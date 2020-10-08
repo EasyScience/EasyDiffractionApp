@@ -62,7 +62,7 @@ def localRepositoryDir():
 
 def remoteRepositoryDir():
     remote_subdir_name = CONFIG['ci']['app']['setup']['ftp']['remote_subdir']
-    return os.path.join(remote_subdir_name, CONFIG.app_name, CONFIG.setup_os)
+    return os.path.join(CONFIG.app_name, remote_subdir_name, CONFIG.setup_os)
 
 def installationDir():
     var = CONFIG['ci']['app']['setup']['installation_dir'][CONFIG.os]

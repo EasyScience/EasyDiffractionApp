@@ -112,9 +112,9 @@ def removeDir(ftp, path):
 
 def deploy():
     branch = sys.argv[1]
-    if branch != 'master':
-        Functions.printNeutralMessage(f'No deploy needed for branch {branch}')
-        return
+    #if branch != 'master':
+    #    Functions.printNeutralMessage(f'No deploy needed for branch {branch}')
+    #    return
 
     password = sys.argv[2]
     host = CONFIG['ci']['app']['setup']['ftp']['host']

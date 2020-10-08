@@ -1,121 +1,119 @@
 [[package]]
-name = "altgraph"
-version = "0.17"
-description = "Python graph (network) package"
 category = "dev"
+description = "Python graph (network) package"
+name = "altgraph"
 optional = false
 python-versions = "*"
+version = "0.17"
 
 [[package]]
-name = "asteval"
-version = "0.9.19"
-description = "Safe, minimalistic evaluator of python expression using ast module"
 category = "main"
+description = "Safe, minimalistic evaluator of python expression using ast module"
+name = "asteval"
 optional = false
 python-versions = ">=3.5"
+version = "0.9.19"
 
 [[package]]
-name = "attrs"
-version = "20.2.0"
-description = "Classes Without Boilerplate"
 category = "dev"
+description = "Classes Without Boilerplate"
+name = "attrs"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+version = "20.2.0"
 
 [package.extras]
-dev = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "six", "zope.interface", "sphinx", "sphinx-rtd-theme", "pre-commit"]
+dev = ["coverage (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "six", "zope.interface", "sphinx", "sphinx-rtd-theme", "pre-commit"]
 docs = ["sphinx", "sphinx-rtd-theme", "zope.interface"]
-tests = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "six", "zope.interface"]
-tests_no_zope = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "six"]
+tests = ["coverage (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "six", "zope.interface"]
+tests_no_zope = ["coverage (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "six"]
 
 [[package]]
-name = "bumps"
-version = "0.7.16"
-description = "Data fitting with bayesian uncertainty analysis"
 category = "main"
+description = "Data fitting with bayesian uncertainty analysis"
+name = "bumps"
 optional = false
 python-versions = "*"
+version = "0.7.16"
 
 [package.dependencies]
 six = "*"
 
 [[package]]
-name = "certifi"
-version = "2020.6.20"
+category = "dev"
 description = "Python package for providing Mozilla's CA Bundle."
-category = "dev"
+name = "certifi"
 optional = false
 python-versions = "*"
+version = "2020.6.20"
 
 [[package]]
-name = "chardet"
-version = "3.0.4"
+category = "dev"
 description = "Universal encoding detector for Python 2 and 3"
-category = "dev"
+name = "chardet"
 optional = false
 python-versions = "*"
+version = "3.0.4"
 
 [[package]]
-name = "dephell-licenses"
-version = "0.1.7"
-description = "Get info about OSS licenses"
 category = "dev"
+description = "Get info about OSS licenses"
+name = "dephell-licenses"
 optional = false
 python-versions = ">=3.5"
+version = "0.1.7"
 
 [package.dependencies]
 attrs = "*"
 requests = "*"
 
 [[package]]
-name = "dicttoxml"
-version = "1.7.4"
-description = "Converts a Python dictionary or other native data type into a valid XML string."
 category = "main"
+description = "Converts a Python dictionary or other native data type into a valid XML string."
+name = "dicttoxml"
 optional = false
 python-versions = "*"
+version = "1.7.4"
 
 [[package]]
-name = "easyappgui"
-version = "0.0.1"
-description = "Generic GUI for easyScience applications"
 category = "main"
+description = ""
+develop = true
+name = "easyappgui"
 optional = false
 python-versions = "^3.8, <3.9" # "^3.8" generates error when installing PySide2 in easyAppGui
+version = "0.0.1"
 
 [package.dependencies]
 PySide2 = "^5.15"
 
 [package.source]
-type = "git"
-url = "https://github.com/easyScience/easyAppGui.git"
-reference = "master"
-resolved_reference = "20562262733bf7ede7f76b252597af13a15564fb"
+reference = ""
+type = "directory"
+url = "../easyAppGui"
 
 [[package]]
-name = "easyapplogic"
-version = "0.0.1"
-description = "Generic logic for easyScience applications"
 category = "main"
+description = ""
+name = "easyapplogic"
 optional = false
 python-versions = "^3.8, <3.9" # "^3.8" generates error when installing PySide2 in easyAppGui
+version = "0.0.1"
 
 [package.dependencies]
 dicttoxml = "^1.7.4"
 
 [package.source]
+reference = "c891fde960216e9d928d32ab8e1bb888c6e5a492"
 type = "git"
 url = "https://github.com/easyScience/easyAppLogic.git"
-reference = "master"
-resolved_reference = "c891fde960216e9d928d32ab8e1bb888c6e5a492"
-
 [[package]]
-name = "easycore"
-version = "0.0.1"
-description = "Generic logic for easyScience libraries"
 category = "main"
+description = ""
+name = "easycore"
 optional = false
 python-versions = "^3.6, >=3.6.1" # "^3.8" generates error when installing PySide2 in easyAppGui
+version = "0.0.1"
 
 [package.dependencies]
 asteval = "^0.9.19"
@@ -126,32 +124,28 @@ pint = "^0.16"
 uncertainties = "^3.1"
 
 [package.source]
+reference = "f918d7847122f0c160388683b780851d3cdeeba1"
 type = "git"
 url = "https://github.com/easyScience/easyCore.git"
-reference = "STAR_io"
-resolved_reference = "f918d7847122f0c160388683b780851d3cdeeba1"
-
 [[package]]
-name = "easyexamplelib"
-version = "0.0.1"
-description = "Advanced example of easyScience library"
 category = "main"
+description = ""
+name = "easyexamplelib"
 optional = false
 python-versions = "^3.8, <3.9" # "^3.8" generates error when installing PySide2 in easyAppGui
+version = "0.0.1"
 
 [package.source]
+reference = "43334405ef99cf1c308ad6cafda981673c05cf4e"
 type = "git"
 url = "https://github.com/easyScience/easyExampleLib.git"
-reference = "master"
-resolved_reference = "43334405ef99cf1c308ad6cafda981673c05cf4e"
-
 [[package]]
-name = "ffmpeg-python"
-version = "0.2.0"
-description = "Python bindings for FFmpeg - with complex filtering support"
 category = "dev"
+description = "Python bindings for FFmpeg - with complex filtering support"
+name = "ffmpeg-python"
 optional = false
 python-versions = "*"
+version = "0.2.0"
 
 [package.dependencies]
 future = "*"
@@ -160,67 +154,67 @@ future = "*"
 dev = ["future (0.17.1)", "numpy (1.16.4)", "pytest-mock (1.10.4)", "pytest (4.6.1)", "Sphinx (2.1.0)", "tox (3.12.1)"]
 
 [[package]]
-name = "future"
-version = "0.18.2"
-description = "Clean single-source support for Python 3 and 2"
 category = "main"
+description = "Clean single-source support for Python 3 and 2"
+name = "future"
 optional = false
 python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
+version = "0.18.2"
 
 [[package]]
-name = "googletrans"
-version = "3.0.0"
-description = "Free Google Translate API for Python. Translates totally free of charge."
 category = "dev"
+description = "Free Google Translate API for Python. Translates totally free of charge."
+name = "googletrans"
 optional = false
 python-versions = "*"
+version = "3.0.0"
 
 [package.dependencies]
 httpx = "0.13.3"
 
 [[package]]
-name = "h11"
-version = "0.9.0"
-description = "A pure-Python, bring-your-own-I/O implementation of HTTP/1.1"
 category = "dev"
+description = "A pure-Python, bring-your-own-I/O implementation of HTTP/1.1"
+name = "h11"
 optional = false
 python-versions = "*"
+version = "0.9.0"
 
 [[package]]
-name = "h2"
-version = "3.2.0"
-description = "HTTP/2 State-Machine based protocol implementation"
 category = "dev"
+description = "HTTP/2 State-Machine based protocol implementation"
+name = "h2"
 optional = false
 python-versions = "*"
+version = "3.2.0"
 
 [package.dependencies]
 hpack = ">=3.0,<4"
 hyperframe = ">=5.2.0,<6"
 
 [[package]]
-name = "hpack"
-version = "3.0.0"
-description = "Pure-Python HPACK header compression"
 category = "dev"
+description = "Pure-Python HPACK header compression"
+name = "hpack"
 optional = false
 python-versions = "*"
+version = "3.0.0"
 
 [[package]]
-name = "hstspreload"
-version = "2020.10.6"
+category = "dev"
 description = "Chromium HSTS Preload list as a Python package and updated daily"
-category = "dev"
+name = "hstspreload"
 optional = false
 python-versions = ">=3.6"
+version = "2020.10.6"
 
 [[package]]
-name = "httpcore"
-version = "0.9.1"
-description = "A minimal low-level HTTP client."
 category = "dev"
+description = "A minimal low-level HTTP client."
+name = "httpcore"
 optional = false
 python-versions = ">=3.6"
+version = "0.9.1"
 
 [package.dependencies]
 h11 = ">=0.8,<0.10"
@@ -228,12 +222,12 @@ h2 = ">=3.0.0,<4.0.0"
 sniffio = ">=1.0.0,<2.0.0"
 
 [[package]]
-name = "httpx"
-version = "0.13.3"
-description = "The next generation HTTP client."
 category = "dev"
+description = "The next generation HTTP client."
+name = "httpx"
 optional = false
 python-versions = ">=3.6"
+version = "0.13.3"
 
 [package.dependencies]
 certifi = "*"
@@ -245,28 +239,28 @@ rfc3986 = ">=1.3,<2"
 sniffio = "*"
 
 [[package]]
-name = "hyperframe"
-version = "5.2.0"
-description = "HTTP/2 framing layer for Python"
 category = "dev"
+description = "HTTP/2 framing layer for Python"
+name = "hyperframe"
 optional = false
 python-versions = "*"
+version = "5.2.0"
 
 [[package]]
-name = "idna"
-version = "2.10"
-description = "Internationalized Domain Names in Applications (IDNA)"
 category = "dev"
+description = "Internationalized Domain Names in Applications (IDNA)"
+name = "idna"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+version = "2.10"
 
 [[package]]
-name = "lmfit"
-version = "1.0.1"
-description = "Least-Squares Minimization with Bounds and Constraints"
 category = "main"
+description = "Least-Squares Minimization with Bounds and Constraints"
+name = "lmfit"
 optional = false
 python-versions = ">=3.5"
+version = "1.0.1"
 
 [package.dependencies]
 asteval = ">=0.9.16"
@@ -275,54 +269,55 @@ scipy = ">=1.2"
 uncertainties = ">=3.0.1"
 
 [[package]]
-name = "macholib"
-version = "1.14"
-description = "Mach-O header analysis and editing"
 category = "dev"
+description = "Mach-O header analysis and editing"
+name = "macholib"
 optional = false
 python-versions = "*"
+version = "1.14"
 
 [package.dependencies]
 altgraph = ">=0.15"
 
 [[package]]
-name = "numpy"
-version = "1.19.2"
-description = "NumPy is the fundamental package for array computing with Python."
 category = "main"
+description = "NumPy is the fundamental package for array computing with Python."
+name = "numpy"
 optional = false
 python-versions = ">=3.6"
+version = "1.19.2"
 
 [[package]]
-name = "packaging"
-version = "20.4"
-description = "Core utilities for Python packages"
 category = "main"
+description = "Core utilities for Python packages"
+name = "packaging"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+version = "20.4"
 
 [package.dependencies]
 pyparsing = ">=2.0.2"
 six = "*"
 
 [[package]]
-name = "pefile"
-version = "2019.4.18"
-description = "Python PE parsing module"
 category = "dev"
+description = "Python PE parsing module"
+marker = "sys_platform == \"win32\""
+name = "pefile"
 optional = false
 python-versions = "*"
+version = "2019.4.18"
 
 [package.dependencies]
 future = "*"
 
 [[package]]
-name = "pint"
-version = "0.16.1"
-description = "Physical quantities module"
 category = "main"
+description = "Physical quantities module"
+name = "pint"
 optional = false
 python-versions = ">=3.6"
+version = "0.16.1"
 
 [package.dependencies]
 packaging = "*"
@@ -333,91 +328,93 @@ test = ["pytest", "pytest-mpl", "pytest-cov"]
 uncertainties = ["uncertainties (>=3.0)"]
 
 [[package]]
-name = "pyinstaller"
-version = "4.1.dev0"
-description = "PyInstaller bundles a Python application and all its dependencies into a single package."
 category = "dev"
+description = "PyInstaller bundles a Python application and all its dependencies into a single package."
+name = "pyinstaller"
 optional = false
 python-versions = "*"
+version = "4.1.dev0"
 
 [package.dependencies]
 altgraph = "*"
-macholib = {version = ">=1.8", markers = "sys_platform == \"darwin\""}
-pefile = {version = ">=2017.8.1", markers = "sys_platform == \"win32\""}
+macholib = ">=1.8"
+pefile = ">=2017.8.1"
 pyinstaller-hooks-contrib = ">=2020.6"
-pywin32-ctypes = {version = ">=0.2.0", markers = "sys_platform == \"win32\""}
+pywin32-ctypes = ">=0.2.0"
+setuptools = "*"
 
 [package.extras]
 encryption = ["tinyaes (>=1.0.0)"]
 hook_testing = ["pytest (>=2.7.3)", "execnet (>=1.5.0)", "psutil"]
 
 [package.source]
+reference = "6413670174a30a1617d146a52b0cdc597c6bed7c"
 type = "git"
 url = "https://github.com/pyinstaller/pyinstaller.git"
-reference = "develop"
-resolved_reference = "6413670174a30a1617d146a52b0cdc597c6bed7c"
-
 [[package]]
-name = "pyinstaller-hooks-contrib"
-version = "2020.9"
-description = "Community maintained hooks for PyInstaller"
 category = "dev"
+description = "Community maintained hooks for PyInstaller"
+name = "pyinstaller-hooks-contrib"
 optional = false
 python-versions = "*"
+version = "2020.9"
 
 [[package]]
-name = "pyparsing"
-version = "2.4.7"
-description = "Python parsing module"
 category = "main"
+description = "Python parsing module"
+name = "pyparsing"
 optional = false
 python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
+version = "2.4.7"
 
 [[package]]
-name = "pypiwin32"
-version = "223"
-description = ""
 category = "dev"
+description = ""
+marker = "sys_platform == \"win32\""
+name = "pypiwin32"
 optional = false
 python-versions = "*"
+version = "223"
 
 [package.dependencies]
 pywin32 = ">=223"
 
 [[package]]
-name = "pyside2"
-version = "5.15.1"
-description = "Python bindings for the Qt cross-platform application and UI framework"
 category = "main"
+description = "Python bindings for the Qt cross-platform application and UI framework"
+name = "pyside2"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, <3.10"
+version = "5.15.1"
 
 [package.dependencies]
 shiboken2 = "5.15.1"
 
 [[package]]
-name = "pywin32"
-version = "228"
+category = "dev"
 description = "Python for Window Extensions"
-category = "dev"
+marker = "sys_platform == \"win32\""
+name = "pywin32"
 optional = false
 python-versions = "*"
+version = "228"
 
 [[package]]
-name = "pywin32-ctypes"
-version = "0.2.0"
+category = "dev"
 description = ""
-category = "dev"
+marker = "sys_platform == \"win32\""
+name = "pywin32-ctypes"
 optional = false
 python-versions = "*"
+version = "0.2.0"
 
 [[package]]
-name = "requests"
-version = "2.24.0"
-description = "Python HTTP for Humans."
 category = "dev"
+description = "Python HTTP for Humans."
+name = "requests"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
+version = "2.24.0"
 
 [package.dependencies]
 certifi = ">=2017.4.17"
@@ -430,66 +427,66 @@ security = ["pyOpenSSL (>=0.14)", "cryptography (>=1.3.4)"]
 socks = ["PySocks (>=1.5.6,<1.5.7 || >1.5.7)", "win-inet-pton"]
 
 [[package]]
-name = "rfc3986"
-version = "1.4.0"
-description = "Validating URI References per RFC 3986"
 category = "dev"
+description = "Validating URI References per RFC 3986"
+name = "rfc3986"
 optional = false
 python-versions = "*"
+version = "1.4.0"
 
 [package.extras]
 idna2008 = ["idna"]
 
 [[package]]
-name = "scipy"
-version = "1.5.2"
-description = "SciPy: Scientific Library for Python"
 category = "main"
+description = "SciPy: Scientific Library for Python"
+name = "scipy"
 optional = false
 python-versions = ">=3.6"
+version = "1.5.2"
 
 [package.dependencies]
 numpy = ">=1.14.5"
 
 [[package]]
-name = "shiboken2"
-version = "5.15.1"
-description = "Python / C++ bindings helper module"
 category = "main"
+description = "Python / C++ bindings helper module"
+name = "shiboken2"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, <3.10"
+version = "5.15.1"
 
 [[package]]
-name = "six"
-version = "1.15.0"
-description = "Python 2 and 3 compatibility utilities"
 category = "main"
+description = "Python 2 and 3 compatibility utilities"
+name = "six"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
+version = "1.15.0"
 
 [[package]]
-name = "sniffio"
-version = "1.1.0"
-description = "Sniff out which async library your code is running under"
 category = "dev"
+description = "Sniff out which async library your code is running under"
+name = "sniffio"
 optional = false
 python-versions = ">=3.5"
+version = "1.1.0"
 
 [[package]]
-name = "toml"
-version = "0.10.1"
-description = "Python Library for Tom's Obvious, Minimal Language"
 category = "dev"
+description = "Python Library for Tom's Obvious, Minimal Language"
+name = "toml"
 optional = false
 python-versions = "*"
+version = "0.10.1"
 
 [[package]]
-name = "uncertainties"
-version = "3.1.4"
-description = "Transparent calculations with uncertainties on the quantities involved (aka error propagation); fast calculation of derivatives"
 category = "main"
+description = "Transparent calculations with uncertainties on the quantities involved (aka error propagation); fast calculation of derivatives"
+name = "uncertainties"
 optional = false
 python-versions = "*"
+version = "3.1.4"
 
 [package.dependencies]
 future = "*"
@@ -501,12 +498,12 @@ optional = ["numpy"]
 tests = ["nose", "numpy"]
 
 [[package]]
-name = "urllib3"
-version = "1.25.10"
-description = "HTTP library with thread-safe connection pooling, file post, and more."
 category = "dev"
+description = "HTTP library with thread-safe connection pooling, file post, and more."
+name = "urllib3"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, <4"
+version = "1.25.10"
 
 [package.extras]
 brotli = ["brotlipy (>=0.6.0)"]
@@ -514,9 +511,9 @@ secure = ["certifi", "cryptography (>=1.3.4)", "idna (>=2.0.0)", "pyOpenSSL (>=0
 socks = ["PySocks (>=1.5.6,<1.5.7 || >1.5.7,<2.0)"]
 
 [metadata]
-lock-version = "1.1"
+content-hash = "be834b9c4119f46afbbfb81525a5727db46417515cdb800a14510c35e354f520"
+lock-version = "1.0"
 python-versions = "^3.8, <3.9" # "^3.8" generates error when installing PySide2 in easyAppGui
-content-hash = "e920f61d6cd13a7c3e8c12bde8f91de99581bb3e496fdc227ecdd2ce0d83e24a"
 
 [metadata.files]
 altgraph = [

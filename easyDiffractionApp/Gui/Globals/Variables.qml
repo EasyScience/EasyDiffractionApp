@@ -4,7 +4,7 @@ import QtQuick 2.13
 
 QtObject {
     // Debug mode
-    property bool isDebugMode: false
+    property bool isDebugMode: true
 
     // Initial application components accessibility
     property bool homePageEnabled: isDebugMode ? true : true

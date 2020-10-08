@@ -6,7 +6,7 @@ from PySide2.QtQml import QQmlApplicationEngine
 import pyproject
 import easyAppGui
 from easyAppLogic.Translate import Translator
-from easyExampleApp.Logic.PyQmlProxy import PyQmlProxy
+from easyDiffractionApp.Logic.PyQmlProxy import PyQmlProxy
 
 
 CONFIG = pyproject.config()
@@ -19,7 +19,7 @@ def isTestMode():
 
 def main():
     current_path = os.path.dirname(sys.argv[0])
-    package_path = os.path.join(current_path, "easyExampleApp")
+    package_path = os.path.join(current_path, "easyDiffractionApp")
     if not os.path.exists(package_path):
         package_path = current_path
 

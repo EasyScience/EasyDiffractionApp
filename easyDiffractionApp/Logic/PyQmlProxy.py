@@ -13,8 +13,8 @@ from easyCore.Utils.classTools import generatePath
 from easyExampleLib.interface import InterfaceFactory
 from easyExampleLib.model import Sin, DummySin
 
-from easyExampleApp.Logic.QtDataStore import QtDataStore
-from easyExampleApp.Logic.DisplayModels.DataModels import MeasuredDataModel, CalculatedDataModel
+from easyDiffractionApp.Logic.QtDataStore import QtDataStore
+from easyDiffractionApp.Logic.DisplayModels.DataModels import MeasuredDataModel, CalculatedDataModel
 
 
 class PyQmlProxy(QObject):
@@ -372,13 +372,43 @@ class PyQmlProxy(QObject):
     # Test phases dict
 
     def initPhases(self):
-        phases = [dict(label = "Sin_1",
-                     color = "darkolivegreen",
-                     parameters = [dict(amplitude = 3.2, period = 2.1)]
+        phases = [dict(
+                    label = "Co2SiO4",
+                    color = "darkolivegreen",
+                    crystal_system = "orthorhombic",
+                    space_group_name = "P n m a",
+                    space_group_setting = "abc",
+                    cell_length_a = 10.28,
+                    cell_length_b = 10.28,
+                    cell_length_c = 10.28,
+                    cell_angle_alpha = 90.0,
+                    cell_angle_beta = 90.0,
+                    cell_angle_gamma = 90.0,
+                    atoms = [
+                        dict(label="Co1", type="Co", color="coral", x=0.0, y=0.0, z=0.0, occupancy=1.0, adp_type="Uiso", adp_iso=0.004),
+                        dict(label="Co2", type="Co", color="coral", x=0.279, y=0.279, z=0.279, occupancy=1.0, adp_type="Uiso", adp_iso=0.007),
+                        dict(label="Si", type="Si", color="steelblue", x=0.094, y=0.094, z=0.094, occupancy=1.0, adp_type="Uiso", adp_iso=0.005),
+                        dict(label="O1", type="O", color="darkolivegreen", x=0.091, y=0.091, z=0.091, occupancy=1.0, adp_type="Uiso", adp_iso=0.008),
+                        dict(label="O2", type="O", color="darkolivegreen", x=0.448, y=0.448, z=0.448, occupancy=1.0, adp_type="Uiso", adp_iso=0.008),
+                        dict(label="O3", type="O", color="darkolivegreen", x=0.164, y=0.164, z=0.164, occupancy=1.0, adp_type="Uiso", adp_iso=0.011),
+                    ]
                 ),
-                dict(label = "Sin_2",
-                     color = "steelblue",
-                     parameters = [dict(amplitude = 2.5, period = 2.7)]
+                dict(
+                    label = "CoO",
+                    color = "steelblue",
+                    crystal_system = "cubic",
+                    space_group_name = "F m -3 m",
+                    space_group_setting = "1",
+                    cell_length_a = 3.02,
+                    cell_length_b = 3.02,
+                    cell_length_c = 3.02,
+                    cell_angle_alpha = 90.0,
+                    cell_angle_beta = 90.0,
+                    cell_angle_gamma = 90.0,
+                    atoms = [
+                        dict(label="Co", type="Co", color="coral", x=0.0, y=0.0, z=0.0, occupancy=1.0, adp_type="Uiso", adp_iso=0.000),
+                        dict(label="O", type="O", color="darkolivegreen", x=0.2471, y=0.4986, z=0.7497, occupancy=1.0, adp_type="Uiso", adp_iso=0.000),
+                    ]
                 )
                ]
         return phases

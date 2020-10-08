@@ -5,9 +5,9 @@ requires = ["poetry>=1.0"]
 build-backend = "poetry.masonry.api"
 
 [tool.poetry]
-name = "easyExample"
+name = "easyDiffraction"
 version = "0.0.1"
-description = "Advanced example of easyScience applications"
+description = "Making diffraction data analysis and modelling easy."
 license = "GPL-3.0-only"
 authors = ["Andrew Sazonov", "Simon Ward"]
 readme = "README.md"
@@ -15,7 +15,7 @@ homepage = "https://github.com/tempscience"
 repository = "https://easyscience.apptimity.com/"
 documentation = "https://github.com/tempscience"
 include = ["CHANGELOG.md"]
-packages = [ { include = "easyExampleApp" } ]
+packages = [ { include = "easyDiffractionApp" } ]
 
 [tool.poetry.dependencies]
 python = "^3.8, <3.9" # "^3.8" generates error when installing PySide2 in easyAppGui
@@ -47,7 +47,7 @@ ffmpeg-python = "^0.2"
 googletrans = "^3.0"
 
 [tool.poetry.scripts]
-easyExample = "easyExampleApp.main:main"
+easyDiffraction = "easyDiffractionApp.main:main"
 
 # CUSTOM CONFIG
 

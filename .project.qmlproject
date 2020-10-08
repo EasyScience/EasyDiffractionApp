@@ -1,17 +1,17 @@
 import QmlProject 1.1
 
 Project {
-    mainFile: "easyExampleApp/Gui/main.qml"
+    mainFile: "easyDiffractionApp/Gui/main.qml"
 
     // List of module and plugin directories passed to QML runtime
     importPaths: [
-        "easyExampleApp",
+        "easyDiffractionApp",
         "../easyAppGui"
     ]
 
     // Include .qml files from specified directory and its subdirectories
     QmlFiles {
-        directory: "easyExampleApp"
+        directory: "easyDiffractionApp"
     }
     QmlFiles {
         directory: "../easyAppGui"
@@ -19,7 +19,7 @@ Project {
 
     // Include .js files from specified directory and its subdirectories
     JavaScriptFiles {
-        directory: "easyExampleApp"
+        directory: "easyDiffractionApp"
     }
     JavaScriptFiles {
         directory: "../easyAppGui"
@@ -29,7 +29,7 @@ Project {
     // from specified directory and its subdirectories
     Files {
         filter: "qmldir;*.ts;*.qrc"
-        directory: "easyExampleApp"
+        directory: "easyDiffractionApp"
         recursive: true
     }
     Files {

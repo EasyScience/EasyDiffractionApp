@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 import os, sys
 import toml
 
@@ -17,11 +15,14 @@ def keyPath():
 
 def getValue(d, element):
     keys = element.split('.')
-    keys[-1] = keys[-1].split('-')[0] # macos-latest -> macos
+    keys[-1] = keys[-1].split('-')[0] # macos-latest -> macos, etc.
     rv = d
     for key in keys:
         rv = rv[key]
     return rv
 
 if __name__ == "__main__":
-    print(getValue(config(), keyPath()))
+    config = config()
+    key_path = keyPath()
+    value = getValue(config, key_path)
+    print(value)

@@ -10,6 +10,18 @@ import easyAppGui.Components 1.0 as EaComponents
 import Gui.Globals 1.0 as ExGlobals
 
 Rectangle {
+    visible: ExGlobals.Variables.experimentPageEnabled
+
+    color: EaStyle.Colors.mainContentBackground
+
+    EaElements.Label {
+        anchors.centerIn: parent
+        text: "Structure view: Phase " + ExGlobals.Constants.proxy.phasesDict[ExGlobals.Variables.phasesCurrentIndex].label
+    }
+}
+
+/*
+Rectangle {
     property double amplitude: ExGlobals.Constants.proxy.phasesDict[ExGlobals.Variables.phasesCurrentIndex].parameters[ExGlobals.Variables.parametersCurrentIndex].amplitude
     property double period: ExGlobals.Constants.proxy.phasesDict[ExGlobals.Variables.phasesCurrentIndex].parameters[ExGlobals.Variables.parametersCurrentIndex].period
 
@@ -57,3 +69,4 @@ Rectangle {
     }
 
 }
+*/

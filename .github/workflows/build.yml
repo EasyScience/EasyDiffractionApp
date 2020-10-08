@@ -67,7 +67,7 @@ jobs:
       # poetry update: Install dependencies or update them
       run: |
         poetry self update
-        poetry update
+        poetry install
 
     - name: Create freezed python app bundle
       run: poetry run python ${{ env.SCRIPTS_PATH }}/FreezeApp.py

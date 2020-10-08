@@ -1,0 +1,6 @@
+module Components
+
+ApplicationWindow 1.0 ApplicationWindow.qml
+DataChartView 1.0 DataChartView.qml
+FitablesView 1.0 FitablesView.qml
+ConstraintsView 1.0 ConstraintsView.qml

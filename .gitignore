@@ -1,0 +1,42 @@
+# QtCreator
+*.autosave
+
+# QtCreator Qml
+*.qmlproject.user
+*.qmlproject.user.*
+
+# QtCreator Python
+*.pyproject.user
+*.pyproject.user.*
+
+# QtCreator CMake
+CMakeLists.txt.user*
+
+# Python
+__pycache__
+.venv
+.coverage
+.pyc
+
+# Poetry
+dist
+*.egg-info
+
+# PyInstaller
+build
+*.spec
+
+# Jupyter
+.ipynb_checkpoints
+
+# macOS
+.DS_Store
+*.app
+*.dmg
+
+# Misc
+..*
+*.log
+*.zip
+.ci/
+.idea/

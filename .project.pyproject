@@ -1,0 +1,16 @@
+{
+"files": [
+    "easyExampleApp/main.py",
+    "easyExampleApp/Logic/PyQmlProxy.py",
+    "easyExampleApp/Logic/QtDataStore.py",
+    "easyExampleApp/Logic/DisplayModels/DataModels.py",
+
+    "../easyAppLogic/easyAppLogic/Translate.py",
+
+    "../easyExampleLib/easyExampleLib/interface.py",
+    "../easyExampleLib/easyExampleLib/model.py",
+    "../easyExampleLib/easyExampleLib/Calculators/calculator1.py",
+    "../easyExampleLib/easyExampleLib/Interfaces/interface1.py",
+    "../easyExampleLib/easyExampleLib/Interfaces/interfaceTemplate.py"
+    ]
+}

@@ -1,0 +1,107 @@
+name: build macOS, Linux, Windows
+
+# Trigger the workflow on push or pull request
+on: [push, pull_request]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+
+  # This workflow contains a single job called "build"
+  build:
+
+    # Rename job "build"
+    #name: App Build
+
+    # CI skip conditions
+    if: "!contains(github.event.head_commit.message, '[ci skip]')"
+    #if: false
+
+    # The type of runner that the job will run on
+    runs-on: ${{ matrix.os }}
+
+    # Build matrix for different platforms
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+
+    - name: Check-out repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python environment
+      uses: actions/setup-python@v2
+      with:
+          python-version: 3.8
+
+    - name: Set up project config parser & Declare env variables
+      shell: bash
+      run: |
+        pip install toml
+        echo "SHORT_GITHUB_REF=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+        echo "SCRIPTS_PATH=$(python pyproject.py ci.project.subdirs.scripts)" >> $GITHUB_ENV
+        echo "DOWNLOAD_PATH=$(python pyproject.py ci.project.subdirs.download)" >> $GITHUB_ENV
+        echo "DISTRIBUTION_PATH=$(python pyproject.py ci.project.subdirs.distribution)" >> $GITHUB_ENV
+        echo "APP_NAME=$(python pyproject.py tool.poetry.name)" >> $GITHUB_ENV
+        echo "POETRY_VENV_PATH=$(python pyproject.py ci.poetry.venv_path.${{ matrix.os }})" >> $GITHUB_ENV
+        echo "QTIFW_PATH=$(python pyproject.py ci.qtifw.setup.installation_path.${{ matrix.os }})" >> $GITHUB_ENV
+
+    - name: Cache dependencies
+      uses: actions/cache@v2
+      with:
+        path: |
+          ${{ env.POETRY_VENV_PATH }}
+          ${{ env.QTIFW_PATH }}
+          ${{ env.DOWNLOAD_PATH }}
+        key: ${{ matrix.os }}-poetry-${{ hashFiles('poetry.lock') }}
+
+    - name: Set up python packages manager
+      uses: Gr1N/setup-poetry@v2
+
+    - name: Create venv and install dependences
+      # --upgrade pip: To get rid of ERROR: No matching distribution found for opencv-python-headless==4.3.0.36
+      # --upgrade setuptools: To get rid of ModuleNotFoundError: No module named 'pkg_resources.py2_warn'
+      # poetry update: Install dependencies or update them
+      run: |
+        poetry self update
+        poetry run pip install --upgrade pip
+        poetry run pip install --upgrade setuptools
+        poetry update
+
+    - name: Create freezed python app bundle
+      run: poetry run python ${{ env.SCRIPTS_PATH }}/FreezeApp.py
+
+    - name: Create app installer from freezed app bundle
+      run: poetry run python ${{ env.SCRIPTS_PATH }}/MakeInstaller.py
+
+    - name: Install and run app in test mode to create GUI test videos
+      if: runner.os == 'macOS'
+      run: |
+        poetry run python ${{ env.SCRIPTS_PATH }}/InstallApp.py
+        poetry run python ${{ env.SCRIPTS_PATH }}/RunApp.py test
+        poetry run python ${{ env.SCRIPTS_PATH }}/CreateTestVideos.py
+
+    - name: Upload GUI test videos to GitHub repository
+      if: runner.os == 'macOS'
+      uses: stefanzweifel/git-auto-commit-action@v4
+      with:
+        commit_message: Upload GUI test videos
+
+    - name: Create zip archive of app installer
+      run: poetry run python ${{ env.SCRIPTS_PATH }}/ZipArtifacts.py ${{ env.SHORT_GITHUB_REF }}
+
+    - name: Upload zipped app installer to GitHub releases
+      uses: ncipollo/release-action@v1
+      with:
+        draft: true
+        prerelease: true
+        allowUpdates: true
+        replacesArtifacts: true
+        token: ${{ secrets.GITHUB_TOKEN }}
+        commit: ${{ env.SHORT_GITHUB_REF }}
+        tag: ${{ env.SHORT_GITHUB_REF }}
+        artifacts: "${{ env.DISTRIBUTION_PATH }}/${{ env.APP_NAME }}_*.zip"
+
+#    - name: Deploy app installer repository via FTP
+#      run: poetry run python ${{ env.SCRIPTS_PATH }}/DeployFtp.py ${{ env.SHORT_GITHUB_REF }} ${{ secrets.FTP_PASSWORD }}

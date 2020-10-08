@@ -1,0 +1,11 @@
+digraph "classes_easyTemplateApp" {
+charset="utf-8"
+rankdir=BT
+"0" [label="{easyTemplateApp.Logic.DisplayModels.DataModels.CalculatedDataModel|interface : NoneType\l|setSeriesRef(seriesRef)\lupdateSeries()\l}", shape="record"];
+"1" [label="{easyTemplateApp.Logic.DisplayModels.DataModels.MeasuredDataModel|interface : NoneType\l|addLowerSeriesRef(seriesRef)\laddUpperSeriesRef(seriesRef)\lupdateSeries()\l}", shape="record"];
+"2" [label="{easyTemplateApp.Logic.PyQmlProxy.PyQmlProxy|appName : str\lappNameChanged\lcalculatorChanged\linterface\lmodelChanged\l|addLowerMeasuredSeriesRef(series)\laddMeasuredSeriesRef(series)\laddUpperMeasuredSeriesRef(series)\lamplitude()\lappName()\lcalculatorInt()\lcalculatorList()\lfittingFTol(ftol)\lgenerateMeasuredData()\lperiod()\lsetAmplitude(value)\lsetAppName(value)\lsetCalculatedSeriesRef(series)\lsetCalculator(value)\lsetPeriod(value)\lsetXShift(value)\lsetYShift(value)\lstartFitting()\lupdateCalculatedData()\lxShift()\lyShift()\l}", shape="record"];
+"3" [label="{easyTemplateApp.Logic.QtInterface.QtInterface|calculator : str\lcalculatorList\lftol\lgenerator\lsy\lx : ndarray\ly\ly_opt\l|get_XY()\lget_fit_XY()\lget_lowerXY()\lget_upperXY()\lnew_model()\lset_parameter(parm, value)\lupdate_model()\l}", shape="record"];
+"0" -> "2" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="_calculated_data_model", style="solid"];
+"1" -> "2" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="_measured_data_model", style="solid"];
+"3" -> "2" [arrowhead="diamond", arrowtail="none", fontcolor="green", label="interface", style="solid"];
+}

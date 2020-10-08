@@ -76,6 +76,14 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "dis3"
+version = "0.1.3"
+description = "Python 2.7 backport of the \"dis\" module from Python 3.5+"
+category = "dev"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "easyappgui"
 version = "0.0.1"
 description = "Generic GUI for easyScience applications"
@@ -334,36 +342,15 @@ uncertainties = ["uncertainties (>=3.0)"]
 
 [[package]]
 name = "pyinstaller"
-version = "4.1.dev0"
+version = "3.6"
 description = "PyInstaller bundles a Python application and all its dependencies into a single package."
 category = "dev"
 optional = false
-python-versions = "*"
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [package.dependencies]
 altgraph = "*"
-macholib = {version = ">=1.8", markers = "sys_platform == \"darwin\""}
-pefile = {version = ">=2017.8.1", markers = "sys_platform == \"win32\""}
-pyinstaller-hooks-contrib = ">=2020.6"
-pywin32-ctypes = {version = ">=0.2.0", markers = "sys_platform == \"win32\""}
-
-[package.extras]
-encryption = ["tinyaes (>=1.0.0)"]
-hook_testing = ["pytest (>=2.7.3)", "execnet (>=1.5.0)", "psutil"]
-
-[package.source]
-type = "git"
-url = "https://github.com/pyinstaller/pyinstaller.git"
-reference = "develop"
-resolved_reference = "6413670174a30a1617d146a52b0cdc597c6bed7c"
-
-[[package]]
-name = "pyinstaller-hooks-contrib"
-version = "2020.9"
-description = "Community maintained hooks for PyInstaller"
-category = "dev"
-optional = false
-python-versions = "*"
+dis3 = "*"
 
 [[package]]
 name = "pyparsing"
@@ -516,7 +503,7 @@ socks = ["PySocks (>=1.5.6,<1.5.7 || >1.5.7,<2.0)"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8, <3.9" # "^3.8" generates error when installing PySide2 in easyAppGui
-content-hash = "e920f61d6cd13a7c3e8c12bde8f91de99581bb3e496fdc227ecdd2ce0d83e24a"
+content-hash = "4244c7304ba491b47875cabfb661af941f00074b9ded61d30f6ed093a5846293"
 
 [metadata.files]
 altgraph = [
@@ -547,6 +534,11 @@ dephell-licenses = [
 ]
 dicttoxml = [
     {file = "dicttoxml-1.7.4.tar.gz", hash = "sha256:ea44cc4ec6c0f85098c57a431a1ee891b3549347b07b7414c8a24611ecf37e45"},
+]
+dis3 = [
+    {file = "dis3-0.1.3-py2-none-any.whl", hash = "sha256:61f7720dd0d8749d23fda3d7227ce74d73da11c2fade993a67ab2f9852451b14"},
+    {file = "dis3-0.1.3-py3-none-any.whl", hash = "sha256:30b6412d33d738663e8ded781b138f4b01116437f0872aa56aa3adba6aeff218"},
+    {file = "dis3-0.1.3.tar.gz", hash = "sha256:9259b881fc1df02ed12ac25f82d4a85b44241854330b1a651e40e0c675cb2d1e"},
 ]
 easyappgui = []
 easyapplogic = []
@@ -640,10 +632,8 @@ pint = [
     {file = "Pint-0.16.1-py2.py3-none-any.whl", hash = "sha256:63ccb7153754923fd95477be69dcf8d7d0764ec2ebb3f6945f920c31fdf13392"},
     {file = "Pint-0.16.1.tar.gz", hash = "sha256:d43a2e9ae003164978b60fdf8cd920d8581e1a5991df8dded29b00f4850ec83a"},
 ]
-pyinstaller = []
-pyinstaller-hooks-contrib = [
-    {file = "pyinstaller-hooks-contrib-2020.9.tar.gz", hash = "sha256:a5fd45a920012802e3f2089e1d3501ef2f49265dfea8fc46c3310f18e3326c91"},
-    {file = "pyinstaller_hooks_contrib-2020.9-py2.py3-none-any.whl", hash = "sha256:c382f3ac1a42b45cfecd581475c36db77da90e479b2f5bcb6d840d21fa545114"},
+pyinstaller = [
+    {file = "PyInstaller-3.6.tar.gz", hash = "sha256:3730fa80d088f8bb7084d32480eb87cbb4ddb64123363763cf8f2a1378c1c4b7"},
 ]
 pyparsing = [
     {file = "pyparsing-2.4.7-py2.py3-none-any.whl", hash = "sha256:ef9d7589ef3c200abe66653d3f1ab1033c3c419ae9b9bdb1240a85b024efc88b"},

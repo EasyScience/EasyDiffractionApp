@@ -1,58 +1,58 @@
 # POETRY CONFIG
 
 [build-system]
-requires = ["poetry>=1.0"]
-build-backend = "poetry.masonry.api"
+requires = ['poetry>=1.0']
+build-backend = 'poetry.masonry.api'
 
 [tool.poetry]
-name = "easyDiffraction"
-version = "0.0.1"
-description = "Making diffraction data analysis and modelling easy."
-license = "GPL-3.0-only"
-authors = ["Andrew Sazonov", "Simon Ward"]
-readme = "README.md"
-homepage = "https://github.com/tempscience"
-repository = "https://easyscience.apptimity.com/"
-documentation = "https://github.com/tempscience"
-include = ["CHANGELOG.md"]
-packages = [ { include = "easyDiffractionApp" } ]
+name = 'easyDiffraction'
+version = '0.0.1'
+description = 'Making diffraction data analysis and modelling easy.'
+license = 'GPL-3.0-only'
+authors = ['Andrew Sazonov', 'Simon Ward']
+readme = 'README.md'
+homepage = 'https://github.com/tempscience'
+repository = 'https://easyscience.apptimity.com/'
+documentation = 'https://github.com/tempscience'
+include = ['CHANGELOG.md']
+packages = [ { include = 'easyDiffractionApp' } ]
 
 [tool.poetry.dependencies]
-python = "^3.8, <3.9" # "^3.8" generates error when installing PySide2 in easyAppGui
-#python = "3.7" # PyInstaller 3.6 doesn't support Python 3.8
+python = '^3.8, <3.9' # '^3.8' generates error when installing PySide2 in easyAppGui
+#python = '3.7' # PyInstaller 3.6 doesn't support Python 3.8
 # easyScience
-easyCore = { git = "https://github.com/easyScience/easyCore.git", rev = "STAR_io" }
-easyExampleLib = { git = "https://github.com/easyScience/easyExampleLib.git", rev = "master" }
-easyAppLogic = { git = "https://github.com/easyScience/easyAppLogic.git", rev = "master" }
-easyAppGui = { git = "https://github.com/easyScience/easyAppGui.git", rev = "master" }
+easyCore = { git = 'https://github.com/easyScience/easyCore.git', rev = 'STAR_io' }
+easyExampleLib = { git = 'https://github.com/easyScience/easyExampleLib.git', rev = 'master' }
+easyAppLogic = { git = 'https://github.com/easyScience/easyAppLogic.git', rev = 'master' }
+easyAppGui = { git = 'https://github.com/easyScience/easyAppGui.git', rev = 'master' }
 
 [tool.poetry.dev-dependencies]
 # easyScience
 #easyCore = { path = '../easyCore/' }
 #easyExampleLib = { path = '../easyExampleLib/' }
-#easyAppLogic = { path = "../easyAppLogic/" }
-#easyAppGui = { path = "../easyAppGui/" }
+#easyAppLogic = { path = '../easyAppLogic/' }
+#easyAppGui = { path = '../easyAppGui/' }
 # PyInstaller
-#pyinstaller = "^3.6"
-pyinstaller = { git = "https://github.com/pyinstaller/pyinstaller.git", rev = "develop" }
-macholib = "^1.14"
-pywin32-ctypes = { version = "^0.2", platform = "win32" }
-pypiwin32 = { version = "^223", platform = "win32" }
-pefile = { version = "^2019.4", platform = "win32" }
+pyinstaller = '^3.6'
+#pyinstaller = { git = 'https://github.com/pyinstaller/pyinstaller.git', rev = 'develop' }
+macholib = '^1.14'
+pywin32-ctypes = { version = '^0.2', platform = 'win32' }
+pypiwin32 = { version = '^223', platform = 'win32' }
+pefile = { version = '^2019.4', platform = 'win32' }
 # Misc
-toml = "^0.10"
-requests = "^2.24"
-dephell_licenses = "^0.1"
-ffmpeg-python = "^0.2"
-googletrans = "^3.0"
+toml = '^0.10'
+requests = '^2.24'
+dephell_licenses = '^0.1'
+ffmpeg-python = '^0.2'
+googletrans = '^3.0'
 
 [tool.poetry.scripts]
-easyDiffraction = "easyDiffractionApp.main:main"
+easyDiffraction = 'easyDiffractionApp.main:main'
 
 # CUSTOM CONFIG
 
 [ci.project]
-license_file = "LICENSE.md" # how to combine this with tool.poetry.license???
+license_file = 'LICENSE.md' # how to combine this with tool.poetry.license???
 
 [ci.project.subdirs]
 scripts = 'tools/Scripts'
@@ -104,7 +104,7 @@ app_package_subdir = 'app'
 #docs_package_subdir = 'docs'
 #docs_package_subdir = 'docs'
 #docs_package_name = 'Documentation'
-#docs_package_description = "Documentation: User manual, text and video tutorials"
+#docs_package_description = 'Documentation: User manual, text and video tutorials'
 #docs_package_version = '2020.7.11'
 
 [ci.app.tutorials.video]

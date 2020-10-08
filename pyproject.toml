@@ -76,7 +76,7 @@ file_ext = { macos = '.icns', ubuntu = '.png', windows = '.ico' }
 
 [ci.app.setup]
 build_dir_suffix = 'Setup'
-repository_dir_suffix = 'Repositories'
+repository_dir_suffix = 'Repos'
 os = { macos = 'macOS', ubuntu = 'Linux', windows = 'Windows' } # Should be the same as GH actions ${{ runner.os }}
 arch = { macos = 'x86-64', ubuntu = 'x86-64', windows = 'x86-32' }
 file_ext = { macos = '.app', ubuntu = '', windows = '.exe' }

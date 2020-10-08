@@ -103,5 +103,5 @@ jobs:
         tag: ${{ env.SHORT_GITHUB_REF }}
         artifacts: "${{ env.DISTRIBUTION_PATH }}/${{ env.APP_NAME }}_*.zip"
 
-#    - name: Deploy app installer repository via FTP
-#      run: poetry run python ${{ env.SCRIPTS_PATH }}/DeployFtp.py ${{ env.SHORT_GITHUB_REF }} ${{ secrets.FTP_PASSWORD }}
+    - name: Deploy app installer repository via FTP
+      run: poetry run python ${{ env.SCRIPTS_PATH }}/DeployFtp.py ${{ env.SHORT_GITHUB_REF }} ${{ secrets.FTP_PASSWORD }}

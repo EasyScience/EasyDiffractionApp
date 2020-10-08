@@ -1,6 +1,6 @@
 <img src="https://easydiffraction.github.io/images/easydiffraction-logo.svg" height="80"><img width="15"><img src="https://easydiffraction.github.io/images/easydiffraction-text.svg" height="80">
 
-**easyDiffraction** is a scientific software for modelling and analysis of the diffraction data.
+**easyDiffraction** is a scientific software for modelling and analysis of the diffraction data. 
 
 ## Dev info
 

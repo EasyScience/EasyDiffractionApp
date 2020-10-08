@@ -77,7 +77,7 @@ file_ext = { macos = '.icns', ubuntu = '.png', windows = '.ico' }
 [ci.app.setup]
 build_dir_suffix = 'Setup'
 repository_dir_suffix = 'Repos'
-os = { macos = 'macOS', ubuntu = 'Linux', windows = 'Windows' } # Should be the same as GH actions ${{ runner.os }}
+os = { macos = 'macOS', ubuntu = 'Linux', windows = 'Windows' }  # Should be the same as GH actions ${{ runner.os }}
 arch = { macos = 'x86-64', ubuntu = 'x86-64', windows = 'x86-32' }
 file_ext = { macos = '.app', ubuntu = '', windows = '.exe' }
 maintenance_tool_suffix = 'MaintenanceTool'
@@ -147,7 +147,7 @@ file_name_suffix = { macos = 'mac-x64', ubuntu = 'linux-x64', windows = 'win-x86
 file_ext = { macos = '.dmg', ubuntu = '.run', windows = '.exe' }
 installation_path = { macos = '/Users/runner/Qt', ubuntu = '/home/runner/Qt', windows = 'C:\Qt' }
 
-[ci.ffmpeg.macos] # https://evermeet.cx/ffmpeg/ffmpeg-4.3.zip
+[ci.ffmpeg.macos]  # https://evermeet.cx/ffmpeg/ffmpeg-4.3.zip
 version = '4.3.1'
 base_url = 'https://evermeet.cx/ffmpeg'
 file_name_base = 'ffmpeg-'

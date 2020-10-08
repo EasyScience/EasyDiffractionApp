@@ -60,14 +60,13 @@ jobs:
       uses: Gr1N/setup-poetry@v2
 
     - name: Create venv and install dependences
+      # poetry self update: Update poetry
       # --upgrade pip: To get rid of ERROR: No matching distribution found for opencv-python-headless==4.3.0.36
       # WIN ERROR: Could not install packages due to an EnvironmentError: [WinError 5] Access is denied: 'C:\\Users\\runneradmin\\AppData\\Local\\Temp\\pip-uninstall-w29qfiig\\pip.exe'
       # Consider using the `--user` option or check the permissions.
       # --upgrade setuptools: To get rid of ModuleNotFoundError: No module named 'pkg_resources.py2_warn'
       # poetry update: Install dependencies or update them
-      run: |
-        poetry self update
-        poetry install
+      run: poetry install
 
     - name: Create freezed python app bundle
       run: poetry run python ${{ env.SCRIPTS_PATH }}/FreezeApp.py

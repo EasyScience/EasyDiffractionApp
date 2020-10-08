@@ -33,7 +33,7 @@ easyAppGui = { git = 'https://github.com/easyScience/easyAppGui.git', rev = 'mas
 #easyAppLogic = { path = '../easyAppLogic/' }
 #easyAppGui = { path = '../easyAppGui/' }
 # PyInstaller
-pyinstaller = '^3.6'
+pyinstaller = '^4.0'
 #pyinstaller = { git = 'https://github.com/pyinstaller/pyinstaller.git', rev = 'develop' }
 macholib = '^1.14'
 pywin32-ctypes = { version = '^0.2', platform = 'win32' }

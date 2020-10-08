@@ -120,17 +120,17 @@ def deploy():
     host = CONFIG['ci']['app']['setup']['ftp']['host']
     port = CONFIG['ci']['app']['setup']['ftp']['port']
     user = CONFIG['ci']['app']['setup']['ftp']['user']
+    remote_subdir_name = CONFIG['ci']['app']['setup']['ftp']['remote_subdir']
 
-    repository_dir_name = f'{CONFIG.app_name}{CONFIG.repository_dir_suffix}'
-    local_repository_dir_path = os.path.join(CONFIG.dist_dir, repository_dir_name, CONFIG.setup_os)
-    remote_repositories_root_dir = repository_dir_name
-    remote_repository_dir = os.path.join(remote_repositories_root_dir, CONFIG.setup_os)
+    local_repository_dir_name = f'{CONFIG.app_name}{CONFIG.repository_dir_suffix}'
+    local_repository_dir_path = os.path.join(CONFIG.dist_dir, local_repository_dir_name, CONFIG.setup_os)
+    remote_repository_dir_path = os.path.join(remote_subdir_name, CONFIG.setup_os)
 
     ftp = ftplib.FTP()
     connect(ftp, host, port)
     login(ftp, user, password)
-    removeDir(ftp, remote_repository_dir)
-    upload(ftp, local_repository_dir_path, remote_repositories_root_dir)
+    removeDir(ftp, remote_repository_dir_path)
+    upload(ftp, local_repository_dir_path, remote_subdir_name)
     ftp.quit()
 
 if __name__ == "__main__":

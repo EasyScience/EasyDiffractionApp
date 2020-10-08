@@ -86,7 +86,8 @@ installation_dir = { macos = '/Applications', ubuntu = '/opt', windows = 'Progra
 [ci.app.setup.ftp]
 host = 'ftp.apptimity.com'
 port = 21
-user = 'gh@easyscience.apptimity.com'
+user = 'ed@easyscience.apptimity.com'
+remote_subdir = 'app'
 
 [ci.app.setup.build]
 # config

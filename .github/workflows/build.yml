@@ -61,11 +61,13 @@ jobs:
 
     - name: Create venv and install dependences
       # --upgrade pip: To get rid of ERROR: No matching distribution found for opencv-python-headless==4.3.0.36
+      # WIN ERROR: Could not install packages due to an EnvironmentError: [WinError 5] Access is denied: 'C:\\Users\\runneradmin\\AppData\\Local\\Temp\\pip-uninstall-w29qfiig\\pip.exe'
+      # Consider using the `--user` option or check the permissions.
       # --upgrade setuptools: To get rid of ModuleNotFoundError: No module named 'pkg_resources.py2_warn'
       # poetry update: Install dependencies or update them
       run: |
         poetry self update
-        poetry run pip install --upgrade pip
+#        poetry run pip install --upgrade pip
         poetry run pip install --upgrade setuptools
         poetry update
 

@@ -67,7 +67,6 @@ jobs:
       # poetry update: Install dependencies or update them
       run: |
         poetry self update
-#        poetry run pip install --upgrade pip
         poetry run pip install --upgrade setuptools
         poetry update
 

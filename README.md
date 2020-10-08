@@ -2,6 +2,8 @@
 
 **easyDiffraction** is a scientific software for modelling and analysis of the diffraction data.
 
+## Dev info
+
 [![CI Build][20]][21]
 
 [![Release][30]][31]
@@ -11,8 +13,6 @@
 [![License][50]][51]
 
 [![w3c][90]][91]
-
-## Dev setup
 
 ### Download easyDiffractionApp repo
 * Open **Terminal**

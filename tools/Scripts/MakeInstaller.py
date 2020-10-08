@@ -56,9 +56,13 @@ def configXmlPath():
 def packagesDirPath():
     return os.path.join(setupBuildDirPath(), CONFIG['ci']['app']['setup']['build']['packages_dir'])
 
-def repositoryDir():
+def localRepositoryDir():
     repository_dir_suffix = CONFIG['ci']['app']['setup']['repository_dir_suffix']
     return os.path.join(f'{CONFIG.app_name}{repository_dir_suffix}', CONFIG.setup_os)
+
+def remoteRepositoryDir():
+    remote_subdir_name = CONFIG['ci']['app']['setup']['ftp']['remote_subdir']
+    return os.path.join(remote_subdir_name, CONFIG.app_name, CONFIG.setup_os)
 
 def installationDir():
     var = CONFIG['ci']['app']['setup']['installation_dir'][CONFIG.os]
@@ -97,7 +101,7 @@ def installerConfigXml():
                 'RemoteRepositories': {
                     'Repository': [
                         {
-                            'Url': f'http://easyscience.apptimity.com/{repositoryDir()}',
+                            'Url': f'http://easyscience.apptimity.com/{remoteRepositoryDir()}',
                             'DisplayName': f'{CONFIG.app_name} {CONFIG.setup_os}_{CONFIG.setup_arch} repository',
                             'Enabled': 1,
                         }
@@ -267,7 +271,7 @@ def createOnlineRepository():
         message = 'create online repository'
         qtifw_bin_dir_path = os.path.join(qtifwDirPath(), 'bin')
         qtifw_repogen_path = os.path.join(qtifw_bin_dir_path, 'repogen')
-        repository_dir_path = os.path.join(CONFIG['ci']['project']['subdirs']['distribution'], repositoryDir())
+        repository_dir_path = os.path.join(CONFIG['ci']['project']['subdirs']['distribution'], localRepositoryDir())
         Functions.run(
             qtifw_repogen_path,
             '--update-new-components',

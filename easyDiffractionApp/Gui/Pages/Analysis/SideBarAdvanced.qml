@@ -45,7 +45,7 @@ EaComponents.SideBarColumn {
 
         /*
         EaComponents.ConstraintsView {
-            defaultLabelText: qsTr("No Constraints Added")
+            defaultInfoText: qsTr("No Constraints Added")
             xmlModel: ExGlobals.Constants.proxy.constraintsListAsXml
         }
         */

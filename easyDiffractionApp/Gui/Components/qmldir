@@ -1,6 +1,17 @@
 module Components
 
 ApplicationWindow 1.0 ApplicationWindow.qml
+
+# Main content components
+
 DataChartView 1.0 DataChartView.qml
+
+# Sidebar components
+
+PhasesView 1.0 PhasesView.qml
+CellView 1.0 CellView.qml
+AtomsView 1.0 AtomsView.qml
+AdpsView 1.0 AdpsView.qml
+
 FitablesView 1.0 FitablesView.qml
 ConstraintsView 1.0 ConstraintsView.qml

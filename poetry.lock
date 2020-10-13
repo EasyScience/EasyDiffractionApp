@@ -6,7 +6,6 @@ category = "dev"
 optional = false
 python-versions = "*"
 
-
 [[package]]
 name = "asteval"
 version = "0.9.19"
@@ -49,6 +48,23 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "cfml-api"
+version = "0.0.1"
+description = ""
+category = "main"
+optional = false
+python-versions = "^3.7, <3.8"
+
+[package.dependencies]
+numpy = "^1.19"
+
+[package.source]
+type = "git"
+url = 'ssh://git@github.com/easyScience/CFML_api.git'
+reference = 'main'
+resolved_reference = "490209d55fbf0392ebf899a66986b131d92c015f"
+
+[[package]]
 name = "chardet"
 version = "3.0.4"
 description = "Universal encoding detector for Python 2 and 3"
@@ -82,7 +98,7 @@ version = "0.0.1"
 description = "Generic GUI for easyScience applications"
 category = "main"
 optional = false
-python-versions = "^3.8, <3.9" # "^3.8" generates error when installing PySide2 in easyAppGui
+python-versions = '^3.7.0, <3.9'
 
 [package.dependencies]
 PySide2 = "^5.15"
@@ -91,7 +107,7 @@ PySide2 = "^5.15"
 type = "git"
 url = 'https://github.com/easyScience/easyAppGui.git'
 reference = 'master'
-resolved_reference = "e0a220c190050b3c073dc13b6bc40c121043af0e"
+resolved_reference = "cada8de4826a4eee748267ebc74981d55107cad0"
 
 [[package]]
 name = "easyapplogic"
@@ -99,7 +115,7 @@ version = "0.0.1"
 description = "Generic logic for easyScience applications"
 category = "main"
 optional = false
-python-versions = "^3.8, <3.9" # "^3.8" generates error when installing PySide2 in easyAppGui
+python-versions = '^3.7, <3.9'
 
 [package.dependencies]
 dicttoxml = "^1.7.4"
@@ -108,7 +124,7 @@ dicttoxml = "^1.7.4"
 type = "git"
 url = 'https://github.com/easyScience/easyAppLogic.git'
 reference = 'master'
-resolved_reference = "c891fde960216e9d928d32ab8e1bb888c6e5a492"
+resolved_reference = "9e2137e92cd6cfe076ac433b64ba39bb3be9d18c"
 
 [[package]]
 name = "easycore"
@@ -130,7 +146,24 @@ uncertainties = "^3.1"
 type = "git"
 url = 'https://github.com/easyScience/easyCore.git'
 reference = 'STAR_io'
-resolved_reference = "f918d7847122f0c160388683b780851d3cdeeba1"
+resolved_reference = "00cef8ca3aff5f97bb1ef022a833080993f791bd"
+
+[[package]]
+name = "easydiffractionlib"
+version = "0.0.1"
+description = 'Making diffraction data analysis and modelling easy.'
+category = "main"
+optional = false
+python-versions = "^3.7, <3.8"
+
+[package.dependencies]
+CFML_api = "rev main"
+
+[package.source]
+type = "git"
+url = 'https://github.com/easyScience/easyDiffractionLib.git'
+reference = 'DAS-271'
+resolved_reference = "d9227fe6a89339f37a7cbfe3b7a59c7bb5878540"
 
 [[package]]
 name = "easyexamplelib"
@@ -138,13 +171,13 @@ version = "0.0.1"
 description = "Advanced example of easyScience library"
 category = "main"
 optional = false
-python-versions = "^3.8, <3.9" # "^3.8" generates error when installing PySide2 in easyAppGui
+python-versions = '^3.7, <3.9'
 
 [package.source]
 type = "git"
 url = 'https://github.com/easyScience/easyExampleLib.git'
 reference = 'master'
-resolved_reference = "43334405ef99cf1c308ad6cafda981673c05cf4e"
+resolved_reference = "131026993547b05b2db8182dfe5ee7bca26c7754"
 
 [[package]]
 name = "ffmpeg-python"
@@ -262,6 +295,21 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
 [[package]]
+name = "importlib-metadata"
+version = "2.0.0"
+description = "Read metadata from Python packages"
+category = "main"
+optional = false
+python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,>=2.7"
+
+[package.dependencies]
+zipp = ">=0.5"
+
+[package.extras]
+docs = ["sphinx", "rst.linker"]
+testing = ["packaging", "pep517", "importlib-resources (>=1.3)"]
+
+[[package]]
 name = "lmfit"
 version = "1.0.1"
 description = "Least-Squares Minimization with Bounds and Constraints"
@@ -326,6 +374,7 @@ optional = false
 python-versions = ">=3.6"
 
 [package.dependencies]
+importlib-metadata = {version = "*", markers = "python_version < \"3.8\""}
 packaging = "*"
 
 [package.extras]
@@ -464,7 +513,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
 
 [[package]]
 name = "sniffio"
-version = "1.1.0"
+version = "1.2.0"
 description = "Sniff out which async library your code is running under"
 category = "dev"
 optional = false
@@ -508,10 +557,22 @@ brotli = ["brotlipy (>=0.6.0)"]
 secure = ["certifi", "cryptography (>=1.3.4)", "idna (>=2.0.0)", "pyOpenSSL (>=0.14)", "ipaddress"]
 socks = ["PySocks (>=1.5.6,<1.5.7 || >1.5.7,<2.0)"]
 
+[[package]]
+name = "zipp"
+version = "3.3.0"
+description = "Backport of pathlib-compatible object wrapper for zip files"
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[package.extras]
+docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
+testing = ["pytest (>=3.5,<3.7.3 || >3.7.3)", "pytest-checkdocs (>=1.2.3)", "pytest-flake8", "pytest-cov", "jaraco.test (>=3.2.0)", "jaraco.itertools", "func-timeout", "pytest-black (>=0.3.7)", "pytest-mypy"]
+
 [metadata]
 lock-version = "1.1"
-python-versions = '^3.8, <3.9' # '^3.8' generates error when installing PySide2 in easyAppGui
-content-hash = "c00a813275d88387396e69eb959d6b379817be498dfeb8d132211631c96dc1ca"
+python-versions = '^3.7, <3.8'
+content-hash = "8f9cbb7e5eb2c66fbcbd49033bc26f90f7b7b9b32607ecff66f3ad53afc778ce"
 
 [metadata.files]
 altgraph = [
@@ -532,6 +593,7 @@ certifi = [
     {file = "certifi-2020.6.20-py2.py3-none-any.whl", hash = "sha256:8fc0819f1f30ba15bdb34cceffb9ef04d99f420f68eb75d901e9560b8749fc41"},
     {file = "certifi-2020.6.20.tar.gz", hash = "sha256:5930595817496dd21bb8dc35dad090f1c2cd0adfaf21204bf6732ca5d8ee34d3"},
 ]
+cfml-api = []
 chardet = [
     {file = "chardet-3.0.4-py2.py3-none-any.whl", hash = "sha256:fc323ffcaeaed0e0a02bf4d117757b98aed530d9ed4531e3e15460124c106691"},
     {file = "chardet-3.0.4.tar.gz", hash = "sha256:84ab92ed1c4d4f16916e05906b6b75a6c0fb5db821cc65e70cbd64a3e2a5eaae"},
@@ -546,6 +608,7 @@ dicttoxml = [
 easyappgui = []
 easyapplogic = []
 easycore = []
+easydiffractionlib = []
 easyexamplelib = []
 ffmpeg-python = [
     {file = "ffmpeg-python-0.2.0.tar.gz", hash = "sha256:65225db34627c578ef0e11c8b1eb528bb35e024752f6f10b78c011f6f64c4127"},
@@ -588,6 +651,10 @@ hyperframe = [
 idna = [
     {file = "idna-2.10-py2.py3-none-any.whl", hash = "sha256:b97d804b1e9b523befed77c48dacec60e6dcb0b5391d57af6a65a312a90648c0"},
     {file = "idna-2.10.tar.gz", hash = "sha256:b307872f855b18632ce0c21c5e45be78c0ea7ae4c15c828c20788b26921eb3f6"},
+]
+importlib-metadata = [
+    {file = "importlib_metadata-2.0.0-py2.py3-none-any.whl", hash = "sha256:cefa1a2f919b866c5beb7c9f7b0ebb4061f30a8a9bf16d609b000e2dfaceb9c3"},
+    {file = "importlib_metadata-2.0.0.tar.gz", hash = "sha256:77a540690e24b0305878c37ffd421785a6f7e53c8b5720d211b211de8d0e95da"},
 ]
 lmfit = [
     {file = "lmfit-1.0.1.tar.gz", hash = "sha256:d249eb756899360f4d2a544c9458f47fc8f765ac22c09e099530585fd64e286e"},
@@ -715,8 +782,8 @@ six = [
     {file = "six-1.15.0.tar.gz", hash = "sha256:30639c035cdb23534cd4aa2dd52c3bf48f06e5f4a941509c8bafd8ce11080259"},
 ]
 sniffio = [
-    {file = "sniffio-1.1.0-py3-none-any.whl", hash = "sha256:20ed6d5b46f8ae136d00b9dcb807615d83ed82ceea6b2058cecb696765246da5"},
-    {file = "sniffio-1.1.0.tar.gz", hash = "sha256:8e3810100f69fe0edd463d02ad407112542a11ffdc29f67db2bf3771afb87a21"},
+    {file = "sniffio-1.2.0-py3-none-any.whl", hash = "sha256:471b71698eac1c2112a40ce2752bb2f4a4814c22a54a3eed3676bc0f5ca9f663"},
+    {file = "sniffio-1.2.0.tar.gz", hash = "sha256:c4666eecec1d3f50960c6bdf61ab7bc350648da6c126e3cf6898d8cd4ddcd3de"},
 ]
 toml = [
     {file = "toml-0.10.1-py2.py3-none-any.whl", hash = "sha256:bda89d5935c2eac546d648028b9901107a595863cb36bae0c73ac804a9b4ce88"},
@@ -729,4 +796,8 @@ uncertainties = [
 urllib3 = [
     {file = "urllib3-1.25.10-py2.py3-none-any.whl", hash = "sha256:e7983572181f5e1522d9c98453462384ee92a0be7fac5f1413a1e35c56cc0461"},
     {file = "urllib3-1.25.10.tar.gz", hash = "sha256:91056c15fa70756691db97756772bb1eb9678fa585d9184f24534b100dc60f4a"},
+]
+zipp = [
+    {file = "zipp-3.3.0-py3-none-any.whl", hash = "sha256:eed8ec0b8d1416b2ca33516a37a08892442f3954dee131e92cfd92d8fe3e7066"},
+    {file = "zipp-3.3.0.tar.gz", hash = "sha256:64ad89efee774d1897a58607895d80789c59778ea02185dd846ac38394a8642b"},
 ]

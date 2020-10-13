@@ -18,20 +18,17 @@ include = ['CHANGELOG.md']
 packages = [ { include = 'easyDiffractionApp' } ]
 
 [tool.poetry.dependencies]
-python = '^3.8, <3.9' # '^3.8' generates error when installing PySide2 in easyAppGui
+python = '^3.7, <3.8'
+#python = '^3.8, <3.9' # '^3.8' generates error when installing PySide2 in easyAppGui
 #python = '3.7' # PyInstaller 3.6 doesn't support Python 3.8
 # easyScience
 easyCore = { git = 'https://github.com/easyScience/easyCore.git', rev = 'STAR_io' }
+easyDiffractionLib = { git = 'https://github.com/easyScience/easyDiffractionLib.git', rev = 'DAS-271' }
 easyExampleLib = { git = 'https://github.com/easyScience/easyExampleLib.git', rev = 'master' }
 easyAppLogic = { git = 'https://github.com/easyScience/easyAppLogic.git', rev = 'master' }
 easyAppGui = { git = 'https://github.com/easyScience/easyAppGui.git', rev = 'master' }
 
 [tool.poetry.dev-dependencies]
-# easyScience
-#easyCore = { path = '../easyCore/' }
-#easyExampleLib = { path = '../easyExampleLib/' }
-#easyAppLogic = { path = '../easyAppLogic/' }
-#easyAppGui = { path = '../easyAppGui/' }
 # PyInstaller
 pyinstaller = '^4.0'
 #pyinstaller = { git = 'https://github.com/pyinstaller/pyinstaller.git', rev = 'develop' }
@@ -45,6 +42,12 @@ requests = '^2.24'
 dephell_licenses = '^0.1'
 ffmpeg-python = '^0.2'
 googletrans = '^3.0'
+# easyScience
+#easyCore = { path = '../easyCore/' }
+#easyDiffractionLib = { path = '../easyDiffractionLib/' }
+#easyExampleLib = { path = '../easyExampleLib/' }
+#easyAppLogic = { path = '../easyAppLogic/' }
+#easyAppGui = { path = '../easyAppGui/' }
 
 [tool.poetry.scripts]
 easyDiffraction = 'easyDiffractionApp.main:main'

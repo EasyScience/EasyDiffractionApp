@@ -35,10 +35,10 @@ jobs:
       with:
         ssh-private-key: ${{ secrets.GH_WEBFACTORY_KEY }}
 
-    #- name: Set up Python environment
-    #  uses: actions/setup-python@v2
-    #  with:
-    #      python-version: 3.7 #3.8
+    - name: Set up Python environment
+      uses: actions/setup-python@v2
+      with:
+          python-version: 3.7 #3.8
 
     - name: Set up Python environment (macOS)
       run: |

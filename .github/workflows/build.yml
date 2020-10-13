@@ -22,7 +22,7 @@ jobs:
     # Build matrix for different platforms
     strategy:
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
+        os: [macos-latest] #, ubuntu-latest, windows-latest]
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -33,7 +33,7 @@ jobs:
     - name: Set up Python environment
       uses: actions/setup-python@v2
       with:
-          python-version: 3.8
+          python-version: 3.7 #3.8
 
     - name: Set up project config parser & Declare env variables
       shell: bash

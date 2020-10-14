@@ -35,16 +35,16 @@ jobs:
       with:
         ssh-private-key: ${{ secrets.GH_WEBFACTORY_KEY }}
 
-    - name: Set up Python environment
-      uses: actions/setup-python@v2
-      with:
-          python-version: 3.7 #3.8
+    #- name: Set up Python environment
+    #  uses: actions/setup-python@v2
+    #  with:
+    #      python-version: 3.7 #3.8
 
     - name: Set up Python environment (macOS)
       run: |
         mkdir -p .ci/download
-        curl -o .ci/download/python-3.7.9-macosx10.9.pkg https://www.python.org/ftp/python/3.7.9/python-3.7.9-macosx10.9.pkg
-        sudo installer -store -pkg .ci/download/python-3.7.9-macosx10.9.pkg -target /
+        curl -o .ci/download/python-3.7.6-macosx10.9.pkg https://www.python.org/ftp/python/3.7.6/python-3.7.6-macosx10.9.pkg
+        sudo installer -store -pkg .ci/download/python-3.7.6-macosx10.9.pkg -target /
 
     - name: Set up project config parser & Declare env variables
       shell: bash
@@ -87,7 +87,7 @@ jobs:
     - name: Install and run app in test mode to create GUI test videos
       if: runner.os == 'macOS'
       run: |
-        sudo spctl --master-disable
+      #  sudo spctl --master-disable
         poetry run python ${{ env.SCRIPTS_PATH }}/InstallApp.py
         poetry run python ${{ env.SCRIPTS_PATH }}/RunApp.py test
         poetry run python ${{ env.SCRIPTS_PATH }}/CreateTestVideos.py

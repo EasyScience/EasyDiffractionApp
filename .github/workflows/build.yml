@@ -87,7 +87,6 @@ jobs:
     - name: Install and run app in test mode to create GUI test videos
       if: runner.os == 'macOS'
       run: |
-      #  sudo spctl --master-disable
         poetry run python ${{ env.SCRIPTS_PATH }}/InstallApp.py
         poetry run python ${{ env.SCRIPTS_PATH }}/RunApp.py test
         poetry run python ${{ env.SCRIPTS_PATH }}/CreateTestVideos.py

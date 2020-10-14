@@ -76,7 +76,10 @@ jobs:
       # Consider using the `--user` option or check the permissions.
       # --upgrade setuptools: To get rid of ModuleNotFoundError: No module named 'pkg_resources.py2_warn'
       # poetry update: Install dependencies or update them
-      run: poetry install
+      run: |
+        poetry env info
+        poetry env use 3.7
+        poetry install
 
     - name: Create freezed python app bundle
       run: poetry run python ${{ env.SCRIPTS_PATH }}/FreezeApp.py

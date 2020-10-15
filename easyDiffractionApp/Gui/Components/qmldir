@@ -4,6 +4,7 @@ ApplicationWindow 1.0 ApplicationWindow.qml
 
 # Main content components
 
+Structure3dView 1.0 Structure3dView.qml
 DataChartView 1.0 DataChartView.qml
 
 # Sidebar components

@@ -68,7 +68,7 @@ EaComponents.TableView {
             width: adpAtomLabel.width
             headerText: "Uiso"
             text: model.adp_iso
-            onTextChanged: print("!!!!!", model.adp_iso)
+            //onTextChanged: print("!!!!!", model.adp_iso)
         }
 
         EaComponents.TableViewTextInput {

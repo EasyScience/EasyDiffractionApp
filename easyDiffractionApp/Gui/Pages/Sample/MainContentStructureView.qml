@@ -1,14 +1,11 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-
-import easyAppGui.Globals 1.0 as EaGlobals
-import easyAppGui.Style 1.0 as EaStyle
-import easyAppGui.Animations 1.0 as EaAnimations
-import easyAppGui.Elements 1.0 as EaElements
-import easyAppGui.Components 1.0 as EaComponents
-
 import Gui.Globals 1.0 as ExGlobals
+import Gui.Components 1.0 as ExComponents
 
+ExComponents.Structure3dView {
+    visible: ExGlobals.Variables.experimentPageEnabled
+}
+
+/*
 Rectangle {
     visible: ExGlobals.Variables.experimentPageEnabled
 
@@ -19,6 +16,7 @@ Rectangle {
         text: "Structure view: Phase " + ExGlobals.Constants.proxy.phases2Dict[ExGlobals.Variables.phasesCurrentIndex].name
     }
 }
+*/
 
 /*
 Rectangle {

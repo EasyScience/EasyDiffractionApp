@@ -37,6 +37,7 @@ class PyQmlProxy(QObject):
 
     phases2Changed = Signal()
     model2Changed = Signal()
+    currentPhaseSitesChanged = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -431,10 +432,7 @@ class PyQmlProxy(QObject):
         self.sample2.phase = self.crystal2
         self.updateCalculatedData2()
         self.phases2Changed.emit()
-        self.crystal2.extent = np.array([2, 2, 2])
-        print(self.crystal2.all_sites())
-        print(self.crystal2.extent)
-
+        self.currentPhaseSitesChanged.emit()
 
     @Property(str, notify=phases2Changed)
     def phasesCif(self):
@@ -454,3 +452,13 @@ class PyQmlProxy(QObject):
         xml = dicttoxml(phases, attr_type=False)
         xml = xml.decode()
         return xml
+
+    @Property('QVariant', notify=currentPhaseSitesChanged)
+    def currentPhaseAllSites(self):
+        #self.crystal2.extent = np.array([2, 2, 2])
+        #print(self.crystal2.all_sites())
+        #print(self.crystal2.extent)
+        all_sites = self.crystal2.all_sites()
+        # convert numpy lists to python lists for qml
+        all_sites = { k: all_sites[k].tolist() for k in all_sites.keys() }
+        return all_sites

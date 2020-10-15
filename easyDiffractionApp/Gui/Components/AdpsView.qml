@@ -15,13 +15,21 @@ EaComponents.TableView {
 
     model: XmlListModel {
         property int phaseIndex: ExGlobals.Variables.phasesCurrentIndex + 1
+        //property int atomIndex: ExGlobals.Variables.atomsCurrentIndex + 1
+//        property string adpType: ""
+//        onAdpTypeChanged: print("???", adpType)
 
-        xml: ExGlobals.Constants.proxy.phasesXml
-        query: `/root/item[${phaseIndex}]/atoms/item`
+        //xml: ExGlobals.Constants.proxy.phasesXml
+        //query: `/root/item[${phaseIndex}]/atoms/item`
 
-        XmlRole { name: "label"; query: "label/string()" }
-        XmlRole { name: "adp_type"; query: "adp_type/string()" }
-        XmlRole { name: "adp_iso"; query: "adp_iso/number()" }
+        xml: ExGlobals.Constants.proxy.phases2Xml
+        query: `/root/item[${phaseIndex}]/atoms/data/item`
+
+ //       onXmlChanged: print("+++", model.adp_type)
+
+        XmlRole { name: "label"; query: "label/value/string()" }
+        XmlRole { name: "adp_type"; query: "adp/adp_type/value/string()" }
+        XmlRole { name: "adp_iso"; query: `adp/adp_class/Uiso/value/number()` }
         XmlRole { name: "adp_ani_11"; query: "adp_ani_11/number()" }
         XmlRole { name: "adp_ani_22"; query: "adp_ani_22/number()" }
         XmlRole { name: "adp_ani_33"; query: "adp_ani_33/number()" }
@@ -60,6 +68,7 @@ EaComponents.TableView {
             width: adpAtomLabel.width
             headerText: "Uiso"
             text: model.adp_iso
+            onTextChanged: print("!!!!!", model.adp_iso)
         }
 
         EaComponents.TableViewTextInput {

@@ -10,7 +10,7 @@ QtObject {
     property bool homePageEnabled: isDebugMode ? true : true
     property bool projectPageEnabled: isDebugMode ? true : false
     property bool samplePageEnabled: isDebugMode ? true : false
-    property bool experimentPageEnabled: isDebugMode ? true : false
+    property bool experimentPageEnabled: isDebugMode ? false : false
     property bool analysisPageEnabled: isDebugMode ? true : false
     property bool summaryPageEnabled: isDebugMode ? true : false
 
@@ -57,6 +57,7 @@ QtObject {
     property var phasesTable
     property var parametersTable
     property int phasesCurrentIndex: 0
+    property int atomsCurrentIndex: 0
     property int parametersCurrentIndex: 0
 
 }

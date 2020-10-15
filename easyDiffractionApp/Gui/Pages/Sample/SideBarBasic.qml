@@ -122,7 +122,7 @@ EaComponents.SideBarColumn {
             ExGlobals.Constants.proxy.addSampleFromCif(fileUrl)
             ExGlobals.Variables.experimentPageEnabled = true
             ExGlobals.Variables.sampleLoaded = true
-            //print(EaLogic.Utils.prettyJson(ExGlobals.Constants.proxy.phases2Dict))
+/////            print(EaLogic.Utils.prettyJson(ExGlobals.Constants.proxy.phases2Dict))
             //loadPhaseFileDialog.close()
         }
     }

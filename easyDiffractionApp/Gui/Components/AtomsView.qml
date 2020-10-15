@@ -6,6 +6,7 @@ import easyAppGui.Globals 1.0 as EaGlobals
 import easyAppGui.Style 1.0 as EaStyle
 import easyAppGui.Elements 1.0 as EaElements
 import easyAppGui.Components 1.0 as EaComponents
+import easyAppGui.Logic 1.0 as EaLogic
 
 import Gui.Globals 1.0 as ExGlobals
 
@@ -16,16 +17,19 @@ EaComponents.TableView {
     model: XmlListModel {
         property int phaseIndex: ExGlobals.Variables.phasesCurrentIndex + 1
 
-        xml: ExGlobals.Constants.proxy.phasesXml
-        query: `/root/item[${phaseIndex}]/atoms/item`
+        xml: ExGlobals.Constants.proxy.phases2Xml
+        query: `/root/item[${phaseIndex}]/atoms/data/item`
 
-        XmlRole { name: "label"; query: "label/string()" }
-        XmlRole { name: "type"; query: "type/string()" }
+/////        onXmlChanged: print(EaLogic.Utils.prettyXml(ExGlobals.Constants.proxy.phases2Xml))
+        //onXmlChanged: print(ExGlobals.Constants.proxy.phases2Xml)
+
+        XmlRole { name: "label"; query: "label/value/string()" }
+        XmlRole { name: "type"; query: "specie/value/string()" }
         XmlRole { name: "color"; query: "color/string()" }
-        XmlRole { name: "x"; query: "x/number()" }
-        XmlRole { name: "y"; query: "y/number()" }
-        XmlRole { name: "z"; query: "z/number()" }
-        XmlRole { name: "occupancy"; query: "occupancy/number()" }
+        XmlRole { name: "x"; query: "fract_x/value/number()" }
+        XmlRole { name: "y"; query: "fract_y/value/number()" }
+        XmlRole { name: "z"; query: "fract_z/value/number()" }
+        XmlRole { name: "occupancy"; query: "occupancy/value/number()" }
     }
 
     // Table rows
@@ -47,11 +51,19 @@ EaComponents.TableView {
             text: model.label
         }
 
+        /*
         EaComponents.TableViewComboBox {
             width: atomLabel.width
             currentIndex: model.indexOf(modelType)
             headerText: "Atom"
             model: ["Mn", "Fe", "Co", "Ni", "Cu", "Si", "O"]
+        }
+        */
+        EaComponents.TableViewTextInput {
+            width: atomLabel.width
+            horizontalAlignment: Text.AlignLeft
+            headerText: "Atom"
+            text: model.type
         }
 
         EaComponents.TableViewLabel {
@@ -92,5 +104,7 @@ EaComponents.TableView {
         }
 
     }
+
+    onCurrentIndexChanged: ExGlobals.Variables.atomsCurrentIndex = currentIndex
 
 }

@@ -43,7 +43,7 @@ class PyQmlProxy(QObject):
         self.interface2 = InterfaceFactory2()
         self.sample2 = Sample2(parameters=Pattern2(), interface=self.interface2)
         self.crystal2 = None
-        x_data2 = np.linspace(5, 150, 100)
+        x_data2 = np.linspace(5, 150, 400)
         self.data2 = QtDataStore(x_data2, np.zeros_like(x_data2), np.zeros_like(x_data2), None)
         self.phases2 = []
         self._calculated_data_model2 = CalculatedDataModel(self.data2)
@@ -431,6 +431,10 @@ class PyQmlProxy(QObject):
         self.sample2.phase = self.crystal2
         self.updateCalculatedData2()
         self.phases2Changed.emit()
+        self.crystal2.extent = np.array([2, 2, 2])
+        print(self.crystal2.all_sites())
+        print(self.crystal2.extent)
+
 
     @Property(str, notify=phases2Changed)
     def phasesCif(self):
@@ -441,12 +445,12 @@ class PyQmlProxy(QObject):
 
     @Property('QVariant', notify=phases2Changed)
     def phases2Dict(self):
-        phases = [self.sample2.phase.to_data_dict()]
+        phases = [self.sample2.phase.as_dict()]
         return phases
 
     @Property(str, notify=phases2Changed)
     def phases2Xml(self):
-        phases = [self.sample2.phase.to_data_dict()]
+        phases = [self.sample2.phase.as_dict()]
         xml = dicttoxml(phases, attr_type=False)
         xml = xml.decode()
         return xml

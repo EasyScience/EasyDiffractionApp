@@ -1,6 +1,9 @@
+import sys
 import json
+import numpy as np
 from dicttoxml import dicttoxml
 from distutils.util import strtobool
+from urllib.parse import urlparse
 
 from PySide2.QtCore import QObject, Slot, Signal, Property
 from PySide2.QtCharts import QtCharts
@@ -12,6 +15,11 @@ from easyCore.Utils.classTools import generatePath
 
 from easyExampleLib.interface import InterfaceFactory
 from easyExampleLib.model import Sin, DummySin
+
+from easyDiffractionLib.sample import Sample as Sample2
+from easyDiffractionLib import Crystal as Crystal2
+from easyDiffractionLib.interface import InterfaceFactory as InterfaceFactory2
+from easyDiffractionLib.Elements.Instruments.Instrument import Pattern as Pattern2
 
 from easyDiffractionApp.Logic.QtDataStore import QtDataStore
 from easyDiffractionApp.Logic.DisplayModels.DataModels import MeasuredDataModel, CalculatedDataModel
@@ -27,8 +35,19 @@ class PyQmlProxy(QObject):
     statusChanged = Signal()
     phasesChanged = Signal()
 
+    phases2Changed = Signal()
+    model2Changed = Signal()
+
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.interface2 = InterfaceFactory2()
+        self.sample2 = Sample2(parameters=Pattern2(), interface=self.interface2)
+        self.crystal2 = None
+        x_data2 = np.linspace(5, 150, 100)
+        self.data2 = QtDataStore(x_data2, np.zeros_like(x_data2), np.zeros_like(x_data2), None)
+        self.phases2 = []
+        self._calculated_data_model2 = CalculatedDataModel(self.data2)
+
         self.phases = self.initPhases()
         self.project_info = self.initProjectInfo()
         self.interface = InterfaceFactory()
@@ -38,7 +57,7 @@ class PyQmlProxy(QObject):
         self.data = QtDataStore(self.dummy_source.x_data, self.dummy_source.y_data, self.dummy_source.sy_data, None)
         self._measured_data_model = MeasuredDataModel(self.data)
         self._calculated_data_model = CalculatedDataModel(self.data)
-        self.updateCalculatedData()
+        self.updateCalculatedData2()
         # when to emit status bar items cnahged
         self.calculatorChanged.connect(self.statusChanged)
         self.minimizerChanged.connect(self.statusChanged)
@@ -57,36 +76,13 @@ class PyQmlProxy(QObject):
         self._calculated_data_model.updateData(self.data)
         self.modelChanged.emit()
 
-    # Calculator
-
-    @Property('QVariant', notify=calculatorChanged)
-    def calculatorList(self):
-        return self.interface.available_interfaces
-
-    @Property(int, notify=calculatorChanged)
-    def calculatorIndex(self):
-        return self.calculatorList.index(self.interface.current_interface_name)
-
-    @calculatorIndex.setter
-    def setCalculator(self, index: int):
-        self.model.switch_interface(self.calculatorList[index])
-        self.updateCalculatedData()
-        self.calculatorChanged.emit()
-
-    # Minimizer
-
-    @Property('QVariant', notify=minimizerChanged)
-    def minimizerList(self):
-        return self.fitter.available_engines
-
-    @Property(int, notify=minimizerChanged)
-    def minimizerIndex(self):
-        return self.minimizerList.index(self.fitter.current_engine.name)
-
-    @minimizerIndex.setter
-    def setMinimizer(self, index: int):
-        self.fitter.switch_engine(self.minimizerList[index])
-        self.minimizerChanged.emit()
+    @Slot()
+    def updateCalculatedData2(self):
+        if self.crystal2 is None:
+            return
+        self.data2.y_opt = self.interface2.fit_func(self.data2.x)
+        self._calculated_data_model2.updateData(self.data2)
+        self.model2Changed.emit()
 
     # Calculator
 
@@ -101,7 +97,7 @@ class PyQmlProxy(QObject):
     @calculatorIndex.setter
     def setCalculator(self, index: int):
         self.model.switch_interface(self.calculatorList[index])
-        self.updateCalculatedData()
+        self.updateCalculatedData2()
         self.calculatorChanged.emit()
 
     # Minimizer
@@ -126,6 +122,13 @@ class PyQmlProxy(QObject):
         self._calculated_data_model.updateData(self.data)
         self.modelChanged.emit()
 
+    @Slot()
+    def startFitting2(self):
+        result = self.fitter.fit(self.data2.x, self.data2.y, weights=self.data.sy)
+        self.data2.y_opt = result.y_calc
+        self._calculated_data_model2.updateData(self.data2)
+        self.model2Changed.emit()
+
     # Charts
 
     @Slot(QtCharts.QXYSeries)
@@ -142,7 +145,7 @@ class PyQmlProxy(QObject):
 
     @Slot(QtCharts.QXYSeries)
     def setCalculatedSeriesRef(self, series):
-        self._calculated_data_model.setSeriesRef(series)
+        self._calculated_data_model2.setSeriesRef(series)
 
     # Undo/redo
 
@@ -173,48 +176,6 @@ class PyQmlProxy(QObject):
         xml = dicttoxml(items, attr_type=False)
         xml = xml.decode()
         return xml
-
-    # Model parameters
-
-    @Property(str, notify=modelChanged)
-    def amplitude(self):
-        return str(self.model.amplitude.raw_value)
-
-    @amplitude.setter
-    def setAmplitude(self, value: str):
-        value = float(value)
-        self.model.amplitude = value
-        self.updateCalculatedData()
-
-    @Property(str, notify=modelChanged)
-    def period(self):
-        return str(self.model.period.raw_value)
-
-    @period.setter
-    def setPeriod(self, value: str):
-        value = float(value)
-        self.model.period = value
-        self.updateCalculatedData()
-
-    @Property(str, notify=modelChanged)
-    def xShift(self):
-        return str(self.model.x_shift.raw_value)
-
-    @xShift.setter
-    def setXShift(self, value: str):
-        value = float(value)
-        self.model.x_shift = value
-        self.updateCalculatedData()
-
-    @Property(str, notify=modelChanged)
-    def yShift(self):
-        return str(self.model.y_shift.raw_value)
-
-    @yShift.setter
-    def setYShift(self, value: str):
-        value = float(value)
-        self.model.y_shift = value
-        self.updateCalculatedData()
 
     # Models
 
@@ -251,7 +212,7 @@ class PyQmlProxy(QObject):
         for par in self.model.get_parameters():
             if par.name == name:
                 par.value = float(value)
-                self.updateCalculatedData()
+                self.updateCalculatedData2()
 
     @Slot(int, str, str)
     def editFitableByIndexAndName(self, index, name, value):
@@ -263,7 +224,7 @@ class PyQmlProxy(QObject):
             par.fixed = not bool(strtobool(value))
         elif name == "value":
             par.value = float(value)
-            self.updateCalculatedData()
+            self.updateCalculatedData2()
         else:
             print(f"Unsupported name '{name}'")
 
@@ -295,7 +256,7 @@ class PyQmlProxy(QObject):
         c()
         self.fitter.add_fit_constraint(c)
         self.constraintsChanged.emit()
-        self.updateCalculatedData()
+        self.updateCalculatedData2()
 
     def constraintsList(self):
         constraint_list = []
@@ -343,16 +304,16 @@ class PyQmlProxy(QObject):
         constraint = self.fitter.fit_constraints()[index]
         constraint.enabled = bool(strtobool(enabled))
         self.constraintsChanged.emit()
-        self.updateCalculatedData()
+        self.updateCalculatedData2()
 
     # App project info
 
     def initProjectInfo(self):
         return dict(name = "Example Project",
-                    keywords = "sine, cosine, lmfit, bumps",
-                    samples = "samples.json",
-                    experiments = "experiments.json",
-                    calculations = "calculation.json",
+                    keywords = "diffraction, cfml, cryspy",
+                    samples = "samples.cif",
+                    experiments = "experiments.cif",
+                    calculations = "calculation.cif",
                     modified = "18.09.2020, 09:24")
 
     @Property('QVariant', notify=projectInfoChanged)
@@ -439,3 +400,53 @@ class PyQmlProxy(QObject):
         #print("----", phase_index, parameter_index, parameter_name, new_value)
         self.phases[phase_index]['parameters'][parameter_index][parameter_name] = new_value
         self.phasesChanged.emit()
+
+
+
+    ####
+
+
+
+    def generalizePath(self, rcif_path: str) -> str:
+        """
+        Generalize the filepath to be platform-specific, so all file operations
+        can be performed.
+        :param URI rcfPath: URI to the file
+        :return URI filename: platform specific URI
+        """
+        filename = urlparse(rcif_path).path
+        if not sys.platform.startswith("win"):
+            return filename
+        if filename[0] == '/':
+            filename = filename[1:].replace('/', os.path.sep)
+        return filename
+
+    @Slot(str)
+    def addSampleFromCif(self, cif_path):
+        #print("cif_path", cif_path)
+        cif_path = self.generalizePath(cif_path)
+        self.crystal2 = Crystal2.from_cif_file(cif_path)
+        #print(self.crystal2)
+        #print(self.crystal2.atoms)
+        self.sample2.phase = self.crystal2
+        self.updateCalculatedData2()
+        self.phases2Changed.emit()
+
+    @Property(str, notify=phases2Changed)
+    def phasesCif(self):
+        #print("str(self.crystal2.cif)", str(self.crystal2.cif))
+        if self.crystal2 is None:
+            return ""
+        return str(self.crystal2.cif)
+
+    @Property('QVariant', notify=phases2Changed)
+    def phases2Dict(self):
+        phases = [self.sample2.phase.to_data_dict()]
+        return phases
+
+    @Property(str, notify=phases2Changed)
+    def phases2Xml(self):
+        phases = [self.sample2.phase.to_data_dict()]
+        xml = dicttoxml(phases, attr_type=False)
+        xml = xml.decode()
+        return xml

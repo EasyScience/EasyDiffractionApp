@@ -33,6 +33,6 @@ EaComponents.SideBarColumn {
         }
     }
 
-    Component.onCompleted: ExGlobals.Constants.proxy.updateCalculatedData()
+    Component.onCompleted: ExGlobals.Constants.proxy.updateCalculatedData2()
 
 }

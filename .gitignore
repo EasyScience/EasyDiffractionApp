@@ -12,6 +12,9 @@
 # QtCreator CMake
 CMakeLists.txt.user*
 
+# Fortran
+fort.1
+
 # Python
 __pycache__
 .venv

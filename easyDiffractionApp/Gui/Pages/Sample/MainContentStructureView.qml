@@ -16,7 +16,7 @@ Rectangle {
 
     EaElements.Label {
         anchors.centerIn: parent
-        text: "Structure view: Phase " + ExGlobals.Constants.proxy.phasesDict[ExGlobals.Variables.phasesCurrentIndex].label
+        text: "Structure view: Phase " + ExGlobals.Constants.proxy.phases2Dict[ExGlobals.Variables.phasesCurrentIndex].name
     }
 }
 

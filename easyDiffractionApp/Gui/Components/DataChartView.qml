@@ -26,7 +26,7 @@ Rectangle {
             tickCount: 4
 
             min: 0
-            max: Math.PI * (tickCount - 1)
+            max: 150 //Math.PI * (tickCount - 1)
         }
 
         EaCharts.ValueAxis {
@@ -34,7 +34,7 @@ Rectangle {
 
             title: "Signal (arb. units)"
 
-            min: -6
+            min: 0
             max: 6
         }
 

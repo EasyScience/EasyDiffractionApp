@@ -6,6 +6,7 @@ import easyAppGui.Globals 1.0 as EaGlobals
 import easyAppGui.Style 1.0 as EaStyle
 import easyAppGui.Elements 1.0 as EaElements
 import easyAppGui.Components 1.0 as EaComponents
+import easyAppGui.Logic 1.0 as EaLogic
 
 import Gui.Globals 1.0 as ExGlobals
 
@@ -16,15 +17,17 @@ EaComponents.TableView {
     model: XmlListModel {
         property int phaseIndex: ExGlobals.Variables.phasesCurrentIndex + 1
 
-        xml: ExGlobals.Constants.proxy.phasesXml
+        xml: ExGlobals.Constants.proxy.phases2Xml
         query: `/root/item[${phaseIndex}]`
 
-        XmlRole { name: "cell_length_a"; query: "cell_length_a/number()" }
-        XmlRole { name: "cell_length_b"; query: "cell_length_b/number()" }
-        XmlRole { name: "cell_length_c"; query: "cell_length_c/number()" }
-        XmlRole { name: "cell_angle_alpha"; query: "cell_angle_alpha/number()" }
-        XmlRole { name: "cell_angle_beta"; query: "cell_angle_beta/number()" }
-        XmlRole { name: "cell_angle_gamma"; query: "cell_angle_gamma/number()" }
+        //onXmlChanged: print(EaLogic.Utils.prettyXml(ExGlobals.Constants.proxy.phases2Xml))
+
+        XmlRole { name: "cell_length_a"; query: "cell/length_a/value/number()" }
+        XmlRole { name: "cell_length_b"; query: "cell/length_b/value/number()" }
+        XmlRole { name: "cell_length_c"; query: "cell/length_c/value/number()" }
+        XmlRole { name: "cell_angle_alpha"; query: "cell/angle_alpha/value/number()" }
+        XmlRole { name: "cell_angle_beta"; query: "cell/angle_beta/value/number()" }
+        XmlRole { name: "cell_angle_gamma"; query: "cell/angle_gamma/value/number()" }
     }
 
     // Table rows

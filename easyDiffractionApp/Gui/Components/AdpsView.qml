@@ -22,7 +22,7 @@ EaComponents.TableView {
         //xml: ExGlobals.Constants.proxy.phasesXml
         //query: `/root/item[${phaseIndex}]/atoms/item`
 
-        xml: ExGlobals.Constants.proxy.phases2Xml
+        xml: ExGlobals.Constants.proxy.phasesXml
         query: `/root/item[${phaseIndex}]/atoms/data/item`
 
  //       onXmlChanged: print("+++", model.adp_type)

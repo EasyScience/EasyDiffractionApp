@@ -17,7 +17,7 @@ EaComponents.TableView  {
     // Table model
 
     model: XmlListModel {
-        xml: ExGlobals.Constants.proxy.constraintsListAsXml
+        ///xml: ExGlobals.Constants.proxy.constraintsListAsXml
 
         query: "/root/item"
 

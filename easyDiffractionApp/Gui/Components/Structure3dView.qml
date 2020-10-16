@@ -147,10 +147,12 @@ Rectangle {
 
     function updateCell() {
         // Get phase
-        const phase = ExGlobals.Constants.proxy.phases2Dict[ExGlobals.Variables.phasesCurrentIndex]
-        if (!Object.keys(phase).length) {
+        const phase = ExGlobals.Constants.proxy.phasesObj[ExGlobals.Variables.phasesCurrentIndex]
+        if (typeof phase === 'undefined' || !Object.keys(phase).length) {
             return
         }
+
+        ///print(JSON.stringify(ExGlobals.Constants.proxy.phasesObj))
 
         // Unit cell parameters
         const a = phase.cell.length_a.value

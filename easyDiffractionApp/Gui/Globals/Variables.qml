@@ -4,13 +4,13 @@ import QtQuick 2.13
 
 QtObject {
     // Debug mode
-    property bool isDebugMode: true
+    property bool isDebugMode: false
 
     // Initial application components accessibility
     property bool homePageEnabled: isDebugMode ? true : true
     property bool projectPageEnabled: isDebugMode ? true : false
     property bool samplePageEnabled: isDebugMode ? true : false
-    property bool experimentPageEnabled: isDebugMode ? false : false
+    property bool experimentPageEnabled: isDebugMode ? true : false
     property bool analysisPageEnabled: isDebugMode ? true : false
     property bool summaryPageEnabled: isDebugMode ? true : false
 

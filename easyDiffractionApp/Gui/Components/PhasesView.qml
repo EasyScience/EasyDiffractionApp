@@ -20,7 +20,7 @@ EaComponents.TableView {
         property int phaseIndex: ExGlobals.Variables.phasesCurrentIndex + 1
 
         //xml: ExGlobals.Variables.sampleLoaded ? ExGlobals.Constants.proxy.phasesXml : ""
-        xml: ExGlobals.Constants.proxy.phases2Xml
+        xml: ExGlobals.Constants.proxy.phasesXml
         query: "/root/item"
 
         XmlRole { name: "label"; query: "name/string()" }

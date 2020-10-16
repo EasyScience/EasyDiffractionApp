@@ -32,7 +32,7 @@ EaComponents.SideBarColumn {
 
         EaElements.ComboBox {
             width: 200
-            currentIndex: ExGlobals.Constants.proxy.minimizerIndex
+            ///currentIndex: ExGlobals.Constants.proxy.minimizerIndex
             model: ExGlobals.Constants.proxy.minimizerList
             onActivated: ExGlobals.Constants.proxy.minimizerIndex = currentIndex
         }
@@ -67,7 +67,7 @@ EaComponents.SideBarColumn {
                     currentIndex: -1
                     displayText: currentIndex === -1 ? "Select parameter" : currentText
                     model: XmlListModel {
-                        xml: ExGlobals.Constants.proxy.fitablesListAsXml
+                        ///xml: ExGlobals.Constants.proxy.fitablesListAsXml
                         query: "/root/item"
                         XmlRole { name: "label"; query: "label/string()" }
                         onXmlChanged: dependentParCurrentIndex = dependentPar.currentIndex
@@ -118,7 +118,7 @@ EaComponents.SideBarColumn {
                     currentIndex: -1
                     displayText: currentIndex === -1 ? "Select parameter" : currentText
                     model: XmlListModel {
-                        xml: ExGlobals.Constants.proxy.fitablesListAsXml
+                        ///xml: ExGlobals.Constants.proxy.fitablesListAsXml
                         query: "/root/item"
                         XmlRole { name: "label"; query: "label/string()" }
                         onXmlChanged: independentParCurrentIndex = independentPar.currentIndex
@@ -158,7 +158,7 @@ EaComponents.SideBarColumn {
                     currentIndex: -1
                     displayText: currentIndex === -1 ? "Select parameter" : currentText
                     model: XmlListModel {
-                        xml: ExGlobals.Constants.proxy.fitablesListAsXml
+                        ///xml: ExGlobals.Constants.proxy.fitablesListAsXml
                         query: "/root/item"
                         XmlRole { name: "label"; query: "label/string()" }
                         onXmlChanged: dependentParCurrentIndex2 = dependentPar2.currentIndex

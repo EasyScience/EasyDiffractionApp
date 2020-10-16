@@ -42,9 +42,9 @@ EaComponents.SideBarColumn {
     EaElements.GroupBox {
         id: symmetryGroup
 
-        property string crystalSystem: ""//ExGlobals.Constants.proxy.phasesDict[ExGlobals.Variables.phasesCurrentIndex].crystal_system
-        property string spaceGroupName: ExGlobals.Constants.proxy.phases2Dict[ExGlobals.Variables.phasesCurrentIndex].spacegroup._space_group_HM_name.value
-        property string spaceGroupSetting: ""//ExGlobals.Constants.proxy.phasesDict[ExGlobals.Variables.phasesCurrentIndex].space_group_setting
+        property string crystalSystem: ""//ExGlobals.Constants.proxy.phasesObj[ExGlobals.Variables.phasesCurrentIndex].crystal_system
+        property string spaceGroupName: ExGlobals.Constants.proxy.phasesObj[ExGlobals.Variables.phasesCurrentIndex].spacegroup._space_group_HM_name.value
+        property string spaceGroupSetting: ""//ExGlobals.Constants.proxy.phasesObj[ExGlobals.Variables.phasesCurrentIndex].space_group_setting
 
         title: qsTr("Symmetry and cell parameters")
         enabled: ExGlobals.Variables.sampleLoaded
@@ -122,7 +122,8 @@ EaComponents.SideBarColumn {
             ExGlobals.Constants.proxy.addSampleFromCif(fileUrl)
             ExGlobals.Variables.experimentPageEnabled = true
             ExGlobals.Variables.sampleLoaded = true
-/////            print(EaLogic.Utils.prettyJson(ExGlobals.Constants.proxy.phases2Dict))
+            ExGlobals.Variables.analysisPageEnabled = true
+/////            print(EaLogic.Utils.prettyJson(ExGlobals.Constants.proxy.phasesObj))
             //loadPhaseFileDialog.close()
         }
     }

@@ -60,7 +60,7 @@ Rectangle {
                 XYPoint { x: 9; y: -2.7 }
                 XYPoint { x: 9.4; y: -2.2 }
 
-                Component.onCompleted: ExGlobals.Constants.proxy.addLowerMeasuredSeriesRef(lowerMeasuredSeries)
+                ///Component.onCompleted: ExGlobals.Constants.proxy.addLowerMeasuredSeriesRef(lowerMeasuredSeries)
             }
 
             upperSeries: LineSeries {
@@ -79,7 +79,7 @@ Rectangle {
                 XYPoint { x: 9; y: -2.2 }
                 XYPoint { x: 9.4; y: -2.0 }
 
-                Component.onCompleted: ExGlobals.Constants.proxy.addUpperMeasuredSeriesRef(upperMeasuredSeries)
+                ///Component.onCompleted: ExGlobals.Constants.proxy.addUpperMeasuredSeriesRef(upperMeasuredSeries)
             }
         }
 

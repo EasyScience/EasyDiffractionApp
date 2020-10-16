@@ -66,11 +66,6 @@ EaComponents.TableView {
             text: model.type
         }
 
-        EaComponents.TableViewLabel {
-            headerText: "Color"
-            backgroundColor: model.color
-        }
-
         EaComponents.TableViewTextInput {
             width: atomLabel.width
             headerText: "x"
@@ -93,6 +88,11 @@ EaComponents.TableView {
             width: atomLabel.width
             headerText: "Occupancy"
             text: model.occupancy
+        }
+
+        EaComponents.TableViewLabel {
+            headerText: "Color"
+            backgroundColor: model.color ? model.color : "transparent"
         }
 
         EaComponents.TableViewButton {

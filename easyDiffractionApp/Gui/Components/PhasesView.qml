@@ -6,6 +6,7 @@ import easyAppGui.Globals 1.0 as EaGlobals
 import easyAppGui.Style 1.0 as EaStyle
 import easyAppGui.Elements 1.0 as EaElements
 import easyAppGui.Components 1.0 as EaComponents
+import easyAppGui.Logic 1.0 as EaLogic
 
 import Gui.Globals 1.0 as ExGlobals
 
@@ -23,6 +24,8 @@ EaComponents.TableView {
         xml: ExGlobals.Constants.proxy.phasesXml
         query: "/root/item"
 
+        //onXmlChanged: print(EaLogic.Utils.prettyXml(ExGlobals.Constants.proxy.phasesXml))
+
         XmlRole { name: "label"; query: "name/string()" }
         XmlRole { name: "color"; query: "color/string()" }
     }
@@ -30,7 +33,7 @@ EaComponents.TableView {
     // Table rows
 
     delegate: EaComponents.TableViewDelegate {
-        property string modelColor: model.color
+        //property string modelColor: model.color ? model.color : "transparent"
 
         EaComponents.TableViewLabel {
             width: EaStyle.Sizes.fontPixelSize * 2.5
@@ -62,7 +65,7 @@ EaComponents.TableView {
 
         EaComponents.TableViewLabel {
             headerText: "Color"
-            backgroundColor: model.color
+            backgroundColor: model.color ? model.color : "transparent"
         }
 
         EaComponents.TableViewButton {

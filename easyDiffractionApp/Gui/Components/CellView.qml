@@ -15,7 +15,7 @@ EaComponents.TableView {
     // Table model
 
     model: XmlListModel {
-        property int phaseIndex: ExGlobals.Variables.phasesCurrentIndex + 1
+        property int phaseIndex: ExGlobals.Constants.proxy.currentPhaseIndex + 1
 
         xml: ExGlobals.Constants.proxy.phasesXml
         query: `/root/item[${phaseIndex}]`

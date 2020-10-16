@@ -56,7 +56,7 @@ QtObject {
     // Tables
     property var phasesTable
     property var parametersTable
-    property int phasesCurrentIndex: 0
+    property int currentPhaseIndex: 0
     property int atomsCurrentIndex: 0
     property int parametersCurrentIndex: 0
 

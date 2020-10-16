@@ -18,7 +18,7 @@ EaComponents.TableView {
     // Table model
 
     model: XmlListModel {
-        property int phaseIndex: ExGlobals.Variables.phasesCurrentIndex + 1
+        property int phaseIndex: ExGlobals.Constants.proxy.currentPhaseIndex + 1
 
         //xml: ExGlobals.Variables.sampleLoaded ? ExGlobals.Constants.proxy.phasesXml : ""
         xml: ExGlobals.Constants.proxy.phasesXml
@@ -77,5 +77,5 @@ EaComponents.TableView {
 
     }
 
-    onCurrentIndexChanged: ExGlobals.Variables.phasesCurrentIndex = currentIndex
+    onCurrentIndexChanged: ExGlobals.Constants.proxy.currentPhaseIndex = currentIndex //ExGlobals.Constants.proxy.currentPhaseIndex = currentIndex
 }

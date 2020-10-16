@@ -149,7 +149,7 @@ Rectangle {
 
     function updateCell() {
         // Get phase
-        const phase = ExGlobals.Constants.proxy.phasesObj[ExGlobals.Variables.phasesCurrentIndex]
+        const phase = ExGlobals.Constants.proxy.phasesObj[ExGlobals.Constants.proxy.currentPhaseIndex]
         if (typeof phase === 'undefined' || !Object.keys(phase).length) {
             return
         }
@@ -192,7 +192,7 @@ Rectangle {
         }
 
         // Populate chart with atoms. Every atom is an individual scatter serie
-        const sites = ExGlobals.Constants.proxy.currentPhaseAllSites
+        const sites = ExGlobals.Constants.proxy.currentPhaseAllSites //(ExGlobals.Constants.proxy.currentPhaseIndex)
         let atom_idx = 0
         for (let atom_label in sites) {
             for (let site_fracts_idx in sites[atom_label]) {

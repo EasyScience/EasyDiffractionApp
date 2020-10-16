@@ -14,7 +14,7 @@ EaComponents.TableView {
     // Table model
 
     model: XmlListModel {
-        property int phaseIndex: ExGlobals.Variables.phasesCurrentIndex + 1
+        property int phaseIndex: ExGlobals.Constants.proxy.currentPhaseIndex + 1
         //property int atomIndex: ExGlobals.Variables.atomsCurrentIndex + 1
 //        property string adpType: ""
 //        onAdpTypeChanged: print("???", adpType)

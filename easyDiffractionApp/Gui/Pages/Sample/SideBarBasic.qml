@@ -42,9 +42,13 @@ EaComponents.SideBarColumn {
     EaElements.GroupBox {
         id: symmetryGroup
 
-        property string crystalSystem: ""//ExGlobals.Constants.proxy.phasesObj[ExGlobals.Variables.phasesCurrentIndex].crystal_system
-        property string spaceGroupName: ExGlobals.Constants.proxy.phasesObj[ExGlobals.Variables.phasesCurrentIndex].spacegroup._space_group_HM_name.value
-        property string spaceGroupSetting: ""//ExGlobals.Constants.proxy.phasesObj[ExGlobals.Variables.phasesCurrentIndex].space_group_setting
+        property string crystalSystem: ""//ExGlobals.Constants.proxy.phasesObj[ExGlobals.Constants.proxy.currentPhaseIndex].crystal_system
+        property string spaceGroupName: ExGlobals.Constants.proxy.phasesObj[ExGlobals.Constants.proxy.currentPhaseIndex].spacegroup._space_group_HM_name.value
+        property string spaceGroupSetting: ""//ExGlobals.Constants.proxy.phasesObj[ExGlobals.Constants.proxy.currentPhaseIndex].space_group_setting
+
+        //property var spaceGroups: ExGlobals.Constants.proxy.spaceGroups
+        //onSpaceGroupsChanged: print(JSON.stringify(spaceGroups))
+
 
         title: qsTr("Symmetry and cell parameters")
         enabled: ExGlobals.Variables.sampleLoaded
@@ -74,7 +78,9 @@ EaComponents.SideBarColumn {
                     }
                     EaElements.ComboBox {
                         width: EaStyle.Sizes.sideBarContentWidth / 3 - EaStyle.Sizes.fontPixelSize / 3 * 2
-                        model: [symmetryGroup.spaceGroupName]
+                        model: ExGlobals.Constants.proxy.spaceGroups //[symmetryGroup.spaceGroupName]
+                        currentIndex: indexOfValue(spaceGroupName)
+                        //currentIndex: indexOfValue(symmetryGroup.spaceGroupName)
                     }
                 }
 

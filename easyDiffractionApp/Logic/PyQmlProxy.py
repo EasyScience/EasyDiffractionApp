@@ -39,6 +39,8 @@ class PyQmlProxy(QObject):
     modelChanged = Signal()
     currentPhaseSitesChanged = Signal()
 
+    currentPhaseChanged = Signal()
+
     def __init__(self, parent=None):
         super().__init__(parent)
 
@@ -50,6 +52,8 @@ class PyQmlProxy(QObject):
         self.project_info = self.initProjectInfo()
         #self.updateCalculatedData()
 
+        self._current_phase_index = 0
+
         # when to emit status bar items cnahged
         self.calculatorChanged.connect(self.statusChanged)
         self.minimizerChanged.connect(self.statusChanged)
@@ -60,6 +64,9 @@ class PyQmlProxy(QObject):
     def updateCalculatedData(self):
         #if self.crystal is None:
         #    return
+        print("self.sample.output_index 1 --", self.sample.output_index, self.currentPhaseIndex)
+        self.sample.output_index = self.currentPhaseIndex
+        print("self.sample.output_index 2 --", self.sample.output_index, self.currentPhaseIndex)
         self.data.y_opt = self.interface.fit_func(self.data.x)
         self._calculated_data_model.updateData(self.data)
         self.modelChanged.emit()
@@ -197,10 +204,51 @@ class PyQmlProxy(QObject):
         all_sites = { k: all_sites[k].tolist() for k in all_sites.keys() }
         return all_sites
 
+    #@Slot(int, result='QVariant')
+    #def currentPhaseAllSites(self, phase_index: int):
+    #    all_sites = self.sample.phases[phase_index].all_sites()
+    #    # convert numpy lists to python lists for qml
+    #    all_sites = { k: all_sites[k].tolist() for k in all_sites.keys() }
+    #    return all_sites
+
+    @Property(int, notify=currentPhaseChanged)
+    def currentPhaseIndex(self):
+        return self._current_phase_index
+
+    @currentPhaseIndex.setter
+    def setCurrentPhaseIndex(self, index: int):
+        self._current_phase_index = index
+        self.phasesChanged.emit()
+        self.updateCalculatedData()
+        self.currentPhaseChanged.emit()
+
+    @Slot(result='QVariant')
+    def spaceGroups__(self):
+        sgs = [op['hermann_mauguin_fmt'] for op in self.sample.phases[0].spacegroup._sg_data.SYMM_OPS]
+        print(sgs)
+        return ['P n m a', 'P b n m']
+
+    @Property('QVariant', notify=phasesChanged)
+    def spaceGroups(self):
+        spase_groups = [op['hermann_mauguin_fmt'] for op in self.sample.phases[0].spacegroup._sg_data.SYMM_OPS]
+        return spase_groups
+
     # Misc
 
     @Slot(str, float)
     def editParameterValue(self, obj_id: str, new_value: float):
+        if not obj_id:
+            return
+        print("----0 obj_id, new_value", obj_id, new_value)
+        obj = borg.map.get_item_by_key(int(obj_id))
+        print("----1 obj.name, obj.value", obj.name, obj.value)
+        obj.value = new_value
+        print("----2 obj.name, obj.value", obj.name, obj.value)
+        self.phasesChanged.emit()
+        self.updateCalculatedData()
+
+    @Slot(str, str)
+    def editDescriptorValue(self, obj_id: str, new_value: str):
         if not obj_id:
             return
         print("----0 obj_id, new_value", obj_id, new_value)

@@ -20,6 +20,7 @@ Rectangle {
     property real zTargetInitial: 0.0
     property int animationDuration: 1000
     property var currentPhaseAllSites: ExGlobals.Constants.proxy.currentPhaseAllSites
+    property var phasesObj: ExGlobals.Constants.proxy.phasesObj
 
     color: EaStyle.Colors.mainContentBackground
 
@@ -114,7 +115,8 @@ Rectangle {
     }
 
     // Update atoms
-    onCurrentPhaseAllSitesChanged: updateCell()
+    //onCurrentPhaseAllSitesChanged: updateCell()
+    onPhasesObjChanged: updateCell()
 
     // Logic
 

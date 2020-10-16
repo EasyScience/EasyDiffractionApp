@@ -123,7 +123,7 @@ EaComponents.SideBarColumn {
             ExGlobals.Variables.experimentPageEnabled = true
             ExGlobals.Variables.sampleLoaded = true
             ExGlobals.Variables.analysisPageEnabled = true
-/////            print(EaLogic.Utils.prettyJson(ExGlobals.Constants.proxy.phasesObj))
+            //print(EaLogic.Utils.prettyJson(ExGlobals.Constants.proxy.phasesObj))
             //loadPhaseFileDialog.close()
         }
     }

@@ -20,14 +20,19 @@ EaComponents.TableView {
         xml: ExGlobals.Constants.proxy.phasesXml
         query: `/root/item[${phaseIndex}]`
 
-        //onXmlChanged: print(EaLogic.Utils.prettyXml(ExGlobals.Constants.proxy.phasesXml))
+        XmlRole { name: "a"; query: "cell/length_a/value/number()" }
+        XmlRole { name: "b"; query: "cell/length_b/value/number()" }
+        XmlRole { name: "c"; query: "cell/length_c/value/number()" }
+        XmlRole { name: "alpha"; query: "cell/angle_alpha/value/number()" }
+        XmlRole { name: "beta"; query: "cell/angle_beta/value/number()" }
+        XmlRole { name: "gamma"; query: "cell/angle_gamma/value/number()" }
 
-        XmlRole { name: "cell_length_a"; query: "cell/length_a/value/number()" }
-        XmlRole { name: "cell_length_b"; query: "cell/length_b/value/number()" }
-        XmlRole { name: "cell_length_c"; query: "cell/length_c/value/number()" }
-        XmlRole { name: "cell_angle_alpha"; query: "cell/angle_alpha/value/number()" }
-        XmlRole { name: "cell_angle_beta"; query: "cell/angle_beta/value/number()" }
-        XmlRole { name: "cell_angle_gamma"; query: "cell/angle_gamma/value/number()" }
+        XmlRole { name: "aId"; query: "cell/length_a/key[4]/string()" }
+        XmlRole { name: "bId"; query: "cell/length_b/key[4]/string()" }
+        XmlRole { name: "cId"; query: "cell/length_c/key[4]/string()" }
+        XmlRole { name: "alphaId"; query: "cell/angle_alpha/key[4]/string()" }
+        XmlRole { name: "betaId"; query: "cell/angle_beta/key[4]/string()" }
+        XmlRole { name: "gammaId"; query: "cell/angle_gamma/key[4]/string()" }
     }
 
     // Table rows
@@ -38,39 +43,51 @@ EaComponents.TableView {
             id: cellLabel
             width: EaStyle.Sizes.fontPixelSize * 5.8
             headerText: "a (Å)"
-            text: model.cell_length_a
+            text: model.a
+            onEditingFinished: editParameterValue(model.aId, text)
         }
 
         EaComponents.TableViewTextInput {
             width: cellLabel.width
             headerText: "b (Å)"
-            text: model.cell_length_b
+            text: model.b
+            onEditingFinished: editParameterValue(model.bId, text)
         }
 
         EaComponents.TableViewTextInput {
             width: cellLabel.width
             headerText: "c (Å)"
-            text: model.cell_length_c
+            text: model.c
+            onEditingFinished: editParameterValue(model.cId, text)
         }
 
         EaComponents.TableViewTextInput {
             width: cellLabel.width
             headerText: "alpha (°)"
-            text: model.cell_angle_alpha
+            text: model.alpha
+            onEditingFinished: editParameterValue(model.alphaId, text)
         }
 
         EaComponents.TableViewTextInput {
             width: cellLabel.width
             headerText: "beta (°)"
-            text: model.cell_angle_beta
+            text: model.beta
+            onEditingFinished: editParameterValue(model.betaId, text)
         }
 
         EaComponents.TableViewTextInput {
             width: cellLabel.width
             headerText: "gamma (°)"
-            text: model.cell_angle_gamma
+            text: model.gamma
+            onEditingFinished: editParameterValue(model.gammaId, text)
         }
 
+    }
+
+    // Logic
+
+    function editParameterValue(id, value) {
+        ExGlobals.Constants.proxy.editParameterValue(id, parseFloat(value))
     }
 
 }

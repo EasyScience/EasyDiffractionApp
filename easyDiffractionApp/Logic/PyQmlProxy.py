@@ -83,7 +83,8 @@ class PyQmlProxy(QObject):
 
     @calculatorIndex.setter
     def setCalculator(self, index: int):
-        self.model.switch_interface(self.calculatorList[index])
+        self.interface.switch(self.calculatorList[index])
+        self.sample._updateInterface()
         self.updateCalculatedData()
         self.calculatorChanged.emit()
 

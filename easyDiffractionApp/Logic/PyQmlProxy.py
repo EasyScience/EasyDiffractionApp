@@ -15,7 +15,6 @@ from easyCore.Fitting.Constraints import ObjConstraint, NumericConstraint
 from easyCore.Utils.classTools import generatePath
 
 from easyExampleLib.interface import InterfaceFactory
-from easyExampleLib.model import Sin, DummySin
 
 from easyDiffractionLib.sample import Sample
 from easyDiffractionLib import Crystals
@@ -25,6 +24,7 @@ from easyDiffractionLib.Elements.Instruments.Instrument import Pattern
 from easyDiffractionApp.Logic.QtDataStore import QtDataStore
 from easyDiffractionApp.Logic.DisplayModels.DataModels import MeasuredDataModel, CalculatedDataModel
 
+from easyDiffractionApp.Logic.Backend import DisplayBridge
 
 class PyQmlProxy(QObject):
     _borg = borg
@@ -38,6 +38,8 @@ class PyQmlProxy(QObject):
     phasesChanged = Signal()
     modelChanged = Signal()
     currentPhaseSitesChanged = Signal()
+
+    bridge = DisplayBridge()
 
     currentPhaseChanged = Signal()
 
@@ -69,6 +71,8 @@ class PyQmlProxy(QObject):
         print("self.sample.output_index 2 --", self.sample.output_index, self.currentPhaseIndex)
         self.data.y_opt = self.interface.fit_func(self.data.x)
         self._calculated_data_model.updateData(self.data)
+        self.bridge.updateWithCanvas('figure', {'x': self.data.x,
+                                                'y': self.data.y_opt})
         self.modelChanged.emit()
 
     # Calculator

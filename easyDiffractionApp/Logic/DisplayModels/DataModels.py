@@ -5,10 +5,12 @@ from random import random
 
 from PySide2.QtCore import QPointF
 from PySide2.QtCharts import QtCharts
+from easyDiffractionApp.Logic.Backend import DisplayBridge
 
 
 class MeasuredDataModel:
     def __init__(self, dataObj=None):
+        self.bridge = DisplayBridge()
         self._dataObj = dataObj
         self._lowerSeriesRefs = []
         self._upperSeriesRefs = []
@@ -50,6 +52,7 @@ class MeasuredDataModel:
 
 class CalculatedDataModel:
     def __init__(self, dataObj=None):
+        self.bridge = DisplayBridge()
         self._seriesRef = None
         self._dataObj = dataObj
 

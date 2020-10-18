@@ -8,8 +8,13 @@ import easyAppGui
 from easyAppLogic.Translate import Translator
 from easyDiffractionApp.Logic.PyQmlProxy import PyQmlProxy
 
+from matplotlib_backend_qtquick.backend_qtquickagg import (
+    FigureCanvasQtQuickAgg)
+from matplotlib_backend_qtquick.qt_compat import QtGui, QtQml, QtCore
+from easyDiffractionApp.Logic.Backend import DisplayBridge
 
 CONFIG = pyproject.config()
+
 
 def isTestMode():
     if len(sys.argv) > 1:
@@ -18,6 +23,7 @@ def isTestMode():
     return False
 
 def main():
+    QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
     current_path = os.path.dirname(sys.argv[0])
     package_path = os.path.join(current_path, "easyDiffractionApp")
     if not os.path.exists(package_path):
@@ -38,6 +44,16 @@ def main():
     app = QApplication(sys.argv)
     engine = QQmlApplicationEngine()
 
+    # Display Bridge
+    displayBridge = DisplayBridge()
+
+    # Expose the Python object to QML
+    context = engine.rootContext()
+    context.setContextProperty("displayBridge", displayBridge)
+
+    # matplotlib stuff
+    QtQml.qmlRegisterType(FigureCanvasQtQuickAgg, "Backend", 1, 0, "FigureCanvas")
+
     # Create translator
     translator = Translator(app, engine, translations_path, languages)
     #translator.selectSystemLanguage()
@@ -56,6 +72,9 @@ def main():
     engine.addImportPath(gui_path)
     engine.load(main_qml_path)
 
+    win = engine.rootObjects()[0]
+    displayBridge.context = win
+    displayBridge.updateWithCanvas('figure')
     # Event loop
     if not engine.rootObjects():
         sys.exit(-1)

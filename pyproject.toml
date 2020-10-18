@@ -27,6 +27,7 @@ easyDiffractionLib = { git = 'https://github.com/easyScience/easyDiffractionLib.
 easyExampleLib = { git = 'https://github.com/easyScience/easyExampleLib.git', rev = 'master' }
 easyAppLogic = { git = 'https://github.com/easyScience/easyAppLogic.git', rev = 'master' }
 easyAppGui = { git = 'https://github.com/easyScience/easyAppGui.git', rev = 'master' }
+matplotlib = "^3.3.2"
 
 [tool.poetry.dev-dependencies]
 # PyInstaller

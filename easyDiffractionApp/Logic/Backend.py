@@ -33,8 +33,10 @@ class DisplayBridge(QtCore.QObject):
         if data is None:
             data = {}
 
-        if canvas:
-            canvas = self.context.findChild(QtCore.QObject, canvas)
+        if not (canvas and self.context):
+            raise RuntimeError
+
+        canvas = self.context.findChild(QtCore.QObject, canvas)
 
         self.figure = canvas.figure
         self.figure.clf()

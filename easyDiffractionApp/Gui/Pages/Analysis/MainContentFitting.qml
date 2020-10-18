@@ -2,6 +2,7 @@ import Gui.Globals 1.0 as ExGlobals
 import Gui.Components 1.0 as ExComponents
 import QtQuick 2.13
 import QtQuick.Controls 2.13
+import QtQuick.Window 2.12
 import Backend 1.0
 
 Column {

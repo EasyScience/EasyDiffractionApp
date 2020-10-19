@@ -31,6 +31,7 @@ EaComponents.ApplicationWindow {
         },
 
         EaElements.ToolButton {
+            enabled: false
             //enabled: ExGlobals.Constants.proxy.canUndo()
             fontIcon: "\uf2ea"
             ToolTip.text: qsTr("Undo")
@@ -38,6 +39,7 @@ EaComponents.ApplicationWindow {
         },
 
         EaElements.ToolButton {
+            enabled: false
             //enabled: ExGlobals.Constants.proxy.canRedo()
             fontIcon: "\uf2f9"
             ToolTip.text: qsTr("Redo")
@@ -58,11 +60,13 @@ EaComponents.ApplicationWindow {
         },
 
         EaElements.ToolButton {
+            enabled: false
             fontIcon: "\uf059"
             ToolTip.text: qsTr("Get online help")
         },
 
         EaElements.ToolButton {
+            enabled: false
             fontIcon: "\uf188"
             ToolTip.text: qsTr("Report a bug or issue")
         }

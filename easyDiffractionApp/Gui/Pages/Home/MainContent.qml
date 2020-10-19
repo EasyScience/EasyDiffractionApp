@@ -80,12 +80,15 @@ Item {
                 spacing: EaStyle.Sizes.fontPixelSize
 
                 EaElements.Button {
+                    enabled: false
                     text: qsTr("About %1".arg(ExGlobals.Constants.appName))
                 }
                 EaElements.Button {
+                    enabled: false
                     text: qsTr("Online documentation")
                 }
                 EaElements.Button {
+                    enabled: false
                     text: qsTr("Get in touch online")
                 }
             }

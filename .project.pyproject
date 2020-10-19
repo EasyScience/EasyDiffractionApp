@@ -1,9 +1,11 @@
 {
 "files": [
     "easyDiffractionApp/main.py",
+    "easyDiffractionApp/Logic/MatplotlibBackend.py",
     "easyDiffractionApp/Logic/PyQmlProxy.py",
     "easyDiffractionApp/Logic/QtDataStore.py",
     "easyDiffractionApp/Logic/DisplayModels/DataModels.py",
+    "easyDiffractionApp/Logic/DisplayModels/StatusModel.py",
 
     "../easyAppLogic/easyAppLogic/Translate.py",
 

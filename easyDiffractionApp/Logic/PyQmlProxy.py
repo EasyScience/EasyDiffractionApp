@@ -330,6 +330,7 @@ class PyQmlProxy(QObject):
             par.fixed = not bool(strtobool(value))
         elif name == "value":
             par.value = float(value)
+            self.phasesChanged.emit()
             self.updateCalculatedData()
         else:
             print(f"Unsupported name '{name}'")

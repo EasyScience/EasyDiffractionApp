@@ -52,7 +52,7 @@ def main():
     context.setContextProperty("displayBridge", displayBridge)
 
     # matplotlib stuff
-    QtQml.qmlRegisterType(FigureCanvasQtQuickAgg, "Backend", 1, 0, "FigureCanvas")
+    QtQml.qmlRegisterType(FigureCanvasQtQuickAgg, "MatplotlibBackend", 1, 0, "FigureCanvas")
 
     # Create translator
     translator = Translator(app, engine, translations_path, languages)

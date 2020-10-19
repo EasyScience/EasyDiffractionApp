@@ -1,72 +1,83 @@
-import Gui.Globals 1.0 as ExGlobals
-import Gui.Components 1.0 as ExComponents
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Window 2.12
-import Backend 1.0
 
-Column {
+import MatplotlibBackend 1.0
+
+import easyAppGui.Elements 1.0 as EaElements
+
+import Gui.Globals 1.0 as ExGlobals
+import Gui.Components 1.0 as ExComponents
+
+Rectangle {
+    color: "white"
 
     FigureCanvas {
-        id: mplView
-        objectName : "figure"
-        dpi_ratio: Screen.devicePixelRatio
+        objectName: "figure"
+
         anchors.fill: parent
+        anchors.topMargin: -25
+        anchors.bottomMargin: 0
+        anchors.rightMargin: -55
+
+        dpi_ratio: Screen.devicePixelRatio
     }
 
     Row {
-        ToolButton {
-            text: qsTr("home")
-            onClicked: {
-                displayBridge.home();
-            }
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.top: parent.top
+        anchors.topMargin: 10
+        spacing: 5
+
+        EaElements.ToolButton {
+            fontIcon: "home"
+            ToolTip.text: qsTr("Home")
+
+            onClicked: displayBridge.home()
         }
 
-        Button {
-            text: qsTr("back")
-            onClicked: {
-                displayBridge.back();
-            }
+        EaElements.ToolButton {
+            fontIcon: "arrow-left"
+            ToolTip.text: qsTr("Back")
+
+            onClicked: displayBridge.back()
         }
 
-        Button {
-            text: qsTr("forward")
-            onClicked: {
-                displayBridge.forward();
-            }
+        EaElements.ToolButton {
+            fontIcon: "arrow-right"
+            ToolTip.text: qsTr("Forward")
+
+            onClicked: displayBridge.forward()
         }
 
-        ToolSeparator{}
-
-        Button {
+        EaElements.ToolButton {
             id: pan
-            text: qsTr("pan")
+
+            fontIcon: "arrows-alt"
+            ToolTip.text: qsTr("Pan")
             checkable: true
+
             onClicked: {
                 if (zoom.checked) {
-                    zoom.checked = false;
+                    zoom.checked = false
                 }
-                displayBridge.pan();
+                displayBridge.pan()
             }
         }
 
-        Button {
+        EaElements.ToolButton {
             id: zoom
-            text: qsTr("zoom")
+
+            fontIcon: "expand"
+            ToolTip.text: qsTr("Zoom")
             checkable: true
+
             onClicked: {
                 if (pan.checked) {
-                    // toggle pan off
-                    pan.checked = false;
+                    pan.checked = false
                 }
-                displayBridge.zoom();
+                displayBridge.zoom()
             }
-        }
-        ToolSeparator {}
-        TextInput {
-            id: location
-            readOnly: true
-            text: displayBridge.coordinates
         }
     }
 }

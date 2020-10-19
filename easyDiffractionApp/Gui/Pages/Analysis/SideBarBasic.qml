@@ -15,7 +15,7 @@ EaComponents.SideBarColumn {
     EaElements.GroupBox {
         id: groupBox
 
-        title: qsTr("Fit parameters")
+        title: qsTr("Parameters")
         visible: true // ExGlobals.Variables.analysisPageEnabled
         collapsible: false
 

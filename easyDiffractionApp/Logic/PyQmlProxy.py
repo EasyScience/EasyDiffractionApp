@@ -1,4 +1,5 @@
 import sys
+import os
 import json
 import numpy as np
 from dicttoxml import dicttoxml
@@ -26,6 +27,11 @@ from easyDiffractionApp.Logic.DisplayModels.DataModels import MeasuredDataModel,
 
 from easyDiffractionApp.Logic.MatplotlibBackend import DisplayBridge
 
+from easyCore.Symmetry.groups import SpaceGroup
+
+sgs = [op['hermann_mauguin_fmt'] for op in SpaceGroup.SYMM_OPS]
+
+
 class PyQmlProxy(QObject):
     _borg = borg
 
@@ -52,7 +58,7 @@ class PyQmlProxy(QObject):
         self.data = QtDataStore(x_data, np.zeros_like(x_data), np.zeros_like(x_data), None)
         self._calculated_data_model = CalculatedDataModel(self.data)
         self.project_info = self.initProjectInfo()
-        #self.updateCalculatedData()
+        # self.updateCalculatedData()
 
         self._current_phase_index = 0
 
@@ -64,7 +70,7 @@ class PyQmlProxy(QObject):
 
     @Slot()
     def updateCalculatedData(self):
-        #if self.crystal is None:
+        # if self.crystal is None:
         #    return
         print("self.sample.output_index 1 --", self.sample.output_index, self.currentPhaseIndex)
         self.sample.output_index = self.currentPhaseIndex
@@ -114,7 +120,7 @@ class PyQmlProxy(QObject):
 
     @Property(str, notify=statusChanged)
     def statusModelAsXml(self):
-        items = [ { "label": "Calculator", "value": self.interface.current_interface_name } ]
+        items = [{"label": "Calculator", "value": self.interface.current_interface_name}]
         xml = dicttoxml(items, attr_type=False)
         xml = xml.decode()
         return xml
@@ -122,12 +128,12 @@ class PyQmlProxy(QObject):
     # App project info
 
     def initProjectInfo(self):
-        return dict(name = "Example Project",
-                    keywords = "diffraction, cfml, cryspy",
-                    samples = "samples.cif",
-                    experiments = "experiments.cif",
-                    calculations = "calculation.cif",
-                    modified = "18.09.2020, 09:24")
+        return dict(name="Example Project",
+                    keywords="diffraction, cfml, cryspy",
+                    samples="samples.cif",
+                    experiments="experiments.cif",
+                    calculations="calculation.cif",
+                    modified="18.09.2020, 09:24")
 
     @Property('QVariant', notify=projectInfoChanged)
     def projectInfoAsJson(self):
@@ -150,40 +156,41 @@ class PyQmlProxy(QObject):
         phases = self.sample.phases.as_dict()['data']
         return phases
 
-    #@phasesObj.setter
-    #def setPhasesObj(self, json_str):
+    # @phasesObj.setter
+    # def setPhasesObj(self, json_str):
     #    self.phases = json.loads(json_str)
     #    self.phasesChanged.emit()
 
     @Property(str, notify=phasesChanged)
     def phasesXml(self):
-        #if self.sample.phase is None:
+        # if self.sample.phase is None:
         #     return []
         phases = self.sample.phases.as_dict()['data']
-        #xml = dicttoxml(phases, attr_type=False)
+        # xml = dicttoxml(phases, attr_type=False)
         xml = dicttoxml(phases, attr_type=True)
         xml = xml.decode()
         return xml
 
-    #@Slot(int, str, str)
-    #def editPhase(self, phase_index, parameter_name, new_value):
-        #print("----", phase_index, parameter_name, new_value)
+    # @Slot(int, str, str)
+    # def editPhase(self, phase_index, parameter_name, new_value):
+    # print("----", phase_index, parameter_name, new_value)
     #    self.phases[phase_index][parameter_name] = new_value
     #    self.phasesChanged.emit()
 
-    #@Slot(int, int, str, str)
-    #def editPhaseParameter(self, phase_index, parameter_index, parameter_name, new_value):
-        #print("----", phase_index, parameter_index, parameter_name, new_value)
+    # @Slot(int, int, str, str)
+    # def editPhaseParameter(self, phase_index, parameter_index, parameter_name, new_value):
+    # print("----", phase_index, parameter_index, parameter_name, new_value)
     #    self.phases[phase_index]['parameters'][parameter_index][parameter_name] = new_value
     #    self.phasesChanged.emit()
 
     @Slot(str)
     def addSampleFromCif(self, cif_path):
-        #print("cif_path", cif_path)
+        # print("cif_path", cif_path)
         cif_path = self.generalizePath(cif_path)
         crystals = Crystals.from_cif_file(cif_path)
-        #print(self.crystal)
-        #print(self.crystal.atoms)
+        # print(self.crystal)
+        # print(self.crystal.atoms)
+        crystals.name = 'Phases'
         self.sample.phases = crystals
         self.interface.generate_sample_binding("filename", self.sample)
         self.updateCalculatedData()
@@ -192,25 +199,25 @@ class PyQmlProxy(QObject):
 
     @Property(str, notify=phasesChanged)
     def phasesCif(self):
-        #print("str(self.crystal.cif)", str(self.crystal.cif))
-        #if self.crystal is None:
+        # print("str(self.crystal.cif)", str(self.crystal.cif))
+        # if self.crystal is None:
         #    return ""
         return str(self.sample.phases.cif)
 
     @Property('QVariant', notify=currentPhaseSitesChanged)
     def currentPhaseAllSites(self):
-        #self.crystal.extent = np.array([2, 2, 2])
-        #print(self.crystal.all_sites())
-        #print(self.crystal.extent)
-        #if self.crystal is None:
+        # self.crystal.extent = np.array([2, 2, 2])
+        # print(self.crystal.all_sites())
+        # print(self.crystal.extent)
+        # if self.crystal is None:
         #    return []
         all_sites = self.sample.phases[0].all_sites()
         # convert numpy lists to python lists for qml
-        all_sites = { k: all_sites[k].tolist() for k in all_sites.keys() }
+        all_sites = {k: all_sites[k].tolist() for k in all_sites.keys()}
         return all_sites
 
-    #@Slot(int, result='QVariant')
-    #def currentPhaseAllSites(self, phase_index: int):
+    # @Slot(int, result='QVariant')
+    # def currentPhaseAllSites(self, phase_index: int):
     #    all_sites = self.sample.phases[phase_index].all_sites()
     #    # convert numpy lists to python lists for qml
     #    all_sites = { k: all_sites[k].tolist() for k in all_sites.keys() }
@@ -229,14 +236,11 @@ class PyQmlProxy(QObject):
 
     @Slot(result='QVariant')
     def spaceGroups__(self):
-        sgs = [op['hermann_mauguin_fmt'] for op in self.sample.phases[0].spacegroup._sg_data.SYMM_OPS]
-        print(sgs)
         return ['P n m a', 'P b n m']
 
     @Property('QVariant', notify=phasesChanged)
     def spaceGroups(self):
-        spase_groups = [op['hermann_mauguin_fmt'] for op in self.sample.phases[0].spacegroup._sg_data.SYMM_OPS]
-        return spase_groups
+        return sgs
 
     # Misc
 
@@ -278,6 +282,54 @@ class PyQmlProxy(QObject):
             filename = filename[1:].replace('/', os.path.sep)
         return filename
 
+    # Models
 
+    def fitablesList(self):
+        fitables_list = []
+        pars_id, pars_path = generatePath(self.sample, True)
+        print(pars_path)
+        for index, par_path in enumerate(pars_path):
+            par = borg.map.get_item_by_key(pars_id[index])
+            fitables_list.append(
+                {"number": index + 1,
+                 "label":  par_path,
+                 "value":  par.raw_value,
+                 "unit":   str(par.unit).replace("dimensionless", ""),
+                 "error":  par.error,
+                 "fit":    int(not par.fixed)}
+            )
+        return fitables_list
 
+    @Property(str, notify=modelChanged)
+    def fitablesListAsXml(self):
+        xml = dicttoxml(self.fitablesList(), attr_type=False)
+        xml = xml.decode()
+        return xml
 
+    @Property('QVariant', notify=modelChanged)
+    def fitablesDict(self):
+        fitables_dict = {}
+        for par in self.sample.get_parameters():
+            fitables_dict[par.name] = par.raw_value
+        return fitables_dict
+
+    @Slot(str, str)
+    def editFitableValueByName(self, name, value):
+        for par in self.sample.get_parameters():
+            if par.name == name:
+                par.value = float(value)
+                self.updateCalculatedData()
+
+    @Slot(int, str, str)
+    def editFitableByIndexAndName(self, index, name, value):
+        # print("----", index, name, value)
+        if index == -1:  # TODO: Check why index is changed twice when name == "value"
+            return
+        par = self.sample.get_parameters()[index]
+        if name == "fit":
+            par.fixed = not bool(strtobool(value))
+        elif name == "value":
+            par.value = float(value)
+            self.updateCalculatedData()
+        else:
+            print(f"Unsupported name '{name}'")

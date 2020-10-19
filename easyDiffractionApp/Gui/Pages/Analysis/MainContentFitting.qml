@@ -4,12 +4,20 @@ import QtQuick.Window 2.12
 
 import MatplotlibBackend 1.0
 
+import easyAppGui.Style 1.0 as EaStyle
 import easyAppGui.Elements 1.0 as EaElements
 
 import Gui.Globals 1.0 as ExGlobals
 import Gui.Components 1.0 as ExComponents
 
 Rectangle {
+    property bool isDarkTheme: EaStyle.Colors.isDarkTheme
+
+    onIsDarkThemeChanged: {
+        print("onIsDarkThemeChanged", isDarkTheme)
+        displayBridge.updateStyle(isDarkTheme)
+    }
+
     color: "white"
 
     FigureCanvas {

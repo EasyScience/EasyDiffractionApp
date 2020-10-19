@@ -3,6 +3,8 @@ __version__ = '0.0.1'
 
 from easyCore import np
 from easyCore.Utils.classUtils import singleton
+
+import matplotlib
 from matplotlib_backend_qtquick.qt_compat import QtGui, QtQml, QtCore
 from matplotlib_backend_qtquick.backend_qtquick import (
     NavigationToolbar2QtQuick)
@@ -55,6 +57,9 @@ class DisplayBridge(QtCore.QObject):
         # connect for displaying the coordinates
         self.figure.canvas.mpl_connect('motion_notify_event', self.on_motion)
 
+        # set plot style
+        self.setStyle()
+
     # define the coordinates property
     # (I have had problems using the @QtCore.Property directy in the past)
     def getCoordinates(self):
@@ -96,3 +101,19 @@ class DisplayBridge(QtCore.QObject):
         """
         if event.inaxes == self.axes:
             self.coordinates = f"({event.xdata:.2f}, {event.ydata:.2f})"
+
+    # Set style
+    def setStyle(self):
+        matplotlib.rcParams['lines.linewidth'] = 2
+        matplotlib.rcParams['axes.prop_cycle'] = matplotlib.rcsetup.cycler(color=['#ff7f50'])
+        matplotlib.rcParams['axes.edgecolor'] = '#ddd'
+        matplotlib.rcParams['grid.color'] = '#ddd'
+        matplotlib.rcParams['axes.xmargin'] = 0.
+
+    # Update style
+    @QtCore.Slot(bool)
+    def updateStyle(self, is_dark_theme):
+        print("is_dark_theme", is_dark_theme)
+        #self.figure.clear()
+        #self.figure.canvas.draw_idle()
+        #self.figure.canvas.draw()

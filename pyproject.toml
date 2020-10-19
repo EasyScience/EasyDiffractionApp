@@ -22,7 +22,7 @@ python = '^3.7, <3.8'
 #python = '^3.8, <3.9' # '^3.8' generates error when installing PySide2 in easyAppGui
 #python = '3.7' # PyInstaller 3.6 doesn't support Python 3.8
 matplotlib = "^3.3.2"
-matplotlib_backend_qtquick = { git = 'https://github.com/jmitrevs/matplotlib_backend_qtquick.git', rev = 'master' }
+matplotlib_backend_qtquick = { git = 'https://github.com/easyScience/matplotlib_backend_qtquick', rev = 'master' }
 # easyScience
 easyCore = { git = 'https://github.com/easyScience/easyCore.git', rev = 'STAR_io' }
 easyDiffractionLib = { git = 'https://github.com/easyScience/easyDiffractionLib.git', rev = 'DAS-271' }

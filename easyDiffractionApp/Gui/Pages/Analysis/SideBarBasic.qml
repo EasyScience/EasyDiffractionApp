@@ -20,19 +20,6 @@ EaComponents.SideBarColumn {
         collapsible: false
 
         ExComponents.FitablesView {}
-
-        EaElements.SideBarButton {
-            id: startFittingButton
-            fontIcon: "play-circle"
-            text: qsTr("Start fitting")
-            onClicked: {
-                ExGlobals.Variables.summaryPageEnabled = true
-                ExGlobals.Constants.proxy.startFitting()
-            }
-            Component.onCompleted: ExGlobals.Variables.startFittingButton = startFittingButton
-        }
     }
-
-    ///Component.onCompleted: ExGlobals.Constants.proxy.updateCalculatedData2()
 
 }

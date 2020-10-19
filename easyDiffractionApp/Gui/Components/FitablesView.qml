@@ -24,7 +24,6 @@ EaComponents.TableView {
         XmlRole { name: "value"; query: "value/number()" }
         XmlRole { name: "unit"; query: "unit/string()" }
         XmlRole { name: "error"; query: "error/number()" }
-        XmlRole { name: "fit"; query: "fit/number()" }
     }
 
     // Table rows
@@ -46,8 +45,7 @@ EaComponents.TableView {
                    numberColumn.width -
                    valueColumn.width -
                    unitColumn.width -
-                   errorColumn.width -
-                   fitColumn.width
+                   errorColumn.width
             headerText: "Label"
             text: model.label
         }
@@ -68,29 +66,22 @@ EaComponents.TableView {
         EaComponents.TableViewLabel {
             id: unitColumn
             horizontalAlignment: Text.AlignLeft
-            width: EaStyle.Sizes.fontPixelSize
+            width: EaStyle.Sizes.fontPixelSize * 1
+            //headerText: "Units"
             text: model.unit
+                        .replace("degree", "\u00b0")
+                        .replace("angstrom", "\u212b")
+                        .replace(" ** 2", "\u00b2")
         }
 
         EaComponents.TableViewLabel {
             id: errorColumn
-            horizontalAlignment: Text.AlignLeft
+            horizontalAlignment: Text.AlignRight
             width: EaStyle.Sizes.fontPixelSize * 4
-            headerText: "Error"
-            text: !fitColumn.checked || model.error === 0.0 || model.error > 999999 ? "" : model.error.toFixed(4)
+            headerText: "Error  "
+            text: model.error === 0.0 || model.error > 999999 ? "" : model.error.toFixed(4) + "  "
         }
 
-        EaComponents.TableViewCheckBox {
-            id: fitColumn
-            width: EaStyle.Sizes.fontPixelSize * 3
-            headerText: "Fit"
-            checked: model.fit
-            onToggled: ExGlobals.Constants.proxy.editFitableByIndexAndName(model.index, "fit", checked)
-            Component.onCompleted: {
-                if (model.label === "Sin.x_shift")
-                    ExGlobals.Variables.xShiftFitCheckBox = fitColumn
-            }
-        }
     }
 
 }

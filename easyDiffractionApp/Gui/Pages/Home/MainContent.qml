@@ -97,6 +97,7 @@ Item {
                 spacing: EaStyle.Sizes.fontPixelSize
 
                 EaElements.Button {
+                    enabled: false
                     text: qsTr("Tutorial 1: Data fitting")
                     onPressed: runTutorial1()
                 }

@@ -11,7 +11,7 @@ from easyDiffractionApp.Logic.PyQmlProxy import PyQmlProxy
 from matplotlib_backend_qtquick.backend_qtquickagg import (
     FigureCanvasQtQuickAgg)
 from matplotlib_backend_qtquick.qt_compat import QtGui, QtQml, QtCore
-from easyDiffractionApp.Logic.Backend import DisplayBridge
+from easyDiffractionApp.Logic.MatplotlibBackend import DisplayBridge
 
 CONFIG = pyproject.config()
 

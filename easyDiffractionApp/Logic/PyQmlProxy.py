@@ -24,7 +24,7 @@ from easyDiffractionLib.Elements.Instruments.Instrument import Pattern
 from easyDiffractionApp.Logic.QtDataStore import QtDataStore
 from easyDiffractionApp.Logic.DisplayModels.DataModels import MeasuredDataModel, CalculatedDataModel
 
-from easyDiffractionApp.Logic.Backend import DisplayBridge
+from easyDiffractionApp.Logic.MatplotlibBackend import DisplayBridge
 
 class PyQmlProxy(QObject):
     _borg = borg

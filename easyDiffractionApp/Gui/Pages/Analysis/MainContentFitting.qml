@@ -45,17 +45,25 @@ Rectangle {
         }
 
         EaElements.ToolButton {
-            fontIcon: "arrow-left"
+            fontIcon: "\uf2ea"
             ToolTip.text: qsTr("Back")
 
             onClicked: displayBridge.back()
         }
 
         EaElements.ToolButton {
-            fontIcon: "arrow-right"
+            fontIcon: "\uf2f9"
             ToolTip.text: qsTr("Forward")
 
             onClicked: displayBridge.forward()
+        }
+
+        Rectangle {
+            width: 6
+            height: 6
+            radius: 3
+            anchors.verticalCenter: parent.verticalCenter
+            color: EaStyle.Colors.themeBackgroundDisabled
         }
 
         EaElements.ToolButton {

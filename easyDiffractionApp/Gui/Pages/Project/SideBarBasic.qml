@@ -14,15 +14,26 @@ EaComponents.SideBarColumn {
         title: qsTr("Get started")
         collapsible: false
 
-        EaElements.SideBarButton {
-            id: createProjectButton
-            fontIcon: "plus-circle"
-            text: qsTr("Create a new project")
-            onClicked: {
-                ExGlobals.Variables.samplePageEnabled = true
-                ExGlobals.Variables.projectCreated = true
+        Row {
+            spacing: EaStyle.Sizes.fontPixelSize
+
+            EaElements.SideBarButton {
+                id: createProjectButton
+                fontIcon: "plus-circle"
+                text: qsTr("Create a new project")
+                onClicked: {
+                    ExGlobals.Variables.samplePageEnabled = true
+                    ExGlobals.Variables.projectCreated = true
+                }
+                Component.onCompleted: ExGlobals.Variables.createProjectButton = createProjectButton
             }
-            Component.onCompleted: ExGlobals.Variables.createProjectButton = createProjectButton
+
+            EaElements.SideBarButton {
+                enabled: false
+                fontIcon: "upload"
+                text: qsTr("Open an existing project")
+            }
+
         }
     }
 

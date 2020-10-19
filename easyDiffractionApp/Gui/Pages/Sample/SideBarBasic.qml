@@ -32,6 +32,7 @@ EaComponents.SideBarColumn {
             }
 
             EaElements.SideBarButton {
+                enabled: false
                 fontIcon: "plus-circle"
                 text: qsTr("Add new sample manually")
             }

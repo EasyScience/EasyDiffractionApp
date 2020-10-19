@@ -239,7 +239,7 @@ EaComponents.ApplicationWindow {
             mainContent: EaComponents.MainContent {
                 tabs: [
                     EaElements.TabButton { text: qsTr("Fitting") },
-                    EaElements.TabButton { text: ExGlobals.Constants.proxy.projectInfoAsJson.calculations }
+                    EaElements.TabButton { enabled: false; text: ExGlobals.Constants.proxy.projectInfoAsJson.calculations }
                 ]
 
                 items: [

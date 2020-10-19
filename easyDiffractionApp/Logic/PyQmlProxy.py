@@ -294,7 +294,7 @@ class PyQmlProxy(QObject):
                 {"number": index + 1,
                  "label":  par_path,
                  "value":  par.raw_value,
-                 "unit":   str(par.unit).replace("dimensionless", ""),
+                 "unit":   '{:~P}'.format(par.unit),
                  "error":  par.error,
                  "fit":    int(not par.fixed)}
             )

@@ -66,12 +66,9 @@ EaComponents.TableView {
         EaComponents.TableViewLabel {
             id: unitColumn
             horizontalAlignment: Text.AlignLeft
-            width: EaStyle.Sizes.fontPixelSize * 1
+            width: EaStyle.Sizes.fontPixelSize * 2
             //headerText: "Units"
             text: model.unit
-                        .replace("degree", "\u00b0")
-                        .replace("angstrom", "\u212b")
-                        .replace(" ** 2", "\u00b2")
         }
 
         EaComponents.TableViewLabel {

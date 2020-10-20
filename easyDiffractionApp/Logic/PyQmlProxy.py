@@ -159,8 +159,9 @@ class PyQmlProxy(QObject):
 
     @phasesObj.setter
     def setPhasesObj(self, cif_str):
-       print("Set phases from GUI cif string")
-       #self.phases = ?
+       # print("Set phases from GUI cif string")
+       self.phases = Crystals.from_cif_str(cif_str)
+       self.sample.phases = self.phases
        self.updateCalculatedData()
        self.phasesChanged.emit()
        self.currentPhaseSitesChanged.emit()

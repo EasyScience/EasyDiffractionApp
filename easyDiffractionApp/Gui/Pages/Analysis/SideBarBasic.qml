@@ -87,7 +87,6 @@ EaComponents.SideBarColumn {
     }
 
     function editParameterValue(id, value) {
-        print(id, value)
         ExGlobals.Constants.proxy.editParameterValue(id, parseFloat(value))
     }
 

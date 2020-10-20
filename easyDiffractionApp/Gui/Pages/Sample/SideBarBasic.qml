@@ -44,7 +44,9 @@ EaComponents.SideBarColumn {
         id: symmetryGroup
 
         property string crystalSystem: ""//ExGlobals.Constants.proxy.phasesObj[ExGlobals.Constants.proxy.currentPhaseIndex].crystal_system
-        property string spaceGroupName: ExGlobals.Constants.proxy.phasesObj[ExGlobals.Constants.proxy.currentPhaseIndex].spacegroup._space_group_HM_name.value
+        property string spaceGroupName: typeof ExGlobals.Constants.proxy.phasesObj[ExGlobals.Constants.proxy.currentPhaseIndex] !== 'undefined'
+                                            ? ExGlobals.Constants.proxy.phasesObj[ExGlobals.Constants.proxy.currentPhaseIndex].spacegroup._space_group_HM_name.value
+                                            : ""
         property string spaceGroupSystem: ExGlobals.Constants.proxy.phasesObj[ExGlobals.Constants.proxy.currentPhaseIndex].spacegroup.crystal_system
         property string spaceGroupSetting: ""//ExGlobals.Constants.proxy.phasesObj[ExGlobals.Constants.proxy.currentPhaseIndex].space_group_setting
 
@@ -148,5 +150,9 @@ EaComponents.SideBarColumn {
             //loadPhaseFileDialog.close()
         }
     }
+
+    // Logic
+
+
 
 }

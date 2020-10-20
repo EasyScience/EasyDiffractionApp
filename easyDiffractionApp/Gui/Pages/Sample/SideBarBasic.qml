@@ -1,5 +1,5 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
+import QtQuick 2.14
+import QtQuick.Controls 2.14
 import QtQuick.Dialogs 1.3 as Dialogs1
 
 import easyAppGui.Globals 1.0 as EaGlobals
@@ -80,8 +80,17 @@ EaComponents.SideBarColumn {
                     EaElements.ComboBox {
                         width: EaStyle.Sizes.sideBarContentWidth / 3 - EaStyle.Sizes.fontPixelSize / 3 * 2
                         model: ExGlobals.Constants.proxy.spaceGroups //[symmetryGroup.spaceGroupName]
-                        currentIndex: indexOfValue(spaceGroupName)
-                        //currentIndex: indexOfValue(symmetryGroup.spaceGroupName)
+
+                        currentIndex: indexOfValue(symmetryGroup.spaceGroupName)
+
+                        /*
+                        onModelChanged: {
+                            print("ExGlobals.Constants.proxy.spaceGroups", JSON.stringify(ExGlobals.Constants.proxy.spaceGroups))
+                            print("spaceGroupName", symmetryGroup.spaceGroupName)
+                            print("indexOfValue(spaceGroupName)", indexOfValue(symmetryGroup.spaceGroupName))
+                            print("currentIndex", currentIndex)
+                        }
+                        */
                     }
                 }
 

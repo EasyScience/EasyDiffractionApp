@@ -292,6 +292,8 @@ class PyQmlProxy(QObject):
         for index, par_path in enumerate(pars_path):
             id = pars_id[index]
             par = borg.map.get_item_by_key(id)
+            if not par.enabled:
+                continue
             fitables_list.append(
                 {"id": str(id),
                  "number": index + 1,

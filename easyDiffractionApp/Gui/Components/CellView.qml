@@ -20,12 +20,17 @@ EaComponents.TableView {
         xml: ExGlobals.Constants.proxy.phasesAsXml
         query: `/root/item[${phaseIndex}]`
 
+
         XmlRole { name: "a"; query: "cell/length_a/value/number()" }
         XmlRole { name: "b"; query: "cell/length_b/value/number()" }
+        XmlRole { name: "b_enabled"; query: "boolean(@cell/length_b/enabled)"}
         XmlRole { name: "c"; query: "cell/length_c/value/number()" }
+        XmlRole { name: "c_enabled"; query: "boolean(@cell/length_c/enabled)"}
         XmlRole { name: "alpha"; query: "cell/angle_alpha/value/number()" }
         XmlRole { name: "beta"; query: "cell/angle_beta/value/number()" }
+        XmlRole { name: "beta_enabled"; query: "boolean(@cell/angle_beta/enabled)"}
         XmlRole { name: "gamma"; query: "cell/angle_gamma/value/number()" }
+        XmlRole { name: "gamma_enabled"; query: "boolean(@cell/angle_gamma/enabled)"}
 
         XmlRole { name: "aId"; query: "cell/length_a/key[4]/string()" }
         XmlRole { name: "bId"; query: "cell/length_b/key[4]/string()" }
@@ -45,6 +50,7 @@ EaComponents.TableView {
             headerText: "a (Å)"
             text: model.a
             onEditingFinished: editParameterValue(model.aId, text)
+            onTextEdited: print(model.a_enabled)
         }
 
         EaComponents.TableViewTextInput {
@@ -52,6 +58,7 @@ EaComponents.TableView {
             headerText: "b (Å)"
             text: model.b
             onEditingFinished: editParameterValue(model.bId, text)
+            readOnly: ~model.b_enabled
         }
 
         EaComponents.TableViewTextInput {
@@ -59,6 +66,7 @@ EaComponents.TableView {
             headerText: "c (Å)"
             text: model.c
             onEditingFinished: editParameterValue(model.cId, text)
+            readOnly: ~model.c_enabled
         }
 
         EaComponents.TableViewTextInput {
@@ -73,6 +81,7 @@ EaComponents.TableView {
             headerText: "beta (°)"
             text: model.beta
             onEditingFinished: editParameterValue(model.betaId, text)
+            readOnly: ~model.beta_enabled
         }
 
         EaComponents.TableViewTextInput {
@@ -80,6 +89,7 @@ EaComponents.TableView {
             headerText: "gamma (°)"
             text: model.gamma
             onEditingFinished: editParameterValue(model.gammaId, text)
+            readOnly: ~model.gamma_enabled
         }
 
     }

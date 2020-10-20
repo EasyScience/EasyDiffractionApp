@@ -54,7 +54,12 @@ class PyQmlProxy(QObject):
 
         self.interface = InterfaceFactory()
         self.sample = Sample(parameters=Pattern(), interface=self.interface)
-        x_data = np.linspace(5, 150, 400)
+        self.sample.parameters.u_resolution=0.4
+        self.sample.parameters.v_resolution=-0.5
+        self.sample.parameters.w_resolution=0.9
+        self.sample.parameters.x_resolution=0.0
+        self.sample.parameters.y_resolution=0.0
+        x_data = np.linspace(5, 150, 1000)
         self.data = QtDataStore(x_data, np.zeros_like(x_data), np.zeros_like(x_data), None)
         self._calculated_data_model = CalculatedDataModel(self.data)
         self.project_info = self.initProjectInfo()

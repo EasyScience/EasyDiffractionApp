@@ -157,15 +157,6 @@ class PyQmlProxy(QObject):
         phases = self.sample.phases.as_dict()['data']
         return phases
 
-    @phasesObj.setter
-    def setPhasesObj(self, cif_str):
-       # print("Set phases from GUI cif string")
-       self.phases = Crystals.from_cif_str(cif_str)
-       self.sample.phases = self.phases
-       self.updateCalculatedData()
-       self.phasesChanged.emit()
-       self.currentPhaseSitesChanged.emit()
-
     @Slot(str)
     def addSampleFromCif(self, cif_path):
         cif_path = self.generalizePath(cif_path)
@@ -188,6 +179,15 @@ class PyQmlProxy(QObject):
     def phasesAsCif(self):
         cif = str(self.sample.phases.cif)
         return cif
+
+    @phasesAsCif.setter
+    def setPhasesAsCif(self, cif_str):
+       # print("Set phases from GUI cif string")
+       self.phases = Crystals.from_cif_str(cif_str)
+       self.sample.phases = self.phases
+       self.updateCalculatedData()
+       self.phasesChanged.emit()
+       self.currentPhaseSitesChanged.emit()
 
     @Property('QVariant', notify=currentPhaseSitesChanged)
     def currentPhaseAllSites(self):

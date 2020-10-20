@@ -77,9 +77,9 @@ class PyQmlProxy(QObject):
     def updateCalculatedData(self):
         # if self.crystal is None:
         #    return
-        print("self.sample.output_index 1 --", self.sample.output_index, self.currentPhaseIndex)
+        #print("self.sample.output_index 1 --", self.sample.output_index, self.currentPhaseIndex)
         self.sample.output_index = self.currentPhaseIndex
-        print("self.sample.output_index 2 --", self.sample.output_index, self.currentPhaseIndex)
+        #print("self.sample.output_index 2 --", self.sample.output_index, self.currentPhaseIndex)
         self.data.y_opt = self.interface.fit_func(self.data.x)
         self._calculated_data_model.updateData(self.data)
         self.bridge.updateWithCanvas('figure', {'x': self.data.x,
@@ -253,11 +253,11 @@ class PyQmlProxy(QObject):
     def editParameterValue(self, obj_id: str, new_value: float):
         if not obj_id:
             return
-        print("----0 obj_id, new_value", obj_id, new_value)
+        #print("----0 obj_id, new_value", obj_id, new_value)
         obj = borg.map.get_item_by_key(int(obj_id))
-        print("----1 obj.name, obj.value", obj.name, obj.value)
+        #print("----1 obj.name, obj.value", obj.name, obj.value)
         obj.value = new_value
-        print("----2 obj.name, obj.value", obj.name, obj.value)
+        #print("----2 obj.name, obj.value", obj.name, obj.value)
         self.phasesChanged.emit()
         self.updateCalculatedData()
 
@@ -265,11 +265,11 @@ class PyQmlProxy(QObject):
     def editDescriptorValue(self, obj_id: str, new_value: str):
         if not obj_id:
             return
-        print("----0 obj_id, new_value", obj_id, new_value)
+        #print("----0 obj_id, new_value", obj_id, new_value)
         obj = borg.map.get_item_by_key(int(obj_id))
-        print("----1 obj.name, obj.value", obj.name, obj.value)
+        #print("----1 obj.name, obj.value", obj.name, obj.value)
         obj.value = new_value
-        print("----2 obj.name, obj.value", obj.name, obj.value)
+        #print("----2 obj.name, obj.value", obj.name, obj.value)
         self.phasesChanged.emit()
         self.updateCalculatedData()
 
@@ -292,7 +292,7 @@ class PyQmlProxy(QObject):
     def fitablesList(self):
         fitables_list = []
         pars_id, pars_path = generatePath(self.sample, True)
-        print(pars_path)
+        #print(pars_path)
         for index, par_path in enumerate(pars_path):
             par = borg.map.get_item_by_key(pars_id[index])
             fitables_list.append(
@@ -327,7 +327,7 @@ class PyQmlProxy(QObject):
 
     @Slot(int, str, str)
     def editFitableByIndexAndName(self, index, name, value):
-        # print("----", index, name, value)
+        #print("----", index, name, value)
         if index == -1:  # TODO: Check why index is changed twice when name == "value"
             return
         par = self.sample.get_parameters()[index]

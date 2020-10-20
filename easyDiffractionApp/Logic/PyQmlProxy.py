@@ -222,37 +222,56 @@ class PyQmlProxy(QObject):
     def spaceGroupSystem(self):
         return self.sample.phases[self.currentPhaseIndex].spacegroup.crystal_system
 
+    @spaceGroupSystem.setter
+    def setSpaceGroupSystem(self, new_system: str):
+        ints = SpacegroupInfo.get_ints_from_system(new_system)
+        name = SpacegroupInfo.get_symbol_from_int_number(ints[0])
+        self.sample.phases[self.currentPhaseIndex].spacegroup.space_group_HM_name = name
+        self.updateCalculatedData()
+        self.phasesChanged.emit()
+
     @Property('QVariant', notify=currentPhaseChanged)
     def spaceGroupsInts(self):
         ints = SpacegroupInfo.get_ints_from_system(self.spaceGroupSystem)
-        for this_int in ints:
-            print(this_int)
-            print(this_int, SpacegroupInfo.get_symbol_from_int_number(this_int))
-
-        print("ints", ints)
         out_list = ['{}  {:s}'.format(this_int, SpacegroupInfo.get_symbol_from_int_number(this_int)) for this_int in ints]
-        print('HEllo THeres')
-        print(out_list)
-        return out_list
+        out = {'display': out_list,
+               'index': ints
+               }
+        return out
 
+    @Property(int, notify=currentPhaseChanged)
+    def spaceGroupInt(self):
+        this_int = self.sample.phases[self.currentPhaseIndex].spacegroup.int_number
+        idx = 0
+        ints: list = self.spaceGroupsInts['index']
+        if this_int in ints:
+            idx = ints.index(this_int)
+        return idx
 
+    @spaceGroupInt.setter
+    def setSpaceGroupInt(self, idx: int):
+        ints: list = self.spaceGroupsInts['index']
+        name = SpacegroupInfo.get_symbol_from_int_number(ints[idx])
+        self.sample.phases[self.currentPhaseIndex].spacegroup.space_group_HM_name = name
+        self.updateCalculatedData()
+        self.phasesChanged.emit()
 
-    #@Slot(result='QVariant')
-    #def spaceGroupsInts__(self, system: str):
-    #    ints = SpacegroupInfo.get_ints_from_system(system)
-    #    out_list = ['{}  {:s}'.format(this_int, SpacegroupInfo.get_symbol_from_int_number(this_int)) for this_int in ints]
-    #    print('HEllo THeres')
-    #    print(out_list)
-    #    return out_list
-
-    @Slot(result='QVariant')
-    def spaceGroupsOpts(self, system_int: int):
-        opts = SpacegroupInfo.get_compatible_HM_from_int(system_int)
+    @Property('QVariant', notify=currentPhaseChanged)
+    def spaceGroupSettings(self):
+        this_int = self.sample.phases[self.currentPhaseIndex].spacegroup.int_number
+        opts = SpacegroupInfo.get_compatible_HM_from_int(this_int)
+        print(opts)
         return opts
 
-    @Property('QVariant', notify=phasesChanged)
-    def spaceGroups(self):
-        return sgs
+    @Property(str, notify=currentPhaseChanged)
+    def spaceGroupSetting(self):
+        return self.sample.phases[self.currentPhaseIndex].spacegroup.space_group_HM_name.raw_value
+
+    @spaceGroupSetting.setter
+    def setSpaceGroupSetting(self, new_value: str):
+        self.sample.phases[self.currentPhaseIndex].spacegroup.space_group_HM_name = new_value
+        self.updateCalculatedData()
+        self.phasesChanged.emit()
 
     # Fitables
 

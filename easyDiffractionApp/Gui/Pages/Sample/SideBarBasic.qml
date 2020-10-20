@@ -45,11 +45,12 @@ EaComponents.SideBarColumn {
 
         property string crystalSystem: ""//ExGlobals.Constants.proxy.phasesObj[ExGlobals.Constants.proxy.currentPhaseIndex].crystal_system
         property string spaceGroupName: typeof ExGlobals.Constants.proxy.phasesObj[ExGlobals.Constants.proxy.currentPhaseIndex] !== 'undefined'
-                                            ? ExGlobals.Constants.proxy.phasesObj[ExGlobals.Constants.proxy.currentPhaseIndex].spacegroup._space_group_HM_name.value
+                                            ? ExGlobals.Constants.proxy.spaceGroupSetting
                                             : "P 1"
         property string spaceGroupSystem: typeof ExGlobals.Constants.proxy.phasesObj[ExGlobals.Constants.proxy.currentPhaseIndex] !== 'undefined'
                                             ? ExGlobals.Constants.proxy.spaceGroupSystem
                                             : "triclinic"
+        property var spaceGroupInt: ExGlobals.Constants.proxy.spaceGroupInt
         property string spaceGroupSetting: ""//ExGlobals.Constants.proxy.phasesObj[ExGlobals.Constants.proxy.currentPhaseIndex].space_group_setting
 
         //property var spaceGroups: ExGlobals.Constants.proxy.spaceGroups
@@ -76,9 +77,8 @@ EaComponents.SideBarColumn {
                         id: spaceGroupSystemSelect
                         width: EaStyle.Sizes.sideBarContentWidth / 3 - EaStyle.Sizes.fontPixelSize / 3 * 2
                         model: ExGlobals.Constants.proxy.spaceGroupsSystems
-                        onModelChanged: {print("ExGlobals.Constants.proxy.spaceGroupsSystems", JSON.stringify(ExGlobals.Constants.proxy.spaceGroupsSystems))}
                         currentIndex: indexOfValue(symmetryGroup.spaceGroupSystem)
-                        onCurrentIndexChanged: print("Current Index: ", symmetryGroup.spaceGroupSystem, currentIndex)
+                        onActivated: ExGlobals.Constants.proxy.spaceGroupSystem = currentText
                     }
                 }
 
@@ -90,10 +90,9 @@ EaComponents.SideBarColumn {
                     }
                     EaElements.ComboBox {
                         width: EaStyle.Sizes.sideBarContentWidth / 3 - EaStyle.Sizes.fontPixelSize / 3 * 2
-                        model: ExGlobals.Constants.proxy.spaceGroupsInts
-
-                        //currentIndex: indexOfValue(symmetryGroup.spaceGroupName)
-
+                        model: ExGlobals.Constants.proxy.spaceGroupsInts.display
+                        currentIndex: symmetryGroup.spaceGroupInt
+                        onActivated: ExGlobals.Constants.proxy.spaceGroupInt = currentIndex
                     }
                 }
 
@@ -105,9 +104,13 @@ EaComponents.SideBarColumn {
                     }
                     EaElements.ComboBox {
                         width: EaStyle.Sizes.sideBarContentWidth / 3 - EaStyle.Sizes.fontPixelSize / 3 * 2
-                        model: ExGlobals.Constants.proxy.spaceGroups //[symmetryGroup.spaceGroupName]
+                        model: ExGlobals.Constants.proxy.spaceGroupSettings //[symmetryGroup.spaceGroupName]
 
                         currentIndex: indexOfValue(symmetryGroup.spaceGroupName)
+                        onCurrentIndexChanged: {print("ExGlobals.Constants.proxy.spaceGroups", JSON.stringify(ExGlobals.Constants.proxy.spaceGroupSettings))
+                                                print("SG SETTING: Current Index: ", "'", symmetryGroup.spaceGroupName, "' ", currentIndex)
+                                                }
+                        onActivated: ExGlobals.Constants.proxy.spaceGroupSetting = currentText
 
                         /*
                         onModelChanged: {

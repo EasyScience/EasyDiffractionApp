@@ -88,6 +88,8 @@ EaComponents.TableView {
     // Logic
 
     function storeCurrentParameter() {
+        if (typeof model.get(currentIndex) === "undefined")
+            return
         ExGlobals.Variables.currentParameterId = model.get(currentIndex).id
         ExGlobals.Variables.currentParameterValue = model.get(currentIndex).value
     }

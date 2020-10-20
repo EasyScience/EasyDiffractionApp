@@ -191,6 +191,8 @@ class PyQmlProxy(QObject):
 
     @Property('QVariant', notify=currentPhaseSitesChanged)
     def currentPhaseAllSites(self):
+        if not self.sample.phases:
+            return {}
         all_sites = self.sample.phases[0].all_sites()
         # convert numpy lists to python lists for qml
         all_sites = { k: all_sites[k].tolist() for k in all_sites.keys() }

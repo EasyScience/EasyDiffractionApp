@@ -20,11 +20,11 @@ EaComponents.TableView {
     model: XmlListModel {
         property int phaseIndex: ExGlobals.Constants.proxy.currentPhaseIndex + 1
 
-        //xml: ExGlobals.Variables.sampleLoaded ? ExGlobals.Constants.proxy.phasesXml : ""
-        xml: ExGlobals.Constants.proxy.phasesXml
+        //xml: ExGlobals.Variables.sampleLoaded ? ExGlobals.Constants.proxy.phasesAsXml : ""
+        xml: ExGlobals.Constants.proxy.phasesAsXml
         query: "/root/item"
 
-        //onXmlChanged: print(EaLogic.Utils.prettyXml(ExGlobals.Constants.proxy.phasesXml))
+        //onXmlChanged: print(EaLogic.Utils.prettyXml(ExGlobals.Constants.proxy.phasesAsXml))
 
         XmlRole { name: "label"; query: "name/string()" }
         XmlRole { name: "color"; query: "color/string()" }

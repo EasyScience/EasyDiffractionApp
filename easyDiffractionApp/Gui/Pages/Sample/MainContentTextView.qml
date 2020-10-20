@@ -13,13 +13,9 @@ Item {
         anchors.fill: parent
 
         EaElements.TextArea {
-            //text: EaLogic.Utils.prettyJson(ExGlobals.Constants.proxy.phasesObj)
-            //onEditingFinished: ExGlobals.Constants.proxy.phasesObj = text
-            text: ExGlobals.Constants.proxy.phasesCif
-            //onEditingFinished: ExGlobals.Constants.proxy.phasesCif = text
+            text: ExGlobals.Constants.proxy.phasesAsCif
+            onEditingFinished: ExGlobals.Constants.proxy.phasesAsCif = text
         }
     }
-
-
 
 }

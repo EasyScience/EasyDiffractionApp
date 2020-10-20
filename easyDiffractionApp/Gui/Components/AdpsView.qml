@@ -19,10 +19,10 @@ EaComponents.TableView {
 //        property string adpType: ""
 //        onAdpTypeChanged: print("???", adpType)
 
-        //xml: ExGlobals.Constants.proxy.phasesXml
+        //xml: ExGlobals.Constants.proxy.phasesAsXml
         //query: `/root/item[${phaseIndex}]/atoms/item`
 
-        xml: ExGlobals.Constants.proxy.phasesXml
+        xml: ExGlobals.Constants.proxy.phasesAsXml
         query: `/root/item[${phaseIndex}]/atoms/data/item`
 
  //       onXmlChanged: print("+++", model.adp_type)

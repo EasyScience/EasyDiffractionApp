@@ -17,7 +17,7 @@ EaComponents.TableView {
     model: XmlListModel {
         property int phaseIndex: ExGlobals.Constants.proxy.currentPhaseIndex + 1
 
-        xml: ExGlobals.Constants.proxy.phasesXml
+        xml: ExGlobals.Constants.proxy.phasesAsXml
         query: `/root/item[${phaseIndex}]`
 
         XmlRole { name: "a"; query: "cell/length_a/value/number()" }

@@ -11,15 +11,11 @@ import Gui.Globals 1.0 as ExGlobals
 import Gui.Components 1.0 as ExComponents
 
 EaComponents.SideBarColumn {
-    //ExGlobals.Variables.currentParameterIndex = model.index
-    //ExGlobals.Variables.currentParameterValue = model.value
-
 
     EaElements.GroupBox {
         id: groupBox
 
         title: qsTr("Parameters")
-        visible: true // ExGlobals.Variables.analysisPageEnabled
         collapsible: false
 
         ExComponents.FitablesView {}
@@ -58,10 +54,7 @@ EaComponents.SideBarColumn {
                 value: ExGlobals.Variables.currentParameterValue
                 onPressedChanged: {
                     if (!pressed) {
-                        ExGlobals.Constants.proxy.editFitableByIndexAndName(
-                                    ExGlobals.Variables.currentParameterIndex,
-                                    "value",
-                                    value.toFixed(4))
+                        editParameterValue(ExGlobals.Variables.currentParameterId, value.toFixed(4))
                     }
                 }
             }
@@ -93,6 +86,9 @@ EaComponents.SideBarColumn {
         return 0.1
     }
 
-
+    function editParameterValue(id, value) {
+        print(id, value)
+        ExGlobals.Constants.proxy.editParameterValue(id, parseFloat(value))
+    }
 
 }

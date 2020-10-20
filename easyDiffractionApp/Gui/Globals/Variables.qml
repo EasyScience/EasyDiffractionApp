@@ -61,6 +61,6 @@ QtObject {
     property int parametersCurrentIndex: 0
 
     // Slider
-    property int currentParameterIndex
+    property string currentParameterId
     property real currentParameterValue
 }

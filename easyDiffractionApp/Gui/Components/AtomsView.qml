@@ -17,10 +17,10 @@ EaComponents.TableView {
     model: XmlListModel {
         property int phaseIndex: ExGlobals.Constants.proxy.currentPhaseIndex + 1
 
-        xml: ExGlobals.Constants.proxy.phasesXml
+        xml: ExGlobals.Constants.proxy.phasesAsXml
         query: `/root/item[${phaseIndex}]/atoms/data/item`
 
-        //onXmlChanged: print(EaLogic.Utils.prettyXml(ExGlobals.Constants.proxy.phasesXml))
+        //onXmlChanged: print(EaLogic.Utils.prettyXml(ExGlobals.Constants.proxy.phasesAsXml))
 
         XmlRole { name: "label"; query: "label/value/string()" }
         XmlRole { name: "type"; query: "specie/value/string()" }

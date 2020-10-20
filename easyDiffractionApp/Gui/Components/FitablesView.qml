@@ -19,6 +19,7 @@ EaComponents.TableView {
 
         query: "/root/item"
 
+        XmlRole { name: "id"; query: "id/string()" }
         XmlRole { name: "number"; query: "number/number()" }
         XmlRole { name: "label"; query: "label/string()" }
         XmlRole { name: "value"; query: "value/number()" }
@@ -62,18 +63,13 @@ EaComponents.TableView {
             width: EaStyle.Sizes.fontPixelSize * 4
             headerText: "Value"
             text: model.value.toFixed(4)
-            onEditingFinished: ExGlobals.Constants.proxy.editFitableByIndexAndName(model.index, "value", text)
-            Component.onCompleted: {
-                if (model.label === "Sin.x_shift")
-                    ExGlobals.Variables.xShiftValueTextInput = valueColumn
-            }
+            onEditingFinished: editParameterValue(model.id, text)
         }
 
         EaComponents.TableViewLabel {
             id: unitColumn
             horizontalAlignment: Text.AlignLeft
             width: EaStyle.Sizes.fontPixelSize * 2
-            //headerText: "Units"
             text: model.unit
         }
 
@@ -92,8 +88,12 @@ EaComponents.TableView {
     // Logic
 
     function storeCurrentParameter() {
-        ExGlobals.Variables.currentParameterIndex = currentIndex
+        ExGlobals.Variables.currentParameterId = model.get(currentIndex).id
         ExGlobals.Variables.currentParameterValue = model.get(currentIndex).value
+    }
+
+    function editParameterValue(id, value) {
+        ExGlobals.Constants.proxy.editParameterValue(id, parseFloat(value))
     }
 
 }

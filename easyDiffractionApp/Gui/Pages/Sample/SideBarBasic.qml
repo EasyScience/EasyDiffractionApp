@@ -32,9 +32,16 @@ EaComponents.SideBarColumn {
             }
 
             EaElements.SideBarButton {
-                enabled: false
+                enabled: true
                 fontIcon: "plus-circle"
                 text: qsTr("Add new sample manually")
+
+                onClicked: {
+                            ExGlobals.Constants.proxy.addSampleManual()
+                            ExGlobals.Variables.experimentPageEnabled = true
+                            ExGlobals.Variables.sampleLoaded = true
+                            ExGlobals.Variables.analysisPageEnabled = true
+                        }
             }
         }
 

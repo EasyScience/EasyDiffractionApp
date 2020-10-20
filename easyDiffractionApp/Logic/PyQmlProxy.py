@@ -21,7 +21,7 @@ from easyCore.Utils.classTools import generatePath
 from easyExampleLib.interface import InterfaceFactory
 
 from easyDiffractionLib.sample import Sample
-from easyDiffractionLib import Crystals
+from easyDiffractionLib import Crystals, Crystal
 from easyDiffractionLib.interface import InterfaceFactory
 from easyDiffractionLib.Elements.Instruments.Instrument import Pattern
 
@@ -166,6 +166,17 @@ class PyQmlProxy(QObject):
         crystals = Crystals.from_cif_file(cif_path)
         crystals.name = 'Phases'
         self.sample.phases = crystals
+        self.interface.generate_sample_binding("filename", self.sample)
+        self.updateCalculatedData()
+        self.phasesChanged.emit()
+        self.currentPhaseSitesChanged.emit()
+
+    @Slot()
+    def addSampleManual(self):
+        crystal = Crystal('NewCrystal')
+        crystal.add_atom('Fe', 'Fe3+')
+        self.sample.phases = crystal
+        self.sample.phases.name = 'Phases'
         self.interface.generate_sample_binding("filename", self.sample)
         self.updateCalculatedData()
         self.phasesChanged.emit()

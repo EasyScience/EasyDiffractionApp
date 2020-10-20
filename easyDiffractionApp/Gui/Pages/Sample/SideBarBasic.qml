@@ -45,6 +45,7 @@ EaComponents.SideBarColumn {
 
         property string crystalSystem: ""//ExGlobals.Constants.proxy.phasesObj[ExGlobals.Constants.proxy.currentPhaseIndex].crystal_system
         property string spaceGroupName: ExGlobals.Constants.proxy.phasesObj[ExGlobals.Constants.proxy.currentPhaseIndex].spacegroup._space_group_HM_name.value
+        property string spaceGroupSystem: ExGlobals.Constants.proxy.phasesObj[ExGlobals.Constants.proxy.currentPhaseIndex].spacegroup.crystal_system
         property string spaceGroupSetting: ""//ExGlobals.Constants.proxy.phasesObj[ExGlobals.Constants.proxy.currentPhaseIndex].space_group_setting
 
         //property var spaceGroups: ExGlobals.Constants.proxy.spaceGroups
@@ -66,8 +67,12 @@ EaComponents.SideBarColumn {
                         text: "Crystal system"
                     }
                     EaElements.ComboBox {
+                        id: spaceGroupSystemSelect
                         width: EaStyle.Sizes.sideBarContentWidth / 3 - EaStyle.Sizes.fontPixelSize / 3 * 2
-                        model: [symmetryGroup.crystalSystem]
+                        model: ExGlobals.Constants.proxy.spaceGroupsSystems
+                        onModelChanged: {print("ExGlobals.Constants.proxy.spaceGroupsSystems", JSON.stringify(ExGlobals.Constants.proxy.spaceGroupsSystems))}
+                        currentIndex: indexOfValue(symmetryGroup.spaceGroupSystem)
+                        onCurrentIndexChanged: print("Current Index: ", symmetryGroup.spaceGroupSystem, currentIndex)
                     }
                 }
 
@@ -76,6 +81,18 @@ EaComponents.SideBarColumn {
                     EaElements.Label {
                         enabled: false
                         text: "Space group"
+                    }
+                    EaElements.ComboBox {
+                        width: EaStyle.Sizes.sideBarContentWidth / 3 - EaStyle.Sizes.fontPixelSize / 3 * 2
+                        model: ExGlobals.Constants.proxy.spaceGroupsInts('cubic')
+                    }
+                }
+
+                Column {
+                    spacing: EaStyle.Sizes.fontPixelSize * -0.5
+                    EaElements.Label {
+                        enabled: false
+                        text: "Setting"
                     }
                     EaElements.ComboBox {
                         width: EaStyle.Sizes.sideBarContentWidth / 3 - EaStyle.Sizes.fontPixelSize / 3 * 2
@@ -91,18 +108,6 @@ EaComponents.SideBarColumn {
                             print("currentIndex", currentIndex)
                         }
                         */
-                    }
-                }
-
-                Column {
-                    spacing: EaStyle.Sizes.fontPixelSize * -0.5
-                    EaElements.Label {
-                        enabled: false
-                        text: "Setting"
-                    }
-                    EaElements.ComboBox {
-                        width: EaStyle.Sizes.sideBarContentWidth / 3 - EaStyle.Sizes.fontPixelSize / 3 * 2
-                        model: [symmetryGroup.spaceGroupSetting]
                     }
                 }
             }

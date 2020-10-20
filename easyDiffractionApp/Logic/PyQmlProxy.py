@@ -11,6 +11,9 @@ from PySide2.QtCharts import QtCharts
 
 from easyCore import borg
 
+# borg.debug = True
+
+from easyCore.Symmetry.tools import SpacegroupInfo
 from easyCore.Fitting.Fitting import Fitter
 from easyCore.Fitting.Constraints import ObjConstraint, NumericConstraint
 from easyCore.Utils.classTools import generatePath
@@ -209,9 +212,22 @@ class PyQmlProxy(QObject):
 
     # Space groups
 
+    @Property('QVariant', notify=phasesChanged)
+    def spaceGroupsSystems(self):
+        return SpacegroupInfo.get_all_systems()
+
     @Slot(result='QVariant')
-    def spaceGroups__(self):
-        return ['P n m a', 'P b n m']
+    def spaceGroupsInts(self, system: str):
+        ints = SpacegroupInfo.get_ints_from_system(system)
+        out_list = ['{}  {:s}'.format(this_int, SpacegroupInfo.get_symbol_from_int_number(this_int)) for this_int in ints]
+        print('HEllo THeres')
+        print(out_list)
+        return out_list
+
+    @Slot(result='QVariant')
+    def spaceGroupsOpts(self, system_int: int):
+        opts = SpacegroupInfo.get_compatible_HM_from_int(system_int)
+        return opts
 
     @Property('QVariant', notify=phasesChanged)
     def spaceGroups(self):

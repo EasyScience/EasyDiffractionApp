@@ -60,4 +60,7 @@ QtObject {
     property int atomsCurrentIndex: 0
     property int parametersCurrentIndex: 0
 
+    // Slider
+    property int currentParameterIndex
+    property real currentParameterValue
 }

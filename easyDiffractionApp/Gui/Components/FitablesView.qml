@@ -24,6 +24,12 @@ EaComponents.TableView {
         XmlRole { name: "value"; query: "value/number()" }
         XmlRole { name: "unit"; query: "unit/string()" }
         XmlRole { name: "error"; query: "error/number()" }
+
+        onStatusChanged: {
+            if (status === XmlListModel.Ready) {
+                storeCurrentParameter()
+            }
+        }
     }
 
     // Table rows
@@ -81,4 +87,14 @@ EaComponents.TableView {
 
     }
 
+    onCurrentIndexChanged: storeCurrentParameter()
+
+    // Logic
+
+    function storeCurrentParameter() {
+        ExGlobals.Variables.currentParameterIndex = currentIndex
+        ExGlobals.Variables.currentParameterValue = model.get(currentIndex).value
+    }
+
 }
+

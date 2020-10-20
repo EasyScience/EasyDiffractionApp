@@ -240,6 +240,8 @@ class PyQmlProxy(QObject):
         self.sample.phases[self.currentPhaseIndex].spacegroup.space_group_HM_name = name
         self.updateCalculatedData()
         self.phasesChanged.emit()
+        self.currentPhaseChanged.emit()
+
 
     @Property('QVariant', notify=currentPhaseChanged)
     def spaceGroupsInts(self):
@@ -266,6 +268,7 @@ class PyQmlProxy(QObject):
         self.sample.phases[self.currentPhaseIndex].spacegroup.space_group_HM_name = name
         self.updateCalculatedData()
         self.phasesChanged.emit()
+        self.currentPhaseChanged.emit()
 
     @Property('QVariant', notify=currentPhaseChanged)
     def spaceGroupSettings(self):
@@ -283,6 +286,7 @@ class PyQmlProxy(QObject):
         self.sample.phases[self.currentPhaseIndex].spacegroup.space_group_HM_name = new_value
         self.updateCalculatedData()
         self.phasesChanged.emit()
+        self.currentPhaseChanged.emit()
 
     # Fitables
 

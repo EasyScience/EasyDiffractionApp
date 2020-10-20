@@ -46,12 +46,16 @@ EaComponents.SideBarColumn {
         property string crystalSystem: ""//ExGlobals.Constants.proxy.phasesObj[ExGlobals.Constants.proxy.currentPhaseIndex].crystal_system
         property string spaceGroupName: typeof ExGlobals.Constants.proxy.phasesObj[ExGlobals.Constants.proxy.currentPhaseIndex] !== 'undefined'
                                             ? ExGlobals.Constants.proxy.phasesObj[ExGlobals.Constants.proxy.currentPhaseIndex].spacegroup._space_group_HM_name.value
-                                            : ""
-        property string spaceGroupSystem: ExGlobals.Constants.proxy.phasesObj[ExGlobals.Constants.proxy.currentPhaseIndex].spacegroup.crystal_system
+                                            : "P 1"
+        property string spaceGroupSystem: typeof ExGlobals.Constants.proxy.phasesObj[ExGlobals.Constants.proxy.currentPhaseIndex] !== 'undefined'
+                                            ? ExGlobals.Constants.proxy.spaceGroupSystem
+                                            : "triclinic"
         property string spaceGroupSetting: ""//ExGlobals.Constants.proxy.phasesObj[ExGlobals.Constants.proxy.currentPhaseIndex].space_group_setting
 
         //property var spaceGroups: ExGlobals.Constants.proxy.spaceGroups
         //onSpaceGroupsChanged: print(JSON.stringify(spaceGroups))
+
+        //onSpaceGroupNameChanged: print(EaLogic.Utils.prettyJson(ExGlobals.Constants.proxy.phasesObj[ExGlobals.Constants.proxy.currentPhaseIndex]))
 
 
         title: qsTr("Symmetry and cell parameters")
@@ -86,7 +90,10 @@ EaComponents.SideBarColumn {
                     }
                     EaElements.ComboBox {
                         width: EaStyle.Sizes.sideBarContentWidth / 3 - EaStyle.Sizes.fontPixelSize / 3 * 2
-                        model: ExGlobals.Constants.proxy.spaceGroupsInts('cubic')
+                        model: ExGlobals.Constants.proxy.spaceGroupsInts
+
+                        //currentIndex: indexOfValue(symmetryGroup.spaceGroupName)
+
                     }
                 }
 

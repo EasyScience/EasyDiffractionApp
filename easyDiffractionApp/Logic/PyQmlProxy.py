@@ -218,13 +218,32 @@ class PyQmlProxy(QObject):
     def spaceGroupsSystems(self):
         return SpacegroupInfo.get_all_systems()
 
-    @Slot(result='QVariant')
-    def spaceGroupsInts(self, system: str):
-        ints = SpacegroupInfo.get_ints_from_system(system)
+    @Property(str, notify=currentPhaseChanged)
+    def spaceGroupSystem(self):
+        return self.sample.phases[self.currentPhaseIndex].spacegroup.crystal_system
+
+    @Property('QVariant', notify=currentPhaseChanged)
+    def spaceGroupsInts(self):
+        ints = SpacegroupInfo.get_ints_from_system(self.spaceGroupSystem)
+        for this_int in ints:
+            print(this_int)
+            print(this_int, SpacegroupInfo.get_symbol_from_int_number(this_int))
+
+        print("ints", ints)
         out_list = ['{}  {:s}'.format(this_int, SpacegroupInfo.get_symbol_from_int_number(this_int)) for this_int in ints]
         print('HEllo THeres')
         print(out_list)
         return out_list
+
+
+
+    #@Slot(result='QVariant')
+    #def spaceGroupsInts__(self, system: str):
+    #    ints = SpacegroupInfo.get_ints_from_system(system)
+    #    out_list = ['{}  {:s}'.format(this_int, SpacegroupInfo.get_symbol_from_int_number(this_int)) for this_int in ints]
+    #    print('HEllo THeres')
+    #    print(out_list)
+    #    return out_list
 
     @Slot(result='QVariant')
     def spaceGroupsOpts(self, system_int: int):

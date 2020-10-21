@@ -49,6 +49,7 @@ class PyQmlProxy(QObject):
     modelChanged = Signal()
     currentPhaseChanged = Signal()
     currentPhaseSitesChanged = Signal()
+    spaceGroupChanged = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -169,7 +170,9 @@ class PyQmlProxy(QObject):
         self.interface.generate_sample_binding("filename", self.sample)
         self.updateCalculatedData()
         self.phasesChanged.emit()
+        self.currentPhaseChanged.emit()
         self.currentPhaseSitesChanged.emit()
+        self.spaceGroupChanged.emit()
 
     @Slot()
     def addSampleManual(self):
@@ -180,7 +183,9 @@ class PyQmlProxy(QObject):
         self.interface.generate_sample_binding("filename", self.sample)
         self.updateCalculatedData()
         self.phasesChanged.emit()
+        self.currentPhaseChanged.emit()
         self.currentPhaseSitesChanged.emit()
+        self.spaceGroupChanged.emit()
 
     @Property(str, notify=phasesChanged)
     def phasesAsXml(self):
@@ -196,7 +201,6 @@ class PyQmlProxy(QObject):
 
     @phasesAsCif.setter
     def setPhasesAsCif(self, cif_str):
-       # print("Set phases from GUI cif string")
        self.phases = Crystals.from_cif_str(cif_str)
        self.sample.phases = self.phases
        self.updateCalculatedData()
@@ -225,11 +229,11 @@ class PyQmlProxy(QObject):
 
     # Space groups
 
-    @Property('QVariant', notify=phasesChanged)
+    @Property('QVariant', notify=spaceGroupChanged)
     def spaceGroupsSystems(self):
         return SpacegroupInfo.get_all_systems()
 
-    @Property(str, notify=currentPhaseChanged)
+    @Property(str, notify=spaceGroupChanged)
     def spaceGroupSystem(self):
         return self.sample.phases[self.currentPhaseIndex].spacegroup.crystal_system
 
@@ -237,13 +241,11 @@ class PyQmlProxy(QObject):
     def setSpaceGroupSystem(self, new_system: str):
         ints = SpacegroupInfo.get_ints_from_system(new_system)
         name = SpacegroupInfo.get_symbol_from_int_number(ints[0])
-        self.sample.phases[self.currentPhaseIndex].spacegroup.space_group_HM_name = name
-        self.updateCalculatedData()
-        self.phasesChanged.emit()
-        self.currentPhaseChanged.emit()
+        self.spaceGroupSetting = name
 
+    ##
 
-    @Property('QVariant', notify=currentPhaseChanged)
+    @Property('QVariant', notify=spaceGroupChanged)
     def spaceGroupsInts(self):
         ints = SpacegroupInfo.get_ints_from_system(self.spaceGroupSystem)
         out_list = ['{}  {:s}'.format(this_int, SpacegroupInfo.get_symbol_from_int_number(this_int)) for this_int in ints]
@@ -252,7 +254,7 @@ class PyQmlProxy(QObject):
                }
         return out
 
-    @Property(int, notify=currentPhaseChanged)
+    @Property(int, notify=spaceGroupChanged)
     def spaceGroupInt(self):
         this_int = self.sample.phases[self.currentPhaseIndex].spacegroup.int_number
         idx = 0
@@ -265,19 +267,17 @@ class PyQmlProxy(QObject):
     def setSpaceGroupInt(self, idx: int):
         ints: list = self.spaceGroupsInts['index']
         name = SpacegroupInfo.get_symbol_from_int_number(ints[idx])
-        self.sample.phases[self.currentPhaseIndex].spacegroup.space_group_HM_name = name
-        self.updateCalculatedData()
-        self.phasesChanged.emit()
-        self.currentPhaseChanged.emit()
+        self.spaceGroupSetting = name
 
-    @Property('QVariant', notify=currentPhaseChanged)
+    ##
+
+    @Property('QVariant', notify=spaceGroupChanged)
     def spaceGroupSettings(self):
         this_int = self.sample.phases[self.currentPhaseIndex].spacegroup.int_number
         opts = SpacegroupInfo.get_compatible_HM_from_int(this_int)
-        print(opts)
         return opts
 
-    @Property(str, notify=currentPhaseChanged)
+    @Property(str, notify=spaceGroupChanged)
     def spaceGroupSetting(self):
         return self.sample.phases[self.currentPhaseIndex].spacegroup.space_group_HM_name.raw_value
 
@@ -287,6 +287,8 @@ class PyQmlProxy(QObject):
         self.updateCalculatedData()
         self.phasesChanged.emit()
         self.currentPhaseChanged.emit()
+        self.currentPhaseSitesChanged.emit()
+        self.spaceGroupChanged.emit()
 
     # Fitables
 

@@ -10,6 +10,7 @@ DataChartView 1.0 DataChartView.qml
 # Sidebar components
 
 PhasesView 1.0 PhasesView.qml
+SymmetryView 1.0 SymmetryView.qml
 CellView 1.0 CellView.qml
 AtomsView 1.0 AtomsView.qml
 AdpsView 1.0 AdpsView.qml

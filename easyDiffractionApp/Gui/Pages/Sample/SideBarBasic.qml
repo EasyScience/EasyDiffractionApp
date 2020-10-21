@@ -37,11 +37,11 @@ EaComponents.SideBarColumn {
                 text: qsTr("Add new sample manually")
 
                 onClicked: {
-                            ExGlobals.Constants.proxy.addSampleManual()
-                            ExGlobals.Variables.experimentPageEnabled = true
-                            ExGlobals.Variables.sampleLoaded = true
-                            ExGlobals.Variables.analysisPageEnabled = true
-                        }
+                    ExGlobals.Constants.proxy.addSampleManual()
+                    ExGlobals.Variables.experimentPageEnabled = true
+                    ExGlobals.Variables.sampleLoaded = true
+                    ExGlobals.Variables.analysisPageEnabled = true
+                }
             }
         }
 
@@ -50,89 +50,12 @@ EaComponents.SideBarColumn {
     EaElements.GroupBox {
         id: symmetryGroup
 
-        property string crystalSystem: ""//ExGlobals.Constants.proxy.phasesObj[ExGlobals.Constants.proxy.currentPhaseIndex].crystal_system
-        property string spaceGroupName: typeof ExGlobals.Constants.proxy.phasesObj[ExGlobals.Constants.proxy.currentPhaseIndex] !== 'undefined'
-                                            ? ExGlobals.Constants.proxy.spaceGroupSetting
-                                            : "P 1"
-        property string spaceGroupSystem: typeof ExGlobals.Constants.proxy.phasesObj[ExGlobals.Constants.proxy.currentPhaseIndex] !== 'undefined'
-                                            ? ExGlobals.Constants.proxy.spaceGroupSystem
-                                            : "triclinic"
-        property var spaceGroupInt: ExGlobals.Constants.proxy.spaceGroupInt
-        property string spaceGroupSetting: ""//ExGlobals.Constants.proxy.phasesObj[ExGlobals.Constants.proxy.currentPhaseIndex].space_group_setting
-
-        //property var spaceGroups: ExGlobals.Constants.proxy.spaceGroups
-        //onSpaceGroupsChanged: print(JSON.stringify(spaceGroups))
-
-        //onSpaceGroupNameChanged: print(EaLogic.Utils.prettyJson(ExGlobals.Constants.proxy.phasesObj[ExGlobals.Constants.proxy.currentPhaseIndex]))
-
-
         title: qsTr("Symmetry and cell parameters")
         enabled: ExGlobals.Variables.sampleLoaded
 
         Column {
-
-            Row {
-                spacing: EaStyle.Sizes.fontPixelSize
-
-                Column {
-                    spacing: EaStyle.Sizes.fontPixelSize * -0.5
-                    EaElements.Label {
-                        enabled: false
-                        text: "Crystal system"
-                    }
-                    EaElements.ComboBox {
-                        id: spaceGroupSystemSelect
-                        width: EaStyle.Sizes.sideBarContentWidth / 3 - EaStyle.Sizes.fontPixelSize / 3 * 2
-                        model: ExGlobals.Constants.proxy.spaceGroupsSystems
-                        currentIndex: indexOfValue(symmetryGroup.spaceGroupSystem)
-                        onActivated: ExGlobals.Constants.proxy.spaceGroupSystem = currentText
-                    }
-                }
-
-                Column {
-                    spacing: EaStyle.Sizes.fontPixelSize * -0.5
-                    EaElements.Label {
-                        enabled: false
-                        text: "Space group"
-                    }
-                    EaElements.ComboBox {
-                        width: EaStyle.Sizes.sideBarContentWidth / 3 - EaStyle.Sizes.fontPixelSize / 3 * 2
-                        model: ExGlobals.Constants.proxy.spaceGroupsInts.display
-                        currentIndex: symmetryGroup.spaceGroupInt
-                        onActivated: ExGlobals.Constants.proxy.spaceGroupInt = currentIndex
-                    }
-                }
-
-                Column {
-                    spacing: EaStyle.Sizes.fontPixelSize * -0.5
-                    EaElements.Label {
-                        enabled: false
-                        text: "Setting"
-                    }
-                    EaElements.ComboBox {
-                        width: EaStyle.Sizes.sideBarContentWidth / 3 - EaStyle.Sizes.fontPixelSize / 3 * 2
-                        model: ExGlobals.Constants.proxy.spaceGroupSettings //[symmetryGroup.spaceGroupName]
-
-                        currentIndex: indexOfValue(symmetryGroup.spaceGroupName)
-                        onCurrentIndexChanged: {print("ExGlobals.Constants.proxy.spaceGroups", JSON.stringify(ExGlobals.Constants.proxy.spaceGroupSettings))
-                                                print("SG SETTING: Current Index: ", "'", symmetryGroup.spaceGroupName, "' ", currentIndex)
-                                                }
-                        onActivated: ExGlobals.Constants.proxy.spaceGroupSetting = currentText
-
-                        /*
-                        onModelChanged: {
-                            print("ExGlobals.Constants.proxy.spaceGroups", JSON.stringify(ExGlobals.Constants.proxy.spaceGroups))
-                            print("spaceGroupName", symmetryGroup.spaceGroupName)
-                            print("indexOfValue(spaceGroupName)", indexOfValue(symmetryGroup.spaceGroupName))
-                            print("currentIndex", currentIndex)
-                        }
-                        */
-                    }
-                }
-            }
-
+            ExComponents.SymmetryView {}
             ExComponents.CellView { titleText: "Cell parameters" }
-
         }
 
     }

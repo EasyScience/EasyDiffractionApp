@@ -32,8 +32,6 @@ from easyDiffractionApp.Logic.MatplotlibBackend import DisplayBridge
 
 from easyCore.Symmetry.groups import SpaceGroup
 
-sgs = [op['hermann_mauguin_fmt'] for op in SpaceGroup.SYMM_OPS]
-
 
 class PyQmlProxy(QObject):
     _borg = borg
@@ -233,15 +231,16 @@ class PyQmlProxy(QObject):
 
     @Property('QVariant', notify=spaceGroupChanged)
     def spaceGroupsSystems(self):
-        return SpacegroupInfo.get_all_systems()
+        return [group[0].upper() + group[1:] for group in SpacegroupInfo.get_all_systems()]
 
     @Property(str, notify=spaceGroupChanged)
     def spaceGroupSystem(self):
-        return self.sample.phases[self.currentPhaseIndex].spacegroup.crystal_system
+        system = self.sample.phases[self.currentPhaseIndex].spacegroup.crystal_system
+        return system[0].upper() + system[1:]
 
     @spaceGroupSystem.setter
     def setSpaceGroupSystem(self, new_system: str):
-        ints = SpacegroupInfo.get_ints_from_system(new_system)
+        ints = SpacegroupInfo.get_ints_from_system(new_system.lower())
         name = SpacegroupInfo.get_symbol_from_int_number(ints[0])
         self._setCurrentSpaceGroup(name)
 
@@ -249,7 +248,7 @@ class PyQmlProxy(QObject):
 
     @Property('QVariant', notify=spaceGroupChanged)
     def spaceGroupsInts(self):
-        ints = SpacegroupInfo.get_ints_from_system(self.spaceGroupSystem)
+        ints = SpacegroupInfo.get_ints_from_system(self.spaceGroupSystem.lower())
         out_list = ["<font color='#999'>{}</font> {:s}".format(this_int, SpacegroupInfo.get_symbol_from_int_number(this_int)) for this_int in ints]
         out = {'display': out_list, 'index': ints }
         return out

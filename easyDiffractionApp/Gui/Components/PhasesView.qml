@@ -41,11 +41,12 @@ EaComponents.TableView {
             text: model.index + 1
         }
 
-        EaComponents.TableViewLabel {
+        EaComponents.TableViewTextInput {
             horizontalAlignment: Text.AlignLeft
             width: EaStyle.Sizes.fontPixelSize * 27.9
             headerText: "Label"
             text: model.label
+            onEditingFinished: ExGlobals.Constants.proxy.modifyPhaseName(text)
         }
 
         /*
@@ -73,6 +74,7 @@ EaComponents.TableView {
             headerText: "Del." //"\uf2ed"
             fontIcon: "minus-circle"
             ToolTip.text: qsTr("Remove this phase")
+            onClicked: ExGlobals.Constants.proxy.removePhase(model.label)
         }
 
     }

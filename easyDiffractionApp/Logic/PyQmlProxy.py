@@ -185,6 +185,15 @@ class PyQmlProxy(QObject):
         self.currentPhaseSitesChanged.emit()
         self.spaceGroupChanged.emit()
 
+    @Slot(str)
+    def removePhase(self, phase_name: str):
+        del self.sample.phases[phase_name]
+        self.updateCalculatedData()
+        self.phasesChanged.emit()
+        self.currentPhaseChanged.emit()
+        self.currentPhaseSitesChanged.emit()
+        self.spaceGroupChanged.emit()
+
     @Property(str, notify=phasesChanged)
     def phasesAsXml(self):
         phases = self.sample.phases.as_dict()['data']
@@ -206,6 +215,11 @@ class PyQmlProxy(QObject):
        self.currentPhaseChanged.emit()
        self.currentPhaseSitesChanged.emit()
        self.spaceGroupChanged.emit()
+
+    @Slot(str)
+    def modifyPhaseName(self, new_value: str):
+        self.sample.phases[self.currentPhaseIndex].name = new_value
+        self.phasesChanged.emit()
 
     @Property('QVariant', notify=currentPhaseSitesChanged)
     def currentPhaseAllSites(self):
@@ -235,6 +249,8 @@ class PyQmlProxy(QObject):
 
     @Property(str, notify=spaceGroupChanged)
     def spaceGroupSystem(self):
+        if len(self.sample.phases) == 0:
+            return 'Triclinic'
         system = self.sample.phases[self.currentPhaseIndex].spacegroup.crystal_system
         return system[0].upper() + system[1:]
 
@@ -259,6 +275,8 @@ class PyQmlProxy(QObject):
 
     @Property(int, notify=spaceGroupChanged)
     def spaceGroupInt(self):
+        if len(self.sample.phases) == 0:
+            return 0
         this_int = self.sample.phases[self.currentPhaseIndex].spacegroup.int_number
         idx = 0
         ints: list = self.spaceGroupsInts['index']
@@ -275,6 +293,8 @@ class PyQmlProxy(QObject):
     ## Setting
 
     def _currentSpaceGroupSettingList(self):
+        if len(self.sample.phases) == 0:
+            return []
         space_group_index = self.sample.phases[self.currentPhaseIndex].spacegroup.int_number
         setting_list = SpacegroupInfo.get_compatible_HM_from_int(space_group_index)
         return setting_list
@@ -286,6 +306,8 @@ class PyQmlProxy(QObject):
 
     @Property(int, notify=spaceGroupChanged)
     def curentSpaceGroupSettingIndex(self):
+        if len(self.sample.phases) == 0:
+            return 0
         setting = self.sample.phases[self.currentPhaseIndex].spacegroup.space_group_HM_name.raw_value
         i = self._currentSpaceGroupSettingList().index(setting)
         return i
@@ -304,6 +326,26 @@ class PyQmlProxy(QObject):
         self.currentPhaseChanged.emit()
         self.currentPhaseSitesChanged.emit()
         self.spaceGroupChanged.emit()
+
+    # Atoms
+    @Slot(str)
+    def removeAtom(self, atom_label: str):
+        del self.sample.phases[self.currentPhaseIndex].atoms[atom_label]
+        self.updateCalculatedData()
+        self.phasesChanged.emit()
+        self.currentPhaseChanged.emit()
+        self.currentPhaseSitesChanged.emit()
+
+    @Slot()
+    def addAtom(self):
+        try:
+            self.sample.phases[self.currentPhaseIndex].add_atom('X', 'X')
+        except AttributeError:
+            return
+        self.updateCalculatedData()
+        self.phasesChanged.emit()
+        self.currentPhaseChanged.emit()
+        self.currentPhaseSitesChanged.emit()
 
     # Fitables
 
@@ -350,6 +392,7 @@ class PyQmlProxy(QObject):
     @Slot(str, str)
     def editDescriptorValue(self, obj_id: str, new_value: str):
         self._editValue(obj_id, new_value)
+
 
     # Utils
 

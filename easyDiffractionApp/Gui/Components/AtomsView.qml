@@ -112,7 +112,7 @@ EaComponents.TableView {
             headerText: "Del." //"\uf2ed"
             fontIcon: "minus-circle"
             ToolTip.text: qsTr("Remove this atom")
-            onClicked: ExGlobals.Constants.proxy.removeConstraintByIndex(model.index)
+            onClicked: ExGlobals.Constants.proxy.removeAtom(model.label)
         }
 
     }

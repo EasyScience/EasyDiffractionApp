@@ -205,7 +205,9 @@ class PyQmlProxy(QObject):
        self.sample.phases = self.phases
        self.updateCalculatedData()
        self.phasesChanged.emit()
+       self.currentPhaseChanged.emit()
        self.currentPhaseSitesChanged.emit()
+       self.spaceGroupChanged.emit()
 
     @Property('QVariant', notify=currentPhaseSitesChanged)
     def currentPhaseAllSites(self):
@@ -241,18 +243,20 @@ class PyQmlProxy(QObject):
     def setSpaceGroupSystem(self, new_system: str):
         ints = SpacegroupInfo.get_ints_from_system(new_system)
         name = SpacegroupInfo.get_symbol_from_int_number(ints[0])
-        self.spaceGroupSetting = name
+        self._setCurrentSpaceGroup(name)
 
     ##
 
     @Property('QVariant', notify=spaceGroupChanged)
     def spaceGroupsInts(self):
         ints = SpacegroupInfo.get_ints_from_system(self.spaceGroupSystem)
-        out_list = ['{}  {:s}'.format(this_int, SpacegroupInfo.get_symbol_from_int_number(this_int)) for this_int in ints]
-        out = {'display': out_list,
-               'index': ints
-               }
+        out_list = ["<font color='#999'>{}</font> {:s}".format(this_int, SpacegroupInfo.get_symbol_from_int_number(this_int)) for this_int in ints]
+        out = {'display': out_list, 'index': ints }
         return out
+        #ints = SpacegroupInfo.get_ints_from_system(self.spaceGroupSystem)
+        #out_list = ["<font color='#999'>{}</font> {:s}".format(this_int, SpacegroupInfo.get_symbol_from_int_number(this_int)) for this_int in ints]
+        #display_list =  ["<font color='#999'>{}</font> {:s}".format(i, value) for i, value in enumerate(self._currentSpaceGroupSettingList())]
+        #return out
 
     @Property(int, notify=spaceGroupChanged)
     def spaceGroupInt(self):
@@ -267,23 +271,35 @@ class PyQmlProxy(QObject):
     def setSpaceGroupInt(self, idx: int):
         ints: list = self.spaceGroupsInts['index']
         name = SpacegroupInfo.get_symbol_from_int_number(ints[idx])
-        self.spaceGroupSetting = name
+        self._setCurrentSpaceGroup(name)
+
+    ## Setting
+
+    def _currentSpaceGroupSettingList(self):
+        space_group_index = self.sample.phases[self.currentPhaseIndex].spacegroup.int_number
+        setting_list = SpacegroupInfo.get_compatible_HM_from_int(space_group_index)
+        return setting_list
+
+    @Property('QVariant', notify=spaceGroupChanged)
+    def currentSpaceGroupSettingList(self):
+        display_list =  ["<font color='#999'>{}</font> {:s}".format(i+1, value) for i, value in enumerate(self._currentSpaceGroupSettingList())]
+        return display_list
+
+    @Property(int, notify=spaceGroupChanged)
+    def curentSpaceGroupSettingIndex(self):
+        setting = self.sample.phases[self.currentPhaseIndex].spacegroup.space_group_HM_name.raw_value
+        i = self._currentSpaceGroupSettingList().index(setting)
+        return i
+
+    @curentSpaceGroupSettingIndex.setter
+    def setCurrentSpaceGroupSettingIndex(self, i: int):
+        name = self._currentSpaceGroupSettingList()[i]
+        self._setCurrentSpaceGroup(name)
 
     ##
 
-    @Property('QVariant', notify=spaceGroupChanged)
-    def spaceGroupSettings(self):
-        this_int = self.sample.phases[self.currentPhaseIndex].spacegroup.int_number
-        opts = SpacegroupInfo.get_compatible_HM_from_int(this_int)
-        return opts
-
-    @Property(str, notify=spaceGroupChanged)
-    def spaceGroupSetting(self):
-        return self.sample.phases[self.currentPhaseIndex].spacegroup.space_group_HM_name.raw_value
-
-    @spaceGroupSetting.setter
-    def setSpaceGroupSetting(self, new_value: str):
-        self.sample.phases[self.currentPhaseIndex].spacegroup.space_group_HM_name = new_value
+    def _setCurrentSpaceGroup(self, name: str):
+        self.sample.phases[self.currentPhaseIndex].spacegroup.space_group_HM_name = name
         self.updateCalculatedData()
         self.phasesChanged.emit()
         self.currentPhaseChanged.emit()

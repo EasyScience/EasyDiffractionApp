@@ -53,9 +53,10 @@ Row {
 
         EaElements.ComboBox {
             width: EaStyle.Sizes.sideBarContentWidth / 3 - EaStyle.Sizes.fontPixelSize / 3 * 2
-            model: ExGlobals.Constants.proxy.spaceGroupSettings
-            currentIndex: indexOfValue(ExGlobals.Constants.proxy.spaceGroupSetting)
-            onActivated: ExGlobals.Constants.proxy.spaceGroupSetting = currentText
+            model: ExGlobals.Constants.proxy.currentSpaceGroupSettingList
+            currentIndex: ExGlobals.Constants.proxy.curentSpaceGroupSettingIndex
+            onActivated: ExGlobals.Constants.proxy.curentSpaceGroupSettingIndex = currentIndex
+            //onCurrentTextChanged: print("onCurrrentTextChanged", currentText, currentValue)
         }
     }
 }

@@ -15,17 +15,9 @@ EaComponents.TableView {
 
     model: XmlListModel {
         property int phaseIndex: ExGlobals.Constants.proxy.currentPhaseIndex + 1
-        //property int atomIndex: ExGlobals.Variables.currentAtomIndex + 1
-//        property string adpType: ""
-//        onAdpTypeChanged: print("???", adpType)
-
-        //xml: ExGlobals.Constants.proxy.phasesAsXml
-        //query: `/root/item[${phaseIndex}]/atoms/item`
 
         xml: ExGlobals.Constants.proxy.phasesAsXml
         query: `/root/item[${phaseIndex}]/atoms/data/item`
-
- //       onXmlChanged: print("+++", model.adp_type)
 
         XmlRole { name: "label"; query: "label/value/string()" }
         XmlRole { name: "adp_type"; query: "adp/adp_type/value/string()" }
@@ -58,47 +50,49 @@ EaComponents.TableView {
         }
 
         EaComponents.TableViewComboBox {
+            enabled: false
             width: adpAtomLabel.width * 1.2
-            currentIndex: model.indexOf(modelAdpType)
+            //currentIndex: model.indexOf(modelAdpType)
             headerText: "Type"
             model: ["Uiso", "Uani", "Biso", "Bani"]
+            Component.onCompleted: currentIndex = model.indexOf(modelAdpType)
         }
 
         EaComponents.TableViewTextInput {
             width: adpAtomLabel.width
-            headerText: "Uiso"
+            headerText: "Iso"
             text: model.adp_iso
             //onTextChanged: print("!!!!!", model.adp_iso)
         }
 
         EaComponents.TableViewTextInput {
             width: adpAtomLabel.width
-            headerText: "U11"
+            headerText: "Ani11"
         }
 
         EaComponents.TableViewTextInput {
             width: adpAtomLabel.width
-            headerText: "U22"
+            headerText: "Ani22"
         }
 
         EaComponents.TableViewTextInput {
             width: adpAtomLabel.width
-            headerText: "U33"
+            headerText: "Ani33"
         }
 
         EaComponents.TableViewTextInput {
             width: adpAtomLabel.width
-            headerText: "U12"
+            headerText: "Ani12"
         }
 
         EaComponents.TableViewTextInput {
             width: adpAtomLabel.width
-            headerText: "U13"
+            headerText: "Ani13"
         }
 
         EaComponents.TableViewTextInput {
             width: adpAtomLabel.width
-            headerText: "U23"
+            headerText: "Ani23"
         }
 
     }

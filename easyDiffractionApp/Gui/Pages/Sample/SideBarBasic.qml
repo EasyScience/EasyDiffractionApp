@@ -26,7 +26,7 @@ EaComponents.SideBarColumn {
                 enabled: ExGlobals.Constants.proxy.phaseList.length === 0
 
                 fontIcon: "upload"
-                text: qsTr("Set new sample from CIF")
+                text: qsTr("Set new phase from CIF")
 
                 onClicked: {
                     loadPhaseFileDialog.open()
@@ -39,7 +39,7 @@ EaComponents.SideBarColumn {
                 enabled: ExGlobals.Constants.proxy.phaseList.length === 0
 
                 fontIcon: "plus-circle"
-                text: qsTr("Set new sample manually")
+                text: qsTr("Set new phase manually")
 
                 onClicked: {
                     ExGlobals.Constants.proxy.addSampleManual()

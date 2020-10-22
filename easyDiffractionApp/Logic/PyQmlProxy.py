@@ -10,7 +10,6 @@ from PySide2.QtCore import QObject, Slot, Signal, Property
 from PySide2.QtCharts import QtCharts
 
 from easyCore import borg
-
 # borg.debug = True
 
 from easyCore.Symmetry.tools import SpacegroupInfo
@@ -19,16 +18,13 @@ from easyCore.Fitting.Constraints import ObjConstraint, NumericConstraint
 from easyCore.Utils.classTools import generatePath
 
 from easyDiffractionLib.sample import Sample
-from easyDiffractionLib import Crystals, Crystal, Site
+from easyDiffractionLib import Crystals, Crystal, Cell, Site, Atoms, SpaceGroup
 from easyDiffractionLib.interface import InterfaceFactory
 from easyDiffractionLib.Elements.Instruments.Instrument import Pattern
 
 from easyDiffractionApp.Logic.QtDataStore import QtDataStore
 from easyDiffractionApp.Logic.DisplayModels.DataModels import MeasuredDataModel, CalculatedDataModel
-
 from easyDiffractionApp.Logic.MatplotlibBackend import DisplayBridge
-
-from easyCore.Symmetry.groups import SpaceGroup
 
 
 class PyQmlProxy(QObject):
@@ -172,9 +168,11 @@ class PyQmlProxy(QObject):
 
     @Slot()
     def addSampleManual(self):
-        crystal = Crystal('Phase1')
-        atom = Site.default('Atom1', 'H')
+        cell = Cell.from_pars(2.91, 2.91, 2.91, 90, 90, 90)
+        spacegroup = SpaceGroup.from_pars('I m -3 m')
+        atom = Site.from_pars(label='Fe', specie='Fe3+', fract_x=0, fract_y=0, fract_z=0)
         atom.add_adp('Uiso', Uiso=0.0)
+        crystal = Crystal('Iron-Beta', spacegroup=spacegroup, cell=cell)
         crystal.add_atom(atom)
         self.sample.phases = crystal
         self.sample.phases.name = 'Phases'

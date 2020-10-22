@@ -254,8 +254,16 @@ EaComponents.ApplicationWindow {
 
             sideBar: EaComponents.SideBar {
                 tabs: [
-                    EaElements.TabButton { text: qsTr("Basic controls") },
-                    EaElements.TabButton { text: qsTr("Advanced controls") }
+                    EaElements.TabButton {
+                        id: analysisBasicControlsTabButton
+                        text: qsTr("Basic controls")
+                        Component.onCompleted: ExGlobals.Variables.analysisBasicControlsTabButton = analysisBasicControlsTabButton
+                    },
+                    EaElements.TabButton {
+                        id: analysisAdvancedControlsTabButton
+                        text: qsTr("Advanced controls")
+                        Component.onCompleted: ExGlobals.Variables.analysisAdvancedControlsTabButton = analysisAdvancedControlsTabButton
+                    }
                 ]
 
                 items: [

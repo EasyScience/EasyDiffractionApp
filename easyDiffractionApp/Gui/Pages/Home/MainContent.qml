@@ -254,8 +254,17 @@ Item {
         // Analysis Tab
 
         rc.mouseClick(ExGlobals.Variables.analysisTabButton)
-
         rc.wait(1000)
+        rc.mouseClick(ExGlobals.Variables.analysisAdvancedControlsTabButton)
+        rc.mouseClick(ExGlobals.Variables.calculatorSelector)
+        const x_pos = undefined
+        let y_pos = EaStyle.Sizes.comboBoxHeight * 1.5
+        rc.mouseClick(ExGlobals.Variables.calculatorSelector, x_pos, y_pos)
+        rc.wait(1000)
+        y_pos = undefined
+        rc.mouseClick(ExGlobals.Variables.calculatorSelector)
+        rc.mouseClick(ExGlobals.Variables.calculatorSelector)
+        rc.mouseClick(ExGlobals.Variables.analysisBasicControlsTabButton)
 
         // End
 

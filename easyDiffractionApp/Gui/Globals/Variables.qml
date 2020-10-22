@@ -31,6 +31,10 @@ QtObject {
     property var analysisTabButton
     property var summaryTabButton
 
+    // Sidebar controls tab buttons
+    property var analysisBasicControlsTabButton
+    property var analysisAdvancedControlsTabButton
+
     // Application bar tool buttons
     property var preferencesButton
 
@@ -50,6 +54,7 @@ QtObject {
 
     // Comboboxes
     property var themeSelector
+    property var calculatorSelector
 
     // Tables
     property var phasesTable

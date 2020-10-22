@@ -339,7 +339,7 @@ class PyQmlProxy(QObject):
     @Slot()
     def addAtom(self):
         try:
-            atom = Site.default('Atom2', 'H')
+            atom = Site.default('Label2', 'H')
             atom.add_adp('Uiso', Uiso=0.0)
             self.sample.phases[self.currentPhaseIndex].add_atom(atom)
 

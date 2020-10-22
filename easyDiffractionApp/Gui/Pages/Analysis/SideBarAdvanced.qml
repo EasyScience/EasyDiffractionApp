@@ -10,19 +10,23 @@ import Gui.Globals 1.0 as ExGlobals
 import Gui.Components 1.0 as ExComponents
 
 EaComponents.SideBarColumn {
-    property int independentParCurrentIndex: 0
-    property int dependentParCurrentIndex: 0
-    property int dependentParCurrentIndex2: 0
 
     EaElements.GroupBox {
         title: qsTr("Calculator")
         collapsed: false
 
         EaElements.ComboBox {
+            id: calculatorSelector
+
             width: 200
-            currentIndex: ExGlobals.Constants.proxy.calculatorIndex
             model: ExGlobals.Constants.proxy.calculatorList
             onActivated: ExGlobals.Constants.proxy.calculatorIndex = currentIndex
+
+            //currentIndex: ExGlobals.Constants.proxy.calculatorIndex
+            Component.onCompleted: {
+                ExGlobals.Variables.calculatorSelector = calculatorSelector
+                currentIndex = ExGlobals.Constants.proxy.calculatorIndex
+            }
         }
     }
 

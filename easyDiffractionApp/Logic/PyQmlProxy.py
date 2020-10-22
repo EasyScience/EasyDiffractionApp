@@ -18,8 +18,6 @@ from easyCore.Fitting.Fitting import Fitter
 from easyCore.Fitting.Constraints import ObjConstraint, NumericConstraint
 from easyCore.Utils.classTools import generatePath
 
-from easyExampleLib.interface import InterfaceFactory
-
 from easyDiffractionLib.sample import Sample
 from easyDiffractionLib import Crystals, Crystal
 from easyDiffractionLib.interface import InterfaceFactory

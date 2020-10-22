@@ -112,8 +112,4 @@ EaComponents.SideBarColumn {
         }
     }
 
-    // Logic
-
-
-
 }

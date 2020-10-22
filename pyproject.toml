@@ -26,7 +26,6 @@ matplotlib_backend_qtquick = { git = 'https://github.com/easyScience/matplotlib_
 # easyScience
 easyCore = { git = 'https://github.com/easyScience/easyCore.git', rev = 'STAR_io' }
 easyDiffractionLib = { git = 'https://github.com/easyScience/easyDiffractionLib.git', rev = 'DAS-271' }
-easyExampleLib = { git = 'https://github.com/easyScience/easyExampleLib.git', rev = 'master' }
 easyAppLogic = { git = 'https://github.com/easyScience/easyAppLogic.git', rev = 'master' }
 easyAppGui = { git = 'https://github.com/easyScience/easyAppGui.git', rev = 'master' }
 

@@ -102,8 +102,12 @@ Item {
                     onPressed: runTutorial1()
                 }
                 EaElements.Button {
-                    text: qsTr("Tutorial 2: App settings")
+                    text: qsTr("Tutorial 2: Data simulation")
                     onPressed: runTutorial2()
+                }
+                EaElements.Button {
+                    text: qsTr("Tutorial 3: App settings")
+                    onPressed: runTutorial3()
                 }
             }
         }
@@ -128,7 +132,7 @@ Item {
     Component.onCompleted: {
         if (EaGlobals.Variables.isTestMode) {
             print('TEST MODE')
-            runTutorial2()
+            runTutorial3()
         }
     }
 
@@ -211,6 +215,57 @@ Item {
 
     function runTutorial2() {
         print("* run Tutorial 2")
+
+        // Start
+
+        startSavingScreenshots()
+        rc.wait(1000)
+        rc.posToCenter()
+        rc.show()
+
+        // Home Tab
+
+        rc.mouseClick(ExGlobals.Variables.startButton)
+
+        // Project Tab
+
+        rc.mouseClick(ExGlobals.Variables.createProjectButton)
+
+        // Sample Tab
+
+        rc.mouseClick(ExGlobals.Variables.sampleTabButton)
+
+        rc.mouseClick(ExGlobals.Variables.setNewSampleManuallyButton)
+
+        rc.mouseClick(ExGlobals.Variables.symmetryGroup)
+        rc.mouseClick(ExGlobals.Variables.cellLengthALabel)
+        rc.hide()
+        rc.keyClick(Qt.Key_Right)
+        rc.clearText(1)
+        rc.typeText("4.5")
+        rc.keyClick(Qt.Key_Enter)
+        rc.show()
+
+        rc.mouseClick(ExGlobals.Variables.atomsGroup)
+        rc.mouseClick(ExGlobals.Variables.appendNewAtomButton)
+
+        rc.wait(1000)
+
+        // Analysis Tab
+
+        rc.mouseClick(ExGlobals.Variables.analysisTabButton)
+
+        rc.wait(1000)
+
+        // End
+
+        rc.hide()
+        rc.wait(1000)
+        endSavingScreenshots()
+    }
+
+    function runTutorial3() {
+        print("* run Tutorial 3")
 
         startSavingScreenshots()
         rc.wait(1000)

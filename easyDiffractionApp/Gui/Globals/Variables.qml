@@ -37,18 +37,16 @@ QtObject {
     // Main content and sidebar buttons
     property var startButton
     property var createProjectButton
-    property var addNewSampleButton
-    property var generateMeasuredDataButton
-    property var startFittingButton
+    property var setNewSampleManuallyButton
+    property var appendNewAtomButton
 
     // Sidebar group boxes
-    property var sampleParametersGroup
+    property var symmetryGroup
+    property var atomsGroup
+    property var adpsGroup
 
     // Sidebar text inputs
-    property var amplitudeTextInput
-    property var periodTextInput
-    property var xShiftValueTextInput
-    property var xShiftFitCheckBox
+    property var cellLengthALabel
 
     // Comboboxes
     property var themeSelector

@@ -47,16 +47,17 @@ EaComponents.TableView {
     delegate: EaComponents.TableViewDelegate {
 
         EaComponents.TableViewTextInput {
-            id: cellLabel
+            id: cellLengthALabel
             width: EaStyle.Sizes.fontPixelSize * 5.8
             headerText: "a (Å)"
             text: model.a
             onEditingFinished: editParameterValue(model.aId, text)
             enabled: model.a_enabled === 'True'
+            Component.onCompleted: ExGlobals.Variables.cellLengthALabel = cellLengthALabel
         }
 
         EaComponents.TableViewTextInput {
-            width: cellLabel.width
+            width: cellLengthALabel.width
             headerText: "b (Å)"
             text: model.b
             onEditingFinished: editParameterValue(model.bId, text)
@@ -64,7 +65,7 @@ EaComponents.TableView {
         }
 
         EaComponents.TableViewTextInput {
-            width: cellLabel.width
+            width: cellLengthALabel.width
             headerText: "c (Å)"
             text: model.c
             onEditingFinished: editParameterValue(model.cId, text)
@@ -72,7 +73,7 @@ EaComponents.TableView {
         }
 
         EaComponents.TableViewTextInput {
-            width: cellLabel.width
+            width: cellLengthALabel.width
             headerText: "alpha (°)"
             text: model.alpha
             onEditingFinished: editParameterValue(model.alphaId, text)
@@ -80,7 +81,7 @@ EaComponents.TableView {
         }
 
         EaComponents.TableViewTextInput {
-            width: cellLabel.width
+            width: cellLengthALabel.width
             headerText: "beta (°)"
             text: model.beta
             onEditingFinished: editParameterValue(model.betaId, text)
@@ -88,7 +89,7 @@ EaComponents.TableView {
         }
 
         EaComponents.TableViewTextInput {
-            width: cellLabel.width
+            width: cellLengthALabel.width
             headerText: "gamma (°)"
             text: model.gamma
             onEditingFinished: editParameterValue(model.gammaId, text)

@@ -34,6 +34,8 @@ EaComponents.SideBarColumn {
             }
 
             EaElements.SideBarButton {
+                id: setNewSampleManuallyButton
+
                 enabled: ExGlobals.Constants.proxy.phaseList.length === 0
 
                 fontIcon: "plus-circle"
@@ -45,6 +47,8 @@ EaComponents.SideBarColumn {
                     ExGlobals.Variables.sampleLoaded = true
                     ExGlobals.Variables.analysisPageEnabled = true
                 }
+
+                Component.onCompleted: ExGlobals.Variables.setNewSampleManuallyButton = setNewSampleManuallyButton
             }
         }
 
@@ -61,9 +65,12 @@ EaComponents.SideBarColumn {
             ExComponents.CellView { titleText: "Cell parameters" }
         }
 
+        Component.onCompleted: ExGlobals.Variables.symmetryGroup = symmetryGroup
     }
 
     EaElements.GroupBox {
+        id: atomsGroup
+
         title: qsTr("Atoms, atomic coordinates and occupations")
         enabled: ExGlobals.Variables.sampleLoaded
 
@@ -73,12 +80,14 @@ EaComponents.SideBarColumn {
             spacing: EaStyle.Sizes.fontPixelSize
 
             EaElements.SideBarButton {
+                id: appendNewAtomButton
+
                 fontIcon: "plus-circle"
                 text: qsTr("Append new atom")
 
-                onClicked: {
-                    ExGlobals.Constants.proxy.addAtom()
-                }
+                onClicked: ExGlobals.Constants.proxy.addAtom()
+
+                Component.onCompleted: ExGlobals.Variables.appendNewAtomButton = appendNewAtomButton
             }
 
             EaElements.SideBarButton {
@@ -88,13 +97,19 @@ EaComponents.SideBarColumn {
             }
 
         }
+
+        Component.onCompleted: ExGlobals.Variables.atomsGroup = atomsGroup
     }
 
     EaElements.GroupBox {
+        id: adpsGroup
+
         title: qsTr("Atomic displacement parameters")
         enabled: ExGlobals.Variables.sampleLoaded
 
         ExComponents.AdpsView {}
+
+        Component.onCompleted: ExGlobals.Variables.adpsGroup = adpsGroup
     }
 
     // Open phase CIF file dialog

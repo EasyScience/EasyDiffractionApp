@@ -39,6 +39,7 @@ EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
         title: qsTr("Test Group")
+        visible: false
         //collapsed: false
 
         Grid {

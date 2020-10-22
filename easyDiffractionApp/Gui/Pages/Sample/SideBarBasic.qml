@@ -23,8 +23,10 @@ EaComponents.SideBarColumn {
             spacing: EaStyle.Sizes.fontPixelSize
 
             EaElements.SideBarButton {
+                enabled: ExGlobals.Constants.proxy.phaseList.length === 0
+
                 fontIcon: "upload"
-                text: qsTr("Import new sample from CIF")
+                text: qsTr("Set new sample from CIF")
 
                 onClicked: {
                     loadPhaseFileDialog.open()
@@ -32,9 +34,10 @@ EaComponents.SideBarColumn {
             }
 
             EaElements.SideBarButton {
-                enabled: true
+                enabled: ExGlobals.Constants.proxy.phaseList.length === 0
+
                 fontIcon: "plus-circle"
-                text: qsTr("Add new sample manually")
+                text: qsTr("Set new sample manually")
 
                 onClicked: {
                     ExGlobals.Constants.proxy.addSampleManual()
@@ -71,26 +74,19 @@ EaComponents.SideBarColumn {
 
             EaElements.SideBarButton {
                 fontIcon: "plus-circle"
-                text: qsTr("Add new Atom")
+                text: qsTr("Append new atom")
 
                 onClicked: {
                     ExGlobals.Constants.proxy.addAtom()
                 }
             }
-            /*
-            EaElements.SideBarButton {
-                enabled: true
-                fontIcon: "plus-circle"
-                text: qsTr("Add new sample manually")
 
-                onClicked: {
-                    ExGlobals.Constants.proxy.addSampleManual()
-                    ExGlobals.Variables.experimentPageEnabled = true
-                    ExGlobals.Variables.sampleLoaded = true
-                    ExGlobals.Variables.analysisPageEnabled = true
-                }
+            EaElements.SideBarButton {
+                enabled: false
+                fontIcon: "clone"
+                text: qsTr("Duplicate selected atom")
             }
-            */
+
         }
     }
 
@@ -113,8 +109,6 @@ EaComponents.SideBarColumn {
             ExGlobals.Variables.experimentPageEnabled = true
             ExGlobals.Variables.sampleLoaded = true
             ExGlobals.Variables.analysisPageEnabled = true
-            //print(EaLogic.Utils.prettyJson(ExGlobals.Constants.proxy.phasesObj))
-            //loadPhaseFileDialog.close()
         }
     }
 

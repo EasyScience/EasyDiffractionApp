@@ -20,7 +20,7 @@ Row {
 
         EaElements.ComboBox {
             id: spaceGroupSystemSelect
-            width: EaStyle.Sizes.sideBarContentWidth / 3 - EaStyle.Sizes.fontPixelSize / 3 * 2
+            width: EaStyle.Sizes.sideBarContentWidth / 3 - EaStyle.Sizes.fontPixelSize * 2
             model: ExGlobals.Constants.proxy.spaceGroupsSystems
             currentIndex: indexOfValue(ExGlobals.Constants.proxy.spaceGroupSystem)
             onActivated: ExGlobals.Constants.proxy.spaceGroupSystem = currentText
@@ -36,7 +36,7 @@ Row {
         }
 
         EaElements.ComboBox {
-            width: EaStyle.Sizes.sideBarContentWidth / 3 - EaStyle.Sizes.fontPixelSize / 3 * 2
+            width: spaceGroupSystemSelect.width
             model: ExGlobals.Constants.proxy.spaceGroupsInts.display
             currentIndex: ExGlobals.Constants.proxy.spaceGroupInt
             onActivated: ExGlobals.Constants.proxy.spaceGroupInt = currentIndex
@@ -52,7 +52,7 @@ Row {
         }
 
         EaElements.ComboBox {
-            width: EaStyle.Sizes.sideBarContentWidth / 3 - EaStyle.Sizes.fontPixelSize / 3 * 2
+            width: spaceGroupSystemSelect.width + EaStyle.Sizes.fontPixelSize * 4.0
             model: ExGlobals.Constants.proxy.currentSpaceGroupSettingList
             currentIndex: ExGlobals.Constants.proxy.curentSpaceGroupSettingIndex
             onActivated: ExGlobals.Constants.proxy.curentSpaceGroupSettingIndex = currentIndex

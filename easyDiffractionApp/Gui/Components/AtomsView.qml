@@ -10,7 +10,12 @@ import easyAppGui.Logic 1.0 as EaLogic
 
 import Gui.Globals 1.0 as ExGlobals
 
-EaComponents.TableView {
+EaComponents.TableView { 
+    property bool enableDelButton:
+        typeof ExGlobals.Constants.proxy.phaseList[ExGlobals.Constants.proxy.currentPhaseIndex] !== 'undefined'
+        && ExGlobals.Constants.proxy.phaseList[ExGlobals.Constants.proxy.currentPhaseIndex].atoms.data.length > 1
+        ? true
+        : false
 
     // Table model
 
@@ -19,8 +24,6 @@ EaComponents.TableView {
 
         xml: ExGlobals.Constants.proxy.phasesAsXml
         query: `/root/item[${phaseIndex}]/atoms/data/item`
-
-        //onXmlChanged: print(EaLogic.Utils.prettyXml(ExGlobals.Constants.proxy.phasesAsXml))
 
         XmlRole { name: "label"; query: "label/value/string()" }
         XmlRole { name: "type"; query: "specie/value/string()" }
@@ -97,7 +100,7 @@ EaComponents.TableView {
 
         EaComponents.TableViewTextInput {
             width: atomLabel.width
-            headerText: "Occupancy"
+            headerText: "Occ."
             text: model.occupancy
             onEditingFinished: editParameterValue(model.occupancyId, text)
         }
@@ -109,6 +112,7 @@ EaComponents.TableView {
 
         EaComponents.TableViewButton {
             id: deleteRowColumn
+            enabled: enableDelButton
             headerText: "Del." //"\uf2ed"
             fontIcon: "minus-circle"
             ToolTip.text: qsTr("Remove this atom")
@@ -117,7 +121,7 @@ EaComponents.TableView {
 
     }
 
-    onCurrentIndexChanged: ExGlobals.Variables.atomsCurrentIndex = currentIndex
+    onCurrentIndexChanged: ExGlobals.Variables.currentAtomIndex = currentIndex
 
     // Logic
 

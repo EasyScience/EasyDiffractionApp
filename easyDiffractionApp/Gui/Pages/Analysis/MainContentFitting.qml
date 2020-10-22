@@ -59,11 +59,11 @@ Rectangle {
         }
 
         Rectangle {
-            width: 6
-            height: 6
-            radius: 3
+            width: 4
+            height: 4
+            radius: 2
             anchors.verticalCenter: parent.verticalCenter
-            color: EaStyle.Colors.themeBackgroundDisabled
+            color: EaStyle.Colors.themeForeground
         }
 
         EaElements.ToolButton {

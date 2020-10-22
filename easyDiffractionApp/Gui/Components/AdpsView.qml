@@ -15,7 +15,7 @@ EaComponents.TableView {
 
     model: XmlListModel {
         property int phaseIndex: ExGlobals.Constants.proxy.currentPhaseIndex + 1
-        //property int atomIndex: ExGlobals.Variables.atomsCurrentIndex + 1
+        //property int atomIndex: ExGlobals.Variables.currentAtomIndex + 1
 //        property string adpType: ""
 //        onAdpTypeChanged: print("???", adpType)
 
@@ -58,7 +58,7 @@ EaComponents.TableView {
         }
 
         EaComponents.TableViewComboBox {
-            width: adpAtomLabel.width * 1.1
+            width: adpAtomLabel.width * 1.2
             currentIndex: model.indexOf(modelAdpType)
             headerText: "Type"
             model: ["Uiso", "Uani", "Biso", "Bani"]

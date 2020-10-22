@@ -155,7 +155,7 @@ class PyQmlProxy(QObject):
     # Phases
 
     @Property('QVariant', notify=phasesChanged)
-    def phasesObj(self):
+    def phaseList(self):
         phases = self.sample.phases.as_dict()['data']
         return phases
 
@@ -174,7 +174,7 @@ class PyQmlProxy(QObject):
 
     @Slot()
     def addSampleManual(self):
-        crystal = Crystal('NewCrystal')
+        crystal = Crystal('Phase1')
         crystal.add_atom('Fe', 'Fe3+')
         self.sample.phases = crystal
         self.sample.phases.name = 'Phases'
@@ -236,6 +236,8 @@ class PyQmlProxy(QObject):
 
     @currentPhaseIndex.setter
     def setCurrentPhaseIndex(self, index: int):
+        if index == -1:
+            return
         self._current_phase_index = index
         self.phasesChanged.emit()
         self.updateCalculatedData()
@@ -250,7 +252,7 @@ class PyQmlProxy(QObject):
     @Property(str, notify=spaceGroupChanged)
     def spaceGroupSystem(self):
         if len(self.sample.phases) == 0:
-            return 'Triclinic'
+            return ''
         system = self.sample.phases[self.currentPhaseIndex].spacegroup.crystal_system
         return system[0].upper() + system[1:]
 
@@ -276,7 +278,7 @@ class PyQmlProxy(QObject):
     @Property(int, notify=spaceGroupChanged)
     def spaceGroupInt(self):
         if len(self.sample.phases) == 0:
-            return 0
+            return -1
         this_int = self.sample.phases[self.currentPhaseIndex].spacegroup.int_number
         idx = 0
         ints: list = self.spaceGroupsInts['index']
@@ -339,7 +341,7 @@ class PyQmlProxy(QObject):
     @Slot()
     def addAtom(self):
         try:
-            self.sample.phases[self.currentPhaseIndex].add_atom('X', 'X')
+            self.sample.phases[self.currentPhaseIndex].add_atom('Atom1', 'H')
         except AttributeError:
             return
         self.updateCalculatedData()

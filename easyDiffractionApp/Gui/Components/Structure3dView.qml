@@ -20,7 +20,7 @@ Rectangle {
     property real zTargetInitial: 0.0
     property int animationDuration: 1000
     property var currentPhaseAllSites: ExGlobals.Constants.proxy.currentPhaseAllSites
-    property var phasesObj: ExGlobals.Constants.proxy.phasesObj
+    property var phaseList: ExGlobals.Constants.proxy.phaseList
 
     color: EaStyle.Colors.mainContentBackground
 
@@ -116,7 +116,7 @@ Rectangle {
 
     // Update atoms
     //onCurrentPhaseAllSitesChanged: updateCell()
-    onPhasesObjChanged: updateCell()
+    onPhaseListChanged: updateCell()
 
     // Logic
 
@@ -149,12 +149,12 @@ Rectangle {
 
     function updateCell() {
         // Get phase
-        const phase = ExGlobals.Constants.proxy.phasesObj[ExGlobals.Constants.proxy.currentPhaseIndex]
+        const phase = ExGlobals.Constants.proxy.phaseList[ExGlobals.Constants.proxy.currentPhaseIndex]
         if (typeof phase === 'undefined' || !Object.keys(phase).length) {
             return
         }
 
-        ///print(JSON.stringify(ExGlobals.Constants.proxy.phasesObj))
+        ///print(JSON.stringify(ExGlobals.Constants.proxy.phaseList))
 
         // Unit cell parameters
         const a = phase.cell.length_a.value

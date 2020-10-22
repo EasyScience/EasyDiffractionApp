@@ -20,14 +20,19 @@ EaComponents.TableView {
     model: XmlListModel {
         property int phaseIndex: ExGlobals.Constants.proxy.currentPhaseIndex + 1
 
-        //xml: ExGlobals.Variables.sampleLoaded ? ExGlobals.Constants.proxy.phasesAsXml : ""
         xml: ExGlobals.Constants.proxy.phasesAsXml
         query: "/root/item"
 
-        //onXmlChanged: print(EaLogic.Utils.prettyXml(ExGlobals.Constants.proxy.phasesAsXml))
-
         XmlRole { name: "label"; query: "name/string()" }
         XmlRole { name: "color"; query: "color/string()" }
+
+        onXmlChanged: {
+            if (ExGlobals.Constants.proxy.phaseList.length === 0) {
+                ExGlobals.Variables.experimentPageEnabled = false
+                ExGlobals.Variables.sampleLoaded = false
+                ExGlobals.Variables.analysisPageEnabled = false
+            }
+        }
     }
 
     // Table rows
@@ -79,5 +84,8 @@ EaComponents.TableView {
 
     }
 
-    onCurrentIndexChanged: ExGlobals.Constants.proxy.currentPhaseIndex = currentIndex //ExGlobals.Constants.proxy.currentPhaseIndex = currentIndex
+    onCurrentIndexChanged: {
+        ExGlobals.Constants.proxy.currentPhaseIndex = currentIndex //ExGlobals.Constants.proxy.currentPhaseIndex = currentIndex
+    }
+
 }

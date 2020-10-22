@@ -56,9 +56,8 @@ QtObject {
     // Tables
     property var phasesTable
     property var parametersTable
-    property int currentPhaseIndex: 0
-    property int atomsCurrentIndex: 0
-    property int parametersCurrentIndex: 0
+    property int currentPhaseIndex: -1
+    property int currentAtomIndex: -1
 
     // Slider
     property string currentParameterId

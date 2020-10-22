@@ -19,7 +19,7 @@ from easyCore.Fitting.Constraints import ObjConstraint, NumericConstraint
 from easyCore.Utils.classTools import generatePath
 
 from easyDiffractionLib.sample import Sample
-from easyDiffractionLib import Crystals, Crystal
+from easyDiffractionLib import Crystals, Crystal, Site
 from easyDiffractionLib.interface import InterfaceFactory
 from easyDiffractionLib.Elements.Instruments.Instrument import Pattern
 
@@ -173,7 +173,9 @@ class PyQmlProxy(QObject):
     @Slot()
     def addSampleManual(self):
         crystal = Crystal('Phase1')
-        crystal.add_atom('Fe', 'Fe3+')
+        atom = Site.default('Atom1', 'H')
+        atom.add_adp('Uiso', Uiso=0.0)
+        crystal.add_atom(atom)
         self.sample.phases = crystal
         self.sample.phases.name = 'Phases'
         self.interface.generate_sample_binding("filename", self.sample)
@@ -339,7 +341,10 @@ class PyQmlProxy(QObject):
     @Slot()
     def addAtom(self):
         try:
-            self.sample.phases[self.currentPhaseIndex].add_atom('Atom1', 'H')
+            atom = Site.default('Atom1', 'H')
+            atom.add_adp('Uiso', Uiso=0.0)
+            self.sample.phases[self.currentPhaseIndex].add_atom(atom)
+
         except AttributeError:
             return
         self.updateCalculatedData()

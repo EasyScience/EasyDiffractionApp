@@ -168,11 +168,11 @@ class PyQmlProxy(QObject):
 
     @Slot()
     def addSampleManual(self):
-        cell = Cell.from_pars(2.91, 2.91, 2.91, 90, 90, 90)
-        spacegroup = SpaceGroup.from_pars('I m -3 m')
-        atom = Site.from_pars(label='Fe', specie='Fe3+', fract_x=0, fract_y=0, fract_z=0)
+        cell = Cell.from_pars(8.56, 8.56, 6.12, 90, 90, 90)
+        spacegroup = SpaceGroup.from_pars('P 42/n c m')
+        atom = Site.from_pars(label='Cl1', specie='Cl', fract_x=0.125, fract_y=0.167, fract_z=0.107)
         atom.add_adp('Uiso', Uiso=0.0)
-        crystal = Crystal('Iron-Beta', spacegroup=spacegroup, cell=cell)
+        crystal = Crystal('Dichlorine', spacegroup=spacegroup, cell=cell)
         crystal.add_atom(atom)
         self.sample.phases = crystal
         self.sample.phases.name = 'Phases'
@@ -339,7 +339,7 @@ class PyQmlProxy(QObject):
     @Slot()
     def addAtom(self):
         try:
-            atom = Site.default('Atom1', 'H')
+            atom = Site.default('Atom2', 'H')
             atom.add_adp('Uiso', Uiso=0.0)
             self.sample.phases[self.currentPhaseIndex].add_atom(atom)
 

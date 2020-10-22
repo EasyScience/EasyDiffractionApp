@@ -20,20 +20,28 @@ EaComponents.TableView {
         query: `/root/item[${phaseIndex}]/atoms/data/item`
 
         XmlRole { name: "label"; query: "label/value/string()" }
-        XmlRole { name: "adp_type"; query: "adp/adp_type/value/string()" }
-        XmlRole { name: "adp_iso"; query: `adp/adp_class/Uiso/value/number()` }
-        XmlRole { name: "adp_ani_11"; query: "adp_ani_11/number()" }
-        XmlRole { name: "adp_ani_22"; query: "adp_ani_22/number()" }
-        XmlRole { name: "adp_ani_33"; query: "adp_ani_33/number()" }
-        XmlRole { name: "adp_ani_12"; query: "adp_ani_12/number()" }
-        XmlRole { name: "adp_ani_13"; query: "adp_ani_13/number()" }
-        XmlRole { name: "adp_ani_23"; query: "adp_ani_23/number()" }
+        XmlRole { name: "adpType"; query: "adp/adp_type/value/string()" }
+        XmlRole { name: "adpIso"; query: `adp/adp_class/Uiso/value/number()` }
+        XmlRole { name: "adpAni11"; query: "adp_ani_11/number()" }
+        XmlRole { name: "adpAni22"; query: "adp_ani_22/number()" }
+        XmlRole { name: "adpAni33"; query: "adp_ani_33/number()" }
+        XmlRole { name: "adpAni12"; query: "adp_ani_12/number()" }
+        XmlRole { name: "adpAni13"; query: "adp_ani_13/number()" }
+        XmlRole { name: "adpAni23"; query: "adp_ani_23/number()" }
+
+        XmlRole { name: "adpIsoId"; query: "adp/adp_class/Uiso/key[4]/string()" }
+        XmlRole { name: "adpAni11Id"; query: "adp_ani_11/key[4]/string()" }
+        XmlRole { name: "adpAni22Id"; query: "adp_ani_22/key[4]/string()" }
+        XmlRole { name: "adpAni33Id"; query: "adp_ani_33/key[4]/string()" }
+        XmlRole { name: "adpAni12Id"; query: "adp_ani_12/key[4]/string()" }
+        XmlRole { name: "adpAni13Id"; query: "adp_ani_13/key[4]/string()" }
+        XmlRole { name: "adpAni23Id"; query: "adp_ani_23/key[4]/string()" }
     }
 
     // Table rows
 
     delegate: EaComponents.TableViewDelegate {
-        property string modelAdpType: model.adp_type
+        property string modelAdpType: model.adpType
 
         EaComponents.TableViewLabel {
             width: EaStyle.Sizes.fontPixelSize * 2.5
@@ -52,49 +60,67 @@ EaComponents.TableView {
         EaComponents.TableViewComboBox {
             enabled: false
             width: adpAtomLabel.width * 1.2
-            //currentIndex: model.indexOf(modelAdpType)
             headerText: "Type"
             model: ["Uiso", "Uani", "Biso", "Bani"]
+            //currentIndex: model.indexOf(modelAdpType)
             Component.onCompleted: currentIndex = model.indexOf(modelAdpType)
         }
 
         EaComponents.TableViewTextInput {
             width: adpAtomLabel.width
             headerText: "Iso"
-            text: model.adp_iso
-            //onTextChanged: print("!!!!!", model.adp_iso)
+            text: model.adpIso
+            onEditingFinished: editParameterValue(model.adpIsoId, text)
         }
 
         EaComponents.TableViewTextInput {
             width: adpAtomLabel.width
             headerText: "Ani11"
+            text: model.adpAni11
+            onEditingFinished: editParameterValue(model.adpAniId11, text)
         }
 
         EaComponents.TableViewTextInput {
             width: adpAtomLabel.width
             headerText: "Ani22"
+            text: model.adpAni22
+            onEditingFinished: editParameterValue(model.adpAniId22, text)
         }
 
         EaComponents.TableViewTextInput {
             width: adpAtomLabel.width
             headerText: "Ani33"
+            text: model.adpAni33
+            onEditingFinished: editParameterValue(model.adpAniId33, text)
         }
 
         EaComponents.TableViewTextInput {
             width: adpAtomLabel.width
             headerText: "Ani12"
+            text: model.adpAni12
+            onEditingFinished: editParameterValue(model.adpAniId12, text)
         }
 
         EaComponents.TableViewTextInput {
             width: adpAtomLabel.width
             headerText: "Ani13"
+            text: model.adpAni13
+            onEditingFinished: editParameterValue(model.adpAniId13, text)
         }
 
         EaComponents.TableViewTextInput {
             width: adpAtomLabel.width
             headerText: "Ani23"
+            text: model.adpAni23
+            onEditingFinished: editParameterValue(model.adpAniId23, text)
         }
 
+    }
+
+    // Logic
+
+    function editParameterValue(id, value) {
+        ExGlobals.Constants.proxy.editParameterValue(id, parseFloat(value))
     }
 
 }

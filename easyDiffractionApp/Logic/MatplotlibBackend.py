@@ -5,6 +5,8 @@ from easyCore import np
 from easyCore.Utils.classUtils import singleton
 
 import matplotlib
+
+from easyDiffractionApp.Logic.DataStore import DataStore, DataSet1D
 from matplotlib_backend_qtquick.qt_compat import QtGui, QtQml, QtCore
 from matplotlib_backend_qtquick.backend_qtquick import (
     NavigationToolbar2QtQuick)
@@ -31,26 +33,20 @@ class DisplayBridge(QtCore.QObject):
 
         # Set data
         self.style = Style()
-        self.data = {}
+        self.data = DataStore()
         self.current_canvas = None
 
-    def updateWithCanvas(self, canvas=None, data=None):
+    def updateWithCanvas(self, canvas=None):
         """ initialize with the canvas for the figure
         """
-
-        if data is None:
-            data = {}
 
         if not (self.current_canvas and self.context) and not (canvas and self.context):
             raise RuntimeError
         if canvas:
             self.current_canvas = self.context.findChild(QtCore.QObject, canvas)
 
-        if not data:
-            data['x'] = np.linspace(0, 2 * np.pi, 100)
-            data['y'] = np.sin(data['x'])
-
-        self.data = data
+        if not self.data:
+            self.data[0] = DataSet1D()
         self.redraw()
 
     def redraw(self):
@@ -66,9 +62,10 @@ class DisplayBridge(QtCore.QObject):
         self.axes = self.figure.add_subplot(111)
         self.axes.grid(True)
 
-        self.axes.plot(self.data['x'], self.data['y'])
-        self.axes.set_xlabel('Two Theta (degrees)')
-        self.axes.set_ylabel('Intensity (arb)')
+        for data in self.data:
+            self.axes.plot(data.x, data.y, label=data.name)
+        self.axes.set_xlabel(self.data.x_label)
+        self.axes.set_ylabel(self.data.y_label)
         self.current_canvas.draw_idle()
 
         # connect for displaying the coordinates

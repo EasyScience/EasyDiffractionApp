@@ -1,14 +1,12 @@
 import sys
 import os
 import json
-import numpy as np
 from dicttoxml import dicttoxml
-from distutils.util import strtobool
 from urllib.parse import urlparse
 
 from PySide2.QtCore import QObject, Slot, Signal, Property
-from PySide2.QtCharts import QtCharts
 
+from easyCore import np
 from easyCore import borg
 # borg.debug = True
 
@@ -16,14 +14,13 @@ from easyCore.Symmetry.tools import SpacegroupInfo
 from easyCore.Fitting.Fitting import Fitter
 from easyCore.Fitting.Constraints import ObjConstraint, NumericConstraint
 from easyCore.Utils.classTools import generatePath
+from easyDiffractionApp.Logic.DataStore import DataSet1D
 
 from easyDiffractionLib.sample import Sample
 from easyDiffractionLib import Crystals, Crystal, Cell, Site, Atoms, SpaceGroup
 from easyDiffractionLib.interface import InterfaceFactory
 from easyDiffractionLib.Elements.Instruments.Instrument import Pattern
 
-from easyDiffractionApp.Logic.QtDataStore import QtDataStore
-from easyDiffractionApp.Logic.DisplayModels.DataModels import MeasuredDataModel, CalculatedDataModel
 from easyDiffractionApp.Logic.MatplotlibBackend import DisplayBridge
 
 
@@ -54,13 +51,16 @@ class PyQmlProxy(QObject):
         self.sample.parameters.w_resolution=0.9
         self.sample.parameters.x_resolution=0.0
         self.sample.parameters.y_resolution=0.0
-
         x_data = np.linspace(5, 150, 1000)
-        self.data = QtDataStore(x_data, np.zeros_like(x_data), np.zeros_like(x_data), None)
-        self._calculated_data_model = CalculatedDataModel(self.data)
+        self.bridge.data.x_label = 'Two Theta (Degrees)'
+        self.bridge.data.y_label = 'Intensity (Arb)'
+        self.bridge.data.append(
+            DataSet1D(name='Simulator {:s}'.format(self.interface.current_interface_name),
+                      x=x_data, y=np.zeros_like(x_data))
+        )
+        self.data = self.bridge.data[0]
 
         self.project_info = self.initProjectInfo()
-
         self._current_phase_index = 0
 
         # when to emit status bar items cnahged
@@ -72,10 +72,8 @@ class PyQmlProxy(QObject):
     @Slot()
     def updateCalculatedData(self):
         self.sample.output_index = self.currentPhaseIndex
-        self.data.y_opt = self.interface.fit_func(self.data.x)
-        self._calculated_data_model.updateData(self.data)
-        self.bridge.updateWithCanvas('figure', {'x': self.data.x,
-                                                'y': self.data.y_opt})
+        self.data.y = self.interface.fit_func(self.data.x)
+        self.bridge.updateWithCanvas('figure')
         self.modelChanged.emit()
 
     # Calculator
@@ -91,27 +89,28 @@ class PyQmlProxy(QObject):
     @calculatorIndex.setter
     def setCalculator(self, index: int):
         self.interface.switch(self.calculatorList[index])
+        self.data.name = 'Simulator {:s}'.format(self.interface.current_interface_name)
         self.sample._updateInterface()
         self.updateCalculatedData()
         self.calculatorChanged.emit()
 
     # Charts
 
-    @Slot(QtCharts.QXYSeries)
-    def addMeasuredSeriesRef(self, series):
-        self._measured_data_model.addSeriesRef(series)
-
-    @Slot(QtCharts.QXYSeries)
-    def addLowerMeasuredSeriesRef(self, series):
-        self._measured_data_model.addLowerSeriesRef(series)
-
-    @Slot(QtCharts.QXYSeries)
-    def addUpperMeasuredSeriesRef(self, series):
-        self._measured_data_model.addUpperSeriesRef(series)
-
-    @Slot(QtCharts.QXYSeries)
-    def setCalculatedSeriesRef(self, series):
-        self._calculated_data_model.setSeriesRef(series)
+    # @Slot(QtCharts.QXYSeries)
+    # def addMeasuredSeriesRef(self, series):
+    #     self._measured_data_model.addSeriesRef(series)
+    #
+    # @Slot(QtCharts.QXYSeries)
+    # def addLowerMeasuredSeriesRef(self, series):
+    #     self._measured_data_model.addLowerSeriesRef(series)
+    #
+    # @Slot(QtCharts.QXYSeries)
+    # def addUpperMeasuredSeriesRef(self, series):
+    #     self._measured_data_model.addUpperSeriesRef(series)
+    #
+    # @Slot(QtCharts.QXYSeries)
+    # def setCalculatedSeriesRef(self, series):
+    #     self._calculated_data_model.setSeriesRef(series)
 
     # Status
 

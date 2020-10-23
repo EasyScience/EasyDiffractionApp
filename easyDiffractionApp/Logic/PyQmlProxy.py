@@ -52,8 +52,8 @@ class PyQmlProxy(QObject):
         self.sample.parameters.x_resolution=0.0
         self.sample.parameters.y_resolution=0.0
         x_data = np.linspace(5, 150, 1000)
-        self.bridge.data.x_label = 'Two Theta (Degrees)'
-        self.bridge.data.y_label = 'Intensity (Arb)'
+        self.bridge.data.x_label = '2theta (deg)'
+        self.bridge.data.y_label = 'Intensity (arb. units)'
         self.bridge.data.append(
             DataSet1D(name='Simulator {:s}'.format(self.interface.current_interface_name),
                       x=x_data, y=np.zeros_like(x_data))

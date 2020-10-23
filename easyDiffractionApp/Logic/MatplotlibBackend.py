@@ -61,6 +61,7 @@ class DisplayBridge(QtCore.QObject):
         # make a small plot
         self.axes = self.figure.add_subplot(111)
         self.axes.grid(True)
+        self.axes.tick_params(width=0)
 
         for data in self.data:
             self.axes.plot(data.x, data.y, label=data.name)
@@ -117,8 +118,6 @@ class DisplayBridge(QtCore.QObject):
     @QtCore.Slot(bool, 'QVariant')
     def updateStyle(self, is_dark_theme, rc_params):
         rc_params = rc_params.toVariant() # PySide2.QtQml.QJSValue -> dict
-        print("is_dark_theme", is_dark_theme)
-        print("rc_params", rc_params)
         self.style.style_override = rc_params
         self.style.dark_mode = is_dark_theme
         self.redraw()
@@ -132,6 +131,7 @@ class Style:
         self._base_style()
 
     def set_style(self):
+        self._base_style()
         if self.dark_mode:
             self._dark_style()
         self.current_style.update(self.style_override)
@@ -151,6 +151,7 @@ class Style:
             'xtick.color':      text_color,
             'ytick.color':      text_color,
             'lines.linewidth':  2,
+            'axes.labelpad':    12,
             'axes.prop_cycle':  matplotlib.rcsetup.cycler(color=['#ff7f50']),
             'axes.edgecolor':   '#ddd',
             'grid.color':       '#ddd',

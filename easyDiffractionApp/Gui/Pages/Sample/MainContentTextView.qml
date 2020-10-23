@@ -18,4 +18,12 @@ Item {
         }
     }
 
+    EaComponents.TableViewButton {
+        anchors.bottom: parent.bottom
+        anchors.right: parent.right
+        fontIcon: "sync-alt"
+        ToolTip.text: qsTr("Update")
+        onClicked: forceActiveFocus()
+    }
+
 }

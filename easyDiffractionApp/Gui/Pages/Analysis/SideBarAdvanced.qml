@@ -37,7 +37,8 @@ EaComponents.SideBarColumn {
         collapsed: false
 
         EaElements.CheckBox {
-            text: qsTr("Show Legend")
+            topPadding: 0
+            text: qsTr("Show legend")
             checked: ExGlobals.Variables.showLegend
             onCheckedChanged: displayBridge.showLegend(checked)
         }

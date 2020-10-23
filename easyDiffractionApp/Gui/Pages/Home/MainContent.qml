@@ -98,15 +98,15 @@ Item {
 
                 EaElements.Button {
                     enabled: false
-                    text: qsTr("Tutorial 1: Data fitting")
+                    text: qsTr("Tutorial 1") + ": " + qsTr("Data fitting")
                     onPressed: runTutorial1()
                 }
                 EaElements.Button {
-                    text: qsTr("Tutorial 2: Data simulation")
+                    text: qsTr("Tutorial 2") + ": " + qsTr("Data simulation")
                     onPressed: runTutorial2()
                 }
                 EaElements.Button {
-                    text: qsTr("Tutorial 3: App settings")
+                    text: qsTr("Tutorial 3") + ": " + qsTr("App settings")
                     onPressed: runTutorial3()
                 }
             }

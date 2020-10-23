@@ -12,11 +12,8 @@ import Gui.Components 1.0 as ExComponents
 
 Rectangle {
     property bool isDarkTheme: EaStyle.Colors.isDarkTheme
-
-    onIsDarkThemeChanged: {
-        print("onIsDarkThemeChanged", isDarkTheme)
-        displayBridge.updateStyle(isDarkTheme)
-    }
+    property var matplotlibRcParams: EaStyle.Colors.matplotlibRcParams
+    onIsDarkThemeChanged: displayBridge.updateStyle(isDarkTheme, matplotlibRcParams)
 
     color: "white"
 

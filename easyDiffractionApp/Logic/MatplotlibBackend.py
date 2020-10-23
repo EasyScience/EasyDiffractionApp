@@ -111,9 +111,11 @@ class DisplayBridge(QtCore.QObject):
         matplotlib.rcParams['axes.xmargin'] = 0.
 
     # Update style
-    @QtCore.Slot(bool)
-    def updateStyle(self, is_dark_theme):
+    @QtCore.Slot(bool, 'QVariant')
+    def updateStyle(self, is_dark_theme, rc_params):
+        rc_params = rc_params.toVariant() # PySide2.QtQml.QJSValue -> dict
         print("is_dark_theme", is_dark_theme)
+        print("rc_params", rc_params)
         #self.figure.clear()
         #self.figure.canvas.draw_idle()
         #self.figure.canvas.draw()

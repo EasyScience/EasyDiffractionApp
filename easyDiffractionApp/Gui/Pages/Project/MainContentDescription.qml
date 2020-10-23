@@ -7,8 +7,10 @@ import easyAppGui.Components 1.0 as EaComponents
 
 import Gui.Globals 1.0 as ExGlobals
 
-Item {
+Rectangle {
     readonly property int commonSpacing: EaStyle.Sizes.fontPixelSize * 1.5
+
+    color: EaStyle.Colors.mainContentBackground
 
     Column {
 

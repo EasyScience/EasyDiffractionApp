@@ -54,11 +54,11 @@ Rectangle {
             type: Theme3D.ThemeUserDefined
             ambientLightStrength: 0.5
             lightStrength: 5.0
-            windowColor: "white"
+            windowColor: EaStyle.Colors.chartBackground
             backgroundEnabled: false
             labelBackgroundEnabled: false
             labelBorderEnabled: false
-            labelTextColor: "grey"
+            labelTextColor: EaStyle.Colors.chartLabels
             gridEnabled: false
             //font.pointSize: 60
             //font.family: Generic.Style.fontFamily
@@ -78,7 +78,7 @@ Rectangle {
         Scatter3DSeries {
             mesh: Abstract3DSeries.MeshSphere
             itemSize: 0.03
-            baseColor: "grey"
+            baseColor: EaStyle.Colors.chartForeground
             colorStyle: Theme3D.ColorStyleUniform
 
             ItemModelScatterDataProxy {

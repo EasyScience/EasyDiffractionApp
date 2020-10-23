@@ -65,6 +65,8 @@ class DisplayBridge(QtCore.QObject):
 
         for data in self.data:
             self.axes.plot(data.x, data.y, label=data.name)
+        if self.data.show_legend:
+            self.axes.legend(loc="upper right")
         self.axes.set_xlabel(self.data.x_label)
         self.axes.set_ylabel(self.data.y_label)
         self.current_canvas.draw_idle()
@@ -120,6 +122,11 @@ class DisplayBridge(QtCore.QObject):
         rc_params = rc_params.toVariant() # PySide2.QtQml.QJSValue -> dict
         self.style.style_override = rc_params
         self.style.dark_mode = is_dark_theme
+        self.redraw()
+
+    @QtCore.Slot(bool)
+    def showLegend(self, show_legend):
+        self.data.show_legend = show_legend
         self.redraw()
 
 

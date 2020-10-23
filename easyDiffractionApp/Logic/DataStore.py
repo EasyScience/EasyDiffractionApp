@@ -29,6 +29,7 @@ class DataStore(Sequence, MSONable):
         self.x_label = x_label
         self.y_label = y_label
         self.items = list(args)
+        self.show_legend = False
 
     def __getitem__(self, i: int) -> T:
         return self.items.__getitem__(i)

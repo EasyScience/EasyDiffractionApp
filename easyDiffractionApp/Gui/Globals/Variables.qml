@@ -65,4 +65,7 @@ QtObject {
     // Slider
     property string currentParameterId
     property real currentParameterValue
+
+    // Plotting defaults
+    property bool showLegend: false
 }

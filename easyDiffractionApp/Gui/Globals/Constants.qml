@@ -18,4 +18,5 @@ QtObject {
     readonly property string appLogo: Qt.resolvedUrl("../Resources/Logo/App.svg")
 
     readonly property int sampleScale: 100
+
 }

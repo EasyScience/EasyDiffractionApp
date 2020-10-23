@@ -237,7 +237,7 @@ Item {
 
         rc.mouseClick(ExGlobals.Variables.setNewSampleManuallyButton)
 
-        rc.mouseClick(ExGlobals.Variables.symmetryGroup)
+        rc.mouseClick(ExGlobals.Variables.symmetryGroup, 15)
         rc.mouseClick(ExGlobals.Variables.cellLengthALabel)
         rc.hide()
         rc.keyClick(Qt.Key_Right)
@@ -247,7 +247,7 @@ Item {
         rc.keyClick(Qt.Key_Enter)
         rc.show()
 
-        rc.mouseClick(ExGlobals.Variables.atomsGroup)
+        rc.mouseClick(ExGlobals.Variables.atomsGroup, 15)
         rc.mouseClick(ExGlobals.Variables.appendNewAtomButton)
 
         rc.wait(1000)

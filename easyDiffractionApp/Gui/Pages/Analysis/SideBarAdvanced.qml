@@ -14,7 +14,7 @@ import Gui.Components 1.0 as ExComponents
 EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
-        title: qsTr("Calculator")
+        title: qsTr("Calculation engine")
         collapsed: false
 
         EaElements.ComboBox {

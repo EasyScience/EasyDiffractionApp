@@ -55,7 +55,7 @@ class PyQmlProxy(QObject):
         self.bridge.data.x_label = '2theta (deg)'
         self.bridge.data.y_label = 'Intensity (arb. units)'
         self.bridge.data.append(
-            DataSet1D(name='Simulator {:s}'.format(self.interface.current_interface_name),
+            DataSet1D(name='{:s} engine'.format(self.interface.current_interface_name),
                       x=x_data, y=np.zeros_like(x_data))
         )
         self.data = self.bridge.data[0]
@@ -89,7 +89,7 @@ class PyQmlProxy(QObject):
     @calculatorIndex.setter
     def setCalculator(self, index: int):
         self.interface.switch(self.calculatorList[index])
-        self.data.name = 'Simulator {:s}'.format(self.interface.current_interface_name)
+        self.data.name = '{:s} engine'.format(self.interface.current_interface_name)
         self.sample._updateInterface()
         self.updateCalculatedData()
         self.calculatorChanged.emit()
@@ -116,7 +116,7 @@ class PyQmlProxy(QObject):
 
     @Property(str, notify=statusChanged)
     def statusModelAsXml(self):
-        items = [{"label": "Calculator", "value": self.interface.current_interface_name}]
+        items = [{"label": "Engine", "value": self.interface.current_interface_name}]
         xml = dicttoxml(items, attr_type=False)
         xml = xml.decode()
         return xml

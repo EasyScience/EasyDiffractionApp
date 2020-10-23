@@ -286,13 +286,13 @@ Item {
         rc.mouseClick(ExGlobals.Variables.themeSelector)
 
         const x_pos = undefined
-        let y_pos = EaStyle.Colors.isDarkTheme ? EaStyle.Sizes.comboBoxHeight * 1.5 : undefined
+        let y_pos = !EaStyle.Colors.isDarkTheme ? EaStyle.Sizes.comboBoxHeight * 1.5 : undefined
         rc.mouseClick(ExGlobals.Variables.themeSelector, x_pos, y_pos)
 
         rc.wait(1000)
 
         rc.mouseClick(ExGlobals.Variables.themeSelector)
-        y_pos = EaStyle.Colors.isDarkTheme ? EaStyle.Sizes.comboBoxHeight * 1.5 : undefined
+        y_pos = !EaStyle.Colors.isDarkTheme ? EaStyle.Sizes.comboBoxHeight * 1.5 : undefined
         rc.mouseClick(ExGlobals.Variables.themeSelector, x_pos, y_pos)
 
         rc.wait(1000)

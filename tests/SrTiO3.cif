@@ -2,7 +2,7 @@ data_SrTiO3
 
 _cell_length_a   5.5202(2)
 _cell_length_b   5.5202(2)
-_cell_length_c   7.80670(0)
+_cell_length_c   7.8067(3)
 _cell_angle_alpha   90.0
 _cell_angle_beta   90.0
 _cell_angle_gamma   90.0

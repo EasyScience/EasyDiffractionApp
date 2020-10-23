@@ -34,7 +34,7 @@ class DisplayBridge(QtCore.QObject):
         self.data = {}
         self.current_canvas = None
 
-    def updateWithCanvas(self, canvas=None, data=None, style={}):
+    def updateWithCanvas(self, canvas=None, data=None):
         """ initialize with the canvas for the figure
         """
 
@@ -51,13 +51,14 @@ class DisplayBridge(QtCore.QObject):
             data['y'] = np.sin(data['x'])
 
         self.data = data
-        self.redraw(style=style)
+        self.redraw()
 
-    def redraw(self, style={}):
+    def redraw(self):
 
-        self.style.set_style(style)
+        self.style.set_style()
 
         self.figure = self.current_canvas.figure
+        self.figure.patch.set_color(self.style.current_style['figure.facecolor'])
         self.figure.clf()
         self.toolbar = NavigationToolbar2QtQuick(canvas=self.current_canvas)
 
@@ -115,56 +116,14 @@ class DisplayBridge(QtCore.QObject):
         if event.inaxes == self.axes:
             self.coordinates = f"({event.xdata:.2f}, {event.ydata:.2f})"
 
-    # # Set style
-    # def setStyle(self):
-    #
-    #     matplotlib.style.use('fivethirtyeight')
-    #
-    #     # matplotlib.rcParams["figure.figsize"] = (10, 6)
-    #     matplotlib.rcParams['lines.linewidth'] = 1
-    #
-    #     SIZE = 7
-    #     matplotlib.rcParams['axes.labelsize'] = SIZE
-    #     matplotlib.rcParams['ytick.labelsize'] = SIZE
-    #     matplotlib.rcParfacecolorams['xtick.labelsize'] = SIZE
-    #     matplotlib.rcParams["font.size"] = SIZE
-    #
-    #     COLOR = '1'
-    #     matplotlib.rcParams['text.color'] = COLOR
-    #     matplotlib.rcParams['axes.labelcolor'] = COLOR
-    #     matplotlib.rcParams['xtick.color'] = COLOR
-    #     matplotlib.rcParams['ytick.color'] = COLOR
-    #
-    #     matplotlib.rcParams['grid.linewidth'] = 0.1
-    #     matplotlib.rcParams['grid.color'] = "0.2"
-    #     matplotlib.rcParams['lines.color'] = "0.5"
-    #     matplotlib.rcParams['axes.edgecolor'] = "0.2"
-    #     matplotlib.rcParams['axes.linewidth'] = 0.5
-    #
-    #     matplotlib.rcParams['figure.facecolor'] = "#101622"
-    #     matplotlib.rcParams['axes.facecolor'] = "#101622"
-    #     matplotlib.rcParams["savefig.dpi"] = 120
-    #     dpi = matplotlib.rcParams["savefig.dpi"]
-    #     width = 700
-    #     height = 1200
-    #     # matplotlib.rcParams['figure.figsize'] = height / dpi, width / dpi
-    #     matplotlib.rcParams["savefig.facecolor"] = "#101622"
-    #     matplotlib.rcParams["savefig.edgecolor"] = "#101622"
-    #
-    #     matplotlib.rcParams['legend.fontsize'] = SIZE
-    #     matplotlib.rcParams['legend.title_fontsize'] = SIZE + 1
-    #     matplotlib.rcParams['legend.labelspacing'] = 0.25
-    #     matplotlib.rcParams['image.cmap'] = 'tab10'
-
     # Update style
     @QtCore.Slot(bool, 'QVariant')
     def updateStyle(self, is_dark_theme, rc_params):
         rc_params = rc_params.toVariant() # PySide2.QtQml.QJSValue -> dict
         print("is_dark_theme", is_dark_theme)
         print("rc_params", rc_params)
-        #self.figure.clear()
-        #self.figure.canvas.draw_idle()
-        #self.figure.canvas.draw()
+        self.style.style_override = rc_params
+        self.style.dark_mode = is_dark_theme
         self.redraw()
 
 
@@ -172,15 +131,16 @@ class Style:
     def __init__(self, dark_mode=False):
         self.dark_mode = dark_mode
         self.current_style = {}
+        self.style_override = {}
         self._base_style()
 
-    def set_style(self, style_override: dict = {}):
+    def set_style(self):
         if self.dark_mode:
             self._dark_style()
-        self.current_style.update(style_override)
+        self.current_style.update(self.style_override)
         matplotlib.rcParams.update(self.current_style)
 
-    def _base_style(self) -> dict:
+    def _base_style(self):
         # matplotlib.style.use('seaborn')
 
         bg_color = 'white'

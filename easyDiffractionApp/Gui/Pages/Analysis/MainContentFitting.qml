@@ -24,7 +24,6 @@ Rectangle {
         anchors.topMargin: -25
         anchors.bottomMargin: 0
         anchors.rightMargin: -55
-
         dpi_ratio: Screen.devicePixelRatio
     }
 

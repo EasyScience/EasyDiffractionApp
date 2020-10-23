@@ -8,6 +8,10 @@ import easyAppGui
 from easyAppLogic.Translate import Translator
 from easyDiffractionApp.Logic.PyQmlProxy import PyQmlProxy
 
+# Setup matplotlib styles
+mpl_cfg = os.path.join(os.path.join(os.path.dirname(sys.argv[0]), "easyDiffractionApp"), 'DisplayModels', 'cfg')
+os.environ['MPLCONFIGDIR'] = mpl_cfg
+
 from matplotlib_backend_qtquick.backend_qtquickagg import (
     FigureCanvasQtQuickAgg)
 from matplotlib_backend_qtquick.qt_compat import QtGui, QtQml, QtCore

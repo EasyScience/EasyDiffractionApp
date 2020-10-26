@@ -2,7 +2,6 @@ import sys
 import os
 import json
 from dicttoxml import dicttoxml
-from urllib.parse import urlparse
 
 from PySide2.QtCore import QObject, Slot, Signal, Property
 
@@ -14,13 +13,15 @@ from easyCore.Symmetry.tools import SpacegroupInfo
 from easyCore.Fitting.Fitting import Fitter
 from easyCore.Fitting.Constraints import ObjConstraint, NumericConstraint
 from easyCore.Utils.classTools import generatePath
-from easyDiffractionApp.Logic.DataStore import DataSet1D
 
 from easyDiffractionLib.sample import Sample
 from easyDiffractionLib import Crystals, Crystal, Cell, Site, Atoms, SpaceGroup
 from easyDiffractionLib.interface import InterfaceFactory
 from easyDiffractionLib.Elements.Instruments.Instrument import Pattern
 
+from easyAppLogic.Utils.Utils import generalizePath
+
+from easyDiffractionApp.Logic.DataStore import DataSet1D
 from easyDiffractionApp.Logic.MatplotlibBackend import DisplayBridge
 
 
@@ -52,6 +53,7 @@ class PyQmlProxy(QObject):
         self.sample.parameters.x_resolution=0.0
         self.sample.parameters.y_resolution=0.0
         x_data = np.linspace(5, 150, 1000)
+        self.bridge.data.x_label = '2theta (deg)'
         self.bridge.data.x_label = '2theta (deg)'
         self.bridge.data.y_label = 'Intensity (arb. units)'
         self.bridge.data.append(
@@ -154,7 +156,7 @@ class PyQmlProxy(QObject):
 
     @Slot(str)
     def addSampleFromCif(self, cif_path):
-        cif_path = self.generalizePath(cif_path)
+        cif_path = generalizePath(cif_path)
         crystals = Crystals.from_cif_file(cif_path)
         crystals.name = 'Phases'
         self.sample.phases = crystals
@@ -396,18 +398,3 @@ class PyQmlProxy(QObject):
         self._editValue(obj_id, new_value)
 
 
-    # Utils
-
-    def generalizePath(self, rcif_path: str) -> str:
-        """
-        Generalize the filepath to be platform-specific, so all file operations
-        can be performed.
-        :param URI rcfPath: URI to the file
-        :return URI filename: platform specific URI
-        """
-        filename = urlparse(rcif_path).path
-        if not sys.platform.startswith("win"):
-            return filename
-        if filename[0] == '/':
-            filename = filename[1:].replace('/', os.path.sep)
-        return filename

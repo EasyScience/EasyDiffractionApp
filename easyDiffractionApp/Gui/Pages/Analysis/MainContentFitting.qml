@@ -14,6 +14,10 @@ Rectangle {
     property bool isDarkTheme: EaStyle.Colors.isDarkTheme
     property var matplotlibRcParams: EaStyle.Colors.matplotlibRcParams
     onIsDarkThemeChanged: displayBridge.updateStyle(isDarkTheme, matplotlibRcParams)
+    Component.onCompleted: {
+        displayBridge.updateFont(EaStyle.Fonts.fontSource)
+        displayBridge.updateStyle(isDarkTheme, matplotlibRcParams)
+    }
 
     color: "white"
 

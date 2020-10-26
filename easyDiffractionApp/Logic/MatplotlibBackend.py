@@ -1,12 +1,15 @@
 __author__ = 'github.com/wardsimon'
 __version__ = '0.0.1'
 
+import os
+import matplotlib
+
 from easyCore import np
 from easyCore.Utils.classUtils import singleton
 
-import matplotlib
-
 from easyDiffractionApp.Logic.DataStore import DataStore, DataSet1D
+from easyAppLogic.Utils.Utils import generalizePath
+
 from matplotlib_backend_qtquick.qt_compat import QtGui, QtQml, QtCore
 from matplotlib_backend_qtquick.backend_qtquick import (
     NavigationToolbar2QtQuick)
@@ -51,7 +54,11 @@ class DisplayBridge(QtCore.QObject):
 
     def redraw(self):
 
+        #self.style.set_font()
         self.style.set_style()
+
+        if self.current_canvas is None:
+            return
 
         self.figure = self.current_canvas.figure
         self.figure.patch.set_color(self.style.current_style['figure.facecolor'])
@@ -124,6 +131,12 @@ class DisplayBridge(QtCore.QObject):
         self.style.dark_mode = is_dark_theme
         self.redraw()
 
+    @QtCore.Slot(str)
+    def updateFont(self, font_path):
+        font_path = generalizePath(font_path)
+        self.style.set_font(font_path)
+        self.redraw()
+
     @QtCore.Slot(bool)
     def showLegend(self, show_legend):
         self.data.show_legend = show_legend
@@ -137,6 +150,19 @@ class Style:
         self.style_override = {}
         self._base_style()
 
+    def set_font(self, font_path):
+        # https://stackoverflow.com/questions/35668219/how-to-set-up-a-custom-font-with-custom-path-to-matplotlib-global-font/43647344
+        # https://stackoverflow.com/questions/16574898/how-to-load-ttf-file-in-matplotlib-using-mpl-rcparams
+
+        font_dirs = [os.path.dirname(font_path)]
+        font_files = matplotlib.font_manager.findSystemFonts(fontpaths=font_dirs)
+        font_list = matplotlib.font_manager.createFontList(font_files)
+        matplotlib.font_manager.fontManager.ttflist.extend(font_list)
+        #print([f.name for f in matplotlib.font_manager.fontManager.ttflist])
+
+        prop = matplotlib.font_manager.FontProperties(fname=font_path)
+        matplotlib.rcParams['font.family'] = prop.get_name()
+
     def set_style(self):
         self._base_style()
         if self.dark_mode:
@@ -146,6 +172,8 @@ class Style:
 
     def _base_style(self):
         # matplotlib.style.use('seaborn')
+
+        #self.set_font()
 
         bg_color = 'white'
         axis_color = 'white'

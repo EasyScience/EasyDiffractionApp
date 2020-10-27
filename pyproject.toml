@@ -134,7 +134,7 @@ content_suffix = { macos = 'Contents/MacOS/', ubuntu = '', windows = '' }
 so = { macos = 'somacos', ubuntu = 'solinux', windows = 'sowindows' }
 missing_pyside2_files = { macos = ['libshiboken2.abi3.*.dylib'], ubuntu = [], windows = ['shiboken2.abi3.dll', 'MSVCP140.dll'] }
 missing_pyside2_plugins = { macos = [], ubuntu = ['Qt/plugins/xcbglintegrations'], windows = [] } # EGL and GLX plugins
-auto_exclude = { macos = ['_tkinter'], ubuntu = ['_tkinter'], windows = [''], all = [ 'lib2to3', '_bisect', '_bz2',
+auto_exclude = { macos = ['_tkinter'], ubuntu = ['_tkinter'], windows = [''], all = [ 'lib2to3', '_bisect',
                 '_codecs_cn', '_codecs_hk', '_codecs_iso2022', '_codecs_jp', '_codecs_kr', '_codecs_tw',
                 '_curses', '_elementtree', '_hashlib', '_heapq', '_lzma', '_multibytecodec', '_multiprocessing', '_opcode',
                 '_pickle', '_queue', '_scproxy', '_opcode', '_uuid', '_win32sysloader', 'grp', 'mmap', 'readline', 'termios' ] }

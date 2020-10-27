@@ -42,5 +42,6 @@ build
 *.log
 *.zip
 temp.cif
+temp.prm
 .ci/
 .idea/

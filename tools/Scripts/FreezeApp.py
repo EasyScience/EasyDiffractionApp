@@ -2,9 +2,11 @@ __author__ = "github.com/AndrewSazonov"
 __version__ = '0.0.1'
 
 import os, sys
+import importlib
 import glob
 import PySide2, shiboken2
-import easyExampleLib, easyAppGui, easyAppLogic
+import CFML_api, GSASII
+import easyCore, easyDiffractionLib, easyAppGui, easyAppLogic
 import Functions, Config
 from PyInstaller.__main__ import run as pyInstallerMain
 
@@ -26,7 +28,11 @@ def excludedModules():
 def addedData():
     separator = CONFIG['ci']['pyinstaller']['separator'][CONFIG.os]
     data = [{'from': CONFIG.package_name, 'to': CONFIG.package_name},
-            {'from': easyExampleLib.__path__[0], 'to': 'easyExampleLib'},
+            {'from': importlib.import_module(CONFIG['ci']['pyinstaller']['so'][CONFIG.os]).__path__[0], 'to': CONFIG['ci']['pyinstaller']['so'][CONFIG.os]},
+            {'from': CFML_api.__path__[0], 'to': 'CFML_api'},
+            {'from': GSASII.__path__[0], 'to': 'GSASII'},
+            {'from': easyCore.__path__[0], 'to': 'easyCore'},
+            {'from': easyDiffractionLib.__path__[0], 'to': 'easyDiffractionLib'},
             {'from': easyAppLogic.__path__[0], 'to': 'easyAppLogic'},
             {'from': easyAppGui.__path__[0], 'to': 'easyAppGui'},
             {'from': 'pyproject.py', 'to': '.'},

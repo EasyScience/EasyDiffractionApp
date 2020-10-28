@@ -68,7 +68,7 @@ numpy = "^1.19"
 type = "git"
 url = 'ssh://git@github.com/easyScience/CFML_api.git'
 reference = 'gsas'
-resolved_reference = "0057ff7990b7ccb3b4056140117313812bee64f2"
+resolved_reference = "9ffcfb2b1a554e93129d435a8e69d936ad9b3f18"
 
 [[package]]
 name = "chardet"

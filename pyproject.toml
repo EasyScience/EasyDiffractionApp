@@ -136,8 +136,8 @@ missing_pyside2_files = { macos = ['libshiboken2.abi3.*.dylib'], ubuntu = [], wi
 missing_pyside2_plugins = { macos = [], ubuntu = ['Qt/plugins/xcbglintegrations'], windows = [] } # EGL and GLX plugins
 auto_exclude = { macos = ['_tkinter'], ubuntu = ['_tkinter'], windows = [''], all = [ 'lib2to3', '_bisect',
                 '_codecs_cn', '_codecs_hk', '_codecs_iso2022', '_codecs_jp', '_codecs_kr', '_codecs_tw',
-                '_curses', '_elementtree', '_hashlib', '_heapq', '_lzma', '_multibytecodec', '_multiprocessing', '_opcode',
-                '_queue', '_scproxy', '_opcode', '_uuid', '_win32sysloader', 'grp', 'readline', 'termios' ] }
+                '_curses', '_elementtree', '_hashlib', '_heapq', '_lzma', '_multibytecodec', '_multiprocessing',
+                '_opcode', '_queue', '_opcode', '_uuid', '_win32sysloader', 'grp', 'readline', 'termios' ] }
 manual_exclude = [ 'd3dcompiler*', 'libbispeu*', 'libdqag*', 'libintl*', 'libvode*', 'mfc*', 'msvcp*', 'VCRUNTIME*',
                    '*Qt*3D*', '*Qt*Bluetooth*', '*Qt*Bodymovin*', '*Qt*Concurrent*', '*Qt*Gamepad*', '*Qt*Location*',
                    '*Qt*Multimedia*', '*Qt*Nfc*', '*Qt*Positioning*', '*Qt*Purchasing*', '*Qt*QuickParticles*', '*Qt*QuickShapes*',

@@ -154,18 +154,22 @@ class PyQmlProxy(QObject):
         phases = self.sample.phases.as_dict()['data']
         return phases
 
+    def _onSampleAdded(self):
+        if self.interface.current_interface_name != 'CrysPy':
+            self.interface.generate_sample_binding("filename", self.sample)
+        self.updateCalculatedData()
+        self.phasesChanged.emit()
+        self.currentPhaseChanged.emit()
+        self.currentPhaseSitesChanged.emit()
+        self.spaceGroupChanged.emit()
+
     @Slot(str)
     def addSampleFromCif(self, cif_path):
         cif_path = generalizePath(cif_path)
         crystals = Crystals.from_cif_file(cif_path)
         crystals.name = 'Phases'
         self.sample.phases = crystals
-        self.interface.generate_sample_binding("filename", self.sample)
-        self.updateCalculatedData()
-        self.phasesChanged.emit()
-        self.currentPhaseChanged.emit()
-        self.currentPhaseSitesChanged.emit()
-        self.spaceGroupChanged.emit()
+        self._onSampleAdded()
 
     @Slot()
     def addSampleManual(self):
@@ -177,12 +181,7 @@ class PyQmlProxy(QObject):
         crystal.add_atom(atom)
         self.sample.phases = crystal
         self.sample.phases.name = 'Phases'
-        self.interface.generate_sample_binding("filename", self.sample)
-        self.updateCalculatedData()
-        self.phasesChanged.emit()
-        self.currentPhaseChanged.emit()
-        self.currentPhaseSitesChanged.emit()
-        self.spaceGroupChanged.emit()
+        self._onSampleAdded()
 
     @Slot(str)
     def removePhase(self, phase_name: str):

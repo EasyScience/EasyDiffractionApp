@@ -131,7 +131,7 @@ venv_path = { macos = '/Users/runner/Library/Caches/pypoetry/virtualenvs', ubunt
 separator = { macos = ':', ubuntu = ':', windows = ';' }
 dir_suffix = { macos = '.app', ubuntu = '', windows = '' }
 content_suffix = { macos = 'Contents/MacOS/', ubuntu = '', windows = '' }
-so = { macos = 'somacos', ubuntu = 'solinux', windows = 'sowindows' }
+libs = { macos = 'libsDarwin', ubuntu = 'libsLinux', windows = 'libsWin32' }
 missing_pyside2_files = { macos = ['libshiboken2.abi3.*.dylib'], ubuntu = [], windows = ['shiboken2.abi3.dll', 'MSVCP140.dll'] }
 missing_pyside2_plugins = { macos = [], ubuntu = ['Qt/plugins/xcbglintegrations'], windows = [] } # EGL and GLX plugins
 auto_exclude = { macos = ['_tkinter'], ubuntu = ['_tkinter'], windows = [''], all = [ 'lib2to3', '_bisect',

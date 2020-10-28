@@ -79,7 +79,7 @@ jobs:
       run: |
         poetry env info
         poetry env use 3.7
-        poetry install
+        poetry update
 
     - name: Create freezed python app bundle
       run: poetry run python ${{ env.SCRIPTS_PATH }}/FreezeApp.py

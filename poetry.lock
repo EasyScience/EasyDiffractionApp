@@ -205,7 +205,7 @@ libsDarwin = {version = "rev main", markers = "sys_platform == \"darwin\""}
 type = "git"
 url = 'https://github.com/easyScience/easyDiffractionLib.git'
 reference = 'gsas'
-resolved_reference = "f94ed8186a9e9fd85dd83258db82827cc8ea60a6"
+resolved_reference = "24333df702c0f9fc0ebfe4dd65cf0710363e1ee4"
 
 [[package]]
 name = "ffmpeg-python"
@@ -422,7 +422,7 @@ develop = false
 type = "git"
 url = 'ssh://git@github.com/easyScience/libsWin32.git'
 reference = 'main'
-resolved_reference = "9b585d11f3861415c036887a38af3b0a4957de5d"
+resolved_reference = "2f730ada969857f24e10b94990075b6fb1bfeade"
 
 [[package]]
 name = "lmfit"

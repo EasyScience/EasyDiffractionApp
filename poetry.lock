@@ -205,7 +205,7 @@ libsDarwin = {version = "rev main", markers = "sys_platform == \"darwin\""}
 type = "git"
 url = 'https://github.com/easyScience/easyDiffractionLib.git'
 reference = 'gsas'
-resolved_reference = "bbd66a628cf60e6f45b8251a784e4a9c79993972"
+resolved_reference = "f94ed8186a9e9fd85dd83258db82827cc8ea60a6"
 
 [[package]]
 name = "ffmpeg-python"

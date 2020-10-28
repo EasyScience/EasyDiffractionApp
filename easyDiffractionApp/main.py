@@ -1,4 +1,5 @@
 import os, sys
+import tempfile
 from PySide2.QtCore import QUrl
 from PySide2.QtWidgets import QApplication
 from PySide2.QtQml import QQmlApplicationEngine
@@ -85,4 +86,8 @@ def main():
     sys.exit(app.exec_())
 
 if __name__ == '__main__':
+    save_stdout = sys.stdout
+    log_file = os.path.join(tempfile.gettempdir(), 'easydiffraction.log')
+    sys.stdout = open(log_file, 'w')
     main()
+    sys.stdout = save_stdout

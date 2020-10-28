@@ -1,5 +1,3 @@
-import sys
-import contextlib
 import json
 from dicttoxml import dicttoxml
 
@@ -23,18 +21,6 @@ from easyAppLogic.Utils.Utils import generalizePath
 
 from easyDiffractionApp.Logic.DataStore import DataSet1D
 from easyDiffractionApp.Logic.MatplotlibBackend import DisplayBridge
-
-
-class DummyFile(object):
-    def write(self, x): pass
-
-
-@contextlib.contextmanager
-def nostdout():
-    save_stdout = sys.stdout
-    sys.stdout = DummyFile()
-    yield
-    sys.stdout = save_stdout
 
 
 class PyQmlProxy(QObject):
@@ -85,11 +71,10 @@ class PyQmlProxy(QObject):
 
     @Slot()
     def updateCalculatedData(self):
-        with nostdout():
-            self.sample.output_index = self.currentPhaseIndex
-            self.data.y = self.interface.fit_func(self.data.x)
-            self.bridge.updateWithCanvas('figure')
-            self.modelChanged.emit()
+        self.sample.output_index = self.currentPhaseIndex
+        self.data.y = self.interface.fit_func(self.data.x)
+        self.bridge.updateWithCanvas('figure')
+        self.modelChanged.emit()
 
     # Calculator
 

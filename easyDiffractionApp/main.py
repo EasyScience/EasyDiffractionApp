@@ -1,5 +1,5 @@
 import os, sys
-import tempfile
+
 from PySide2.QtCore import QUrl
 from PySide2.QtWidgets import QApplication
 from PySide2.QtQml import QQmlApplicationEngine
@@ -7,6 +7,7 @@ from PySide2.QtQml import QQmlApplicationEngine
 import pyproject
 import easyAppGui
 from easyAppLogic.Translate import Translator
+import easyAppLogic.Logging
 from easyDiffractionApp.Logic.PyQmlProxy import PyQmlProxy
 
 # Setup matplotlib styles
@@ -80,14 +81,11 @@ def main():
     win = engine.rootObjects()[0]
     displayBridge.context = win
     displayBridge.updateWithCanvas('figure')
+
     # Event loop
     if not engine.rootObjects():
         sys.exit(-1)
     sys.exit(app.exec_())
 
 if __name__ == '__main__':
-    save_stdout = sys.stdout
-    log_file = os.path.join(tempfile.gettempdir(), 'easydiffraction.log')
-    sys.stdout = open(log_file, 'w')
     main()
-    sys.stdout = save_stdout

@@ -35,22 +35,17 @@ jobs:
       with:
         ssh-private-key: ${{ secrets.GH_WEBFACTORY_KEY }}
 
-    #- name: Set up Python environment
-    #  uses: actions/setup-python@v2
-    #  with:
-    #      python-version: 3.7 #3.8
-
-    - name: Set up Python environment (macOS)
-      run: |
-        mkdir -p .ci/download
-        curl -o .ci/download/python-3.7.6-macosx10.9.pkg https://www.python.org/ftp/python/3.7.6/python-3.7.6-macosx10.9.pkg
-        sudo installer -store -pkg .ci/download/python-3.7.6-macosx10.9.pkg -target /
+    - name: Set up Python environment
+      uses: actions/setup-python@v2
+      with:
+          python-version: 3.7 #3.8
 
     - name: Set up project config parser & Declare env variables
       shell: bash
       run: |
         pip install toml
         echo "SHORT_GITHUB_REF=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+        echo "PYTHON_LOCATION=$pythonLocation" >> $GITHUB_ENV
         echo "SCRIPTS_PATH=$(python pyproject.py ci.project.subdirs.scripts)" >> $GITHUB_ENV
         echo "DOWNLOAD_PATH=$(python pyproject.py ci.project.subdirs.download)" >> $GITHUB_ENV
         echo "DISTRIBUTION_PATH=$(python pyproject.py ci.project.subdirs.distribution)" >> $GITHUB_ENV
@@ -80,6 +75,9 @@ jobs:
         poetry env info
         poetry env use 3.7
         poetry update
+
+    - name: Relink CrysFML from default Python dylib
+      run: poetry run python ${{ env.SCRIPTS_PATH }}/RelinkCrysfml.py ${{ env.PYTHON_LOCATION }}
 
     - name: Create freezed python app bundle
       run: poetry run python ${{ env.SCRIPTS_PATH }}/FreezeApp.py

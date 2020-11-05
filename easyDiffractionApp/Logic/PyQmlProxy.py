@@ -71,6 +71,8 @@ class PyQmlProxy(QObject):
         # self.phaseChanged.connect(self.updateStructureView)
         # self.currentPhaseChanged.connect(self.updateStructureView)
 
+    # Structure view
+
     def updateStructureView(self):
         if self.vtkHandler is None or len(self.sample.phases) == 0:
             return
@@ -165,7 +167,8 @@ class PyQmlProxy(QObject):
     def _onSampleAdded(self):
         if self.interface.current_interface_name != 'CrysPy':
             self.interface.generate_sample_binding("filename", self.sample)
-        self.vtkHandler.plot_system2(self.sample.phases[0])
+        #self.vtkHandler.plot_system2(self.sample.phases[0])
+        self.updateStructureView()
         self.updateCalculatedData()
         self.phasesChanged.emit()
         self.currentPhaseChanged.emit()
@@ -195,7 +198,8 @@ class PyQmlProxy(QObject):
     @Slot(str)
     def removePhase(self, phase_name: str):
         del self.sample.phases[phase_name]
-        self.vtkHandler.clearScene()
+        #self.vtkHandler.clearScene()
+        self.updateStructureView()
         self.updateCalculatedData()
         self.phasesChanged.emit()
         self.currentPhaseChanged.emit()
@@ -218,6 +222,7 @@ class PyQmlProxy(QObject):
     def setPhasesAsCif(self, cif_str):
        self.phases = Crystals.from_cif_str(cif_str)
        self.sample.phases = self.phases
+       self.updateStructureView()
        self.updateCalculatedData()
        self.phasesChanged.emit()
        self.currentPhaseChanged.emit()
@@ -247,8 +252,9 @@ class PyQmlProxy(QObject):
         if index == -1:
             return
         self._current_phase_index = index
-        self.phasesChanged.emit()
+        self.updateStructureView()
         self.updateCalculatedData()
+        self.phasesChanged.emit()
         self.currentPhaseChanged.emit()
 
     # Space groups
@@ -331,6 +337,7 @@ class PyQmlProxy(QObject):
 
     def _setCurrentSpaceGroup(self, name: str):
         self.sample.phases[self.currentPhaseIndex].spacegroup.space_group_HM_name = name
+        self.updateStructureView()
         self.updateCalculatedData()
         self.phasesChanged.emit()
         self.currentPhaseChanged.emit()
@@ -338,9 +345,11 @@ class PyQmlProxy(QObject):
         self.spaceGroupChanged.emit()
 
     # Atoms
+
     @Slot(str)
     def removeAtom(self, atom_label: str):
         del self.sample.phases[self.currentPhaseIndex].atoms[atom_label]
+        self.updateStructureView()
         self.updateCalculatedData()
         self.phasesChanged.emit()
         self.currentPhaseChanged.emit()
@@ -352,9 +361,9 @@ class PyQmlProxy(QObject):
             atom = Site.default('Label2', 'H')
             atom.add_adp('Uiso', Uiso=0.0)
             self.sample.phases[self.currentPhaseIndex].add_atom(atom)
-
         except AttributeError:
             return
+        self.updateStructureView()
         self.updateCalculatedData()
         self.phasesChanged.emit()
         self.currentPhaseChanged.emit()
@@ -395,8 +404,9 @@ class PyQmlProxy(QObject):
         obj_id = int(obj_id)
         obj = borg.map.get_item_by_key(obj_id)
         obj.value = new_value
-        self.phasesChanged.emit()
+        self.updateStructureView()
         self.updateCalculatedData()
+        self.phasesChanged.emit()
 
     @Slot(str, float)
     def editParameterValue(self, obj_id: str, new_value: float):

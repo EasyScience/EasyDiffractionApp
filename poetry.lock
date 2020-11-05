@@ -156,7 +156,7 @@ dicttoxml = "^1.7.4"
 type = "git"
 url = 'https://github.com/easyScience/easyAppLogic.git'
 reference = 'master'
-resolved_reference = "20e58eed61a26999833fa0e335aede01425fe6f3"
+resolved_reference = "c96286ecfe2a7df15e180cce0ce415f5ad185bfa"
 
 [[package]]
 name = "easycore"
@@ -205,7 +205,7 @@ matplotlib = "^3.2, <3.3"
 type = "git"
 url = 'https://github.com/easyScience/easyDiffractionLib.git'
 reference = 'gsas'
-resolved_reference = "c4cb3221b1c901d8606b374992497f5378d0cb87"
+resolved_reference = "c7bf3339851a8e29ac920a7b0c7eb3891620b0a3"
 
 [[package]]
 name = "ffmpeg-python"

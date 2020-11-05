@@ -246,6 +246,7 @@ import QtVTK 1.0
             }
         }
 
+        /*
         Button {
             id: clearScene
             text: "Clear Scene"
@@ -273,6 +274,7 @@ import QtVTK 1.0
             ToolTip.delay: 1000
             ToolTip.text: "Open a 3D model into the canvas"
         }
+        */
     }
 
 

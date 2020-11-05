@@ -107,7 +107,7 @@ class VTKcanvasHandler(QObject):
         cubeVertices = np.array([[0, 0, 0], [0, 0, 1], [0, 1, 0], [0, 1, 1], [1, 0, 0], [1, 0, 1], [1, 1, 0], [1, 1, 1]])
         cubeEdges = np.array([[0, 1], [0, 2], [0, 4], [1, 3], [3, 2], [2, 6], [6, 4], [6, 7], [4, 5], [5, 7], [3, 7], [1, 5]])
         actors = []
-        radius = 0.05
+        radius = 0.035
 
         def rotation_matrix_from_vectors(vec1, vec2):
             """ Find the rotation matrix that aligns vec1 to vec2

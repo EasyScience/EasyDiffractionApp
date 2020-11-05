@@ -43,7 +43,7 @@ class PyQmlProxy(QObject):
         super().__init__(parent)
 
         self.interface = InterfaceFactory()
-
+        self.vtkHandler = None
         self.sample = Sample(parameters=Pattern.default(), interface=self.interface)
         self.sample.parameters.u_resolution=0.4
         self.sample.parameters.v_resolution=-0.5
@@ -66,7 +66,16 @@ class PyQmlProxy(QObject):
         # when to emit status bar items cnahged
         self.calculatorChanged.connect(self.statusChanged)
         self.minimizerChanged.connect(self.statusChanged)
-        self.vtkHandler = None
+        # Create a connection between this signal and a receiver, the receiver can be a Python callable, a Slot or a
+        # Signal. But why does it not work :-(
+        # self.phaseChanged.connect(self.updateStructureView)
+        # self.currentPhaseChanged.connect(self.updateStructureView)
+
+    def updateStructureView(self):
+        if self.vtkHandler is None or len(self.sample.phases) == 0:
+            return
+        self.vtkHandler.clearScene()
+        self.vtkHandler.plot_system2(self.sample.phases[0])
 
     # Calculated data
 
@@ -156,6 +165,7 @@ class PyQmlProxy(QObject):
     def _onSampleAdded(self):
         if self.interface.current_interface_name != 'CrysPy':
             self.interface.generate_sample_binding("filename", self.sample)
+        self.vtkHandler.plot_system2(self.sample.phases[0])
         self.updateCalculatedData()
         self.phasesChanged.emit()
         self.currentPhaseChanged.emit()
@@ -185,6 +195,7 @@ class PyQmlProxy(QObject):
     @Slot(str)
     def removePhase(self, phase_name: str):
         del self.sample.phases[phase_name]
+        self.vtkHandler.clearScene()
         self.updateCalculatedData()
         self.phasesChanged.emit()
         self.currentPhaseChanged.emit()

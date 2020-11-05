@@ -1,8 +1,9 @@
 import os, sys
 
-from PySide2.QtCore import QUrl
+from PySide2.QtCore import QUrl, qDebug, qCritical
+from PySide2.QtGui import Qt
 from PySide2.QtWidgets import QApplication
-from PySide2.QtQml import QQmlApplicationEngine
+from PySide2.QtQml import QQmlApplicationEngine, qmlRegisterType
 
 import pyproject
 import easyAppGui
@@ -11,6 +12,8 @@ import easyAppLogic.Logging
 from easyDiffractionApp.Logic.PyQmlProxy import PyQmlProxy
 
 # Setup matplotlib styles
+from easyDiffractionApp.Logic.VTKBackend import VTKcanvasHandler
+
 mpl_cfg = os.path.join(os.path.join(os.path.dirname(sys.argv[0]), "easyDiffractionApp"), 'DisplayModels', 'cfg')
 os.environ['MPLCONFIGDIR'] = mpl_cfg
 
@@ -18,6 +21,7 @@ from matplotlib_backend_qtquick.backend_qtquickagg import (
     FigureCanvasQtQuickAgg)
 from matplotlib_backend_qtquick.qt_compat import QtGui, QtQml, QtCore
 from easyDiffractionApp.Logic.MatplotlibBackend import DisplayBridge
+from easyDiffractionApp.Logic.VTK.QVTKFrameBufferObjectItem import FboItem
 
 CONFIG = pyproject.config()
 
@@ -27,6 +31,54 @@ def isTestMode():
         if 'test' in sys.argv[1:]:
             return True
     return False
+
+
+def defaultFormat(stereo_capable):
+    """ Po prostu skopiowałem to z https://github.com/Kitware/VTK/blob/master/GUISupport/Qt/QVTKRenderWindowAdapter.cxx
+     i działa poprawnie bufor głębokości
+  """
+    fmt = QtGui.QSurfaceFormat()
+    fmt.setRenderableType(QtGui.QSurfaceFormat.OpenGL)
+    fmt.setVersion(3, 2)
+    fmt.setProfile(QtGui.QSurfaceFormat.CoreProfile)
+    fmt.setSwapBehavior(QtGui.QSurfaceFormat.DoubleBuffer)
+    fmt.setRedBufferSize(8)
+    fmt.setGreenBufferSize(8)
+    fmt.setBlueBufferSize(8)
+    fmt.setDepthBufferSize(8)
+    fmt.setAlphaBufferSize(8)
+    fmt.setStencilBufferSize(0)
+    fmt.setStereo(stereo_capable)
+    fmt.setSamples(0)
+
+    return fmt
+
+
+class App(QApplication):
+
+    def __init__(self, sys_argv):
+        # sys_argv += ["-style", "material"]  #! MUST HAVE
+        self._m_vtkFboItem = None
+        QApplication.setAttribute(Qt.AA_UseDesktopOpenGL)
+        QtGui.QSurfaceFormat.setDefaultFormat(defaultFormat(False))  # from vtk 8.2.0
+        super(App, self).__init__(sys_argv)
+
+    def startApplication(self):
+        qDebug('CanvasHandler::startApplication()')
+        self._m_vtkFboItem.rendererInitialized.disconnect(self.startApplication)
+
+    def setup(self, engine):
+        # Get reference to the QVTKFramebufferObjectItem in QML
+        rootObject = engine.rootObjects()[0]  # returns QObject
+        self._m_vtkFboItem = rootObject.findChild(FboItem, 'vtkFboItem')
+
+        # Give the vtkFboItem reference to the CanvasHandler
+        if (self._m_vtkFboItem):
+            qDebug('CanvasHandler::CanvasHandler: setting vtkFboItem to CanvasHandler')
+            self._m_vtkFboItem.rendererInitialized.connect(self.startApplication)
+        else:
+            qCritical('CanvasHandler::CanvasHandler: Unable to get vtkFboItem instance')
+            return
 
 def main():
     QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
@@ -46,19 +98,26 @@ def main():
     # Create a proxy object between python logic and QML GUI
     py_qml_proxy_obj = PyQmlProxy()
 
+    # Expose VTK
+    qmlRegisterType(FboItem, 'QtVTK', 1, 0, 'VtkFboItem')
+
     # Create application and qml application engine
-    app = QApplication(sys.argv)
+    app = App(sys.argv)
     engine = QQmlApplicationEngine()
 
     # Display Bridge
     displayBridge = DisplayBridge()
 
+    handler = VTKcanvasHandler()
+
     # Expose the Python object to QML
     context = engine.rootContext()
     context.setContextProperty("displayBridge", displayBridge)
+    context.setContextProperty('canvasHandler', handler)
+
 
     # matplotlib stuff
-    QtQml.qmlRegisterType(FigureCanvasQtQuickAgg, "MatplotlibBackend", 1, 0, "FigureCanvas")
+    qmlRegisterType(FigureCanvasQtQuickAgg, "MatplotlibBackend", 1, 0, "FigureCanvas")
 
     # Create translator
     translator = Translator(app, engine, translations_path, languages)
@@ -81,6 +140,12 @@ def main():
     win = engine.rootObjects()[0]
     displayBridge.context = win
     displayBridge.updateWithCanvas('figure')
+
+    app.setup(engine)
+
+    handler.fbo = app._m_vtkFboItem
+    handler.context = win
+    py_qml_proxy_obj.vtkHandler = handler
 
     # Event loop
     if not engine.rootObjects():

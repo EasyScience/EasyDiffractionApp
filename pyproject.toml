@@ -28,6 +28,7 @@ easyCore = { git = 'https://github.com/easyScience/easyCore.git', rev = 'STAR_io
 easyDiffractionLib = { git = 'https://github.com/easyScience/easyDiffractionLib.git', rev = 'gsas' }
 easyAppLogic = { git = 'https://github.com/easyScience/easyAppLogic.git', rev = 'master' }
 easyAppGui = { git = 'https://github.com/easyScience/easyAppGui.git', rev = 'master' }
+vtk = "^8.1.2"
 
 [tool.poetry.dev-dependencies]
 # PyInstaller

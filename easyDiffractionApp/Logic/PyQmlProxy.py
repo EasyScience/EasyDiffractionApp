@@ -66,6 +66,7 @@ class PyQmlProxy(QObject):
         # when to emit status bar items cnahged
         self.calculatorChanged.connect(self.statusChanged)
         self.minimizerChanged.connect(self.statusChanged)
+        self.vtkHandler = None
 
     # Calculated data
 

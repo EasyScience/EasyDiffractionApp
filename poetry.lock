@@ -16,15 +16,15 @@ python-versions = ">=3.5"
 
 [[package]]
 name = "attrs"
-version = "20.2.0"
+version = "20.3.0"
 description = "Classes Without Boilerplate"
 category = "dev"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
 [package.extras]
-dev = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "six", "zope.interface", "sphinx", "sphinx-rtd-theme", "pre-commit"]
-docs = ["sphinx", "sphinx-rtd-theme", "zope.interface"]
+dev = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "six", "zope.interface", "furo", "sphinx", "pre-commit"]
+docs = ["furo", "sphinx", "zope.interface"]
 tests = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "six", "zope.interface"]
 tests_no_zope = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "six"]
 
@@ -392,7 +392,7 @@ develop = false
 type = "git"
 url = 'ssh://git@github.com/easyScience/libsDarwin.git'
 reference = 'main'
-resolved_reference = "3967eb888fec844702673353f7d54e8f811232e9"
+resolved_reference = "a7892cc6b3cd72c28d5cd3a6195f67c3bf4eb48f"
 
 [[package]]
 name = "libslinux"
@@ -744,6 +744,14 @@ secure = ["pyOpenSSL (>=0.14)", "cryptography (>=1.3.4)", "idna (>=2.0.0)", "cer
 socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 
 [[package]]
+name = "vtk"
+version = "8.1.2"
+description = "VTK is an open-source toolkit for 3D computer graphics, image processing, and visualization"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "zipp"
 version = "3.4.0"
 description = "Backport of pathlib-compatible object wrapper for zip files"
@@ -758,7 +766,7 @@ testing = ["pytest (>=3.5,!=3.7.3)", "pytest-checkdocs (>=1.2.3)", "pytest-flake
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7, <3.8"
-content-hash = "e4187d9bb5c06ce796ac2337a80065d938af52baf55e02398a1b492fbae5be77"
+content-hash = "b47253d13f3a304ae33938142a2137702e3f8186d6d60f95bd533e19b22318da"
 
 [metadata.files]
 altgraph = [
@@ -769,8 +777,8 @@ asteval = [
     {file = "asteval-0.9.19.tar.gz", hash = "sha256:445f3a59df692c0c0ff2868c0bbf9b293884db4a9f9a13c73555485ba75ed08b"},
 ]
 attrs = [
-    {file = "attrs-20.2.0-py2.py3-none-any.whl", hash = "sha256:fce7fc47dfc976152e82d53ff92fa0407700c21acd20886a13777a0d20e655dc"},
-    {file = "attrs-20.2.0.tar.gz", hash = "sha256:26b54ddbbb9ee1d34d5d3668dd37d6cf74990ab23c828c2888dccdceee395594"},
+    {file = "attrs-20.3.0-py2.py3-none-any.whl", hash = "sha256:31b2eced602aa8423c2aea9c76a724617ed67cf9513173fd3a4f03e3a929c7e6"},
+    {file = "attrs-20.3.0.tar.gz", hash = "sha256:832aa3cde19744e49938b91fea06d69ecb9e649c93ba974535d08ad92164f700"},
 ]
 bumps = [
     {file = "bumps-0.7.16.tar.gz", hash = "sha256:3594452487b8404f1efaace9b70aefaeb345fa44dd74349f7829a61161d2f69a"},
@@ -1086,6 +1094,19 @@ uncertainties = [
 urllib3 = [
     {file = "urllib3-1.25.11-py2.py3-none-any.whl", hash = "sha256:f5321fbe4bf3fefa0efd0bfe7fb14e90909eb62a48ccda331726b4319897dd5e"},
     {file = "urllib3-1.25.11.tar.gz", hash = "sha256:8d7eaa5a82a1cac232164990f04874c594c9453ec55eef02eab885aa02fc17a2"},
+]
+vtk = [
+    {file = "vtk-8.1.2-cp27-cp27m-macosx_10_6_x86_64.whl", hash = "sha256:ee17372ded18987480e3e07405f9b36fc4e2a0c1da1503628c4980a3957d7c98"},
+    {file = "vtk-8.1.2-cp27-cp27mu-manylinux1_x86_64.whl", hash = "sha256:8c6809a3526c8cf06b921dec06cd672f54baa3a050124f0f19f0adb6cf283aa4"},
+    {file = "vtk-8.1.2-cp35-cp35m-macosx_10_6_x86_64.whl", hash = "sha256:56e73eeba6402ba497a24ebdbe773cadbf01b9f7c12b3a2e26f8b40f203d718e"},
+    {file = "vtk-8.1.2-cp35-cp35m-manylinux1_x86_64.whl", hash = "sha256:28df91add29d9cdd6c49235b2c65e31ab50c8655c56ad1a5914b605e22554d7d"},
+    {file = "vtk-8.1.2-cp35-cp35m-win_amd64.whl", hash = "sha256:44454f9dd6c41f20b904b41e1ac0dd06cc3367952da1a8d8d3074e1a40dce916"},
+    {file = "vtk-8.1.2-cp36-cp36m-macosx_10_6_x86_64.whl", hash = "sha256:cd68246764412e8f6855e8e73772392aa826b9d6c3d59e7544ce22af1ad7dcc8"},
+    {file = "vtk-8.1.2-cp36-cp36m-manylinux1_x86_64.whl", hash = "sha256:34b43d32609d81d94a7122e388f7d6a0883138438484d0ee29158726810f6704"},
+    {file = "vtk-8.1.2-cp36-cp36m-win_amd64.whl", hash = "sha256:5c2634afaabd2243c5fbe0f4aa9cff66537cfbcb5d4893e93c31cfce878a413c"},
+    {file = "vtk-8.1.2-cp37-cp37m-macosx_10_6_x86_64.whl", hash = "sha256:110dd7d730584b2e8c13e15f1b245d1b5afb9a6e163223e1fb0e775cec818e92"},
+    {file = "vtk-8.1.2-cp37-cp37m-manylinux1_x86_64.whl", hash = "sha256:d4d834d29abf98c67a63328c271e82bde3f769cbae295fb91e840bead2298d13"},
+    {file = "vtk-8.1.2-cp37-cp37m-win_amd64.whl", hash = "sha256:e790aed1a776d3682b2c38a5a795a0f46e3043f96ed113a3bbaf7ef5eaaeba08"},
 ]
 zipp = [
     {file = "zipp-3.4.0-py3-none-any.whl", hash = "sha256:102c24ef8f171fd729d46599845e95c7ab894a4cf45f5de11a44cc7444fb1108"},

@@ -150,7 +150,6 @@ class VTKcanvasHandler(QObject):
             transformPD.SetTransform(transform)
             transformPD.SetInputConnection(polyDataSource.GetOutputPort())
 
-
             transform2 = vtk.vtkTransform()
             wxyz2 = np.identity(4)
             wxyz2[0:3, 3] = - lattice.get_cartesian_coords([0.5, 0.5, 0.5])
@@ -165,7 +164,7 @@ class VTKcanvasHandler(QObject):
             mapper.SetInputConnection(transformPD2.GetOutputPort())
             actor = vtk.vtkActor()
             actor.SetMapper(mapper)
-            actor.GetProperty().SetColor([0.05, 0.05, 0.05])
+            actor.GetProperty().SetColor([0.40, 0.40, 0.40]) # Lattice color
 
             actors.append(actor)
         return actors
@@ -244,12 +243,14 @@ class VTKcanvasHandler(QObject):
     def create_atoms2(self, system):
         atoms = system.all_sites()
         lattice = system.cell
-        res = 50
         actors = []
-        radius = 0.05 * min(lattice.lengths)
+        colors = ["#ff7f50", "#4682b4", "#6b8e23", "#d2691e", "#5f9ea0", "#8fbc8f", "#6495ed"]
+        radii = [(0.06 + 0.004*i) * min(lattice.lengths) for i in range(len(colors))]
+        res = 50
 
-        for atom_name in atoms.keys():
-            col = np.random.random(size=(1, 3))
+        for atom_index, atom_name in enumerate(atoms.keys()):
+            radius = radii[atom_index]
+            color = self.hex_to_rgb(colors[atom_index])
             for atom in atoms[atom_name]:
                 polyDataSource = vtk.vtkSphereSource()
                 polyDataSource.SetRadius(radius)
@@ -271,7 +272,11 @@ class VTKcanvasHandler(QObject):
                 mapper.SetInputConnection(transformPD.GetOutputPort())
                 actor = vtk.vtkActor()
                 actor.SetMapper(mapper)
-                actor.GetProperty().SetColor(*col)
+                actor.GetProperty().SetColor(color)
+                actor.GetProperty().SetAmbient(0.35)
+                actor.GetProperty().SetDiffuse(0.55)
+                actor.GetProperty().SetSpecular(0.5)
+                actor.GetProperty().SetSpecularPower(7.0)
                 actors.append(actor)
         return actors
 
@@ -321,3 +326,9 @@ class VTKcanvasHandler(QObject):
     @Slot(int, int, int)
     def mouseReleaseEvent(self, button: int, screenX: int, screenY: int):
         qDebug('CanvasHandler::mouseReleaseEvent()')
+
+    def hex_to_rgb(self, hex):
+        hex = hex.lstrip('#')
+        rgb = [int(hex[i:i + 2], 16) for i in (0, 2, 4)]
+        rgb = [i/255 for i in rgb]
+        return rgb

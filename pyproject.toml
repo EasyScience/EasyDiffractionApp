@@ -23,12 +23,12 @@ python = "^3.7, <3.8"
 #python = '3.7' # PyInstaller 3.6 doesn't support Python 3.8
 matplotlib = "^3.2, <3.3"
 matplotlib_backend_qtquick = { git = 'https://github.com/easyScience/matplotlib_backend_qtquick', rev = 'master' }
+vtk = "^8.1"
 # easyScience
 easyCore = { git = 'https://github.com/easyScience/easyCore.git', rev = 'STAR_io' }
 easyDiffractionLib = { git = 'https://github.com/easyScience/easyDiffractionLib.git', rev = 'gsas' }
 easyAppLogic = { git = 'https://github.com/easyScience/easyAppLogic.git', rev = 'master' }
 easyAppGui = { git = 'https://github.com/easyScience/easyAppGui.git', rev = 'master' }
-vtk = "^8.1.2"
 
 [tool.poetry.dev-dependencies]
 # PyInstaller

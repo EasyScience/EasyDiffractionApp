@@ -6,6 +6,7 @@ import vtk
 class SceneHelper:
     def __init__(self, renderer=None):
         self.renderer = renderer
+        self.renderer.UseFXAAOn()  # enable antialiasing
 
         self.__m_platformModel: vtk.vtkCubeSource = None
         self.__m_platformGrid: vtk.vtkPolyData = None
@@ -23,18 +24,20 @@ class SceneHelper:
         qDebug('RendererHelper::initScene()')
 
         # * Top background color
-        r2 = 245.0 / 255.0
-        g2 = 245.0 / 255.0
-        b2 = 245.0 / 255.0
+        #r2 = 245.0 / 255.0
+        #g2 = 245.0 / 255.0
+        #b2 = 245.0 / 255.0
 
         # * Bottom background color
-        r1 = 170.0 / 255.0
-        g1 = 170.0 / 255.0
-        b1 = 170.0 / 255.0
+        #r1 = 170.0 / 255.0
+        #g1 = 170.0 / 255.0
+        #b1 = 170.0 / 255.0
 
-        self.renderer.SetBackground(r2, g2, b2)
-        self.renderer.SetBackground2(r1, g1, b1)
-        self.renderer.GradientBackgroundOn()
+        #self.renderer.SetBackground(r2, g2, b2)
+        #self.renderer.SetBackground2(r1, g1, b1)
+        #self.renderer.GradientBackgroundOn()
+
+        self.renderer.SetBackground(255, 255, 255)
 
         # # #* Axes
         # axes = vtk.vtkAxesActor()

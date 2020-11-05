@@ -105,9 +105,10 @@ def main():
     app = App(sys.argv)
     engine = QQmlApplicationEngine()
 
-    # Display Bridge
+    # Matplotlib display bridge
     displayBridge = DisplayBridge()
 
+    # VTK handler
     handler = VTKcanvasHandler()
 
     # Expose the Python object to QML

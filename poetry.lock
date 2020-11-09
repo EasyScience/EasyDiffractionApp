@@ -180,7 +180,7 @@ matplotlib = "^3.2, <3.3"
 type = "git"
 url = 'https://github.com/easyScience/easyDiffractionLib.git'
 reference = 'gsas'
-resolved_reference = "4249b47328cbcc96cfab6a73e43380a694d779a9"
+resolved_reference = "c7c41176978e3d381ad42bf3412603885f290488"
 
 [[package]]
 name = "ffmpeg-python"
@@ -348,7 +348,7 @@ develop = false
 type = "git"
 url = 'ssh://git@github.com/easyScience/libsLinux.git'
 reference = 'main'
-resolved_reference = "06c433d86ae29b322b786f7762012896bd860c96"
+resolved_reference = "1134e8d91dd2aca27b7d64ed1935f765f350daf7"
 
 [[package]]
 name = "libswin32"
@@ -363,7 +363,7 @@ develop = false
 type = "git"
 url = 'ssh://git@github.com/easyScience/libsWin32.git'
 reference = 'main'
-resolved_reference = "76cdba6b8b91fe6828a8769014b87cc41fc9c843"
+resolved_reference = "f0848ac19e926f5a1437c89d3d14eebfcfce4a4d"
 
 [[package]]
 name = "lmfit"

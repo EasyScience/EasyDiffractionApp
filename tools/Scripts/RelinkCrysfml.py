@@ -42,7 +42,17 @@ def relinkCrysfml():
         if CONFIG.os == 'macos':
             Functions.run('install_name_tool', '-change', crysfmlPythonDylib(), pythonDylib(), crysfmlSo())
         elif CONFIG.os == 'ubuntu':
+            Functions.run('sudo', 'apt-get', 'update', '-y')
+            Functions.run('sudo', 'apt-get', 'install', '-y', 'patchelf')
+            # Python lib
             Functions.run('patchelf', '--replace-needed', crysfmlPythonDylib(), pythonDylib(), crysfmlSo())
+            # Intel fortran libs
+            # Instead of LD_LIBRARY_PATH...
+            import libsLinux
+            lib_path = os.path.join(list(libsLinux.__path__)[0], 'lib')
+            libs = ['libifcoremt.so.5', 'libifport.so.5', 'libimf.so', 'libintlc.so.5', 'libsvml.so']
+            for lib in libs:
+                Functions.run('patchelf', '--replace-needed', lib, os.path.join(lib_path, lib), crysfmlSo())
         else:
             Functions.printFailMessage(f'Platform {CONFIG.os} is unsupported')
     except Exception as exception:

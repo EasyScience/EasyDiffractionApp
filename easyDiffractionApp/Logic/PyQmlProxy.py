@@ -50,7 +50,7 @@ class PyQmlProxy(QObject):
         self.sample.parameters.w_resolution=0.9
         self.sample.parameters.x_resolution=0.0
         self.sample.parameters.y_resolution=0.0
-        x_data = np.linspace(5, 150, 1000)
+        x_data = np.linspace(0, 130, 1301)
         self.bridge.data.x_label = '2theta (deg)'
         self.bridge.data.x_label = '2theta (deg)'
         self.bridge.data.y_label = 'Intensity (arb. units)'

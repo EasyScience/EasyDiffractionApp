@@ -26,10 +26,10 @@ def crysfmlPythonDylib():
 def crysfmlSo():
     lib = CONFIG['ci']['pyinstaller']['libs'][CONFIG.os]
     lib_path = importlib.import_module(lib).__path__[0]
-    so_location = os.path.join(lib_path, 'CFML')
+    so_location = os.path.join(lib_path, 'CFML_api')
     so_file = {
-        'macos': 'powder_generation.so',
-        'ubuntu': 'powder_generation.so'
+        'macos': 'crysfml_api.so',
+        'ubuntu': 'crysfml_api.so'
     }[CONFIG.os]
     return os.path.join(so_location, so_file)
 

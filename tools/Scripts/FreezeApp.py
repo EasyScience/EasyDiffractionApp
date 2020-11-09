@@ -5,7 +5,7 @@ import os, sys
 import importlib
 import glob
 import PySide2, shiboken2
-import cryspy, CFML_api, GSASII
+import cryspy
 import easyCore, easyDiffractionLib, easyAppGui, easyAppLogic
 import Functions, Config
 from PyInstaller.__main__ import run as pyInstallerMain
@@ -31,7 +31,6 @@ def addedData():
     data = [{'from': CONFIG.package_name, 'to': CONFIG.package_name},
             {'from': importlib.import_module(lib).__path__[0], 'to': lib},
             {'from': cryspy.__path__[0], 'to': 'cryspy'},
-            {'from': GSASII.__path__[0], 'to': 'GSASII'},
             {'from': easyCore.__path__[0], 'to': 'easyCore'},
             {'from': easyDiffractionLib.__path__[0], 'to': 'easyDiffractionLib'},
             {'from': easyAppLogic.__path__[0], 'to': 'easyAppLogic'},

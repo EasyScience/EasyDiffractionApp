@@ -17,6 +17,7 @@ AdpsView 1.0 AdpsView.qml
 
 ExperimentChartView 1.0 ExperimentChartView.qml
 ExperimentDataExplorer 1.0 ExperimentDataExplorer.qml
+ExperimentPeakProfile 1.0 ExperimentPeakProfile.qml
 ExperimentBackgroundView 1.0 ExperimentBackgroundView.qml
 
 AnalysisChartView 1.0 AnalysisChartView.qml

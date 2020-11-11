@@ -39,6 +39,7 @@ class PyQmlProxy(QObject):
     currentPhaseSitesChanged = Signal()
     spaceGroupChanged = Signal()
     backgroundChanged = Signal()
+    instrumentResolutionChanged = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -257,6 +258,16 @@ class PyQmlProxy(QObject):
         self.updateCalculatedData()
         self.phasesChanged.emit()
         self.currentPhaseChanged.emit()
+
+
+    # Peak profile
+
+    @Property(str, notify=instrumentResolutionChanged)
+    def instrumentResolutionAsXml(self):
+        instrument_resolution = [ {"U": 11.3, "V": -2.9, "W": 1.1, "X": 0.0, "Y": 0.0} ]
+        xml = dicttoxml(instrument_resolution, attr_type=False)
+        xml = xml.decode()
+        return xml
 
     # Background
 

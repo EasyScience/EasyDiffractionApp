@@ -45,6 +45,37 @@ EaComponents.SideBarColumn {
     }
 
     EaElements.GroupBox {
+        title: qsTr("Peak profile")
+        enabled: ExGlobals.Variables.experimentLoaded
+
+        Column {
+
+            Column {
+                spacing: EaStyle.Sizes.fontPixelSize * -0.5
+
+                EaElements.Label {
+                    enabled: false
+                    text: qsTr("Instrument resolution function")
+                }
+
+                EaElements.ComboBox {
+                    width: EaStyle.Sizes.sideBarContentWidth
+                    model: ["Pseudo-Voigt"]
+                }
+            }
+
+            Column {
+                EaElements.Label {
+                    enabled: false
+                    text: qsTr("Profile parameters")
+                }
+
+                ExComponents.ExperimentPeakProfile {}
+            }
+        }
+    }
+
+    EaElements.GroupBox {
         title: qsTr("Background")
         enabled: ExGlobals.Variables.experimentLoaded
 

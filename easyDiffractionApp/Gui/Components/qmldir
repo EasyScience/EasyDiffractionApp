@@ -15,5 +15,10 @@ CellView 1.0 CellView.qml
 AtomsView 1.0 AtomsView.qml
 AdpsView 1.0 AdpsView.qml
 
+ExperimentChartView 1.0 ExperimentChartView.qml
+ExperimentDataExplorer 1.0 ExperimentDataExplorer.qml
+
+AnalysisChartView 1.0 AnalysisChartView.qml
+
 FitablesView 1.0 FitablesView.qml
 ConstraintsView 1.0 ConstraintsView.qml

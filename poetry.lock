@@ -115,7 +115,7 @@ PySide2 = "5.14"
 type = "git"
 url = 'https://github.com/easyScience/easyAppGui.git'
 reference = 'master'
-resolved_reference = "81b7d30407e1dcf082b02f92d0bca03b1eced433"
+resolved_reference = "5f4341ba3b0a69a9b746ba08c4cf97519f606104"
 
 [[package]]
 name = "easyapplogic"

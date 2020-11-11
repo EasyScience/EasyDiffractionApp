@@ -17,7 +17,7 @@ EaComponents.SideBarColumn {
         title: qsTr("Structural phases")
         collapsible: false
 
-        ExComponents.PhasesView {}
+        ExComponents.SamplePhasesExplorer {}
 
         Row {
             spacing: EaStyle.Sizes.fontPixelSize
@@ -61,8 +61,8 @@ EaComponents.SideBarColumn {
         enabled: ExGlobals.Variables.sampleLoaded
 
         Column {
-            ExComponents.SymmetryView {}
-            ExComponents.CellView { titleText: "Cell parameters" }
+            ExComponents.SampleSymmetry {}
+            ExComponents.SampleCell { titleText: "Cell parameters" }
         }
 
         Component.onCompleted: ExGlobals.Variables.symmetryGroup = symmetryGroup
@@ -74,7 +74,7 @@ EaComponents.SideBarColumn {
         title: qsTr("Atoms, atomic coordinates and occupations")
         enabled: ExGlobals.Variables.sampleLoaded
 
-        ExComponents.AtomsView {}
+        ExComponents.SampleAtoms {}
 
         Row {
             spacing: EaStyle.Sizes.fontPixelSize
@@ -107,7 +107,7 @@ EaComponents.SideBarColumn {
         title: qsTr("Atomic displacement parameters")
         enabled: ExGlobals.Variables.sampleLoaded
 
-        ExComponents.AdpsView {}
+        ExComponents.SampleAdps {}
 
         Component.onCompleted: ExGlobals.Variables.adpsGroup = adpsGroup
     }

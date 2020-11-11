@@ -18,7 +18,7 @@ EaComponents.SideBarColumn {
         title: qsTr("Parameters")
         collapsible: false
 
-        ExComponents.FitablesView {}
+        ExComponents.AnalysisFitables {}
 
         // Slider
         Row {

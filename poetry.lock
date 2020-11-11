@@ -57,7 +57,7 @@ python-versions = "*"
 
 [[package]]
 name = "cryspy"
-version = "0.4.16"
+version = "0.4.17"
 description = "PNPD data analysis"
 category = "main"
 optional = false
@@ -115,7 +115,7 @@ PySide2 = "5.14"
 type = "git"
 url = 'https://github.com/easyScience/easyAppGui.git'
 reference = 'master'
-resolved_reference = "803640a26260f65e53325690f7dc4a07abf35d5c"
+resolved_reference = "81b7d30407e1dcf082b02f92d0bca03b1eced433"
 
 [[package]]
 name = "easyapplogic"
@@ -722,8 +722,8 @@ chardet = [
     {file = "chardet-3.0.4.tar.gz", hash = "sha256:84ab92ed1c4d4f16916e05906b6b75a6c0fb5db821cc65e70cbd64a3e2a5eaae"},
 ]
 cryspy = [
-    {file = "cryspy-0.4.16-py3-none-any.whl", hash = "sha256:3c0c3518547244a7e315a7b44fe6af7bec1c8d2d5a18ff60ec2273fb86d89b48"},
-    {file = "cryspy-0.4.16.tar.gz", hash = "sha256:30878e7a5b37c0f4f38a50ab86f7557e542517e8d162e5a25a22bc4efe0ca26e"},
+    {file = "cryspy-0.4.17-py3-none-any.whl", hash = "sha256:613b9aace401c9fbd20e7b617cd225ee9e938837d18c437cbc498d36bc46fc0b"},
+    {file = "cryspy-0.4.17.tar.gz", hash = "sha256:566f61782f257427f8c26018c043e55fb020b59c8013e0a2c1642087fbac3db7"},
 ]
 cycler = [
     {file = "cycler-0.10.0-py2.py3-none-any.whl", hash = "sha256:1d8a5ae1ff6c5cf9b93e8811e581232ad8920aeec647c37316ceac982b08cb2d"},

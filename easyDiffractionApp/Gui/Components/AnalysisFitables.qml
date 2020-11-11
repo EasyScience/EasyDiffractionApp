@@ -25,6 +25,7 @@ EaComponents.TableView {
         XmlRole { name: "value"; query: "value/number()" }
         XmlRole { name: "unit"; query: "unit/string()" }
         XmlRole { name: "error"; query: "error/number()" }
+        XmlRole { name: "fit"; query: "fit/number()" }
 
         onStatusChanged: {
             if (status === XmlListModel.Ready) {
@@ -52,7 +53,8 @@ EaComponents.TableView {
                    numberColumn.width -
                    valueColumn.width -
                    unitColumn.width -
-                   errorColumn.width
+                   errorColumn.width -
+                   useColumn.width
             headerText: "Label"
             text: model.label
         }
@@ -68,6 +70,7 @@ EaComponents.TableView {
 
         EaComponents.TableViewLabel {
             id: unitColumn
+            enabled: false
             horizontalAlignment: Text.AlignLeft
             width: EaStyle.Sizes.fontPixelSize * 2
             text: model.unit
@@ -79,6 +82,13 @@ EaComponents.TableView {
             width: EaStyle.Sizes.fontPixelSize * 4
             headerText: "Error  "
             text: model.error === 0.0 || model.error > 999999 ? "" : model.error.toFixed(4) + "  "
+        }
+
+        EaComponents.TableViewCheckBox {
+            enabled: ExGlobals.Variables.experimentLoaded
+            id: useColumn
+            headerText: "Fit"
+            checked: model.fit
         }
 
     }

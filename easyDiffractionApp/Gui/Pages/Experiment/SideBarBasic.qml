@@ -111,7 +111,7 @@ EaComponents.SideBarColumn {
             EaElements.SideBarButton {
                 enabled: false
                 fontIcon: "plus-square"
-                text: qsTr("Insert before selected")
+                text: qsTr("Insert point before selected")
             }
         }
     }

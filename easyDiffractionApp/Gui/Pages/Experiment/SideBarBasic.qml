@@ -30,30 +30,41 @@ EaComponents.SideBarColumn {
 
                 onClicked: {
                     ExGlobals.Variables.experimentLoaded = true
-                    //ExGlobals.Constants.proxy.updateExperimentalData()
+                    ExGlobals.Constants.proxy.loadExperiment()
+                    ExGlobals.Variables.analysisPageEnabled = true
                 }
             }
 
             EaElements.SideBarButton {
-                enabled: false
+                fontIcon: "chevron-circle-right"
+                text: qsTr("Continue without experiment data")
 
-                fontIcon: "cloud-download-alt"
-                text: qsTr("Import data from SciCat")
+                onClicked: {
+                    ExGlobals.Variables.experimentSkipped = true
+                    ExGlobals.Variables.analysisPageEnabled = true
+                }
             }
         }
 
     }
 
     EaElements.GroupBox {
-        title: qsTr("Instrument setup")
+        title: qsTr("Associated phases")
         enabled: ExGlobals.Variables.experimentLoaded
+
+        ExComponents.ExperimentAssociatedPhases {}
+    }
+
+    EaElements.GroupBox {
+        title: qsTr("Instrument setup")
+        enabled: ExGlobals.Variables.experimentLoaded || ExGlobals.Variables.experimentSkipped
 
         ExComponents.ExperimentInstrumentSetup {}
     }
 
     EaElements.GroupBox {
         title: qsTr("Peak profile")
-        enabled: ExGlobals.Variables.experimentLoaded
+        enabled: ExGlobals.Variables.experimentLoaded || ExGlobals.Variables.experimentSkipped
 
         Column {
 
@@ -84,9 +95,9 @@ EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
         title: qsTr("Background")
-        enabled: ExGlobals.Variables.experimentLoaded
+        enabled: ExGlobals.Variables.experimentLoaded || ExGlobals.Variables.experimentSkipped
 
-        ExComponents.ExperimentBackgroundView {}
+        ExComponents.ExperimentBackground {}
 
         Row {
             spacing: EaStyle.Sizes.fontPixelSize
@@ -99,8 +110,8 @@ EaComponents.SideBarColumn {
 
             EaElements.SideBarButton {
                 enabled: false
-                fontIcon: "clone"
-                text: qsTr("Duplicate selected point")
+                fontIcon: "plus-square"
+                text: qsTr("Insert before selected")
             }
         }
     }

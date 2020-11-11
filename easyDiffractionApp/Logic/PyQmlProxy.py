@@ -40,10 +40,14 @@ class PyQmlProxy(QObject):
     spaceGroupChanged = Signal()
     backgroundChanged = Signal()
     instrumentResolutionChanged = Signal()
+    experimentDataChanged = Signal()
+
+    parameterChanged = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
 
+        self.experiments = []
         self.interface = InterfaceFactory()
         self.vtkHandler = None
         self.sample = Sample(parameters=Pattern.default(), interface=self.interface)
@@ -68,6 +72,8 @@ class PyQmlProxy(QObject):
         # when to emit status bar items cnahged
         self.calculatorChanged.connect(self.statusChanged)
         self.minimizerChanged.connect(self.statusChanged)
+        self.parameterChanged.connect(self.experimentDataChanged)
+
         # Create a connection between this signal and a receiver, the receiver can be a Python callable, a Slot or a
         # Signal. But why does it not work :-(
         # self.phaseChanged.connect(self.updateStructureView)
@@ -80,6 +86,33 @@ class PyQmlProxy(QObject):
             return
         self.vtkHandler.clearScene()
         self.vtkHandler.plot_system2(self.sample.phases[0])
+
+    # Experimental data
+
+    @Property(str, notify=experimentDataChanged)
+    def experimentDataAsXml(self):
+        xml = dicttoxml(self.experiments, attr_type=False)
+        xml = xml.decode()
+        return xml
+
+    @Slot()
+    def loadExperiment(self):
+        self.experiments = [ {"label": "PND", "color": "steelblue"} ]
+        self.experimentDataChanged.emit()
+
+    # Instrument parameters
+
+    @Property('QVariant', notify=experimentDataChanged)
+    def instrumentParameters(self):
+        parameters = self.sample.parameters.as_dict()
+        return parameters
+
+    @Property(str, notify=experimentDataChanged)
+    def instrumentParametersAsXml(self):
+        parameters = [self.sample.parameters.as_dict()]
+        xml = dicttoxml(parameters, attr_type=False)
+        xml = xml.decode()
+        return xml
 
     # Calculated data
 
@@ -442,6 +475,7 @@ class PyQmlProxy(QObject):
     @Slot(str, float)
     def editParameterValue(self, obj_id: str, new_value: float):
         self._editValue(obj_id, new_value)
+        self.parameterChanged.emit()
 
     @Slot(str, str)
     def editDescriptorValue(self, obj_id: str, new_value: str):

@@ -9,4 +9,6 @@ ExComponents.DataChartView {
 }
 */
 
-ExComponents.ExperimentChartView {}
+ExComponents.ExperimentDataChart {
+    showMeasured: true
+}

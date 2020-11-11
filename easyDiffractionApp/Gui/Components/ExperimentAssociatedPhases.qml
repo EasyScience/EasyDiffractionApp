@@ -13,16 +13,15 @@ import Gui.Globals 1.0 as ExGlobals
 EaComponents.TableView {
     //id: phasesTable
 
-    defaultInfoText: qsTr("No Experiments Loaded")
+    defaultInfoText: qsTr("No Associated Phases")
 
     // Table model
 
     model: XmlListModel {
-        xml: ExGlobals.Constants.proxy.experimentDataAsXml
+        xml: ExGlobals.Constants.proxy.phasesAsXml
         query: "/root/item"
 
-        XmlRole { name: "label"; query: "label/string()" }
-        XmlRole { name: "color"; query: "color/string()" }
+        XmlRole { name: "label"; query: "name/string()" }
     }
 
     // Table rows
@@ -30,6 +29,7 @@ EaComponents.TableView {
     delegate: EaComponents.TableViewDelegate {
 
         EaComponents.TableViewLabel {
+            id: numColumn
             width: EaStyle.Sizes.fontPixelSize * 2.5
             headerText: "No."
             text: model.index + 1
@@ -37,25 +37,39 @@ EaComponents.TableView {
 
         EaComponents.TableViewTextInput {
             horizontalAlignment: Text.AlignLeft
-            width: EaStyle.Sizes.fontPixelSize * 27.9
+            width: EaStyle.Sizes.sideBarContentWidth
+                   - numColumn.width
+                   - scaleColumn.width
+                   - useColumn.width
+                   - deleteRowColumn.width
+                   - EaStyle.Sizes.tableColumnSpacing * 4
+                   - EaStyle.Sizes.borderThickness * 2
             headerText: "Label"
             text: model.label
-            //onEditingFinished: ExGlobals.Constants.proxy.modifyPhaseName(text)
         }
 
-        EaComponents.TableViewLabel {
-            headerText: "Color"
-            backgroundColor: model.color ? model.color : "transparent"
+        EaComponents.TableViewTextInput {
+            id: scaleColumn
+            horizontalAlignment: Text.AlignRight
+            headerText: "Scale"
+            text: "0.1620"
+        }
+
+        EaComponents.TableViewCheckBox {
+            id: useColumn
+            width: EaStyle.Sizes.fontPixelSize * 4
+            headerText: "Use"
+            checked: true
         }
 
         EaComponents.TableViewButton {
             id: deleteRowColumn
-            headerText: "Del." //"\uf2ed"
+            headerText: "Del."
             fontIcon: "minus-circle"
-            ToolTip.text: qsTr("Remove this data")
-            //onClicked: ExGlobals.Constants.proxy.removePhase(model.label)
+            ToolTip.text: qsTr("Remove this phase")
         }
 
     }
+
 
 }

@@ -18,6 +18,7 @@ QtObject {
     property bool projectCreated: false
     property bool sampleLoaded: false
     property bool experimentLoaded: false
+    property bool experimentSkipped: false
 
     // //////////////////////////
     // References to GUI elements

@@ -110,7 +110,7 @@ EaComponents.ApplicationWindow {
         // Experiment tab
         EaElements.AppBarTabButton {
             id: experimentTabButton
-            enabled: true // ExGlobals.Variables.experimentPageEnabled
+            enabled: ExGlobals.Variables.experimentPageEnabled
             fontIcon: "microscope"
             text: qsTr("Experiment")
             ToolTip.text: qsTr("Experimental settings and data page")
@@ -214,8 +214,8 @@ EaComponents.ApplicationWindow {
             mainContent: EaComponents.MainContent {
                 tabs: [
                     EaElements.TabButton { text: qsTr("Plot view") },
-                    EaElements.TabButton { text: qsTr("Table view") },
-                    EaElements.TabButton { text: ExGlobals.Constants.proxy.projectInfoAsJson.experiments }
+                    EaElements.TabButton { enabled: false; text: qsTr("Table view") },
+                    EaElements.TabButton { enabled: false; text: ExGlobals.Constants.proxy.projectInfoAsJson.experiments }
                 ]
 
                 items: [

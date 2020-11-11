@@ -45,7 +45,6 @@ EaComponents.SideBarColumn {
                     ExGlobals.Constants.proxy.addSampleManual()
                     ExGlobals.Variables.experimentPageEnabled = true
                     ExGlobals.Variables.sampleLoaded = true
-                    ExGlobals.Variables.analysisPageEnabled = true
                 }
 
                 Component.onCompleted: ExGlobals.Variables.setNewSampleManuallyButton = setNewSampleManuallyButton

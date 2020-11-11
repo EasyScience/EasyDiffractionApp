@@ -15,20 +15,22 @@ EaComponents.TableView {
     // Table model
 
     model: XmlListModel {
-        xml: ExGlobals.Constants.proxy.instrumentResolutionAsXml
+        xml: ExGlobals.Constants.proxy.instrumentParametersAsXml
         query: `/root/item`
 
-        XmlRole { name: "u"; query: "U/number()" }
-        XmlRole { name: "v"; query: "V/number()" }
-        XmlRole { name: "w"; query: "W/number()" }
-        XmlRole { name: "x"; query: "X/number()" }
-        XmlRole { name: "y"; query: "Y/number()" }
+        onXmlChanged: print(EaLogic.Utils.prettyXml(xml))
 
-        XmlRole { name: "uId"; query: "U/key[4]/string()" }
-        XmlRole { name: "vId"; query: "V/key[4]/string()" }
-        XmlRole { name: "wId"; query: "W/key[4]/string()" }
-        XmlRole { name: "xId"; query: "X/key[4]/string()" }
-        XmlRole { name: "yId"; query: "Y/key[4]/string()" }
+        XmlRole { name: "u"; query: "u_resolution/value/number()" }
+        XmlRole { name: "v"; query: "v_resolution/value/number()" }
+        XmlRole { name: "w"; query: "w_resolution/value/number()" }
+        XmlRole { name: "x"; query: "x_resolution/value/number()" }
+        XmlRole { name: "y"; query: "y_resolution/value/number()" }
+
+        XmlRole { name: "uId"; query: "u_resolution/key[4]/string()" }
+        XmlRole { name: "vId"; query: "v_resolution/key[4]/string()" }
+        XmlRole { name: "wId"; query: "w_resolution/key[4]/string()" }
+        XmlRole { name: "xId"; query: "x_resolution/key[4]/string()" }
+        XmlRole { name: "yId"; query: "y_resolution/key[4]/string()" }
     }
 
     // Table rows

@@ -21,20 +21,20 @@ Rectangle {
         EaCharts.ValueAxis {
             id: axisX
 
-            title: "Time (s)"
+            title: "2theta (deg)"
 
             tickCount: 4
 
             min: 0
-            max: 150 //Math.PI * (tickCount - 1)
+            max: 10
         }
 
         EaCharts.ValueAxis {
             id: axisY
 
-            title: "Signal (arb. units)"
+            title: "Intensity (arb. units)"
 
-            min: 0
+            min: -6
             max: 6
         }
 

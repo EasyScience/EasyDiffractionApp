@@ -38,6 +38,7 @@ class PyQmlProxy(QObject):
     currentPhaseChanged = Signal()
     currentPhaseSitesChanged = Signal()
     spaceGroupChanged = Signal()
+    backgroundChanged = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -256,6 +257,25 @@ class PyQmlProxy(QObject):
         self.updateCalculatedData()
         self.phasesChanged.emit()
         self.currentPhaseChanged.emit()
+
+    # Background
+
+    @Property(str, notify=backgroundChanged)
+    def backgroundAsXml(self):
+        background = [ {"x": 10, "y": 189.2}, {"x": 90, "y": 211.7}, {"x": 170, "y": 195.4} ]
+        xml = dicttoxml(background, attr_type=False)
+        xml = xml.decode()
+        return xml
+
+    @Slot(str)
+    def removeBackgroundPoint(self, background_point_index: int):
+        print(f"removeBackgroundPoint for background_point_index: {background_point_index}")
+        self.backgroundChanged.emit()
+
+    @Slot()
+    def addBackgroundPoint(self):
+        print(f"addBackgroundPoint")
+        self.backgroundChanged.emit()
 
     # Space groups
 

@@ -30,7 +30,7 @@ EaComponents.SideBarColumn {
 
                 onClicked: {
                     ExGlobals.Variables.experimentLoaded = true
-                    ExGlobals.Constants.proxy.updateExperimentalData()
+                    //ExGlobals.Constants.proxy.updateExperimentalData()
                 }
             }
 
@@ -42,6 +42,29 @@ EaComponents.SideBarColumn {
             }
         }
 
+    }
+
+    EaElements.GroupBox {
+        title: qsTr("Background")
+        enabled: ExGlobals.Variables.experimentLoaded
+
+        ExComponents.ExperimentBackgroundView {}
+
+        Row {
+            spacing: EaStyle.Sizes.fontPixelSize
+
+            EaElements.SideBarButton {
+                fontIcon: "plus-circle"
+                text: qsTr("Append new point")
+                onClicked: ExGlobals.Constants.proxy.addBackgroundPoint()
+            }
+
+            EaElements.SideBarButton {
+                enabled: false
+                fontIcon: "clone"
+                text: qsTr("Duplicate selected point")
+            }
+        }
     }
 
 }

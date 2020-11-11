@@ -45,6 +45,13 @@ EaComponents.SideBarColumn {
     }
 
     EaElements.GroupBox {
+        title: qsTr("Instrument setup")
+        enabled: ExGlobals.Variables.experimentLoaded
+
+        ExComponents.ExperimentInstrumentSetup {}
+    }
+
+    EaElements.GroupBox {
         title: qsTr("Peak profile")
         enabled: ExGlobals.Variables.experimentLoaded
 

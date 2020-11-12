@@ -75,6 +75,7 @@ EaComponents.SideBarColumn {
 
         // Start fitting button
         EaElements.SideBarButton {
+            enabled: ExGlobals.Variables.experimentLoaded
             fontIcon: "play-circle"
             text: qsTr("Start fitting")
 

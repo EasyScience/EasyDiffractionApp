@@ -27,7 +27,6 @@ EaComponents.TableView {
         XmlRole { name: "color"; query: "color/string()" }
 
         onXmlChanged: {
-            print(EaLogic.Utils.prettyJson(ExGlobals.Constants.proxy.instrumentParameters))
             if (ExGlobals.Constants.proxy.phaseList.length === 0) {
                 ExGlobals.Variables.experimentPageEnabled = false
                 ExGlobals.Variables.sampleLoaded = false

@@ -18,8 +18,6 @@ EaComponents.TableView {
         xml: ExGlobals.Constants.proxy.instrumentParametersAsXml
         query: `/root/item`
 
-        onXmlChanged: print(EaLogic.Utils.prettyXml(xml))
-
         XmlRole { name: "u"; query: "u_resolution/value/number()" }
         XmlRole { name: "v"; query: "v_resolution/value/number()" }
         XmlRole { name: "w"; query: "w_resolution/value/number()" }

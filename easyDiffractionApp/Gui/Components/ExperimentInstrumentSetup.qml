@@ -37,8 +37,8 @@ Row {
     }
     EaElements.Parameter {
         width: textFieldWidth()
-        units: ExGlobals.Constants.proxy.instrumentParameters.wavelength.units
-        text: ExGlobals.Constants.proxy.instrumentParameters.wavelength.value
+        units: typeof ExGlobals.Constants.proxy.instrumentParameters.wavelength != "undefined" ? ExGlobals.Constants.proxy.instrumentParameters.wavelength.units : ""
+        text: typeof ExGlobals.Constants.proxy.instrumentParameters.wavelength != "undefined" ? ExGlobals.Constants.proxy.instrumentParameters.wavelength.value : ""
         onEditingFinished: editParameterValue(ExGlobals.Constants.proxy.instrumentParameters.wavelength["@id"], text)
     }
 

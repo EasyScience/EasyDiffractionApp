@@ -75,10 +75,10 @@ EaComponents.TableView {
 
         EaComponents.TableViewLabel {
             id: unitColumn
-            enabled: false
             horizontalAlignment: Text.AlignLeft
             width: EaStyle.Sizes.fontPixelSize * 2
             text: model.unit
+            color: EaStyle.Colors.themeForegroundMinor
         }
 
         EaComponents.TableViewLabel {
@@ -125,8 +125,9 @@ EaComponents.TableView {
         let previousList = index > 0 ? fitablesModel.get(index - 1).label.split(".") : [""]
 
         // First element formatting
+        const iconColor = EaStyle.Colors.isDarkTheme ? Qt.darker(EaStyle.Colors.themeForegroundMinor, 1.2) : Qt.lighter(EaStyle.Colors.themeForegroundMinor, 1.2)
         if (list[0] === previousList[0]) {
-            list[0] = `<font color=${EaStyle.Colors.themeForegroundDisabled} face="${EaStyle.Fonts.iconsFamily}">${list[0]}</font>`
+            list[0] = `<font color=${iconColor} face="${EaStyle.Fonts.iconsFamily}">${list[0]}</font>`
         } else {
             list[0] = `<font color=${EaStyle.Colors.themeForeground} face="${EaStyle.Fonts.iconsFamily}">${list[0]}</font>`
         }
@@ -135,7 +136,7 @@ EaComponents.TableView {
         // Intermediate elements formatting (excluding first and last)
         for (let i = 1; i < last; ++i) {
             if (list[i] === previousList[i]) {
-                list[i] = `<font color=${EaStyle.Colors.themeForegroundDisabled}>${list[i]}</font>`
+                list[i] = `<font color=${EaStyle.Colors.themeForegroundMinor}>${list[i]}</font>`
             } else {
                 list[i] = `<b>${list[i]}</b>`
             }

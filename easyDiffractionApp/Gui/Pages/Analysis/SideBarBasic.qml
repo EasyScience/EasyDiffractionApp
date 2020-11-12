@@ -16,11 +16,13 @@ EaComponents.SideBarColumn {
         id: groupBox
 
         title: qsTr("Parameters")
+        last: true
         collapsible: false
 
+        // Parameters table
         ExComponents.AnalysisFitables {}
 
-        // Slider
+        // Parameter change slider
         Row {
             id: slideRow
 

@@ -95,6 +95,7 @@ EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
         title: qsTr("Background")
+        last: true
         enabled: ExGlobals.Variables.experimentLoaded || ExGlobals.Variables.experimentSkipped
 
         ExComponents.ExperimentBackground {}

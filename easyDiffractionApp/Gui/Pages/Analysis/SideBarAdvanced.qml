@@ -34,6 +34,7 @@ EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
         title: qsTr("Plotting")
+        last: true
         collapsed: false
 
         EaElements.CheckBox {

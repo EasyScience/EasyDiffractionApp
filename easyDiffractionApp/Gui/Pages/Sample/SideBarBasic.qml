@@ -104,6 +104,7 @@ EaComponents.SideBarColumn {
         id: adpsGroup
 
         title: qsTr("Atomic displacement parameters")
+        last: true
         enabled: ExGlobals.Variables.sampleLoaded
 
         ExComponents.SampleAdps {}

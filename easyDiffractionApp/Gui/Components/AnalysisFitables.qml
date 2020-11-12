@@ -12,6 +12,8 @@ import Gui.Globals 1.0 as ExGlobals
 EaComponents.TableView {
     id: table
 
+    maxRowCountShow: 10
+
     // Table model
 
     model: XmlListModel {

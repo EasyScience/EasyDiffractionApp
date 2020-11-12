@@ -72,6 +72,18 @@ EaComponents.SideBarColumn {
                 onEditingFinished: {}
             }
         }
+
+        // Start fitting button
+        EaElements.SideBarButton {
+            fontIcon: "play-circle"
+            text: qsTr("Start fitting")
+
+            wide: true
+
+            onClicked: {
+                print("Start fitting button clicked")
+            }
+        }
     }
 
     // Logic

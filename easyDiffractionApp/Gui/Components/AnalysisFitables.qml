@@ -15,6 +15,8 @@ EaComponents.TableView {
     // Table model
 
     model: XmlListModel {
+        id: fitablesModel
+
         xml: ExGlobals.Constants.proxy.fitablesListAsXml
 
         query: "/root/item"
@@ -56,7 +58,8 @@ EaComponents.TableView {
                    errorColumn.width -
                    useColumn.width
             headerText: "Label"
-            text: model.label
+            text: formatLabel(model.index, model.label)
+            textFormat: Text.RichText
         }
 
         EaComponents.TableViewTextInput {
@@ -106,6 +109,40 @@ EaComponents.TableView {
 
     function editParameterValue(id, value) {
         ExGlobals.Constants.proxy.editParameterValue(id, parseFloat(value))
+    }
+
+    function formatLabel(index, label) {
+        // String label to list
+        let list = label.split(".")
+        const last = list.length - 1
+
+        // Previous label to list
+        let previousList = index > 0 ? fitablesModel.get(index - 1).label.split(".") : [""]
+
+        // First element formatting
+        if (list[0] === previousList[0]) {
+            list[0] = `<font color=${EaStyle.Colors.themeForegroundDisabled} face="${EaStyle.Fonts.iconsFamily}">${list[0]}</font>`
+        } else {
+            list[0] = `<font color=${EaStyle.Colors.themeForeground} face="${EaStyle.Fonts.iconsFamily}">${list[0]}</font>`
+        }
+        list[0] = list[0].replace("Phases", "gem").replace("Instrument", "microscope")
+
+        // Intermediate elements formatting (excluding first and last)
+        for (let i = 1; i < last; ++i) {
+            if (list[i] === previousList[i]) {
+                list[i] = `<font color=${EaStyle.Colors.themeForegroundDisabled}>${list[i]}</font>`
+            } else {
+                list[i] = `<b>${list[i]}</b>`
+            }
+        }
+
+        // Last element formatting
+        list[last] = `<font color=${EaStyle.Colors.themeForegroundHovered}><b>${list[last]}</b></font>`
+
+        // Back to string
+        label = list.join("&nbsp;&nbsp;")
+
+        return label
     }
 
 }

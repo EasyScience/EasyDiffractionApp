@@ -112,6 +112,9 @@ EaComponents.TableView {
     }
 
     function formatLabel(index, label) {
+        if (index < 0 || typeof label === "undefined")
+            return ""
+
         // String label to list
         let list = label.split(".")
         const last = list.length - 1

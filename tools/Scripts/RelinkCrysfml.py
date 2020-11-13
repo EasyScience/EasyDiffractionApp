@@ -8,28 +8,52 @@ import Functions, Config
 
 CONFIG = Config.Config()
 
+def pythonLibLocation():
+    if len(sys.argv) > 1:
+        return os.path.join(sys.argv[1], 'lib')
+    return '@rpath'
+
 def pythonDylib():
-    python_location = sys.argv[1]
     python_dylib_file = {
+        #'macos': 'Python',
         'macos': 'libpython3.7m.dylib',
-        'ubuntu': 'libpython3.7m.so.1.0'
+        'ubuntu': 'libpython3.7m.dylib',
+        'windows': None
     }[CONFIG.os]
-    return os.path.join(python_location, 'lib', python_dylib_file)
+    return os.path.join(pythonLibLocation(), python_dylib_file)
 
 def crysfmlPythonDylib():
     d = {
         'macos': '/Library/Frameworks/Python.framework/Versions/3.7/Python',
-        'ubuntu': 'libpython3.7m.so.1.0'
+        'ubuntu': 'libpython3.7m.so.1.0',
+        'windows': None
     }
     return d[CONFIG.os]
 
-def crysfmlSo():
+def rpath():
+    d = {
+        'macos': '@executable_path',
+        'ubuntu': './libsLinux/lib',
+        'windows': None
+    }
+    return d[CONFIG.os]
+
+def crysfmlRpath():
+    d = {
+        'macos': '/opt/intel//compilers_and_libraries_2020.2.258/mac/compiler/lib',
+        'ubuntu': None,
+        'windows': None
+    }
+    return d[CONFIG.os]
+
+def crysfmlSoFile():
     lib = CONFIG['ci']['pyinstaller']['libs'][CONFIG.os]
     lib_path = importlib.import_module(lib).__path__[0]
     so_location = os.path.join(lib_path, 'CFML_api')
     so_file = {
         'macos': 'crysfml_api.so',
-        'ubuntu': 'crysfml_api.so'
+        'ubuntu': 'crysfml_api.so',
+        'windows': None
     }[CONFIG.os]
     return os.path.join(so_location, so_file)
 
@@ -40,19 +64,28 @@ def relinkCrysfml():
     try:
         message = f'relink CrysFML from default Python dylib for platform {CONFIG.os}'
         if CONFIG.os == 'macos':
-            Functions.run('install_name_tool', '-change', crysfmlPythonDylib(), pythonDylib(), crysfmlSo())
+            Functions.run('otool', '-l', crysfmlSoFile())
+            Functions.run('otool', '-L', crysfmlSoFile())
+            Functions.run('install_name_tool', '-rpath', crysfmlRpath(), rpath(), crysfmlSoFile())
+            Functions.run('install_name_tool', '-add_rpath', pythonLibLocation(), crysfmlSoFile())
+            Functions.run('install_name_tool', '-change', crysfmlPythonDylib(), pythonDylib(), crysfmlSoFile())
+            Functions.run('otool', '-l', crysfmlSoFile())
+            Functions.run('otool', '-L', crysfmlSoFile())
         elif CONFIG.os == 'ubuntu':
             Functions.run('sudo', 'apt-get', 'update', '-y')
             Functions.run('sudo', 'apt-get', 'install', '-y', 'patchelf')
+            Functions.run('sudo', 'apt-get', 'install', '-y', 'chrpath')
             # Python lib
-            Functions.run('patchelf', '--replace-needed', crysfmlPythonDylib(), pythonDylib(), crysfmlSo())
+            Functions.run('chrpath', '-l', crysfmlSoFile())
+            Functions.run('patchelf', '--set-rpath', rpath(), crysfmlSoFile())
+            #Functions.run('patchelf', '--replace-needed', crysfmlPythonDylib(), pythonDylib(), crysfmlSoFile())
             # Intel fortran libs
             # Instead of LD_LIBRARY_PATH...
-            import libsLinux
-            lib_path = os.path.join(list(libsLinux.__path__)[0], 'lib')
-            libs = ['libifcoremt.so.5', 'libifport.so.5', 'libimf.so', 'libintlc.so.5', 'libsvml.so']
-            for lib in libs:
-                Functions.run('patchelf', '--replace-needed', lib, os.path.join(lib_path, lib), crysfmlSo())
+            #import libsLinux
+            #lib_path = os.path.join(list(libsLinux.__path__)[0], 'lib')
+            #libs = ['libifcoremt.so.5', 'libifport.so.5', 'libimf.so', 'libintlc.so.5', 'libsvml.so']
+            #for lib in libs:
+            #    Functions.run('patchelf', '--replace-needed', lib, os.path.join(lib_path, lib), crysfmlSoFile())
         else:
             Functions.printFailMessage(f'Platform {CONFIG.os} is unsupported')
     except Exception as exception:
@@ -63,7 +96,10 @@ def relinkCrysfml():
 
 
 if __name__ == "__main__":
-    print("pythonDylib:", pythonDylib())
-    print("crysfmlPythonDylib:", crysfmlPythonDylib())
-    print("crysfmlSo:", crysfmlSo())
+    Functions.printNeutralMessage(f"pythonLibLocation: {pythonLibLocation()}")
+    Functions.printNeutralMessage(f"crysfmlPythonDylib: {crysfmlPythonDylib()}")
+    Functions.printNeutralMessage(f"pythonDylib: {pythonDylib()}")
+    Functions.printNeutralMessage(f"crysfmlRpath: {crysfmlRpath()}")
+    Functions.printNeutralMessage(f"rpath: {rpath()}")
+    Functions.printNeutralMessage(f"crysfmlSoFile: {crysfmlSoFile()}")
     relinkCrysfml()

@@ -19,6 +19,91 @@ EaComponents.SideBarColumn {
         last: true
         collapsible: false
 
+        // Filter buttons
+        Row {
+            spacing: EaStyle.Sizes.fontPixelSize * 0.5
+
+            EaElements.SideBarButton {
+                smallIcon: true
+                width: EaStyle.Sizes.fontPixelSize * 5.5
+                fontIcon: "gem"
+                text: "Phase"
+                down: filterCriteriaField.text == "phases."
+                onClicked: filterCriteriaField.text = "phases."
+            }
+
+            EaElements.SideBarButton {
+                smallIcon: true
+                width: EaStyle.Sizes.fontPixelSize * 7
+                fontIcon: "microscope"
+                text: "Instrument"
+                down: filterCriteriaField.text == "instrument."
+                onClicked: filterCriteriaField.text = "instrument."
+            }
+
+            EaElements.SideBarButton {
+                smallIcon: true
+                width: EaStyle.Sizes.fontPixelSize * 4.5
+                fontIcon: "cube"
+                text: "Cell"
+                down: filterCriteriaField.text == "cell."
+                onClicked: filterCriteriaField.text = "cell."
+            }
+
+            EaElements.SideBarButton {
+                smallIcon: true
+                width: EaStyle.Sizes.fontPixelSize * 5.5
+                fontIcon: "atom"
+                text: "Atoms"
+                down: filterCriteriaField.text == "atoms."
+                onClicked: filterCriteriaField.text = "atoms."
+            }
+
+            EaElements.SideBarButton {
+                smallIcon: true
+                width: EaStyle.Sizes.fontPixelSize * 7.5
+                fontIcon: "map-marker-alt"
+                text: "Coordinates"
+                down: filterCriteriaField.text == "fract_"
+                onClicked: filterCriteriaField.text = "fract_"
+            }
+
+            EaElements.SideBarButton {
+                smallIcon: true
+                width: EaStyle.Sizes.fontPixelSize * 5
+                fontIcon: "arrows-alt"
+                text: "ADPs"
+                down: filterCriteriaField.text == "adp."
+                onClicked: filterCriteriaField.text = "adp."
+            }
+        }
+
+        // Filter text field
+        Row {
+            spacing: EaStyle.Sizes.fontPixelSize * 0.5
+
+
+            EaElements.TextField {
+                id: filterCriteriaField
+                width: EaStyle.Sizes.sideBarContentWidth
+                       - parent.spacing
+                       - resetFilterButton.width
+                placeholderText: "Specify your filter criteria"
+                onTextChanged: ExGlobals.Constants.proxy.setFilterCriteria(text)
+            }
+
+            EaComponents.TableViewButton {
+                id: resetFilterButton
+                inset: 0
+                y: 0
+                height: filterCriteriaField.height
+                width: height
+                fontIcon: "times"
+                ToolTip.text: qsTr("Reset filtering")
+                onClicked: filterCriteriaField.text = ""
+            }
+        }
+
         // Parameters table
         ExComponents.AnalysisFitables {}
 

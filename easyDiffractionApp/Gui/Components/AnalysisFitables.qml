@@ -12,7 +12,7 @@ import Gui.Globals 1.0 as ExGlobals
 EaComponents.TableView {
     id: table
 
-    maxRowCountShow: 10
+    maxRowCountShow: 8
 
     // Table model
 
@@ -140,13 +140,15 @@ EaComponents.TableView {
             } else {
                 list[i] = `<b>${list[i]}</b>`
             }
+            list[i] = list[i].replace("cell", `<font face="${EaStyle.Fonts.iconsFamily}">cube</font>`)
+            list[i] = list[i].replace("atoms", `<font face="${EaStyle.Fonts.iconsFamily}">atom</font>`)
         }
 
         // Last element formatting
         list[last] = `<font color=${EaStyle.Colors.themeForegroundHovered}><b>${list[last]}</b></font>`
 
         // Back to string
-        label = list.join("&nbsp;&nbsp;")
+        label = list.join(`&nbsp;&nbsp;`)
 
         return label
     }

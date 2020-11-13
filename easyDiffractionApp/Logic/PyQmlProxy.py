@@ -65,9 +65,10 @@ class PyQmlProxy(QObject):
                       x=x_data, y=np.zeros_like(x_data))
         )
         self.data = self.bridge.data[0]
-
         self.project_info = self.initProjectInfo()
         self._current_phase_index = 0
+        self._fitables_list = []
+        self._filter_criteria = ""
 
         # when to emit status bar items cnahged
         self.calculatorChanged.connect(self.statusChanged)
@@ -435,15 +436,17 @@ class PyQmlProxy(QObject):
 
     # Fitables
 
-    def _fitablesList(self):
-        fitables_list = []
+    def _setFitablesList(self):
+        self._fitables_list = []
         pars_id, pars_path = generatePath(self.sample, True)
         for index, par_path in enumerate(pars_path):
             id = pars_id[index]
             par = borg.map.get_item_by_key(id)
             if not par.enabled:
                 continue
-            fitables_list.append(
+            if self._filter_criteria.lower() not in par_path.lower():
+                continue
+            self._fitables_list.append(
                 {"id": str(id),
                  "number": index + 1,
                  "label":  par_path,
@@ -452,13 +455,20 @@ class PyQmlProxy(QObject):
                  "error":  par.error,
                  "fit":    int(not par.fixed)}
             )
-        return fitables_list
 
     @Property(str, notify=modelChanged)
     def fitablesListAsXml(self):
-        xml = dicttoxml(self._fitablesList(), attr_type=False)
+        self._setFitablesList()
+        xml = dicttoxml(self._fitables_list, attr_type=False)
         xml = xml.decode()
         return xml
+
+    @Slot(str)
+    def setFilterCriteria(self, filter_criteria):
+        if self._filter_criteria == filter_criteria:
+            return
+        self._filter_criteria = filter_criteria
+        self.modelChanged.emit()
 
     # Edit parameter or descriptor
 
@@ -481,4 +491,5 @@ class PyQmlProxy(QObject):
     def editDescriptorValue(self, obj_id: str, new_value: str):
         self._editValue(obj_id, new_value)
 
+    #
 

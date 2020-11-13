@@ -157,7 +157,7 @@ uncertainties = "^3.1"
 type = "git"
 url = 'https://github.com/easyScience/easyCore.git'
 reference = 'STAR_io'
-resolved_reference = "64eb713fc2c52687a9cbec1235d27902951e7b4a"
+resolved_reference = "23beb6ea675ad0a8bed3e81ca019dca1bbdf2db5"
 
 [[package]]
 name = "easydiffractionlib"

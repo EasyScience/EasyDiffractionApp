@@ -34,7 +34,7 @@ EaComponents.SideBarColumn {
 
             EaElements.SideBarButton {
                 smallIcon: true
-                width: EaStyle.Sizes.fontPixelSize * 7
+                width: EaStyle.Sizes.fontPixelSize * 7.5
                 fontIcon: "microscope"
                 text: "Instrument"
                 down: filterCriteriaField.text == "instrument."
@@ -52,9 +52,9 @@ EaComponents.SideBarColumn {
 
             EaElements.SideBarButton {
                 smallIcon: true
-                width: EaStyle.Sizes.fontPixelSize * 5.5
+                width: EaStyle.Sizes.fontPixelSize * 5
                 fontIcon: "atom"
-                text: "Atoms"
+                text: "Atom"
                 down: filterCriteriaField.text == "atoms."
                 onClicked: filterCriteriaField.text = "atoms."
             }
@@ -63,7 +63,7 @@ EaComponents.SideBarColumn {
                 smallIcon: true
                 width: EaStyle.Sizes.fontPixelSize * 7.5
                 fontIcon: "map-marker-alt"
-                text: "Coordinates"
+                text: "Coordinate"
                 down: filterCriteriaField.text == "fract_"
                 onClicked: filterCriteriaField.text = "fract_"
             }
@@ -72,7 +72,7 @@ EaComponents.SideBarColumn {
                 smallIcon: true
                 width: EaStyle.Sizes.fontPixelSize * 5
                 fontIcon: "arrows-alt"
-                text: "ADPs"
+                text: "ADP"
                 down: filterCriteriaField.text == "adp."
                 onClicked: filterCriteriaField.text = "adp."
             }
@@ -94,12 +94,15 @@ EaComponents.SideBarColumn {
 
             EaComponents.TableViewButton {
                 id: resetFilterButton
+                smallIcon: true
                 inset: 0
                 y: 0
                 height: filterCriteriaField.height
-                width: height
-                fontIcon: "times"
+                width: EaStyle.Sizes.fontPixelSize * 5
+                text: "All"
                 ToolTip.text: qsTr("Reset filtering")
+                fontIcon: "infinity"
+                down: filterCriteriaField.text == ""
                 onClicked: filterCriteriaField.text = ""
             }
         }

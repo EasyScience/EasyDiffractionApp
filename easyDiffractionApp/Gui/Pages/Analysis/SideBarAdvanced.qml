@@ -33,8 +33,7 @@ EaComponents.SideBarColumn {
     }
 
     EaElements.GroupBox {
-        title: qsTr("Plotting")
-        last: true
+        title: qsTr("Plot settings")
         collapsed: false
 
         EaElements.CheckBox {
@@ -42,6 +41,19 @@ EaComponents.SideBarColumn {
             text: qsTr("Show legend")
             checked: ExGlobals.Variables.showLegend
             onCheckedChanged: displayBridge.showLegend(checked)
+        }
+    }
+
+    EaElements.GroupBox {
+        title: qsTr("Parameters settings")
+        last: true
+        collapsed: false
+
+        EaElements.CheckBox {
+            topPadding: 0
+            text: qsTr("Iconified names")
+            checked: ExGlobals.Variables.iconifiedNames
+            onCheckedChanged: ExGlobals.Variables.iconifiedNames = checked
         }
     }
 

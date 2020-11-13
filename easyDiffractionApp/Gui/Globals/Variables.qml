@@ -67,6 +67,7 @@ QtObject {
     property string currentParameterId
     property real currentParameterValue
 
-    // Plotting defaults
+    // Analysis tab settings
     property bool showLegend: false
+    property bool iconifiedNames: true
 }

@@ -117,38 +117,89 @@ EaComponents.TableView {
         if (index < 0 || typeof label === "undefined")
             return ""
 
-        // String label to list
+        // Modify current label
+        label = label.replace("Uiso.Uiso", "Uiso")
+        label = label.replace("fract_", "fract.")
+        label = label.replace("length_", "length.")
+        label = label.replace("angle_", "angle.")
+
+        // Current label to list
         let list = label.split(".")
         const last = list.length - 1
 
+        // Modify previous label to list
+        let previousLabel = index > 0 ? fitablesModel.get(index - 1).label : ""
+        previousLabel = previousLabel.replace("Uiso.Uiso", "Uiso")
+        previousLabel = previousLabel.replace("fract_", "fract.")
+        previousLabel = previousLabel.replace("length_", "length.")
+        previousLabel = previousLabel.replace("angle_", "angle.")
+
         // Previous label to list
-        let previousList = index > 0 ? fitablesModel.get(index - 1).label.split(".") : [""]
+        let previousList = previousLabel.split(".")
 
         // First element formatting
+        //const iconColor = EaStyle.Colors.themeForegroundMinor
         const iconColor = EaStyle.Colors.isDarkTheme ? Qt.darker(EaStyle.Colors.themeForegroundMinor, 1.2) : Qt.lighter(EaStyle.Colors.themeForegroundMinor, 1.2)
         if (list[0] === previousList[0]) {
-            list[0] = `<font color=${iconColor} face="${EaStyle.Fonts.iconsFamily}">${list[0]}</font>`
+            if (ExGlobals.Variables.iconifiedNames) {
+                list[0] = `<font color=${iconColor} face="${EaStyle.Fonts.iconsFamily}">${list[0]}</font>`
+                list[0] = list[0].replace("Phases", "gem").replace("Instrument", "microscope")
+            } else {
+                list[0] = `<font color=${EaStyle.Colors.themeForegroundMinor}>${list[0]}</font>`
+            }
         } else {
-            list[0] = `<font color=${EaStyle.Colors.themeForeground} face="${EaStyle.Fonts.iconsFamily}">${list[0]}</font>`
+            if (ExGlobals.Variables.iconifiedNames) {
+                list[0] = `<font face="${EaStyle.Fonts.iconsFamily}">${list[0]}</font>`
+                list[0] = list[0].replace("Phases", "gem").replace("Instrument", "microscope")
+            } else {
+                list[0] = `<font color=${EaStyle.Colors.themeForeground}><b>${list[0]}</b></font>`
+            }
         }
-        list[0] = list[0].replace("Phases", "gem").replace("Instrument", "microscope")
 
         // Intermediate elements formatting (excluding first and last)
         for (let i = 1; i < last; ++i) {
             if (list[i] === previousList[i]) {
                 list[i] = `<font color=${EaStyle.Colors.themeForegroundMinor}>${list[i]}</font>`
+                if (ExGlobals.Variables.iconifiedNames) {
+                    list[i] = list[i].replace("cell", `<font color=${iconColor} face="${EaStyle.Fonts.iconsFamily}">cube</font>`)
+                    list[i] = list[i].replace("length", `<font color=${iconColor} face="${EaStyle.Fonts.iconsFamily}">ruler</font>`)
+                    list[i] = list[i].replace("angle", `<font color=${iconColor} face="${EaStyle.Fonts.iconsFamily}">less-than</font>`)
+                    list[i] = list[i].replace("atoms", `<font color=${iconColor} face="${EaStyle.Fonts.iconsFamily}">atom</font>`)
+                    list[i] = list[i].replace("adp", `<font color=${iconColor} face="${EaStyle.Fonts.iconsFamily}">arrows-alt</font>`)
+                    list[i] = list[i].replace("fract", `<font color=${iconColor} face="${EaStyle.Fonts.iconsFamily}">map-marker-alt</font>`)
+                }
             } else {
                 list[i] = `<b>${list[i]}</b>`
+                if (ExGlobals.Variables.iconifiedNames) {
+                    list[i] = list[i].replace("cell", `<font face="${EaStyle.Fonts.iconsFamily}">cube</font>`)
+                    list[i] = list[i].replace("length", `<font face="${EaStyle.Fonts.iconsFamily}">ruler</font>`)
+                    list[i] = list[i].replace("angle", `<font face="${EaStyle.Fonts.iconsFamily}">less-than</font>`)
+                    list[i] = list[i].replace("atoms", `<font face="${EaStyle.Fonts.iconsFamily}">atom</font>`)
+                    list[i] = list[i].replace("adp", `<font face="${EaStyle.Fonts.iconsFamily}">arrows-alt</font>`)
+                    list[i] = list[i].replace("fract", `<font face="${EaStyle.Fonts.iconsFamily}">map-marker-alt</font>`)
+                }
             }
-            list[i] = list[i].replace("cell", `<font face="${EaStyle.Fonts.iconsFamily}">cube</font>`)
-            list[i] = list[i].replace("atoms", `<font face="${EaStyle.Fonts.iconsFamily}">atom</font>`)
         }
 
         // Last element formatting
-        list[last] = `<font color=${EaStyle.Colors.themeForegroundHovered}><b>${list[last]}</b></font>`
+        //list[last] = `<font color=${EaStyle.Colors.themeForegroundHovered}><b>${list[last]}</b></font>`
+        list[last] = `<b>${list[last]}</b>`
+        list[last] = list[last].replace("u_resolution", "resolution_u")
+        list[last] = list[last].replace("v_resolution", "resolution_v")
+        list[last] = list[last].replace("w_resolution", "resolution_w")
+        list[last] = list[last].replace("x_resolution", "resolution_x")
+        list[last] = list[last].replace("y_resolution", "resolution_y")
 
         // Back to string
-        label = list.join(`&nbsp;&nbsp;`)
+        if (ExGlobals.Variables.iconifiedNames) {
+            label = list.join(`&nbsp;&nbsp;`)
+        } else {
+            label = list.join(`<font color=${EaStyle.Colors.themeForegroundMinor}>.</font>`)
+            label = label.replace("<b>fract</b><font color=#aaaaaa>.", "<b>fract_</b>").replace("<font color=#aaaaaa>fract</font><font color=#aaaaaa>.", "<b>fract_</b>")
+            label = label.replace("<b>cell</b><font color=#aaaaaa>.", "<b>cell_</b>").replace("<font color=#aaaaaa>cell</font><font color=#aaaaaa>.", "<b>cell_</b>")
+            label = label.replace("<b>length</b><font color=#aaaaaa>.", "<b>length_</b>").replace("<font color=#aaaaaa>length</font><font color=#aaaaaa>.", "<b>length_</b>")
+            label = label.replace("<b>angle</b><font color=#aaaaaa>.", "<b>angle_</b>").replace("<font color=#aaaaaa>angle</font><font color=#aaaaaa>.", "<b>angle_</b>")
+        }
 
         return label
     }

@@ -86,6 +86,9 @@ def relinkCrysfml():
             #libs = ['libifcoremt.so.5', 'libifport.so.5', 'libimf.so', 'libintlc.so.5', 'libsvml.so']
             #for lib in libs:
             #    Functions.run('patchelf', '--replace-needed', lib, os.path.join(lib_path, lib), crysfmlSoFile())
+            # https://nehckl0.medium.com/creating-relocatable-linux-executables-by-setting-rpath-with-origin-45de573a2e98
+            # https://github.com/microsoft/ShaderConductor/issues/52
+            # https://unix.stackexchange.com/questions/479421/how-to-link-to-a-shared-library-with-a-relative-path
         else:
             Functions.printFailMessage(f'Platform {CONFIG.os} is unsupported')
     except Exception as exception:

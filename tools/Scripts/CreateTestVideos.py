@@ -35,7 +35,7 @@ def writeVideo():
     (
         ffmpeg
         .input(inputPattern(), pattern_type='glob', framerate=fps())
-        .filter('scale', size='1280:-2', force_original_aspect_ratio='increase')
+        .filter('scale', size='1280x768')
         .output(outputPath(), **outputOptions())
         .run(overwrite_output=True)
     )

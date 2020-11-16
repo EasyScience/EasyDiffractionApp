@@ -18,10 +18,13 @@ EaComponents.TableView {
         xml: ExGlobals.Constants.proxy.backgroundAsXml
         query: "/root/item"
 
-        XmlRole { name: "x"; query: "x/number()" }
-        XmlRole { name: "y"; query: "y/number()" }
+        XmlRole { name: "x"; query: "x/value/number()" }
+        XmlRole { name: "y"; query: "y/value/number()" }
 
+        XmlRole { name: "xId"; query: "x/key[4]/string()" }
         XmlRole { name: "yId"; query: "y/key[4]/string()" }
+
+        onXmlChanged: print(EaLogic.Utils.prettyXml(xml))
     }
 
     // Table rows
@@ -34,12 +37,13 @@ EaComponents.TableView {
             text: model.index + 1
         }
 
-        EaComponents.TableViewLabel {
+        EaComponents.TableViewTextInput {
             id: xLabel
             horizontalAlignment: Text.AlignRight
             width: EaStyle.Sizes.fontPixelSize * 11.6
             headerText: "2theta"
             text: model.x
+            onEditingFinished: editParameterValue(model.xId, text)
         }
 
         EaComponents.TableViewTextInput {

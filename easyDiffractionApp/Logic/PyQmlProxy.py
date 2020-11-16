@@ -60,7 +60,7 @@ class PyQmlProxy(QObject):
         self.sample.parameters.x_resolution = 0.0
         self.sample.parameters.y_resolution = 0.0
 
-        self.background = PointBackground(linked_experiment='NEED_TO_CHANGE')
+        self.background = PointBackground(BackgroundPoint.from_pars(0, 0), BackgroundPoint.from_pars(180, 0), linked_experiment='NEED_TO_CHANGE')
 
         x_data = np.linspace(0, 130, 1301)
         self.bridge.data.x_label = '2theta (deg)'
@@ -314,9 +314,9 @@ class PyQmlProxy(QObject):
 
     @Property(str, notify=backgroundChanged)
     def backgroundAsXml(self):
-        background = [{"x": item.x.raw_value, "y": item.y.raw_value, 'yId': borg.map.convert_id_to_key(item.y)} for item in self.background]
-        #background = [{"x": 10, "y": 189.2}, {"x": 90, "y": 211.7}, {"x": 170, "y": 195.4}]
-        xml = dicttoxml(background, attr_type=False)
+        background = np.array([item.as_dict() for item in self.background])
+        idx = np.array([item.x.raw_value for item in self.background]).argsort()
+        xml = dicttoxml(background[idx], attr_type=False)
         xml = xml.decode()
         return xml
 
@@ -332,10 +332,9 @@ class PyQmlProxy(QObject):
     def addBackgroundPoint(self):
         print(f"addBackgroundPoint")
         self.sample.remove_background(self.background)
-        point = BackgroundPoint(x=0, y=0)
+        point = BackgroundPoint.from_pars(x=90.0, y=0.0)
         self.background.append(point)
         self.sample.set_background(self.background)
-        self.background.append(point)
         self.backgroundChanged.emit()
 
     # Space groups

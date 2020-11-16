@@ -210,7 +210,7 @@ class PyQmlProxy(QObject):
         if self.interface.current_interface_name != 'CrysPy':
             self.interface.generate_sample_binding("filename", self.sample)
         # self.vtkHandler.plot_system2(self.sample.phases[0])
-        # self.sample.set_background(self.background)
+        self.sample.set_background(self.background)
         self.updateStructureView()
         self.updateCalculatedData()
         self.phasesChanged.emit()
@@ -224,7 +224,7 @@ class PyQmlProxy(QObject):
         crystals = Crystals.from_cif_file(cif_path)
         crystals.name = 'Phases'
         self.sample.phases = crystals
-        # self.sample.set_background(self.background)
+        self.sample.set_background(self.background)
         self._onSampleAdded()
 
     @Slot()
@@ -314,30 +314,28 @@ class PyQmlProxy(QObject):
 
     @Property(str, notify=backgroundChanged)
     def backgroundAsXml(self):
-        # self.background.
-        # background = [{"x": x, "y": y} for x, y in zip(self.background.x_points, self.background.y_points)]
-        background = [{"x": 10, "y": 189.2}, {"x": 90, "y": 211.7}, {"x": 170, "y": 195.4}]
+        background = [{"x": item.x.raw_value, "y": item.y.raw_value, 'yId': borg.map.convert_id_to_key(item.y)} for item in self.background]
+        #background = [{"x": 10, "y": 189.2}, {"x": 90, "y": 211.7}, {"x": 170, "y": 195.4}]
         xml = dicttoxml(background, attr_type=False)
         xml = xml.decode()
         return xml
 
     @Slot(str)
     def removeBackgroundPoint(self, background_point_index: int):
-        # self.sample.remove_background(self.background)
-        # point = BackgroundPoint(x=0, y=0)
-        # del self.background[background_point_index]
-        # self.sample.set_background(self.background)
         print(f"removeBackgroundPoint for background_point_index: {background_point_index}")
+        self.sample.remove_background(self.background)
+        del self.background[background_point_index]
+        self.sample.set_background(self.background)
         self.backgroundChanged.emit()
 
     @Slot()
     def addBackgroundPoint(self):
         print(f"addBackgroundPoint")
-        # self.sample.remove_background(self.background)
-        # point = BackgroundPoint(x=0, y=0)
-        # self.background.append(point)
-        # self.sample.set_background(self.background)
-        # self.background.append(point)
+        self.sample.remove_background(self.background)
+        point = BackgroundPoint(x=0, y=0)
+        self.background.append(point)
+        self.sample.set_background(self.background)
+        self.background.append(point)
         self.backgroundChanged.emit()
 
     # Space groups

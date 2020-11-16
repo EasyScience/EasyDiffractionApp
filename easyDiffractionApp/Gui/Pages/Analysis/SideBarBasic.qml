@@ -110,7 +110,7 @@ EaComponents.SideBarColumn {
             EaElements.SideBarButton {
                 smallIcon: true
                 width: EaStyle.Sizes.fontPixelSize * 6.5
-                fontIcon: "grip-lines-vertical"
+                fontIcon: "grip-lines-vertical"//"delicious"//"grip-lines"//"flipboard"
                 text: "Resolution"
                 down: filterCriteriaField.text == "resolution_"
                 onClicked: filterCriteriaField.text = "resolution_"
@@ -119,7 +119,7 @@ EaComponents.SideBarColumn {
             EaElements.SideBarButton {
                 smallIcon: true
                 width: EaStyle.Sizes.fontPixelSize * 7.5
-                fontIcon: "water"
+                fontIcon: "wave-square"//"water"
                 text: "Background"
                 down: filterCriteriaField.text == "background."
                 onClicked: filterCriteriaField.text = "background."

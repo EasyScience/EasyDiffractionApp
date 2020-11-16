@@ -173,7 +173,7 @@ EaComponents.TableView {
                     list[i] = list[i].replace("adp", `<font color=${iconColor} face="${EaStyle.Fonts.iconsFamily}">arrows-alt</font>`)
                     list[i] = list[i].replace("fract", `<font color=${iconColor} face="${EaStyle.Fonts.iconsFamily}">map-marker-alt</font>`)
                     list[i] = list[i].replace("resolution", `<font color=${iconColor} face="${EaStyle.Fonts.iconsFamily}">grip-lines-vertical</font>`)
-                    list[i] = list[i].replace("point_background", `<font color=${iconColor} face="${EaStyle.Fonts.iconsFamily}">water</font>`)
+                    list[i] = list[i].replace("point_background", `<font color=${iconColor} face="${EaStyle.Fonts.iconsFamily}">wave-square</font>`)
                 }
             } else {
                 list[i] = `${list[i]}`
@@ -185,7 +185,7 @@ EaComponents.TableView {
                     list[i] = list[i].replace("adp", `<font face="${EaStyle.Fonts.iconsFamily}">arrows-alt</font>`)
                     list[i] = list[i].replace("fract", `<font face="${EaStyle.Fonts.iconsFamily}">map-marker-alt</font>`)
                     list[i] = list[i].replace("resolution", `<font face="${EaStyle.Fonts.iconsFamily}">grip-lines-vertical</font>`)
-                    list[i] = list[i].replace("point_background", `<font face="${EaStyle.Fonts.iconsFamily}">water</font>`)
+                    list[i] = list[i].replace("point_background", `<font face="${EaStyle.Fonts.iconsFamily}">wave-square</font>`)
                 }
             }
         }

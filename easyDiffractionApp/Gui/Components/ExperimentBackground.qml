@@ -21,7 +21,7 @@ EaComponents.TableView {
         XmlRole { name: "x"; query: "x/value/number()" }
         XmlRole { name: "y"; query: "y/value/number()" }
 
-        XmlRole { name: "xName"; query: "x/name/string()" }
+        XmlRole { name: "pointName"; query: "name/string()" }
 
         XmlRole { name: "xId"; query: "x/key[4]/string()" }
         XmlRole { name: "yId"; query: "y/key[4]/string()" }
@@ -65,7 +65,7 @@ EaComponents.TableView {
             headerText: "Del."
             fontIcon: "minus-circle"
             ToolTip.text: qsTr("Remove this point")
-            onClicked: ExGlobals.Constants.proxy.removeBackgroundPoint(model.xName)
+            onClicked: ExGlobals.Constants.proxy.removeBackgroundPoint(model.pointName)
         }
 
     }

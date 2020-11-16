@@ -324,7 +324,8 @@ class PyQmlProxy(QObject):
     def removeBackgroundPoint(self, background_point_x_name: str):
         print(f"removeBackgroundPoint for background_point_x_name: {background_point_x_name}")
         # self.sample.remove_background(self.background)
-        del self.background[background_point_x_name]
+        names = self.background.names
+        del self.background[names.index(background_point_x_name)]
         # self.sample.set_background(self.background)
         self.backgroundChanged.emit()
         self.updateCalculatedData()

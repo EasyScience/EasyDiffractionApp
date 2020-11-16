@@ -25,24 +25,6 @@ EaComponents.SideBarColumn {
 
             EaElements.SideBarButton {
                 smallIcon: true
-                width: EaStyle.Sizes.fontPixelSize * 5.5
-                fontIcon: "gem"
-                text: "Phase"
-                down: filterCriteriaField.text == "phases."
-                onClicked: filterCriteriaField.text = "phases."
-            }
-
-            EaElements.SideBarButton {
-                smallIcon: true
-                width: EaStyle.Sizes.fontPixelSize * 7.5
-                fontIcon: "microscope"
-                text: "Instrument"
-                down: filterCriteriaField.text == "instrument."
-                onClicked: filterCriteriaField.text = "instrument."
-            }
-
-            EaElements.SideBarButton {
-                smallIcon: true
                 width: EaStyle.Sizes.fontPixelSize * 4.5
                 fontIcon: "cube"
                 text: "Cell"
@@ -61,7 +43,7 @@ EaComponents.SideBarColumn {
 
             EaElements.SideBarButton {
                 smallIcon: true
-                width: EaStyle.Sizes.fontPixelSize * 7.5
+                width: EaStyle.Sizes.fontPixelSize * 7.0
                 fontIcon: "map-marker-alt"
                 text: "Coordinate"
                 down: filterCriteriaField.text == "fract_"
@@ -70,11 +52,29 @@ EaComponents.SideBarColumn {
 
             EaElements.SideBarButton {
                 smallIcon: true
-                width: EaStyle.Sizes.fontPixelSize * 5
+                width: EaStyle.Sizes.fontPixelSize * 4.5
                 fontIcon: "arrows-alt"
                 text: "ADP"
                 down: filterCriteriaField.text == "adp."
                 onClicked: filterCriteriaField.text = "adp."
+            }
+
+            EaElements.SideBarButton {
+                smallIcon: true
+                width: EaStyle.Sizes.fontPixelSize * 6.5
+                fontIcon: "grip-lines-vertical"
+                text: "Resolution"
+                down: filterCriteriaField.text == "resolution_"
+                onClicked: filterCriteriaField.text = "resolution_"
+            }
+
+            EaElements.SideBarButton {
+                smallIcon: true
+                width: EaStyle.Sizes.fontPixelSize * 7.5
+                fontIcon: "water"
+                text: "Background"
+                down: filterCriteriaField.text == "background."
+                onClicked: filterCriteriaField.text = "background."
             }
         }
 
@@ -86,24 +86,43 @@ EaComponents.SideBarColumn {
             EaElements.TextField {
                 id: filterCriteriaField
                 width: EaStyle.Sizes.sideBarContentWidth
-                       - parent.spacing
+                       - parent.spacing * 3
                        - resetFilterButton.width
+                       - phaseButton.width
+                       - instrumentButton.width
                 placeholderText: "Specify your filter criteria"
                 onTextChanged: ExGlobals.Constants.proxy.setFilterCriteria(text)
             }
 
-            EaComponents.TableViewButton {
+            EaElements.SideBarButton {
                 id: resetFilterButton
                 smallIcon: true
-                inset: 0
-                y: 0
-                height: filterCriteriaField.height
-                width: EaStyle.Sizes.fontPixelSize * 5
+                width: EaStyle.Sizes.fontPixelSize * 4.5
                 text: "All"
                 ToolTip.text: qsTr("Reset filtering")
                 fontIcon: "infinity"
                 down: filterCriteriaField.text == ""
                 onClicked: filterCriteriaField.text = ""
+            }
+
+            EaElements.SideBarButton {
+                id: phaseButton
+                smallIcon: true
+                width: EaStyle.Sizes.fontPixelSize * 6.5
+                fontIcon: "gem"
+                text: "Phase"
+                down: filterCriteriaField.text == "phases."
+                onClicked: filterCriteriaField.text = "phases."
+            }
+
+            EaElements.SideBarButton {
+                id: instrumentButton
+                smallIcon: true
+                width: EaStyle.Sizes.fontPixelSize * 7.5
+                fontIcon: "microscope"
+                text: "Instrument"
+                down: filterCriteriaField.text == "instrument."
+                onClicked: filterCriteriaField.text = "instrument."
             }
         }
 

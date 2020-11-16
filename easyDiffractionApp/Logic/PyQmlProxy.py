@@ -104,7 +104,7 @@ class PyQmlProxy(QObject):
 
     @Slot()
     def loadExperiment(self):
-        self.experiments = [{"label": "PND", "color": "steelblue"}]
+        self.experiments = [{"label": "D2B_300K", "color": "steelblue"}]
         self.experimentDataChanged.emit()
 
     # Instrument parameters
@@ -320,11 +320,11 @@ class PyQmlProxy(QObject):
         xml = xml.decode()
         return xml
 
-    @Slot(int)
-    def removeBackgroundPoint(self, background_point_index: int):
-        print(f"removeBackgroundPoint for background_point_index: {background_point_index}")
+    @Slot(str)
+    def removeBackgroundPoint(self, background_point_x_name: str):
+        print(f"removeBackgroundPoint for background_point_x_name: {background_point_x_name}")
         # self.sample.remove_background(self.background)
-        del self.background[background_point_index]
+        del self.background[background_point_x_name]
         # self.sample.set_background(self.background)
         self.backgroundChanged.emit()
         self.updateCalculatedData()

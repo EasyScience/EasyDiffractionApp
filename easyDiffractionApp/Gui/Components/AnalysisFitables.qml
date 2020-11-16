@@ -120,10 +120,12 @@ EaComponents.TableView {
         print(label)
 
         // Modify current label
+        label = label.replace("Instrument.", "Instrument.D2B_300K.")
         label = label.replace("Uiso.Uiso", "Uiso")
         label = label.replace("fract_", "fract.")
         label = label.replace("length_", "length.")
         label = label.replace("angle_", "angle.")
+        label = label.replace("resolution_", "resolution.")
 
         // Current label to list
         let list = label.split(".")
@@ -131,10 +133,12 @@ EaComponents.TableView {
 
         // Modify previous label to list
         let previousLabel = index > 0 ? fitablesModel.get(index - 1).label : ""
+        previousLabel = previousLabel.replace("Instrument.", "Instrument.D2B_300K.")
         previousLabel = previousLabel.replace("Uiso.Uiso", "Uiso")
         previousLabel = previousLabel.replace("fract_", "fract.")
         previousLabel = previousLabel.replace("length_", "length.")
         previousLabel = previousLabel.replace("angle_", "angle.")
+        previousLabel = previousLabel.replace("resolution_", "resolution.")
 
         // Previous label to list
         let previousList = previousLabel.split(".")
@@ -169,6 +173,8 @@ EaComponents.TableView {
                     list[i] = list[i].replace("atoms", `<font color=${iconColor} face="${EaStyle.Fonts.iconsFamily}">atom</font>`)
                     list[i] = list[i].replace("adp", `<font color=${iconColor} face="${EaStyle.Fonts.iconsFamily}">arrows-alt</font>`)
                     list[i] = list[i].replace("fract", `<font color=${iconColor} face="${EaStyle.Fonts.iconsFamily}">map-marker-alt</font>`)
+                    list[i] = list[i].replace("resolution", `<font color=${iconColor} face="${EaStyle.Fonts.iconsFamily}">grip-lines-vertical</font>`)
+                    list[i] = list[i].replace("point_background", `<font color=${iconColor} face="${EaStyle.Fonts.iconsFamily}">water</font>`)
                 }
             } else {
                 list[i] = `${list[i]}`
@@ -179,6 +185,8 @@ EaComponents.TableView {
                     list[i] = list[i].replace("atoms", `<font face="${EaStyle.Fonts.iconsFamily}">atom</font>`)
                     list[i] = list[i].replace("adp", `<font face="${EaStyle.Fonts.iconsFamily}">arrows-alt</font>`)
                     list[i] = list[i].replace("fract", `<font face="${EaStyle.Fonts.iconsFamily}">map-marker-alt</font>`)
+                    list[i] = list[i].replace("resolution", `<font face="${EaStyle.Fonts.iconsFamily}">grip-lines-vertical</font>`)
+                    list[i] = list[i].replace("point_background", `<font face="${EaStyle.Fonts.iconsFamily}">water</font>`)
                 }
             }
         }
@@ -186,11 +194,6 @@ EaComponents.TableView {
         // Last element formatting
         //list[last] = `<font color=${EaStyle.Colors.themeForegroundHovered}>${list[last]}</font>`
         list[last] = `${list[last]}`
-        list[last] = list[last].replace("u_resolution", "resolution_u")
-        list[last] = list[last].replace("v_resolution", "resolution_v")
-        list[last] = list[last].replace("w_resolution", "resolution_w")
-        list[last] = list[last].replace("x_resolution", "resolution_x")
-        list[last] = list[last].replace("y_resolution", "resolution_y")
 
         // Back to string
         if (ExGlobals.Variables.iconifiedNames) {

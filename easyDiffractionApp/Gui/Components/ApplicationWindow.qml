@@ -151,7 +151,7 @@ EaComponents.ApplicationWindow {
 
         // Project page
         EaComponents.ContentPage {
-            defaultInfo: ExGlobals.Variables.projectCreated ? "" : "No Project Created/Opened"
+            defaultInfo: ExGlobals.Variables.projectCreated ? "" : qsTr("No Project Created/Opened")
 
             mainContent: EaComponents.MainContent {
                 tabs: [
@@ -209,7 +209,7 @@ EaComponents.ApplicationWindow {
 
         // Experiment page
         EaComponents.ContentPage {
-            defaultInfo: ExGlobals.Variables.experimentLoaded ? "" : "No Experiments Loaded"
+            defaultInfo: ExGlobals.Variables.experimentLoaded ? "" : qsTr("No Experiments Loaded")
 
             mainContent: EaComponents.MainContent {
                 tabs: [

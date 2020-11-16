@@ -13,6 +13,7 @@ EaComponents.TableView {
     id: table
 
     maxRowCountShow: 8
+    defaultInfoText: qsTr("No Parameters Found")
 
     // Table model
 

@@ -12,6 +12,8 @@ import Gui.Globals 1.0 as ExGlobals
 
 EaComponents.TableView {
 
+    defaultInfoText: qsTr("No Background Points Added")
+
     // Table model
 
     model: XmlListModel {
@@ -25,8 +27,6 @@ EaComponents.TableView {
 
         XmlRole { name: "xId"; query: "x/key[4]/string()" }
         XmlRole { name: "yId"; query: "y/key[4]/string()" }
-
-        onXmlChanged: print(EaLogic.Utils.prettyXml(xml))
     }
 
     // Table rows

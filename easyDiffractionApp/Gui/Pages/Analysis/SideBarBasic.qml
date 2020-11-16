@@ -19,65 +19,6 @@ EaComponents.SideBarColumn {
         last: true
         collapsible: false
 
-        // Filter buttons
-        Row {
-            spacing: EaStyle.Sizes.fontPixelSize * 0.5
-
-            EaElements.SideBarButton {
-                smallIcon: true
-                width: EaStyle.Sizes.fontPixelSize * 4.5
-                fontIcon: "cube"
-                text: "Cell"
-                down: filterCriteriaField.text == "cell."
-                onClicked: filterCriteriaField.text = "cell."
-            }
-
-            EaElements.SideBarButton {
-                smallIcon: true
-                width: EaStyle.Sizes.fontPixelSize * 5
-                fontIcon: "atom"
-                text: "Atom"
-                down: filterCriteriaField.text == "atoms."
-                onClicked: filterCriteriaField.text = "atoms."
-            }
-
-            EaElements.SideBarButton {
-                smallIcon: true
-                width: EaStyle.Sizes.fontPixelSize * 7.0
-                fontIcon: "map-marker-alt"
-                text: "Coordinate"
-                down: filterCriteriaField.text == "fract_"
-                onClicked: filterCriteriaField.text = "fract_"
-            }
-
-            EaElements.SideBarButton {
-                smallIcon: true
-                width: EaStyle.Sizes.fontPixelSize * 4.5
-                fontIcon: "arrows-alt"
-                text: "ADP"
-                down: filterCriteriaField.text == "adp."
-                onClicked: filterCriteriaField.text = "adp."
-            }
-
-            EaElements.SideBarButton {
-                smallIcon: true
-                width: EaStyle.Sizes.fontPixelSize * 6.5
-                fontIcon: "grip-lines-vertical"
-                text: "Resolution"
-                down: filterCriteriaField.text == "resolution_"
-                onClicked: filterCriteriaField.text = "resolution_"
-            }
-
-            EaElements.SideBarButton {
-                smallIcon: true
-                width: EaStyle.Sizes.fontPixelSize * 7.5
-                fontIcon: "water"
-                text: "Background"
-                down: filterCriteriaField.text == "background."
-                onClicked: filterCriteriaField.text = "background."
-            }
-        }
-
         // Filter text field
         Row {
             spacing: EaStyle.Sizes.fontPixelSize * 0.5
@@ -123,6 +64,65 @@ EaComponents.SideBarColumn {
                 text: "Instrument"
                 down: filterCriteriaField.text == "instrument."
                 onClicked: filterCriteriaField.text = "instrument."
+            }
+        }
+
+        // Filter buttons
+        Row {
+            spacing: EaStyle.Sizes.fontPixelSize * 0.5
+
+            EaElements.SideBarButton {
+                smallIcon: true
+                width: EaStyle.Sizes.fontPixelSize * 4.5
+                fontIcon: "cube"
+                text: "Cell"
+                down: filterCriteriaField.text == "cell."
+                onClicked: filterCriteriaField.text = "cell."
+            }
+
+            EaElements.SideBarButton {
+                smallIcon: true
+                width: EaStyle.Sizes.fontPixelSize * 5
+                fontIcon: "atom"
+                text: "Atom"
+                down: filterCriteriaField.text == "atoms."
+                onClicked: filterCriteriaField.text = "atoms."
+            }
+
+            EaElements.SideBarButton {
+                smallIcon: true
+                width: EaStyle.Sizes.fontPixelSize * 7.0
+                fontIcon: "map-marker-alt"
+                text: "Coordinate"
+                down: filterCriteriaField.text == "fract_"
+                onClicked: filterCriteriaField.text = "fract_"
+            }
+
+            EaElements.SideBarButton {
+                smallIcon: true
+                width: EaStyle.Sizes.fontPixelSize * 4.5
+                fontIcon: "arrows-alt"
+                text: "ADP"
+                down: filterCriteriaField.text == "adp."
+                onClicked: filterCriteriaField.text = "adp."
+            }
+
+            EaElements.SideBarButton {
+                smallIcon: true
+                width: EaStyle.Sizes.fontPixelSize * 6.5
+                fontIcon: "grip-lines-vertical"//"delicious"//"grip-lines"//"flipboard"
+                text: "Resolution"
+                down: filterCriteriaField.text == "resolution_"
+                onClicked: filterCriteriaField.text = "resolution_"
+            }
+
+            EaElements.SideBarButton {
+                smallIcon: true
+                width: EaStyle.Sizes.fontPixelSize * 7.5
+                fontIcon: "wave-square"//"water"
+                text: "Background"
+                down: filterCriteriaField.text == "background."
+                onClicked: filterCriteriaField.text = "background."
             }
         }
 

@@ -30,7 +30,7 @@ tests_no_zope = ["coverage[toml] (>=5.0.2)", "hypothesis", "pympler", "pytest (>
 
 [[package]]
 name = "bumps"
-version = "0.7.17"
+version = "0.7.18"
 description = "Data fitting with bayesian uncertainty analysis"
 category = "main"
 optional = false
@@ -180,7 +180,7 @@ matplotlib = "^3.2, <3.3"
 type = "git"
 url = 'https://github.com/easyScience/easyDiffractionLib.git'
 reference = 'gsas'
-resolved_reference = "18691434b814a28e87bce80bdbe5941045efe425"
+resolved_reference = "40ee09f2d6b522ebfac0febb2de2f1951ed05116"
 
 [[package]]
 name = "ffmpeg-python"
@@ -711,7 +711,7 @@ attrs = [
     {file = "attrs-20.3.0.tar.gz", hash = "sha256:832aa3cde19744e49938b91fea06d69ecb9e649c93ba974535d08ad92164f700"},
 ]
 bumps = [
-    {file = "bumps-0.7.17.tar.gz", hash = "sha256:29ddb6c6704b6bb7bc59704b976579f11a150bf7068c140d006525036f1eef09"},
+    {file = "bumps-0.7.18.tar.gz", hash = "sha256:3217d4fd3ec767448d742f3b6ff527cc3817f2421b9a9a8456e1d8ee4a9b1087"},
 ]
 certifi = [
     {file = "certifi-2020.11.8-py2.py3-none-any.whl", hash = "sha256:1f422849db327d534e3d0c5f02a263458c3955ec0aae4ff09b95f195c59f4edd"},

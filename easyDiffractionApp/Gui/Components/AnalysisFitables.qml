@@ -152,7 +152,7 @@ EaComponents.TableView {
                 list[0] = `<font face="${EaStyle.Fonts.iconsFamily}">${list[0]}</font>`
                 list[0] = list[0].replace("Phases", "gem").replace("Instrument", "microscope")
             } else {
-                list[0] = `<font color=${EaStyle.Colors.themeForeground}><b>${list[0]}</b></font>`
+                list[0] = `<font color=${EaStyle.Colors.themeForeground}>${list[0]}</font>`
             }
         }
 
@@ -169,7 +169,7 @@ EaComponents.TableView {
                     list[i] = list[i].replace("fract", `<font color=${iconColor} face="${EaStyle.Fonts.iconsFamily}">map-marker-alt</font>`)
                 }
             } else {
-                list[i] = `<b>${list[i]}</b>`
+                list[i] = `${list[i]}`
                 if (ExGlobals.Variables.iconifiedNames) {
                     list[i] = list[i].replace("cell", `<font face="${EaStyle.Fonts.iconsFamily}">cube</font>`)
                     list[i] = list[i].replace("length", `<font face="${EaStyle.Fonts.iconsFamily}">ruler</font>`)
@@ -182,8 +182,8 @@ EaComponents.TableView {
         }
 
         // Last element formatting
-        //list[last] = `<font color=${EaStyle.Colors.themeForegroundHovered}><b>${list[last]}</b></font>`
-        list[last] = `<b>${list[last]}</b>`
+        //list[last] = `<font color=${EaStyle.Colors.themeForegroundHovered}>${list[last]}</font>`
+        list[last] = `${list[last]}`
         list[last] = list[last].replace("u_resolution", "resolution_u")
         list[last] = list[last].replace("v_resolution", "resolution_v")
         list[last] = list[last].replace("w_resolution", "resolution_w")
@@ -195,10 +195,10 @@ EaComponents.TableView {
             label = list.join(`&nbsp;&nbsp;`)
         } else {
             label = list.join(`<font color=${EaStyle.Colors.themeForegroundMinor}>.</font>`)
-            label = label.replace("<b>fract</b><font color=#aaaaaa>.", "<b>fract_</b>").replace("<font color=#aaaaaa>fract</font><font color=#aaaaaa>.", "<b>fract_</b>")
-            label = label.replace("<b>cell</b><font color=#aaaaaa>.", "<b>cell_</b>").replace("<font color=#aaaaaa>cell</font><font color=#aaaaaa>.", "<b>cell_</b>")
-            label = label.replace("<b>length</b><font color=#aaaaaa>.", "<b>length_</b>").replace("<font color=#aaaaaa>length</font><font color=#aaaaaa>.", "<b>length_</b>")
-            label = label.replace("<b>angle</b><font color=#aaaaaa>.", "<b>angle_</b>").replace("<font color=#aaaaaa>angle</font><font color=#aaaaaa>.", "<b>angle_</b>")
+            label = label.replace("fract<font color=#aaaaaa>.", "fract_").replace("<font color=#aaaaaa>fract</font><font color=#aaaaaa>.", "fract_")
+            label = label.replace("cell<font color=#aaaaaa>.", "cell_").replace("<font color=#aaaaaa>cell</font><font color=#aaaaaa>.", "cell_")
+            label = label.replace("length<font color=#aaaaaa>.", "length_").replace("<font color=#aaaaaa>length</font><font color=#aaaaaa>.", "length_")
+            label = label.replace("angle<font color=#aaaaaa>.", "angle_").replace("<font color=#aaaaaa>angle</font><font color=#aaaaaa>.", "angle_")
         }
 
         return label

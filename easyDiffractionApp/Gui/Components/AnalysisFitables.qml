@@ -117,6 +117,8 @@ EaComponents.TableView {
         if (index < 0 || typeof label === "undefined")
             return ""
 
+        print(label)
+
         // Modify current label
         label = label.replace("Uiso.Uiso", "Uiso")
         label = label.replace("fract_", "fract.")
@@ -200,6 +202,9 @@ EaComponents.TableView {
             label = label.replace("length<font color=#aaaaaa>.", "length_").replace("<font color=#aaaaaa>length</font><font color=#aaaaaa>.", "length_")
             label = label.replace("angle<font color=#aaaaaa>.", "angle_").replace("<font color=#aaaaaa>angle</font><font color=#aaaaaa>.", "angle_")
         }
+
+        // 180,0_deg to 180.0°
+        label = label.replace(",", ".").replace("_deg", "°")
 
         return label
     }

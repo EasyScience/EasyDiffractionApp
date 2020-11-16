@@ -327,6 +327,9 @@ class PyQmlProxy(QObject):
         del self.background[background_point_index]
         self.sample.set_background(self.background)
         self.backgroundChanged.emit()
+        self.updateCalculatedData()
+        self.phasesChanged.emit()
+        self.modelChanged.emit()
 
     @Slot()
     def addBackgroundPoint(self):
@@ -336,6 +339,9 @@ class PyQmlProxy(QObject):
         self.background.append(point)
         self.sample.set_background(self.background)
         self.backgroundChanged.emit()
+        self.updateCalculatedData()
+        self.phasesChanged.emit()
+        self.modelChanged.emit()
 
     # Space groups
 
@@ -501,6 +507,7 @@ class PyQmlProxy(QObject):
         self.updateStructureView()
         self.updateCalculatedData()
         self.phasesChanged.emit()
+        self.backgroundChanged.emit()
 
     @Slot(str, float)
     def editParameterValue(self, obj_id: str, new_value: float):

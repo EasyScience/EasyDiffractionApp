@@ -52,6 +52,8 @@ class PyQmlProxy(QObject):
         self.interface = InterfaceFactory()
         self.vtkHandler = None
         self.sample = Sample(parameters=Pattern.default(), interface=self.interface)
+        self.sample.parameters.zero_shift=0.0
+        self.sample.parameters.wavelength=1.5
         self.sample.parameters.u_resolution = 0.4
         self.sample.parameters.v_resolution = -0.5
         self.sample.parameters.w_resolution = 0.9

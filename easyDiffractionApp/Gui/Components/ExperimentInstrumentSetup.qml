@@ -12,16 +12,15 @@ Row {
 
     // Zero shift
     EaComponents.TableViewLabel{
-        enabled: false
         horizontalAlignment: Text.AlignRight
         width: labelWidth()
         text: qsTr("Zero shift:")
     }
     EaElements.Parameter {
-        enabled: false
         width: textFieldWidth()
-        text: "0.0"
-        units: "deg"
+        units: typeof ExGlobals.Constants.proxy.instrumentParameters.zero_shift != "undefined" ? ExGlobals.Constants.proxy.instrumentParameters.zero_shift.units : ""
+        text: typeof ExGlobals.Constants.proxy.instrumentParameters.zero_shift != "undefined" ? ExGlobals.Constants.proxy.instrumentParameters.zero_shift.value : ""
+        onEditingFinished: editParameterValue(ExGlobals.Constants.proxy.instrumentParameters.zero_shift["@id"], text)
     }
 
     // Spacer

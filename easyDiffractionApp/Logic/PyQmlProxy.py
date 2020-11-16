@@ -16,7 +16,7 @@ from easyDiffractionLib.Elements.Backgrounds.Point import PointBackground, Backg
 from easyDiffractionLib.sample import Sample
 from easyDiffractionLib import Crystals, Crystal, Cell, Site, Atoms, SpaceGroup
 from easyDiffractionLib.interface import InterfaceFactory
-from easyDiffractionLib.Elements.Instruments.Instrument import Pattern
+from easyDiffractionLib.Elements.Experiments.Experiment import Pars1D
 
 from easyAppLogic.Utils.Utils import generalizePath
 
@@ -51,9 +51,10 @@ class PyQmlProxy(QObject):
         self.experiments = []
         self.interface = InterfaceFactory()
         self.vtkHandler = None
-        self.sample = Sample(parameters=Pattern.default(), interface=self.interface)
-        self.sample.parameters.zero_shift=0.0
-        self.sample.parameters.wavelength=1.5
+        self.sample = Sample(parameters=Pars1D.default(), interface=self.interface)
+        self.sample.pattern.zero_shift = 0.0
+        self.sample.pattern.scale = 1.0
+        self.sample.parameters.wavelength = 1.5
         self.sample.parameters.resolution_u = 0.4
         self.sample.parameters.resolution_v = -0.5
         self.sample.parameters.resolution_w = 0.9

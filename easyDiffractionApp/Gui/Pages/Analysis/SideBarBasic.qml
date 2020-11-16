@@ -19,6 +19,54 @@ EaComponents.SideBarColumn {
         last: true
         collapsible: false
 
+        // Filter text field
+        Row {
+            spacing: EaStyle.Sizes.fontPixelSize * 0.5
+
+
+            EaElements.TextField {
+                id: filterCriteriaField
+                width: EaStyle.Sizes.sideBarContentWidth
+                       - parent.spacing * 3
+                       - resetFilterButton.width
+                       - phaseButton.width
+                       - instrumentButton.width
+                placeholderText: "Specify your filter criteria"
+                onTextChanged: ExGlobals.Constants.proxy.setFilterCriteria(text)
+            }
+
+            EaElements.SideBarButton {
+                id: resetFilterButton
+                smallIcon: true
+                width: EaStyle.Sizes.fontPixelSize * 4.5
+                text: "All"
+                ToolTip.text: qsTr("Reset filtering")
+                fontIcon: "infinity"
+                down: filterCriteriaField.text == ""
+                onClicked: filterCriteriaField.text = ""
+            }
+
+            EaElements.SideBarButton {
+                id: phaseButton
+                smallIcon: true
+                width: EaStyle.Sizes.fontPixelSize * 6.5
+                fontIcon: "gem"
+                text: "Phase"
+                down: filterCriteriaField.text == "phases."
+                onClicked: filterCriteriaField.text = "phases."
+            }
+
+            EaElements.SideBarButton {
+                id: instrumentButton
+                smallIcon: true
+                width: EaStyle.Sizes.fontPixelSize * 7.5
+                fontIcon: "microscope"
+                text: "Instrument"
+                down: filterCriteriaField.text == "instrument."
+                onClicked: filterCriteriaField.text = "instrument."
+            }
+        }
+
         // Filter buttons
         Row {
             spacing: EaStyle.Sizes.fontPixelSize * 0.5
@@ -75,54 +123,6 @@ EaComponents.SideBarColumn {
                 text: "Background"
                 down: filterCriteriaField.text == "background."
                 onClicked: filterCriteriaField.text = "background."
-            }
-        }
-
-        // Filter text field
-        Row {
-            spacing: EaStyle.Sizes.fontPixelSize * 0.5
-
-
-            EaElements.TextField {
-                id: filterCriteriaField
-                width: EaStyle.Sizes.sideBarContentWidth
-                       - parent.spacing * 3
-                       - resetFilterButton.width
-                       - phaseButton.width
-                       - instrumentButton.width
-                placeholderText: "Specify your filter criteria"
-                onTextChanged: ExGlobals.Constants.proxy.setFilterCriteria(text)
-            }
-
-            EaElements.SideBarButton {
-                id: resetFilterButton
-                smallIcon: true
-                width: EaStyle.Sizes.fontPixelSize * 4.5
-                text: "All"
-                ToolTip.text: qsTr("Reset filtering")
-                fontIcon: "infinity"
-                down: filterCriteriaField.text == ""
-                onClicked: filterCriteriaField.text = ""
-            }
-
-            EaElements.SideBarButton {
-                id: phaseButton
-                smallIcon: true
-                width: EaStyle.Sizes.fontPixelSize * 6.5
-                fontIcon: "gem"
-                text: "Phase"
-                down: filterCriteriaField.text == "phases."
-                onClicked: filterCriteriaField.text = "phases."
-            }
-
-            EaElements.SideBarButton {
-                id: instrumentButton
-                smallIcon: true
-                width: EaStyle.Sizes.fontPixelSize * 7.5
-                fontIcon: "microscope"
-                text: "Instrument"
-                down: filterCriteriaField.text == "instrument."
-                onClicked: filterCriteriaField.text = "instrument."
             }
         }
 

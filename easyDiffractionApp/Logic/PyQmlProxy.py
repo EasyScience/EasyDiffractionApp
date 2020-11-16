@@ -320,12 +320,12 @@ class PyQmlProxy(QObject):
         xml = xml.decode()
         return xml
 
-    @Slot(str)
+    @Slot(int)
     def removeBackgroundPoint(self, background_point_index: int):
         print(f"removeBackgroundPoint for background_point_index: {background_point_index}")
-        self.sample.remove_background(self.background)
+        # self.sample.remove_background(self.background)
         del self.background[background_point_index]
-        self.sample.set_background(self.background)
+        # self.sample.set_background(self.background)
         self.backgroundChanged.emit()
         self.updateCalculatedData()
         self.phasesChanged.emit()
@@ -334,10 +334,10 @@ class PyQmlProxy(QObject):
     @Slot()
     def addBackgroundPoint(self):
         print(f"addBackgroundPoint")
-        self.sample.remove_background(self.background)
+        # self.sample.remove_background(self.background)
         point = BackgroundPoint.from_pars(x=90.0, y=0.0)
         self.background.append(point)
-        self.sample.set_background(self.background)
+        # self.sample.set_background(self.background)
         self.backgroundChanged.emit()
         self.updateCalculatedData()
         self.phasesChanged.emit()

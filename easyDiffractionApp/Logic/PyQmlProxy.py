@@ -11,6 +11,7 @@ from easyCore.Symmetry.tools import SpacegroupInfo
 from easyCore.Fitting.Fitting import Fitter
 from easyCore.Fitting.Constraints import ObjConstraint, NumericConstraint
 from easyCore.Utils.classTools import generatePath
+from easyDiffractionLib.Elements.Backgrounds.Point import PointBackground, BackgroundPoint
 
 from easyDiffractionLib.sample import Sample
 from easyDiffractionLib import Crystals, Crystal, Cell, Site, Atoms, SpaceGroup
@@ -51,11 +52,14 @@ class PyQmlProxy(QObject):
         self.interface = InterfaceFactory()
         self.vtkHandler = None
         self.sample = Sample(parameters=Pattern.default(), interface=self.interface)
-        self.sample.parameters.u_resolution=0.4
-        self.sample.parameters.v_resolution=-0.5
-        self.sample.parameters.w_resolution=0.9
-        self.sample.parameters.x_resolution=0.0
-        self.sample.parameters.y_resolution=0.0
+        self.sample.parameters.u_resolution = 0.4
+        self.sample.parameters.v_resolution = -0.5
+        self.sample.parameters.w_resolution = 0.9
+        self.sample.parameters.x_resolution = 0.0
+        self.sample.parameters.y_resolution = 0.0
+
+        self.background = PointBackground(linked_experiment='NEED_TO_CHANGE')
+
         x_data = np.linspace(0, 130, 1301)
         self.bridge.data.x_label = '2theta (deg)'
         self.bridge.data.x_label = '2theta (deg)'
@@ -98,7 +102,7 @@ class PyQmlProxy(QObject):
 
     @Slot()
     def loadExperiment(self):
-        self.experiments = [ {"label": "PND", "color": "steelblue"} ]
+        self.experiments = [{"label": "PND", "color": "steelblue"}]
         self.experimentDataChanged.emit()
 
     # Instrument parameters
@@ -203,7 +207,8 @@ class PyQmlProxy(QObject):
     def _onSampleAdded(self):
         if self.interface.current_interface_name != 'CrysPy':
             self.interface.generate_sample_binding("filename", self.sample)
-        #self.vtkHandler.plot_system2(self.sample.phases[0])
+        # self.vtkHandler.plot_system2(self.sample.phases[0])
+        # self.sample.set_background(self.background)
         self.updateStructureView()
         self.updateCalculatedData()
         self.phasesChanged.emit()
@@ -217,6 +222,7 @@ class PyQmlProxy(QObject):
         crystals = Crystals.from_cif_file(cif_path)
         crystals.name = 'Phases'
         self.sample.phases = crystals
+        # self.sample.set_background(self.background)
         self._onSampleAdded()
 
     @Slot()
@@ -234,7 +240,7 @@ class PyQmlProxy(QObject):
     @Slot(str)
     def removePhase(self, phase_name: str):
         del self.sample.phases[phase_name]
-        #self.vtkHandler.clearScene()
+        # self.vtkHandler.clearScene()
         self.updateStructureView()
         self.updateCalculatedData()
         self.phasesChanged.emit()
@@ -256,14 +262,14 @@ class PyQmlProxy(QObject):
 
     @phasesAsCif.setter
     def setPhasesAsCif(self, cif_str):
-       self.phases = Crystals.from_cif_str(cif_str)
-       self.sample.phases = self.phases
-       self.updateStructureView()
-       self.updateCalculatedData()
-       self.phasesChanged.emit()
-       self.currentPhaseChanged.emit()
-       self.currentPhaseSitesChanged.emit()
-       self.spaceGroupChanged.emit()
+        self.phases = Crystals.from_cif_str(cif_str)
+        self.sample.phases = self.phases
+        self.updateStructureView()
+        self.updateCalculatedData()
+        self.phasesChanged.emit()
+        self.currentPhaseChanged.emit()
+        self.currentPhaseSitesChanged.emit()
+        self.spaceGroupChanged.emit()
 
     @Slot(str)
     def modifyPhaseName(self, new_value: str):
@@ -276,7 +282,7 @@ class PyQmlProxy(QObject):
             return {}
         all_sites = self.sample.phases[0].all_sites()
         # convert numpy lists to python lists for qml
-        all_sites = { k: all_sites[k].tolist() for k in all_sites.keys() }
+        all_sites = {k: all_sites[k].tolist() for k in all_sites.keys()}
         return all_sites
 
     @Property(int, notify=currentPhaseChanged)
@@ -293,12 +299,11 @@ class PyQmlProxy(QObject):
         self.phasesChanged.emit()
         self.currentPhaseChanged.emit()
 
-
     # Peak profile
 
     @Property(str, notify=instrumentResolutionChanged)
     def instrumentResolutionAsXml(self):
-        instrument_resolution = [ {"U": 11.3, "V": -2.9, "W": 1.1, "X": 0.0, "Y": 0.0} ]
+        instrument_resolution = [{"U": 11.3, "V": -2.9, "W": 1.1, "X": 0.0, "Y": 0.0}]
         xml = dicttoxml(instrument_resolution, attr_type=False)
         xml = xml.decode()
         return xml
@@ -307,19 +312,30 @@ class PyQmlProxy(QObject):
 
     @Property(str, notify=backgroundChanged)
     def backgroundAsXml(self):
-        background = [ {"x": 10, "y": 189.2}, {"x": 90, "y": 211.7}, {"x": 170, "y": 195.4} ]
+        # self.background.
+        # background = [{"x": x, "y": y} for x, y in zip(self.background.x_points, self.background.y_points)]
+        background = [{"x": 10, "y": 189.2}, {"x": 90, "y": 211.7}, {"x": 170, "y": 195.4}]
         xml = dicttoxml(background, attr_type=False)
         xml = xml.decode()
         return xml
 
     @Slot(str)
     def removeBackgroundPoint(self, background_point_index: int):
+        # self.sample.remove_background(self.background)
+        # point = BackgroundPoint(x=0, y=0)
+        # del self.background[background_point_index]
+        # self.sample.set_background(self.background)
         print(f"removeBackgroundPoint for background_point_index: {background_point_index}")
         self.backgroundChanged.emit()
 
     @Slot()
     def addBackgroundPoint(self):
         print(f"addBackgroundPoint")
+        # self.sample.remove_background(self.background)
+        # point = BackgroundPoint(x=0, y=0)
+        # self.background.append(point)
+        # self.sample.set_background(self.background)
+        # self.background.append(point)
         self.backgroundChanged.emit()
 
     # Space groups
@@ -346,13 +362,17 @@ class PyQmlProxy(QObject):
     @Property('QVariant', notify=spaceGroupChanged)
     def spaceGroupsInts(self):
         ints = SpacegroupInfo.get_ints_from_system(self.spaceGroupSystem.lower())
-        out_list = ["<font color='#999'>{}</font> {:s}".format(this_int, SpacegroupInfo.get_symbol_from_int_number(this_int)) for this_int in ints]
-        out = {'display': out_list, 'index': ints }
+        out_list = [
+            "<font color='#999'>{}</font> {:s}".format(this_int, SpacegroupInfo.get_symbol_from_int_number(this_int))
+            for this_int in ints]
+        out = {'display': out_list, 'index': ints}
         return out
-        #ints = SpacegroupInfo.get_ints_from_system(self.spaceGroupSystem)
-        #out_list = ["<font color='#999'>{}</font> {:s}".format(this_int, SpacegroupInfo.get_symbol_from_int_number(this_int)) for this_int in ints]
-        #display_list =  ["<font color='#999'>{}</font> {:s}".format(i, value) for i, value in enumerate(self._currentSpaceGroupSettingList())]
-        #return out
+        # ints = SpacegroupInfo.get_ints_from_system(self.spaceGroupSystem)
+        # out_list = ["<font color='#999'>{}</font> {:s}".format(this_int, SpacegroupInfo.get_symbol_from_int_number(
+        # this_int)) for this_int in ints]
+        # display_list =  ["<font color='#999'>{}</font> {:s}".format(i, value) for i, value in enumerate(
+        # self._currentSpaceGroupSettingList())]
+        # return out
 
     @Property(int, notify=spaceGroupChanged)
     def spaceGroupInt(self):
@@ -382,7 +402,8 @@ class PyQmlProxy(QObject):
 
     @Property('QVariant', notify=spaceGroupChanged)
     def currentSpaceGroupSettingList(self):
-        display_list =  ["<font color='#999'>{}</font> {:s}".format(i+1, value) for i, value in enumerate(self._currentSpaceGroupSettingList())]
+        display_list = ["<font color='#999'>{}</font> {:s}".format(i + 1, value) for i, value in
+                        enumerate(self._currentSpaceGroupSettingList())]
         return display_list
 
     @Property(int, notify=spaceGroupChanged)
@@ -447,7 +468,7 @@ class PyQmlProxy(QObject):
             if self._filter_criteria.lower() not in par_path.lower():
                 continue
             self._fitables_list.append(
-                {"id": str(id),
+                {"id":     str(id),
                  "number": index + 1,
                  "label":  par_path,
                  "value":  par.raw_value,

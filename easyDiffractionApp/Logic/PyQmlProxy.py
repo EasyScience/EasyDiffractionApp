@@ -60,7 +60,7 @@ class PyQmlProxy(QObject):
         self.sample.parameters.resolution_x = 0.0
         self.sample.parameters.resolution_y = 0.0
 
-        self.background = PointBackground(BackgroundPoint.from_pars(0, 0), BackgroundPoint.from_pars(180, 0), linked_experiment='NEED_TO_CHANGE')
+        self.background = PointBackground(linked_experiment='NEED_TO_CHANGE')
 
         x_data = np.linspace(0, 130, 1301)
         self.bridge.data.x_label = '2theta (deg)'
@@ -323,10 +323,10 @@ class PyQmlProxy(QObject):
     @Slot(str)
     def removeBackgroundPoint(self, background_point_x_name: str):
         print(f"removeBackgroundPoint for background_point_x_name: {background_point_x_name}")
-        # self.sample.remove_background(self.background)
+        self.sample.remove_background(self.background)
         names = self.background.names
         del self.background[names.index(background_point_x_name)]
-        # self.sample.set_background(self.background)
+        self.sample.set_background(self.background)
         self.backgroundChanged.emit()
         self.updateCalculatedData()
         self.phasesChanged.emit()
@@ -335,10 +335,10 @@ class PyQmlProxy(QObject):
     @Slot()
     def addBackgroundPoint(self):
         print(f"addBackgroundPoint")
-        # self.sample.remove_background(self.background)
-        point = BackgroundPoint.from_pars(x=90.0, y=0.0)
+        self.sample.remove_background(self.background)
+        point = BackgroundPoint.from_pars(x=180.0, y=0.0)
         self.background.append(point)
-        # self.sample.set_background(self.background)
+        self.sample.set_background(self.background)
         self.backgroundChanged.emit()
         self.updateCalculatedData()
         self.phasesChanged.emit()

@@ -317,7 +317,6 @@ class VTKcanvasHandler(QObject):
     @Slot(int, int, int)
     def mousePressEvent(self, button: int, screenX: int, screenY: int):
         qDebug('CanvasHandler::mousePressEvent()')
-        # self._m_vtkFboItem.selectModel(screenX, screenY)
 
     @Slot(int, int, int)
     def mouseMoveEvent(self, button: int, screenX: int, screenY: int):

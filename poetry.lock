@@ -180,7 +180,7 @@ matplotlib = "^3.2, <3.3"
 type = "git"
 url = 'https://github.com/easyScience/easyDiffractionLib.git'
 reference = 'gsas'
-resolved_reference = "f3e535d888a24757305f5b34b67e787100e1c475"
+resolved_reference = "c22dd18a70b8fb8a688474c2cb412613bedd5b6b"
 
 [[package]]
 name = "ffmpeg-python"

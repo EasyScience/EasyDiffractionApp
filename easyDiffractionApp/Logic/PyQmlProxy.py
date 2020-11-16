@@ -54,11 +54,11 @@ class PyQmlProxy(QObject):
         self.sample = Sample(parameters=Pattern.default(), interface=self.interface)
         self.sample.parameters.zero_shift=0.0
         self.sample.parameters.wavelength=1.5
-        self.sample.parameters.u_resolution = 0.4
-        self.sample.parameters.v_resolution = -0.5
-        self.sample.parameters.w_resolution = 0.9
-        self.sample.parameters.x_resolution = 0.0
-        self.sample.parameters.y_resolution = 0.0
+        self.sample.parameters.resolution_u = 0.4
+        self.sample.parameters.resolution_v = -0.5
+        self.sample.parameters.resolution_w = 0.9
+        self.sample.parameters.resolution_x = 0.0
+        self.sample.parameters.resolution_y = 0.0
 
         self.background = PointBackground(BackgroundPoint.from_pars(0, 0), BackgroundPoint.from_pars(180, 0), linked_experiment='NEED_TO_CHANGE')
 

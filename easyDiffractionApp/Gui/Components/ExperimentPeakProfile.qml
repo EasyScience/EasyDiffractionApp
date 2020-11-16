@@ -18,17 +18,17 @@ EaComponents.TableView {
         xml: ExGlobals.Constants.proxy.instrumentParametersAsXml
         query: `/root/item`
 
-        XmlRole { name: "u"; query: "u_resolution/value/number()" }
-        XmlRole { name: "v"; query: "v_resolution/value/number()" }
-        XmlRole { name: "w"; query: "w_resolution/value/number()" }
-        XmlRole { name: "x"; query: "x_resolution/value/number()" }
-        XmlRole { name: "y"; query: "y_resolution/value/number()" }
+        XmlRole { name: "u"; query: "resolution_u/value/number()" }
+        XmlRole { name: "v"; query: "resolution_v/value/number()" }
+        XmlRole { name: "w"; query: "resolution_w/value/number()" }
+        XmlRole { name: "x"; query: "resolution_x/value/number()" }
+        XmlRole { name: "y"; query: "resolution_y/value/number()" }
 
-        XmlRole { name: "uId"; query: "u_resolution/key[4]/string()" }
+        XmlRole { name: "uId"; query: "resolution_u/key[4]/string()" }
         XmlRole { name: "vId"; query: "v_resolution/key[4]/string()" }
-        XmlRole { name: "wId"; query: "w_resolution/key[4]/string()" }
-        XmlRole { name: "xId"; query: "x_resolution/key[4]/string()" }
-        XmlRole { name: "yId"; query: "y_resolution/key[4]/string()" }
+        XmlRole { name: "wId"; query: "resolution_w/key[4]/string()" }
+        XmlRole { name: "xId"; query: "resolution_x/key[4]/string()" }
+        XmlRole { name: "yId"; query: "resolution_y/key[4]/string()" }
     }
 
     // Table rows

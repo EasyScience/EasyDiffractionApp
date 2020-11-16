@@ -117,8 +117,6 @@ EaComponents.TableView {
         if (index < 0 || typeof label === "undefined")
             return ""
 
-        print(label)
-
         // Modify current label
         label = label.replace("Instrument.", "Instrument.D2B_300K.")
         label = label.replace("Uiso.Uiso", "Uiso")

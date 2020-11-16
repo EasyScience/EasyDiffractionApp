@@ -25,8 +25,6 @@ EaComponents.TableView {
 
         XmlRole { name: "xId"; query: "x/key[4]/string()" }
         XmlRole { name: "yId"; query: "y/key[4]/string()" }
-
-        onXmlChanged: print(EaLogic.Utils.prettyXml(xml))
     }
 
     // Table rows

@@ -120,6 +120,7 @@ EaComponents.TableView {
 
         // Modify current label
         label = label.replace("Instrument.", "Instrument.D2B_300K.")
+        label = label.replace(".background.", ".")
         label = label.replace("Uiso.Uiso", "Uiso")
         label = label.replace("fract_", "fract.")
         label = label.replace("length_", "length.")
@@ -133,6 +134,7 @@ EaComponents.TableView {
         // Modify previous label to list
         let previousLabel = index > 0 ? fitablesModel.get(index - 1).label : ""
         previousLabel = previousLabel.replace("Instrument.", "Instrument.D2B_300K.")
+        previousLabel = previousLabel.replace(".background.", ".")
         previousLabel = previousLabel.replace("Uiso.Uiso", "Uiso")
         previousLabel = previousLabel.replace("fract_", "fract.")
         previousLabel = previousLabel.replace("length_", "length.")

@@ -1,5 +1,13 @@
 import os, sys
 
+def isTestMode():
+    if len(sys.argv) > 1:
+        if 'test' in sys.argv[1:]:
+            return True
+    return False
+
+if not isTestMode(): import easyAppLogic.Logging
+
 from PySide2.QtCore import QUrl, qDebug, qCritical
 from PySide2.QtGui import Qt
 from PySide2.QtWidgets import QApplication
@@ -24,14 +32,6 @@ from easyDiffractionApp.Logic.VTK.QVTKFrameBufferObjectItem import FboItem
 
 CONFIG = pyproject.config()
 
-
-def isTestMode():
-    if len(sys.argv) > 1:
-        if 'test' in sys.argv[1:]:
-            return True
-    return False
-
-if not isTestMode(): import easyAppLogic.Logging
 
 def defaultFormat(stereo_capable):
     """ Po prostu skopiowałem to z https://github.com/Kitware/VTK/blob/master/GUISupport/Qt/QVTKRenderWindowAdapter.cxx

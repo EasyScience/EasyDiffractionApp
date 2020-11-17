@@ -22,7 +22,7 @@ jobs:
     # Build matrix for different platforms
     strategy:
       matrix:
-        os: [macos-11.0] #, ubuntu-latest, windows-latest]
+        os: [macos-10.15] #, ubuntu-latest, windows-latest]
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -62,7 +62,7 @@ jobs:
         key: ${{ matrix.os }}-poetry-${{ hashFiles('poetry.lock') }}
 
     - name: Set up python packages manager
-      uses: Gr1N/setup-poetry@v2
+      uses: Gr1N/setup-poetry@v4
 
     - name: Create venv and install dependences
       # poetry self update: Update poetry

@@ -17,6 +17,7 @@ from easyDiffractionLib.sample import Sample
 from easyDiffractionLib import Crystals, Crystal, Cell, Site, Atoms, SpaceGroup
 from easyDiffractionLib.interface import InterfaceFactory
 from easyDiffractionLib.Elements.Experiments.Experiment import Pars1D
+from easyDiffractionLib.Elements.Experiments.Pattern import Pattern1D
 
 from easyAppLogic.Utils.Utils import generalizePath
 
@@ -51,7 +52,7 @@ class PyQmlProxy(QObject):
         self.experiments = []
         self.interface = InterfaceFactory()
         self.vtkHandler = None
-        self.sample = Sample(parameters=Pars1D.default(), interface=self.interface)
+        self.sample = Sample(parameters=Pars1D.default(), pattern=Pattern1D.default(), interface=self.interface)
         self.sample.pattern.zero_shift = 0.0
         self.sample.pattern.scale = 1.0
         self.sample.parameters.wavelength = 1.5
@@ -107,6 +108,13 @@ class PyQmlProxy(QObject):
     def loadExperiment(self):
         self.experiments = [{"label": "D2B_300K", "color": "steelblue"}]
         self.experimentDataChanged.emit()
+
+    # Pattern parameters
+
+    @Property('QVariant', notify=experimentDataChanged)
+    def patternParameters(self):
+        parameters = self.sample.pattern.as_dict()
+        return parameters
 
     # Instrument parameters
 

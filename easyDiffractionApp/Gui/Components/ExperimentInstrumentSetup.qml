@@ -18,9 +18,9 @@ Row {
     }
     EaElements.Parameter {
         width: textFieldWidth()
-        units: typeof ExGlobals.Constants.proxy.instrumentParameters.zero_shift != "undefined" ? ExGlobals.Constants.proxy.instrumentParameters.zero_shift.units : ""
-        text: typeof ExGlobals.Constants.proxy.instrumentParameters.zero_shift != "undefined" ? ExGlobals.Constants.proxy.instrumentParameters.zero_shift.value : ""
-        onEditingFinished: editParameterValue(ExGlobals.Constants.proxy.instrumentParameters.zero_shift["@id"], text)
+        units: typeof ExGlobals.Constants.proxy.patternParameters.zero_shift != "undefined" ? ExGlobals.Constants.proxy.patternParameters.zero_shift.units : ""
+        text: typeof ExGlobals.Constants.proxy.patternParameters.zero_shift != "undefined" ? ExGlobals.Constants.proxy.patternParameters.zero_shift.value : ""
+        onEditingFinished: editParameterValue(ExGlobals.Constants.proxy.patternParameters.zero_shift["@id"], text)
     }
 
     // Spacer

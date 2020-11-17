@@ -52,7 +52,8 @@ EaComponents.TableView {
             id: scaleColumn
             horizontalAlignment: Text.AlignRight
             headerText: "Scale"
-            text: "0.1620"
+            text: typeof ExGlobals.Constants.proxy.patternParameters.scale != "undefined" ? ExGlobals.Constants.proxy.patternParameters.scale.value : ""
+            onEditingFinished: editParameterValue(ExGlobals.Constants.proxy.patternParameters.scale["@id"], text)
         }
 
         EaComponents.TableViewCheckBox {
@@ -71,5 +72,9 @@ EaComponents.TableView {
 
     }
 
+    // Logic
 
+    function editParameterValue(id, value) {
+        ExGlobals.Constants.proxy.editParameterValue(id, parseFloat(value))
+    }
 }

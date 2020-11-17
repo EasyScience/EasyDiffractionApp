@@ -115,7 +115,7 @@ PySide2 = "5.14"
 type = "git"
 url = 'https://github.com/easyScience/easyAppGui.git'
 reference = 'master'
-resolved_reference = "a0b0fada96a733893c681f76d4036bb7c5ec535f"
+resolved_reference = "129d3ccbbb12fde5649befc480102f51e9fc3c30"
 
 [[package]]
 name = "easyapplogic"
@@ -180,7 +180,7 @@ matplotlib = "^3.2, <3.3"
 type = "git"
 url = 'https://github.com/easyScience/easyDiffractionLib.git'
 reference = 'coreSiteWork'
-resolved_reference = "85e3c705619701f20fa1fcee27957392a2ae2064"
+resolved_reference = "3ce84de1e96ff1ca878952804d02844fb0d33673"
 
 [[package]]
 name = "ffmpeg-python"

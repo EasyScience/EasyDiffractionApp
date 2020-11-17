@@ -126,7 +126,7 @@ languages = [ { code = 'en', name = 'English' }, { code = 'fr', name = 'Françai
               { code = 'ru', name = 'Русский' } ]
 
 [ci.poetry]
-venv_path = { macos = '/Users/runner/Library/Caches/pypoetry/virtualenvs', ubuntu = '/home/runner/.cache/pypoetry/virtualenvs', windows = 'C:\Users\runneradmin\AppData\Local\pypoetry\Cache\virtualenvs' }
+venv_path = { macOS = '/Users/runner/Library/Caches/pypoetry/virtualenvs', Linux = '/home/runner/.cache/pypoetry/virtualenvs', Windows = 'C:\Users\runneradmin\AppData\Local\pypoetry\Cache\virtualenvs' }
 
 [ci.pyinstaller]
 separator = { macos = ':', ubuntu = ':', windows = ';' }

@@ -50,8 +50,8 @@ jobs:
         echo "DOWNLOAD_PATH=$(python pyproject.py ci.project.subdirs.download)" >> $GITHUB_ENV
         echo "DISTRIBUTION_PATH=$(python pyproject.py ci.project.subdirs.distribution)" >> $GITHUB_ENV
         echo "APP_NAME=$(python pyproject.py tool.poetry.name)" >> $GITHUB_ENV
-        echo "POETRY_VENV_PATH=$(python pyproject.py ci.poetry.venv_path.${{ matrix.os }})" >> $GITHUB_ENV
-        echo "QTIFW_PATH=$(python pyproject.py ci.qtifw.setup.installation_path.${{ matrix.os }})" >> $GITHUB_ENV
+        echo "POETRY_VENV_PATH=$(python pyproject.py ci.poetry.venv_path.${{ runner.os }})" >> $GITHUB_ENV
+        echo "QTIFW_PATH=$(python pyproject.py ci.qtifw.setup.installation_path.${{ runner.os }})" >> $GITHUB_ENV
 
     - name: Cache dependencies
       uses: actions/cache@v2

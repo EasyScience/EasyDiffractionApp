@@ -133,7 +133,7 @@ dicttoxml = "^1.7.4"
 type = "git"
 url = 'https://github.com/easyScience/easyAppLogic.git'
 reference = 'master'
-resolved_reference = "1740e905056ac6e34b66ad51f77b83972689135b"
+resolved_reference = "7bdb5bde6138272c940f737418466a217168a76d"
 
 [[package]]
 name = "easycore"
@@ -156,8 +156,8 @@ uncertainties = "^3.1"
 [package.source]
 type = "git"
 url = 'https://github.com/easyScience/easyCore.git'
-reference = 'STAR_io'
-resolved_reference = "23beb6ea675ad0a8bed3e81ca019dca1bbdf2db5"
+reference = 'specie_work'
+resolved_reference = "a4734871b515202e44b6fa6236ce2b3c2c755d42"
 
 [[package]]
 name = "easydiffractionlib"
@@ -170,7 +170,7 @@ develop = false
 
 [package.dependencies]
 cryspy = "^0.4.11"
-easyCore = "rev STAR_io"
+easyCore = "rev specie_work"
 libsDarwin = {version = "rev main", markers = "sys_platform == \"darwin\""}
 libsLinux = {version = "rev main", markers = "sys_platform == \"linux\""}
 libsWin32 = {version = "rev main", markers = "sys_platform == \"win32\""}
@@ -179,8 +179,8 @@ matplotlib = "^3.2, <3.3"
 [package.source]
 type = "git"
 url = 'https://github.com/easyScience/easyDiffractionLib.git'
-reference = 'gsas'
-resolved_reference = "e0943f753b8054d86fc791c365364701e51b8537"
+reference = 'coreSiteWork'
+resolved_reference = "85e3c705619701f20fa1fcee27957392a2ae2064"
 
 [[package]]
 name = "ffmpeg-python"
@@ -696,7 +696,7 @@ testing = ["pytest (>=3.5,!=3.7.3)", "pytest-checkdocs (>=1.2.3)", "pytest-flake
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.7, <3.8"
-content-hash = "cad3b4e83f3cc8c757f8e8ea9978212e2b2332a1245ce6532fbf18073fccb2da"
+content-hash = "65f5f8e838090ba5b526fd5e4d90dfdc54adffe75a78eff2291c69981e352b93"
 
 [metadata.files]
 altgraph = [

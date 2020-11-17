@@ -14,7 +14,7 @@ from easyCore.Utils.classTools import generatePath
 from easyDiffractionLib.Elements.Backgrounds.Point import PointBackground, BackgroundPoint
 
 from easyDiffractionLib.sample import Sample
-from easyDiffractionLib import Crystals, Crystal, Cell, Site, Atoms, SpaceGroup
+from easyDiffractionLib import Phases, Phase, Lattice, Site, Atoms, SpaceGroup
 from easyDiffractionLib.interface import InterfaceFactory
 from easyDiffractionLib.Elements.Experiments.Experiment import Pars1D
 from easyDiffractionLib.Elements.Experiments.Pattern import Pattern1D
@@ -230,7 +230,7 @@ class PyQmlProxy(QObject):
     @Slot(str)
     def addSampleFromCif(self, cif_path):
         cif_path = generalizePath(cif_path)
-        crystals = Crystals.from_cif_file(cif_path)
+        crystals = Phases.from_cif_file(cif_path)
         crystals.name = 'Phases'
         self.sample.phases = crystals
         self.sample.set_background(self.background)
@@ -238,11 +238,11 @@ class PyQmlProxy(QObject):
 
     @Slot()
     def addSampleManual(self):
-        cell = Cell.from_pars(8.56, 8.56, 6.12, 90, 90, 90)
+        cell = Lattice.from_pars(8.56, 8.56, 6.12, 90, 90, 90)
         spacegroup = SpaceGroup.from_pars('P 42/n c m')
         atom = Site.from_pars(label='Cl1', specie='Cl', fract_x=0.125, fract_y=0.167, fract_z=0.107)
         atom.add_adp('Uiso', Uiso=0.0)
-        crystal = Crystal('Dichlorine', spacegroup=spacegroup, cell=cell)
+        crystal = Phase('Dichlorine', spacegroup=spacegroup, cell=cell)
         crystal.add_atom(atom)
         self.sample.phases = crystal
         self.sample.phases.name = 'Phases'
@@ -273,7 +273,7 @@ class PyQmlProxy(QObject):
 
     @phasesAsCif.setter
     def setPhasesAsCif(self, cif_str):
-        self.phases = Crystals.from_cif_str(cif_str)
+        self.phases = Phases.from_cif_str(cif_str)
         self.sample.phases = self.phases
         self.updateStructureView()
         self.updateCalculatedData()

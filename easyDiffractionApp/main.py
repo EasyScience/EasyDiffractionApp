@@ -8,7 +8,6 @@ from PySide2.QtQml import QQmlApplicationEngine, qmlRegisterType
 import pyproject
 import easyAppGui
 from easyAppLogic.Translate import Translator
-import easyAppLogic.Logging
 from easyDiffractionApp.Logic.PyQmlProxy import PyQmlProxy
 
 # Setup matplotlib styles
@@ -32,6 +31,7 @@ def isTestMode():
             return True
     return False
 
+if not isTestMode(): import easyAppLogic.Logging
 
 def defaultFormat(stereo_capable):
     """ Po prostu skopiowałem to z https://github.com/Kitware/VTK/blob/master/GUISupport/Qt/QVTKRenderWindowAdapter.cxx

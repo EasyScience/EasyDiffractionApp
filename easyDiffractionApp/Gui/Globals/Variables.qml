@@ -44,6 +44,7 @@ QtObject {
     property var createProjectButton
     property var setNewSampleManuallyButton
     property var appendNewAtomButton
+    property var continueWithoutExperimentDataButton
 
     // Sidebar group boxes
     property var symmetryGroup

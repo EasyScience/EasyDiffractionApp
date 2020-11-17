@@ -64,7 +64,7 @@ class PyQmlProxy(QObject):
 
         self.background = PointBackground(linked_experiment='NEED_TO_CHANGE')
 
-        x_data = np.linspace(0, 130, 1301)
+        x_data = np.linspace(0, 140, 1401)
         self.bridge.data.x_label = '2theta (deg)'
         self.bridge.data.x_label = '2theta (deg)'
         self.bridge.data.y_label = 'Intensity (arb. units)'

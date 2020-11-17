@@ -1,5 +1,6 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
+import QtTest 1.14
 
 import easyAppGui.Style 1.0 as EaStyle
 import easyAppGui.Globals 1.0 as EaGlobals
@@ -10,6 +11,7 @@ import Gui.Globals 1.0 as ExGlobals
 
 Item {
     id: root
+
 
     Column {
         anchors.centerIn: parent
@@ -97,17 +99,29 @@ Item {
                 spacing: EaStyle.Sizes.fontPixelSize
 
                 EaElements.Button {
+                    id: tutorial1Button
                     enabled: false
                     text: qsTr("Tutorial 1") + ": " + qsTr("Data fitting")
-                    onPressed: runTutorial1()
+                    onPressed: {
+                        runTutorial1()
+                        setRootFocusTimer.start()
+                    }
                 }
                 EaElements.Button {
+                    id: tutorial2Button
                     text: qsTr("Tutorial 2") + ": " + qsTr("Data simulation")
-                    onPressed: runTutorial2()
+                    onPressed: {
+                        runTutorial2()
+                        setRootFocusTimer.start()
+                    }
                 }
                 EaElements.Button {
+                    id: tutorial3Button
                     text: qsTr("Tutorial 3") + ": " + qsTr("App settings")
-                    onPressed: runTutorial3()
+                    onPressed: {
+                        runTutorial3()
+                        setRootFocusTimer.start()
+                    }
                 }
             }
         }
@@ -129,10 +143,31 @@ Item {
         }
     }
 
+    Timer {
+        id: runTutorialTimer
+        interval: 1000
+        onTriggered: runTutorial2()
+    }
+
+    Timer {
+        id: setRootFocusTimer
+        interval: 100
+        onTriggered: {
+            tutorial1Button.enabled = !tutorial1Button.enabled
+            tutorial1Button.enabled = !tutorial1Button.enabled
+            tutorial2Button.enabled = !tutorial2Button.enabled
+            tutorial2Button.enabled = !tutorial2Button.enabled
+            tutorial3Button.enabled = !tutorial3Button.enabled
+            tutorial3Button.enabled = !tutorial3Button.enabled
+            root.forceActiveFocus()
+        }
+    }
+
+
     Component.onCompleted: {
         if (EaGlobals.Variables.isTestMode) {
-            print('TEST MODE')
-            runTutorial3()
+            print('DEBUG MODE')
+            runTutorialTimer.start()
         }
     }
 
@@ -252,17 +287,29 @@ Item {
 
         rc.wait(1000)
 
+        // Experiment Tab
+
+        rc.mouseClick(ExGlobals.Variables.experimentTabButton)
+
+        rc.mouseClick(ExGlobals.Variables.continueWithoutExperimentDataButton)
+
         // Analysis Tab
 
         rc.mouseClick(ExGlobals.Variables.analysisTabButton)
         rc.wait(1000)
         rc.mouseClick(ExGlobals.Variables.analysisAdvancedControlsTabButton)
+        // CFML
         rc.mouseClick(ExGlobals.Variables.calculatorSelector)
         const x_pos = undefined
         let y_pos = EaStyle.Sizes.comboBoxHeight * 1.5
         rc.mouseClick(ExGlobals.Variables.calculatorSelector, x_pos, y_pos)
         rc.wait(1000)
-        y_pos = undefined
+        // GSAS
+        rc.mouseClick(ExGlobals.Variables.calculatorSelector)
+        y_pos = EaStyle.Sizes.comboBoxHeight * 2.5
+        rc.mouseClick(ExGlobals.Variables.calculatorSelector, x_pos, y_pos)
+        rc.wait(1000)
+        // CrysPy
         rc.mouseClick(ExGlobals.Variables.calculatorSelector)
         rc.mouseClick(ExGlobals.Variables.calculatorSelector)
         rc.mouseClick(ExGlobals.Variables.analysisBasicControlsTabButton)

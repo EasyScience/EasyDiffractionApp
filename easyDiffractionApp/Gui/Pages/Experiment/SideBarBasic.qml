@@ -36,6 +36,8 @@ EaComponents.SideBarColumn {
             }
 
             EaElements.SideBarButton {
+                id: continueWithoutExperimentDataButton
+
                 fontIcon: "chevron-circle-right"
                 text: qsTr("Continue without experiment data")
 
@@ -43,6 +45,8 @@ EaComponents.SideBarColumn {
                     ExGlobals.Variables.experimentSkipped = true
                     ExGlobals.Variables.analysisPageEnabled = true
                 }
+
+                Component.onCompleted: ExGlobals.Variables.continueWithoutExperimentDataButton = continueWithoutExperimentDataButton
             }
         }
 

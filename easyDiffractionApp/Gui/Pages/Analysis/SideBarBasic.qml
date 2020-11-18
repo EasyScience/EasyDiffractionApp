@@ -190,6 +190,7 @@ EaComponents.SideBarColumn {
 
             onClicked: {
                 print("Start fitting button clicked")
+                ExGlobals.Constants.proxy.fit()
             }
         }
     }

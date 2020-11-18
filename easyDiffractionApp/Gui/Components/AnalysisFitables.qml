@@ -95,6 +95,7 @@ EaComponents.TableView {
             id: useColumn
             headerText: "Fit"
             checked: model.fit
+            onCheckedChanged: editParameterFit(model.id, checked)
         }
 
     }
@@ -112,6 +113,9 @@ EaComponents.TableView {
 
     function editParameterValue(id, value) {
         ExGlobals.Constants.proxy.editParameterValue(id, parseFloat(value))
+    }
+    function editParameterFit(id, value) {
+        ExGlobals.Constants.proxy.editParameterFit(id, value)
     }
 
     function formatLabel(index, label) {

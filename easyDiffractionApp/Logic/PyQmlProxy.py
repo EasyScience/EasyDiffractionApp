@@ -118,9 +118,29 @@ class PyQmlProxy(QObject):
         file_path = generalizePath(file_path)
         print(f"Load data from: {file_path}")
         data = self.data.experiments[0]
-        data.x, data.y, data.sy = np.loadtxt(file_path, unpack=True)
+        data.x, data.y, data.e = np.loadtxt(file_path, unpack=True)
         self.matplotlib_bridge.updateWithCanvas(self._experiment_figure_obj_name, data)
         self.experiments = [{"label": "D1A@ILL", "color": "steelblue"}]
+        self.experimentDataChanged.emit()
+
+    def createFakeExperiment(self):
+        self.experiments = [{"label": "D2B_300K", "color": "steelblue"}]
+        data = self.data.experiments
+        data = data[0]
+        #  Of course this needs to change........
+        self._currentModel = Sample.from_dict(self.sample.as_dict(skip=['interface']))
+        pbg = PointBackground(linked_experiment='NEED_TO_CHANGE')
+        from random import random
+        ran_p = lambda r: min(data.x) + r*(max(data.x) - min(data.x))
+        pbg.append(BackgroundPoint.from_pars(ran_p(random()), 10000 * random()))
+        pbg.append(BackgroundPoint.from_pars(ran_p(random()), 10000 * random()))
+        pbg.append(BackgroundPoint.from_pars(ran_p(random()), 10000 * random()))
+        self._currentModel._pattern.backgrounds[0] = pbg
+        interface_f = InterfaceFactory()
+        self._currentModel.interface = interface_f
+        self._currentModel._updateInterface()
+        data.y = interface_f.fit_func(data.x)
+        self.bridge.updateWithCanvas('figureEXP', data)
         self.experimentDataChanged.emit()
 
     # Pattern parameters
@@ -151,9 +171,11 @@ class PyQmlProxy(QObject):
         if self._analysis_figure_obj_name is None:
             return
         self.sample.output_index = self.currentPhaseIndex
-        data = self.data.simulations
+        data = self.data.simulations[0]
+        exp = self.data.experiments[0]
         #  THIS IS WHERE WE WOULD LOOK UP CURRENT EXP INDEX
-        data = data[0]
+        # data = data[0]
+        data.x = exp.x
         data.y = self.interface.fit_func(data.x)
         self.matplotlib_bridge.updateWithCanvas(self._analysis_figure_obj_name, [self.data.experiments[0], data])
         self.modelChanged.emit()
@@ -171,7 +193,7 @@ class PyQmlProxy(QObject):
     @calculatorIndex.setter
     def setCalculator(self, index: int):
         self.interface.switch(self.calculatorList[index])
-        data = self.matplotlib_bridge.data.simulations
+        data = self.data.simulations
         #  THIS IS WHERE WE WOULD LOOK UP CURRENT EXP INDEX
         data = data[0]
         data.name = '{:s} engine'.format(self.interface.current_interface_name)
@@ -558,9 +580,34 @@ class PyQmlProxy(QObject):
         self._editValue(obj_id, new_value)
         self.parameterChanged.emit()
 
+    @Slot(str, bool)
+    def editParameterFit(self, obj_id: str, new_value: bool):
+        if not obj_id:
+            return
+        obj_id = int(obj_id)
+        obj = borg.map.get_item_by_key(obj_id)
+        obj.fixed = not new_value
+        # self.updateStructureView()
+        # self.updateCalculatedData()
+        # self.phasesChanged.emit()
+        # self.backgroundChanged.emit()
+        self.parameterChanged.emit()
+
     @Slot(str, str)
     def editDescriptorValue(self, obj_id: str, new_value: str):
         self._editValue(obj_id, new_value)
 
     #
 
+    @Slot()
+    def fit(self):
+        f = Fitter(self.sample, self.interface.fit_func)
+        exp_data = self.data.experiments[0]
+        # result = f.fit(exp_data.x, exp_data.y, method='brute')
+        # print(result)
+        result = f.fit(exp_data.x, exp_data.y, weights=1/exp_data.e**2)
+        print(result)
+        self.updateStructureView()
+        self.updateCalculatedData()
+        self.phasesChanged.emit()
+        self.backgroundChanged.emit()

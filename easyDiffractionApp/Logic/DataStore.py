@@ -24,10 +24,8 @@ class ProjectData(MSONable):
 
 class DataStore(Sequence, MSONable):
 
-    def __init__(self, *args, name='DataStore', x_label: str = 'x', y_label: str = 'y'):
+    def __init__(self, *args, name='DataStore'):
         self.name = name
-        self.x_label = x_label
-        self.y_label = y_label
         self.items = list(args)
         self.show_legend = False
 
@@ -58,24 +56,75 @@ class DataStore(Sequence, MSONable):
         obj.items = [decoder.process_decoded(item) for item in items]
         return obj
 
+    @property
+    def experiments(self):
+        return [self[idx] for idx in range(len(self)) if self[idx].is_experiment]
+
+    @property
+    def simulations(self):
+        return [self[idx] for idx in range(len(self)) if self[idx].is_simulation]
+
 
 class DataSet1D(MSONable):
-    
+
     def __init__(self, name: str = 'Series',
-                 x: Union[np.ndarray, list] = None, y: Union[np.ndarray, list] = None):
+                 x: Union[np.ndarray, list] = None,
+                 y: Union[np.ndarray, list] = None,
+                 e: Union[np.ndarray, list] = None,
+                 data_type: str = 'simulation',
+                 x_label: str = 'x',
+                 y_label: str = 'y'):
+
+        if not isinstance(data_type, str):
+            raise AttributeError
+        self._datatype = None
+        self.data_type = data_type
+
         if x is None:
             x = np.array([])
         if y is None:
             y = np.array([])
+        if e is None:
+            e = np.zeros_like(x)
+
         self.name = name
         if not isinstance(x, np.ndarray):
             x = np.array(x)
         if not isinstance(y, np.ndarray):
             y = np.array(y)
-            
+
         self.x = x
         self.y = y
+        self.e = e
+
+        self.x_label = x_label
+        self.y_label = y_label
+
         self._color = None
+
+    @property
+    def data_type(self) -> str:
+        if self._datatype == 'e':
+            r = 'experiment'
+        else:
+            r = 'simulation'
+        return r
+
+    @data_type.setter
+    def data_type(self, data_type: str):
+        data_switch = data_type.lower()[0]
+        if data_switch == 's':
+            self._datatype = 's'
+        elif data_switch == 'e':
+            self._datatype = 'e'
+
+    @property
+    def is_experiment(self) -> bool:
+        return self._datatype == 'e'
+
+    @property
+    def is_simulation(self) -> bool:
+        return self._datatype == 's'
 
     def __repr__(self) -> str:
         return "1D DataStore of '{:s}' Vs '{:s}' with {} data points".format(self.x_label, self.y_label, len(self.x))

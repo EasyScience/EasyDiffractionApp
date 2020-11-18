@@ -15,8 +15,8 @@ Rectangle {
     property var matplotlibRcParams: EaStyle.Colors.matplotlibRcParams
     onIsDarkThemeChanged: displayBridge.updateStyle(isDarkTheme, matplotlibRcParams)
     Component.onCompleted: {
-        displayBridge.updateFont(EaStyle.Fonts.fontSource)
-        displayBridge.updateStyle(isDarkTheme, matplotlibRcParams)
+        displayBridge.updateFont(EaStyle.Fonts.fontSource, "figure")
+        displayBridge.updateStyle(isDarkTheme, matplotlibRcParams, "figure")
     }
 
     color: "white"
@@ -41,21 +41,21 @@ Rectangle {
             fontIcon: "home"
             ToolTip.text: qsTr("Home")
 
-            onClicked: displayBridge.home()
+            onClicked: displayBridge.home("figure")
         }
 
         EaElements.ToolButton {
             fontIcon: "\uf2ea"
             ToolTip.text: qsTr("Back")
 
-            onClicked: displayBridge.back()
+            onClicked: displayBridge.back("figure")
         }
 
         EaElements.ToolButton {
             fontIcon: "\uf2f9"
             ToolTip.text: qsTr("Forward")
 
-            onClicked: displayBridge.forward()
+            onClicked: displayBridge.forward("figure")
         }
 
         Rectangle {
@@ -77,7 +77,7 @@ Rectangle {
                 if (zoom.checked) {
                     zoom.checked = false
                 }
-                displayBridge.pan()
+                displayBridge.pan("figure")
             }
         }
 
@@ -92,7 +92,7 @@ Rectangle {
                 if (pan.checked) {
                     pan.checked = false
                 }
-                displayBridge.zoom()
+                displayBridge.zoom("figure")
             }
         }
     }

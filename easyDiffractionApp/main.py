@@ -140,7 +140,6 @@ def main():
 
     win = engine.rootObjects()[0]
     displayBridge.context = win
-    displayBridge.updateWithCanvas('figure')
 
     app.setup(engine)
 

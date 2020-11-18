@@ -2,6 +2,8 @@ __author__ = 'github.com/wardsimon'
 __version__ = '0.0.1'
 
 import os
+from typing import Union, List
+
 import matplotlib
 
 from easyCore import np
@@ -23,6 +25,86 @@ class DisplayBridge(QtCore.QObject):
 
     def __init__(self, parent=None):
         super().__init__(parent)
+        # Add context
+        self.context = None
+        # Set data
+        self.canvas_data = {}
+
+    def updateWithCanvas(self, canvas=None, dataset=None):
+        canvas_ = self.context.findChild(QtCore.QObject, canvas)
+        if canvas not in self.canvas_data.keys():
+            self.canvas_data[canvas] = DisplayAdapter(canvas_, dataset, parent=self)
+        self.redraw()
+
+    def redraw(self, items: List['DisplayAdapter'] = None):
+        if items is None:
+            items = [self.canvas_data[key] for key in self.canvas_data.keys()]
+        if not isinstance(items, list):
+            items = [items]
+        for item in items:
+            item.redraw()
+
+    # Update style
+    @QtCore.Slot(bool, 'QVariant', str)
+    def updateStyle(self, is_dark_theme, rc_params, canvas):
+        rc_params = rc_params.toVariant()  # PySide2.QtQml.QJSValue -> dict
+        _canvas: DisplayAdapter = self.canvas_data.get(canvas, None)
+        if _canvas is not None:
+            _canvas.updateStyle(is_dark_theme, rc_params)
+
+    @QtCore.Slot(str, str)
+    def updateFont(self, font_path, canvas):
+        _canvas: DisplayAdapter = self.canvas_data.get(canvas, None)
+        if _canvas is not None:
+            _canvas.updateFont(font_path)
+
+    @QtCore.Slot(bool, str)
+    def showLegend(self, show_legend, canvas):
+        _canvas: DisplayAdapter = self.canvas_data.get(canvas, None)
+        if _canvas is not None:
+            _canvas.showLegend(show_legend)
+
+    # The toolbar commands
+    @QtCore.Slot(str)
+    def pan(self, canvas, *args):
+        """Activate the pan tool."""
+        _canvas: DisplayAdapter = self.canvas_data.get(canvas, None)
+        if _canvas is not None:
+            _canvas.toolbar.pan(*args)
+
+    @QtCore.Slot(str)
+    def zoom(self, canvas, *args):
+        """activate zoom tool."""
+        _canvas: DisplayAdapter = self.canvas_data.get(canvas, None)
+        if _canvas is not None:
+            _canvas.toolbar.zoom(*args)
+
+    @QtCore.Slot(str)
+    def home(self, canvas, *args):
+        _canvas: DisplayAdapter = self.canvas_data.get(canvas, None)
+        if _canvas is not None:
+            _canvas.toolbar.home(*args)
+
+    @QtCore.Slot(str)
+    def back(self, canvas, *args):
+        _canvas: DisplayAdapter = self.canvas_data.get(canvas, None)
+        if _canvas is not None:
+            _canvas.toolbar.back(*args)
+
+    @QtCore.Slot(str)
+    def forward(self, canvas, *args):
+        _canvas: DisplayAdapter = self.canvas_data.get(canvas, None)
+        if _canvas is not None:
+            _canvas.toolbar.forward(*args)
+
+
+class DisplayAdapter(QtCore.QObject):
+    """ A bridge class to interact with the plot in python
+    """
+    coordinatesChanged = QtCore.Signal(str)
+
+    def __init__(self, canvas, dataset, parent=None):
+        super().__init__(parent)
 
         # The figure and toolbar
         self.figure = None
@@ -36,25 +118,19 @@ class DisplayBridge(QtCore.QObject):
 
         # Set data
         self.style = Style()
-        self.data = DataStore()
-        self.current_canvas = None
 
-    def updateWithCanvas(self, canvas=None):
-        """ initialize with the canvas for the figure
-        """
+        self.show_legend = True
 
-        if not (self.current_canvas and self.context) and not (canvas and self.context):
-            raise RuntimeError
-        if canvas:
-            self.current_canvas = self.context.findChild(QtCore.QObject, canvas)
-
-        if not self.data:
-            self.data[0] = DataSet1D()
-        self.redraw()
+        self.current_canvas = canvas
+        self.current_canvas_data = dataset
 
     def redraw(self):
 
-        #self.style.set_font()
+        dataset = self.current_canvas_data
+
+        if not isinstance(dataset, list):
+            dataset = [dataset]
+
         self.style.set_style()
 
         if self.current_canvas is None:
@@ -70,12 +146,12 @@ class DisplayBridge(QtCore.QObject):
         self.axes.grid(True)
         self.axes.tick_params(width=0)
 
-        for data in self.data:
+        for data in dataset:
             self.axes.plot(data.x, data.y, label=data.name)
-        if self.data.show_legend:
+        if self.show_legend:
             self.axes.legend(loc="upper right")
-        self.axes.set_xlabel(self.data.x_label)
-        self.axes.set_ylabel(self.data.y_label)
+        self.axes.set_xlabel(dataset[0].x_label)
+        self.axes.set_ylabel(dataset[0].y_label)
         self.current_canvas.draw_idle()
 
         # connect for displaying the coordinates
@@ -99,20 +175,16 @@ class DisplayBridge(QtCore.QObject):
         """Activate the pan tool."""
         self.toolbar.pan(*args)
 
-    @QtCore.Slot()
     def zoom(self, *args):
         """activate zoom tool."""
         self.toolbar.zoom(*args)
 
-    @QtCore.Slot()
     def home(self, *args):
         self.toolbar.home(*args)
 
-    @QtCore.Slot()
     def back(self, *args):
         self.toolbar.back(*args)
 
-    @QtCore.Slot()
     def forward(self, *args):
         self.toolbar.forward(*args)
 
@@ -124,20 +196,17 @@ class DisplayBridge(QtCore.QObject):
             self.coordinates = f"({event.xdata:.2f}, {event.ydata:.2f})"
 
     # Update style
-    @QtCore.Slot(bool, 'QVariant')
     def updateStyle(self, is_dark_theme, rc_params):
-        rc_params = rc_params.toVariant() # PySide2.QtQml.QJSValue -> dict
+        rc_params = rc_params.toVariant()  # PySide2.QtQml.QJSValue -> dict
         self.style.style_override = rc_params
         self.style.dark_mode = is_dark_theme
         self.redraw()
 
-    @QtCore.Slot(str)
     def updateFont(self, font_path):
         font_path = generalizePath(font_path)
         self.style.set_font(font_path)
         self.redraw()
 
-    @QtCore.Slot(bool)
     def showLegend(self, show_legend):
         self.data.show_legend = show_legend
         self.redraw()
@@ -158,7 +227,7 @@ class Style:
         font_files = matplotlib.font_manager.findSystemFonts(fontpaths=font_dirs)
         font_list = matplotlib.font_manager.createFontList(font_files)
         matplotlib.font_manager.fontManager.ttflist.extend(font_list)
-        #print([f.name for f in matplotlib.font_manager.fontManager.ttflist])
+        # print([f.name for f in matplotlib.font_manager.fontManager.ttflist])
 
         prop = matplotlib.font_manager.FontProperties(fname=font_path)
         matplotlib.rcParams['font.family'] = prop.get_name()
@@ -173,7 +242,7 @@ class Style:
     def _base_style(self):
         # matplotlib.style.use('seaborn')
 
-        #self.set_font()
+        # self.set_font()
 
         bg_color = 'white'
         axis_color = 'white'

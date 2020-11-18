@@ -21,7 +21,7 @@ from easyDiffractionLib.Elements.Experiments.Pattern import Pattern1D
 
 from easyAppLogic.Utils.Utils import generalizePath
 
-from easyDiffractionApp.Logic.DataStore import DataSet1D
+from easyDiffractionApp.Logic.DataStore import DataSet1D, DataStore
 from easyDiffractionApp.Logic.MatplotlibBackend import DisplayBridge
 
 
@@ -65,14 +65,19 @@ class PyQmlProxy(QObject):
         self.background = PointBackground(linked_experiment='NEED_TO_CHANGE')
 
         x_data = np.linspace(0, 140, 1401)
-        self.bridge.data.x_label = '2theta (deg)'
-        self.bridge.data.x_label = '2theta (deg)'
-        self.bridge.data.y_label = 'Intensity (arb. units)'
-        self.bridge.data.append(
-            DataSet1D(name='{:s} engine'.format(self.interface.current_interface_name),
-                      x=x_data, y=np.zeros_like(x_data))
+        self.data = DataStore()
+        self.data.append(
+            DataSet1D(name='Dummy data',
+                      x=x_data, y=np.zeros_like(x_data),
+                      x_label='2theta (deg)', y_label='Intensity (arb. units)',
+                      data_type='experiment')
         )
-        self.data = self.bridge.data[0]
+        self.data.append(
+            DataSet1D(name='{:s} engine'.format(self.interface.current_interface_name),
+                      x=x_data, y=np.zeros_like(x_data),
+                      x_label='2theta (deg)', y_label='Intensity (arb. units)',
+                      data_type='simulation')
+        )
         self.project_info = self.initProjectInfo()
         self._current_phase_index = 0
         self._fitables_list = []
@@ -135,8 +140,11 @@ class PyQmlProxy(QObject):
     @Slot()
     def updateCalculatedData(self):
         self.sample.output_index = self.currentPhaseIndex
-        self.data.y = self.interface.fit_func(self.data.x)
-        self.bridge.updateWithCanvas('figure')
+        data = self.data.simulations
+        #  THIS IS WHERE WE WOULD LOOK UP CURRENT EXP INDEX
+        data = data[0]
+        data.y = self.interface.fit_func(data.x)
+        self.bridge.updateWithCanvas('figure', data)
         self.modelChanged.emit()
 
     # Calculator
@@ -152,7 +160,10 @@ class PyQmlProxy(QObject):
     @calculatorIndex.setter
     def setCalculator(self, index: int):
         self.interface.switch(self.calculatorList[index])
-        self.data.name = '{:s} engine'.format(self.interface.current_interface_name)
+        data = self.bridge.data.simulations
+        #  THIS IS WHERE WE WOULD LOOK UP CURRENT EXP INDEX
+        data = data[0]
+        data.name = '{:s} engine'.format(self.interface.current_interface_name)
         self.sample._updateInterface()
         self.updateCalculatedData()
         self.calculatorChanged.emit()

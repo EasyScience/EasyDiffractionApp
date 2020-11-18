@@ -55,19 +55,20 @@ class PyQmlProxy(QObject):
         self.sample = Sample(parameters=Pars1D.default(), pattern=Pattern1D.default(), interface=self.interface)
         self.sample.pattern.zero_shift = 0.0
         self.sample.pattern.scale = 1.0
-        self.sample.parameters.wavelength = 1.5
-        self.sample.parameters.resolution_u = 0.4
-        self.sample.parameters.resolution_v = -0.5
-        self.sample.parameters.resolution_w = 0.9
+        self.sample.parameters.wavelength = 1.912
+        self.sample.parameters.resolution_u = 0.14
+        self.sample.parameters.resolution_v = -0.42
+        self.sample.parameters.resolution_w = 0.38
         self.sample.parameters.resolution_x = 0.0
         self.sample.parameters.resolution_y = 0.0
 
-        self.background = PointBackground(linked_experiment='NEED_TO_CHANGE')
+        #self.background = PointBackground(linked_experiment='NEED_TO_CHANGE')
+        self.background = PointBackground(BackgroundPoint.from_pars(0, 200), BackgroundPoint.from_pars(140, 250), linked_experiment='NEED_TO_CHANGE')
 
         x_data = np.linspace(0, 140, 1401)
         self.data = DataStore()
         self.data.append(
-            DataSet1D(name='Dummy data',
+            DataSet1D(name='D1A@ILL data',
                       x=x_data, y=np.zeros_like(x_data),
                       x_label='2theta (deg)', y_label='Intensity (arb. units)',
                       data_type='experiment')
@@ -116,11 +117,10 @@ class PyQmlProxy(QObject):
     def loadExperimentDataFromTxt(self, file_path):
         file_path = generalizePath(file_path)
         print(f"Load data from: {file_path}")
-        data = self.data.experiments
-        data = data[0]
+        data = self.data.experiments[0]
         data.x, data.y, data.sy = np.loadtxt(file_path, unpack=True)
         self.matplotlib_bridge.updateWithCanvas(self._experiment_figure_obj_name, data)
-        self.experiments = [{"label": "D2B_300K", "color": "steelblue"}]
+        self.experiments = [{"label": "D1A@ILL", "color": "steelblue"}]
         self.experimentDataChanged.emit()
 
     # Pattern parameters
@@ -155,7 +155,7 @@ class PyQmlProxy(QObject):
         #  THIS IS WHERE WE WOULD LOOK UP CURRENT EXP INDEX
         data = data[0]
         data.y = self.interface.fit_func(data.x)
-        self.matplotlib_bridge.updateWithCanvas(self._analysis_figure_obj_name, data)
+        self.matplotlib_bridge.updateWithCanvas(self._analysis_figure_obj_name, [self.data.experiments[0], data])
         self.modelChanged.emit()
 
     # Calculator

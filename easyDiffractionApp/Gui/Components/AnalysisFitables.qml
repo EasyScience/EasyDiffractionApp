@@ -119,7 +119,7 @@ EaComponents.TableView {
             return ""
 
         // Modify current label
-        label = label.replace("Instrument.", "Instrument.D2B_300K.")
+        label = label.replace("Instrument.", "Instrument.D1A@ILL.")
         label = label.replace(".background.", ".")
         label = label.replace("Uiso.Uiso", "Uiso")
         label = label.replace("fract_", "fract.")

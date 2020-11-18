@@ -197,7 +197,6 @@ class DisplayAdapter(QtCore.QObject):
 
     # Update style
     def updateStyle(self, is_dark_theme, rc_params):
-        rc_params = rc_params.toVariant()  # PySide2.QtQml.QJSValue -> dict
         self.style.style_override = rc_params
         self.style.dark_mode = is_dark_theme
         self.redraw()

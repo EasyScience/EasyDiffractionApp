@@ -14,7 +14,7 @@ readme = 'README.md'
 homepage = 'https://github.com/tempscience'
 repository = 'https://easyscience.apptimity.com/'
 documentation = 'https://github.com/tempscience'
-include = ['CHANGELOG.md']
+include = ['CHANGELOG.md'] 
 packages = [ { include = 'easyDiffractionApp' } ]
 
 [tool.poetry.dependencies]

@@ -157,7 +157,7 @@ uncertainties = "^3.1"
 type = "git"
 url = 'https://github.com/easyScience/easyCore.git'
 reference = 'specie_work'
-resolved_reference = "a4734871b515202e44b6fa6236ce2b3c2c755d42"
+resolved_reference = "aba63744ae554b2f2fc4db40fcdcb5337504ea6a"
 
 [[package]]
 name = "easydiffractionlib"
@@ -180,7 +180,7 @@ matplotlib = "^3.2, <3.3"
 type = "git"
 url = 'https://github.com/easyScience/easyDiffractionLib.git'
 reference = 'coreSiteWork'
-resolved_reference = "8f07686655abe3a2a677619970dcbf6a9b5cf60a"
+resolved_reference = "721d30070c133dd6cc90b8b1d7ad519acc6d0f23"
 
 [[package]]
 name = "ffmpeg-python"

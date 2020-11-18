@@ -180,7 +180,7 @@ matplotlib = "^3.2, <3.3"
 type = "git"
 url = 'https://github.com/easyScience/easyDiffractionLib.git'
 reference = 'coreSiteWork'
-resolved_reference = "3ce84de1e96ff1ca878952804d02844fb0d33673"
+resolved_reference = "8f07686655abe3a2a677619970dcbf6a9b5cf60a"
 
 [[package]]
 name = "ffmpeg-python"
@@ -323,7 +323,7 @@ python-versions = ">=3.6"
 [[package]]
 name = "libsdarwin"
 version = "0.0.1"
-description = ""
+description = "https://code.ill.fr/scientific-software/crysfml/-/jobs/40800/artifacts/download"
 category = "main"
 optional = false
 python-versions = "^3.7, <3.8"
@@ -333,7 +333,7 @@ develop = false
 type = "git"
 url = 'ssh://git@github.com/easyScience/libsDarwin.git'
 reference = 'main'
-resolved_reference = "7d43717546b4eeeacf8ee5bc83d2bcf02f607f3e"
+resolved_reference = "9490af08831ef826b98e8ea53856187dcc956a57"
 
 [[package]]
 name = "libslinux"
@@ -348,7 +348,7 @@ develop = false
 type = "git"
 url = 'ssh://git@github.com/easyScience/libsLinux.git'
 reference = 'main'
-resolved_reference = "1134e8d91dd2aca27b7d64ed1935f765f350daf7"
+resolved_reference = "f9e0c1838e6e91282ce08afdaf12c5bb2e6dde0b"
 
 [[package]]
 name = "libswin32"
@@ -363,7 +363,7 @@ develop = false
 type = "git"
 url = 'ssh://git@github.com/easyScience/libsWin32.git'
 reference = 'main'
-resolved_reference = "f0848ac19e926f5a1437c89d3d14eebfcfce4a4d"
+resolved_reference = "b91db2ea91fb91bd4de37a2c72f68558cf1d0bf5"
 
 [[package]]
 name = "lmfit"

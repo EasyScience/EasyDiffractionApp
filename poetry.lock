@@ -323,7 +323,7 @@ python-versions = ">=3.6"
 [[package]]
 name = "libsdarwin"
 version = "0.0.1"
-description = "https://code.ill.fr/scientific-software/crysfml/-/jobs/40800/artifacts/download"
+description = ""
 category = "main"
 optional = false
 python-versions = "^3.7, <3.8"
@@ -333,7 +333,7 @@ develop = false
 type = "git"
 url = 'ssh://git@github.com/easyScience/libsDarwin.git'
 reference = 'main'
-resolved_reference = "4d2d5b1380870b504fdd99c76ad07c9eae6e6232"
+resolved_reference = "7d43717546b4eeeacf8ee5bc83d2bcf02f607f3e"
 
 [[package]]
 name = "libslinux"

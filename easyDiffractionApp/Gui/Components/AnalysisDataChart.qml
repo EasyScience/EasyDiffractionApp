@@ -12,12 +12,7 @@ import Gui.Components 1.0 as ExComponents
 
 Rectangle {
     property bool isDarkTheme: EaStyle.Colors.isDarkTheme
-    property var matplotlibRcParams: EaStyle.Colors.matplotlibRcParams
-    onIsDarkThemeChanged: _matplotlibBridge.updateStyle(isDarkTheme, matplotlibRcParams)
-    Component.onCompleted: {
-        _matplotlibBridge.updateFont(EaStyle.Fonts.fontSource, analysisDataChart.objectName)
-        _matplotlibBridge.updateStyle(isDarkTheme, matplotlibRcParams, analysisDataChart.objectName)
-    }
+    property bool isExperimentStepDone: ExGlobals.Variables.experimentLoaded || ExGlobals.Variables.experimentSkipped
 
     color: "white"
 
@@ -98,5 +93,19 @@ Rectangle {
                 _matplotlibBridge.zoom(analysisDataChart.objectName)
             }
         }
+    }
+
+
+    onIsDarkThemeChanged: updateMatplotlibStyle()
+    onIsExperimentStepDoneChanged: updateMatplotlibStyle()
+
+    // Logic
+
+    function updateMatplotlibStyle() {
+        _matplotlibBridge.updateFont(EaStyle.Fonts.fontSource,
+                                     analysisDataChart.objectName)
+        _matplotlibBridge.updateStyle(EaStyle.Colors.isDarkTheme,
+                                      EaStyle.Colors.matplotlibRcParams,
+                                      analysisDataChart.objectName)
     }
 }

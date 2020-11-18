@@ -28,11 +28,7 @@ EaComponents.SideBarColumn {
                 fontIcon: "upload"
                 text: qsTr("Import data from local drive")
 
-                onClicked: {
-                    ExGlobals.Variables.experimentLoaded = true
-                    ExGlobals.Constants.proxy.loadExperiment()
-                    ExGlobals.Variables.analysisPageEnabled = true
-                }
+                onClicked: loadExperimentDataFileDialog.open()
             }
 
             EaElements.SideBarButton {
@@ -118,6 +114,18 @@ EaComponents.SideBarColumn {
                 fontIcon: "plus-square"
                 text: qsTr("Insert point before selected")
             }
+        }
+    }
+
+    // Load experimental data file dialog
+
+    Dialogs1.FileDialog{
+        id: loadExperimentDataFileDialog
+        nameFilters: [ "XYE files (*.xye)"]
+        onAccepted: {
+            ExGlobals.Constants.proxy.loadExperimentDataFromTxt(fileUrl)
+            ExGlobals.Variables.experimentLoaded = true
+            ExGlobals.Variables.analysisPageEnabled = true
         }
     }
 

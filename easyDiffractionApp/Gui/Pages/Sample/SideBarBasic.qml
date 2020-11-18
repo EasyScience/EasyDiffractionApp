@@ -28,9 +28,7 @@ EaComponents.SideBarColumn {
                 fontIcon: "upload"
                 text: qsTr("Set new phase from CIF")
 
-                onClicked: {
-                    loadPhaseFileDialog.open()
-                }
+                onClicked: loadPhaseFileDialog.open()
             }
 
             EaElements.SideBarButton {

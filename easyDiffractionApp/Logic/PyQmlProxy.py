@@ -28,7 +28,7 @@ from easyDiffractionApp.Logic.MatplotlibBackend import DisplayBridge
 class PyQmlProxy(QObject):
     _borg = borg
 
-    bridge = DisplayBridge()
+    matplotlib_bridge = DisplayBridge()
 
     projectInfoChanged = Signal()
     constraintsChanged = Signal()
@@ -83,6 +83,9 @@ class PyQmlProxy(QObject):
         self._fitables_list = []
         self._filter_criteria = ""
 
+        self._experiment_figure_obj_name = None
+        self._analysis_figure_obj_name = None
+
         # when to emit status bar items cnahged
         self.calculatorChanged.connect(self.statusChanged)
         self.minimizerChanged.connect(self.statusChanged)
@@ -109,8 +112,14 @@ class PyQmlProxy(QObject):
         xml = xml.decode()
         return xml
 
-    @Slot()
-    def loadExperiment(self):
+    @Slot(str)
+    def loadExperimentDataFromTxt(self, file_path):
+        file_path = generalizePath(file_path)
+        print(f"Load data from: {file_path}")
+        data = self.data.experiments
+        data = data[0]
+        data.x, data.y, data.sy = np.loadtxt(file_path, unpack=True)
+        self.matplotlib_bridge.updateWithCanvas(self._experiment_figure_obj_name, data)
         self.experiments = [{"label": "D2B_300K", "color": "steelblue"}]
         self.experimentDataChanged.emit()
 
@@ -139,12 +148,14 @@ class PyQmlProxy(QObject):
 
     @Slot()
     def updateCalculatedData(self):
+        if self._analysis_figure_obj_name is None:
+            return
         self.sample.output_index = self.currentPhaseIndex
         data = self.data.simulations
         #  THIS IS WHERE WE WOULD LOOK UP CURRENT EXP INDEX
         data = data[0]
         data.y = self.interface.fit_func(data.x)
-        self.bridge.updateWithCanvas('figure', data)
+        self.matplotlib_bridge.updateWithCanvas(self._analysis_figure_obj_name, data)
         self.modelChanged.emit()
 
     # Calculator
@@ -160,7 +171,7 @@ class PyQmlProxy(QObject):
     @calculatorIndex.setter
     def setCalculator(self, index: int):
         self.interface.switch(self.calculatorList[index])
-        data = self.bridge.data.simulations
+        data = self.matplotlib_bridge.data.simulations
         #  THIS IS WHERE WE WOULD LOOK UP CURRENT EXP INDEX
         data = data[0]
         data.name = '{:s} engine'.format(self.interface.current_interface_name)
@@ -185,6 +196,18 @@ class PyQmlProxy(QObject):
     # @Slot(QtCharts.QXYSeries)
     # def setCalculatedSeriesRef(self, series):
     #     self._calculated_data_model.setSeriesRef(series)
+
+    @Slot(str)
+    def setExperimentFigureObjName(self, name):
+        if self._experiment_figure_obj_name == name:
+            return
+        self._experiment_figure_obj_name = name
+
+    @Slot(str)
+    def setAnalysisFigureObjName(self, name):
+        if self._analysis_figure_obj_name == name:
+            return
+        self._analysis_figure_obj_name = name
 
     # Status
 

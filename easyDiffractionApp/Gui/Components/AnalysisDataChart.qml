@@ -13,22 +13,25 @@ import Gui.Components 1.0 as ExComponents
 Rectangle {
     property bool isDarkTheme: EaStyle.Colors.isDarkTheme
     property var matplotlibRcParams: EaStyle.Colors.matplotlibRcParams
-    onIsDarkThemeChanged: displayBridge.updateStyle(isDarkTheme, matplotlibRcParams)
+    onIsDarkThemeChanged: _matplotlibBridge.updateStyle(isDarkTheme, matplotlibRcParams)
     Component.onCompleted: {
-        displayBridge.updateFont(EaStyle.Fonts.fontSource, "figure")
-        displayBridge.updateStyle(isDarkTheme, matplotlibRcParams, "figure")
+        _matplotlibBridge.updateFont(EaStyle.Fonts.fontSource, analysisDataChart.objectName)
+        _matplotlibBridge.updateStyle(isDarkTheme, matplotlibRcParams, analysisDataChart.objectName)
     }
 
     color: "white"
 
     FigureCanvas {
-        objectName: "figure"
+        id: analysisDataChart
+        objectName: "analysisDataChart"
 
         anchors.fill: parent
         anchors.topMargin: -25
         anchors.bottomMargin: 0
         anchors.rightMargin: -55
         dpi_ratio: Screen.devicePixelRatio
+
+        Component.onCompleted: ExGlobals.Constants.proxy.setAnalysisFigureObjName(objectName)
     }
 
     Row {
@@ -41,21 +44,21 @@ Rectangle {
             fontIcon: "home"
             ToolTip.text: qsTr("Home")
 
-            onClicked: displayBridge.home("figure")
+            onClicked: _matplotlibBridge.home(analysisDataChart.objectName)
         }
 
         EaElements.ToolButton {
             fontIcon: "\uf2ea"
             ToolTip.text: qsTr("Back")
 
-            onClicked: displayBridge.back("figure")
+            onClicked: _matplotlibBridge.back(analysisDataChart.objectName)
         }
 
         EaElements.ToolButton {
             fontIcon: "\uf2f9"
             ToolTip.text: qsTr("Forward")
 
-            onClicked: displayBridge.forward("figure")
+            onClicked: _matplotlibBridge.forward(analysisDataChart.objectName)
         }
 
         Rectangle {
@@ -77,7 +80,7 @@ Rectangle {
                 if (zoom.checked) {
                     zoom.checked = false
                 }
-                displayBridge.pan("figure")
+                _matplotlibBridge.pan(analysisDataChart.objectName)
             }
         }
 
@@ -92,7 +95,7 @@ Rectangle {
                 if (pan.checked) {
                     pan.checked = false
                 }
-                displayBridge.zoom("figure")
+                _matplotlibBridge.zoom(analysisDataChart.objectName)
             }
         }
     }

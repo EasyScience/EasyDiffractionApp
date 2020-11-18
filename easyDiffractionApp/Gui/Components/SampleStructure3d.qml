@@ -225,11 +225,11 @@ import QtVTK 1.0
 
             onPositionChanged: (mouse) => {
                 print('Mouse moved')
-                canvasHandler.mouseMoveEvent(pressedButtons, mouseX, mouseY);
+                _vtkHandler.mouseMoveEvent(pressedButtons, mouseX, mouseY);
                 mouse.accepted = false;
             }
             onPressed: (mouse) => {
-                canvasHandler.mousePressEvent(pressedButtons, mouseX, mouseY);
+                _vtkHandler.mousePressEvent(pressedButtons, mouseX, mouseY);
                 mouse.accepted = false;
                 // if u want to propagate the pressed event
                 // so the VtkFboItem instance can receive it
@@ -237,7 +237,7 @@ import QtVTK 1.0
                 // mouse.ignore() // or mouse.accepted = false
             }
             onReleased: (mouse) => {
-                canvasHandler.mouseReleaseEvent(pressedButtons, mouseX, mouseY);
+                _vtkHandler.mouseReleaseEvent(pressedButtons, mouseX, mouseY);
                 print(mouse);
                 mouse.accepted = false;
             }
@@ -254,7 +254,7 @@ import QtVTK 1.0
             anchors.right: parent.right
             anchors.bottom: parent.bottom
             anchors.margins: 50
-            onClicked: canvasHandler.clearScene()
+            onClicked: _vtkHandler.clearScene()
 
             ToolTip.visible: hovered
             ToolTip.delay: 1000
@@ -268,7 +268,7 @@ import QtVTK 1.0
             anchors.right: clearScene.left
             anchors.bottom: parent.bottom
             anchors.margins: 50
-            onClicked: canvasHandler.create_plot_system()
+            onClicked: _vtkHandler.create_plot_system()
 
             ToolTip.visible: hovered
             ToolTip.delay: 1000

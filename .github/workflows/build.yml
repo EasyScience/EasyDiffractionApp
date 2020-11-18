@@ -77,7 +77,8 @@ jobs:
         poetry update
 
     - name: Relink CrysFML from default Python dylib
-      run: poetry run python ${{ env.SCRIPTS_PATH }}/RelinkCrysfml.py ${{ env.PYTHON_LOCATION }}
+      # run: poetry run python ${{ env.SCRIPTS_PATH }}/RelinkCrysfml.py ${{ env.PYTHON_LOCATION }}
+      run: poetry run python ${{ env.SCRIPTS_PATH }}/RelinkCrysfml.py
 
     - name: Create freezed python app bundle
       run: poetry run python ${{ env.SCRIPTS_PATH }}/FreezeApp.py

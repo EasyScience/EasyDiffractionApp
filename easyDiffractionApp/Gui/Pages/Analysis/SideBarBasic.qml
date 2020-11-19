@@ -24,20 +24,20 @@ EaComponents.SideBarColumn {
             spacing: EaStyle.Sizes.fontPixelSize * 0.5
 
             EaElements.TextField {
-                id: filterCriteriaField2
+                id: filterCriteriaField
 
                 width: (EaStyle.Sizes.sideBarContentWidth - parent.spacing) / 2
 
-                placeholderText: "Type filter criteria"
+                placeholderText: "Filter parameters"
 
                 onTextChanged: {
-                    exampleFilters.currentIndex = exampleFilters.indexOfValue(text)
+                    exampleFilterCriteria.currentIndex = exampleFilterCriteria.indexOfValue(text)
                     ExGlobals.Constants.proxy.setFilterCriteria(text)
                 }
             }
 
             EaElements.ComboBox {
-                id: exampleFilters
+                id: exampleFilterCriteria
 
                 topInset: 0
                 bottomInset: 0
@@ -47,7 +47,7 @@ EaComponents.SideBarColumn {
                 textRole: "text"
                 valueRole: "value"
 
-                displayText: currentIndex === -1 ? "Select filter criteria" : currentText
+                displayText: currentIndex === -1 ? "Custom filter criteria" : currentText
 
                 model: [
                     { value: "", text: formatFilterText("infinity", "All parameters") },
@@ -61,7 +61,7 @@ EaComponents.SideBarColumn {
                     { value: "background.", text: formatFilterText("wave-square", "Background") } //"water"
                 ]
 
-                onActivated: filterCriteriaField2.text = currentValue
+                onActivated: filterCriteriaField.text = currentValue
             }
         }
 

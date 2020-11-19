@@ -1,6 +1,6 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.XmlListModel 2.13
+import QtQuick 2.14
+import QtQuick.Controls 2.14
+import QtQuick.XmlListModel 2.14
 
 import easyAppGui.Globals 1.0 as EaGlobals
 import easyAppGui.Style 1.0 as EaStyle
@@ -19,110 +19,49 @@ EaComponents.SideBarColumn {
         last: true
         collapsible: false
 
-        // Filter text field
+        // Filter parameters widget
         Row {
             spacing: EaStyle.Sizes.fontPixelSize * 0.5
-
 
             EaElements.TextField {
-                id: filterCriteriaField
-                width: EaStyle.Sizes.sideBarContentWidth
-                       - parent.spacing * 3
-                       - resetFilterButton.width
-                       - phaseButton.width
-                       - instrumentButton.width
-                placeholderText: "Specify your filter criteria"
-                onTextChanged: ExGlobals.Constants.proxy.setFilterCriteria(text)
+                id: filterCriteriaField2
+
+                width: (EaStyle.Sizes.sideBarContentWidth - parent.spacing) / 2
+
+                placeholderText: "Type filter criteria"
+
+                onTextChanged: {
+                    exampleFilters.currentIndex = exampleFilters.indexOfValue(text)
+                    ExGlobals.Constants.proxy.setFilterCriteria(text)
+                }
             }
 
-            EaElements.SideBarButton {
-                id: resetFilterButton
-                smallIcon: true
-                width: EaStyle.Sizes.fontPixelSize * 4.5
-                text: "All"
-                ToolTip.text: qsTr("Reset filtering")
-                fontIcon: "infinity"
-                down: filterCriteriaField.text == ""
-                onClicked: filterCriteriaField.text = ""
-            }
+            EaElements.ComboBox {
+                id: exampleFilters
 
-            EaElements.SideBarButton {
-                id: phaseButton
-                smallIcon: true
-                width: EaStyle.Sizes.fontPixelSize * 6.5
-                fontIcon: "gem"
-                text: "Phase"
-                down: filterCriteriaField.text == "phases."
-                onClicked: filterCriteriaField.text = "phases."
-            }
+                topInset: 0
+                bottomInset: 0
 
-            EaElements.SideBarButton {
-                id: instrumentButton
-                smallIcon: true
-                width: EaStyle.Sizes.fontPixelSize * 7.5
-                fontIcon: "microscope"
-                text: "Instrument"
-                down: filterCriteriaField.text == "instrument."
-                onClicked: filterCriteriaField.text = "instrument."
-            }
-        }
+                width: (EaStyle.Sizes.sideBarContentWidth - parent.spacing) / 2
 
-        // Filter buttons
-        Row {
-            spacing: EaStyle.Sizes.fontPixelSize * 0.5
+                textRole: "text"
+                valueRole: "value"
 
-            EaElements.SideBarButton {
-                smallIcon: true
-                width: EaStyle.Sizes.fontPixelSize * 4.5
-                fontIcon: "cube"
-                text: "Cell"
-                down: filterCriteriaField.text == "cell."
-                onClicked: filterCriteriaField.text = "cell."
-            }
+                displayText: currentIndex === -1 ? "Select filter criteria" : currentText
 
-            EaElements.SideBarButton {
-                smallIcon: true
-                width: EaStyle.Sizes.fontPixelSize * 5
-                fontIcon: "atom"
-                text: "Atom"
-                down: filterCriteriaField.text == "atoms."
-                onClicked: filterCriteriaField.text = "atoms."
-            }
+                model: [
+                    { value: "", text: formatFilterText("infinity", "All parameters") },
+                    { value: "phases.", text: formatFilterText("gem", "Phases") },
+                    { value: "instrument.", text: formatFilterText("microscope", "Instrument") },
+                    { value: "cell.", text: formatFilterText("cube", "Cell") },
+                    { value: "atoms.", text: formatFilterText("atom", "Atoms") },
+                    { value: "fract_", text: formatFilterText("map-marker-alt", "Coordinates") },
+                    { value: "adp.", text: formatFilterText("arrows-alt", "ADPs") },
+                    { value: "resolution_", text: formatFilterText("grip-lines-vertical", "Resolution") }, //"delicious"//"grip-lines"//"flipboard"
+                    { value: "background.", text: formatFilterText("wave-square", "Background") } //"water"
+                ]
 
-            EaElements.SideBarButton {
-                smallIcon: true
-                width: EaStyle.Sizes.fontPixelSize * 7.0
-                fontIcon: "map-marker-alt"
-                text: "Coordinate"
-                down: filterCriteriaField.text == "fract_"
-                onClicked: filterCriteriaField.text = "fract_"
-            }
-
-            EaElements.SideBarButton {
-                smallIcon: true
-                width: EaStyle.Sizes.fontPixelSize * 4.5
-                fontIcon: "arrows-alt"
-                text: "ADP"
-                down: filterCriteriaField.text == "adp."
-                onClicked: filterCriteriaField.text = "adp."
-            }
-
-            EaElements.SideBarButton {
-                smallIcon: true
-                width: EaStyle.Sizes.fontPixelSize * 6.5
-                fontIcon: "grip-lines-vertical"//"delicious"//"grip-lines"//"flipboard"
-                text: "Resolution"
-                down: filterCriteriaField.text == "resolution_"
-                onClicked: filterCriteriaField.text = "resolution_"
-            }
-
-            EaElements.SideBarButton {
-                smallIcon: true
-                width: EaStyle.Sizes.fontPixelSize * 7.5
-                fontIcon: "wave-square"//"water"
-                text: "Background"
-                down: filterCriteriaField.text == "background."
-                onClicked: filterCriteriaField.text = "background."
+                onActivated: filterCriteriaField2.text = currentValue
             }
         }
 
@@ -196,6 +135,10 @@ EaComponents.SideBarColumn {
     }
 
     // Logic
+
+    function formatFilterText(icon, text) {
+        return `<font face="${EaStyle.Fonts.iconsFamily}">${icon}</font>&nbsp;&nbsp;${text}</font>`
+    }
 
     function min(value) {
         if (value !== 0)

@@ -45,6 +45,7 @@ class PyQmlProxy(QObject):
     experimentDataChanged = Signal()
 
     parameterChanged = Signal()
+    fitResultsChanged = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -65,7 +66,7 @@ class PyQmlProxy(QObject):
         #self.background = PointBackground(linked_experiment='NEED_TO_CHANGE')
         self.background = PointBackground(BackgroundPoint.from_pars(0, 200), BackgroundPoint.from_pars(140, 250), linked_experiment='NEED_TO_CHANGE')
 
-        x_data = np.linspace(0, 140, 1401)
+        x_data = np.linspace(0, 140, 14001)
         self.data = DataStore()
         self.data.append(
             DataSet1D(name='D1A@ILL data',
@@ -86,6 +87,8 @@ class PyQmlProxy(QObject):
 
         self._experiment_figure_obj_name = None
         self._analysis_figure_obj_name = None
+
+        self._fit_results = { "success": None, "nvarys": None, "GOF": None, "redchi": None }
 
         # when to emit status bar items cnahged
         self.calculatorChanged.connect(self.statusChanged)
@@ -607,8 +610,18 @@ class PyQmlProxy(QObject):
         # result = f.fit(exp_data.x, exp_data.y, method='brute')
         # print(result)
         result = f.fit(exp_data.x, exp_data.y, weights=1/exp_data.e**2)
-        print(f"success: {result.success}, nvarys: {result.engine_result.nvarys}, GOF: {result.goodness_of_fit}, redchi: {result.engine_result.redchi}")
+        self._fit_results = {"success": result.success,
+                             "nvarys": result.engine_result.nvarys,
+                             "GOF": result.goodness_of_fit,
+                             "redchi": float(result.engine_result.redchi)}
+        print(f"self._fit_results 1: {self._fit_results}")
+        self.fitResultsChanged.emit()
         self.updateStructureView()
         self.updateCalculatedData()
         self.phasesChanged.emit()
         self.backgroundChanged.emit()
+
+    @Property('QVariant', notify=fitResultsChanged)
+    def fitResults(self):
+        print(f"self._fit_results 2: {self._fit_results}")
+        return self._fit_results

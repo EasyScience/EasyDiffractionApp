@@ -607,7 +607,7 @@ class PyQmlProxy(QObject):
         # result = f.fit(exp_data.x, exp_data.y, method='brute')
         # print(result)
         result = f.fit(exp_data.x, exp_data.y, weights=1/exp_data.e**2)
-        print(result)
+        print(f"success: {result.success}, nvarys: {result.engine_result.nvarys}, GOF: {result.goodness_of_fit}, redchi: {result.engine_result.redchi}")
         self.updateStructureView()
         self.updateCalculatedData()
         self.phasesChanged.emit()

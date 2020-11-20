@@ -122,6 +122,7 @@ class PyQmlProxy(QObject):
         self.matplotlib_bridge.updateWithCanvas(self._experiment_figure_obj_name, data)
         self.experiments = [{"label": "D1A@ILL", "color": "steelblue"}]
         self.experimentDataChanged.emit()
+        self.updateCalculatedData()
 
     def createFakeExperiment(self):
         self.experiments = [{"label": "D2B_300K", "color": "steelblue"}]

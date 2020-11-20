@@ -104,6 +104,8 @@ def main():
     app = App(sys.argv)
     app.setApplicationName(CONFIG['tool']['poetry']['name'])
     app.setApplicationVersion(CONFIG['tool']['poetry']['version'])
+    app.setOrganizationName(CONFIG['tool']['poetry']['name'])
+    app.setOrganizationDomain(CONFIG['tool']['poetry']['name'])
 
     # QML application engine
     engine = QQmlApplicationEngine()

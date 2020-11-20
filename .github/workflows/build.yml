@@ -56,10 +56,11 @@ jobs:
     - name: Cache dependencies
       uses: actions/cache@v2
       with:
-        path: | # ${{ env.POETRY_VENV_PATH }}
+        path: |
+          ${{ env.POETRY_VENV_PATH }}
           ${{ env.QTIFW_PATH }}
           ${{ env.DOWNLOAD_PATH }}
-        key: ${{ matrix.os }}-poetry-${{ hashFiles('poetry.lock') }}
+        key: ${{ matrix.os }}-poetry-${{ hashFiles('pyproject.toml') }}
 
     - name: Set up python packages manager
       uses: Gr1N/setup-poetry@v4

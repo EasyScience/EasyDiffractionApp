@@ -115,7 +115,7 @@ PySide2 = "5.14"
 type = "git"
 url = 'https://github.com/easyScience/easyAppGui.git'
 reference = 'master'
-resolved_reference = "129d3ccbbb12fde5649befc480102f51e9fc3c30"
+resolved_reference = "0834ba985ac0ee49d629b84431b19c515556e225"
 
 [[package]]
 name = "easyapplogic"
@@ -180,7 +180,7 @@ matplotlib = "^3.2, <3.3"
 type = "git"
 url = 'https://github.com/easyScience/easyDiffractionLib.git'
 reference = 'coreSiteWork'
-resolved_reference = "721d30070c133dd6cc90b8b1d7ad519acc6d0f23"
+resolved_reference = "710aba35441622480727af2e1f7fa504ca12e81a"
 
 [[package]]
 name = "ffmpeg-python"
@@ -323,7 +323,7 @@ python-versions = ">=3.6"
 [[package]]
 name = "libsdarwin"
 version = "0.0.1"
-description = "https://code.ill.fr/scientific-software/crysfml/-/jobs/40800/artifacts/download"
+description = "Calculation engine libraries: CFML, GSAS-II"
 category = "main"
 optional = false
 python-versions = "^3.7, <3.8"
@@ -333,12 +333,12 @@ develop = false
 type = "git"
 url = 'ssh://git@github.com/easyScience/libsDarwin.git'
 reference = 'main'
-resolved_reference = "9490af08831ef826b98e8ea53856187dcc956a57"
+resolved_reference = "9239ddff2be8473b15c83db629b2a2ed36918750"
 
 [[package]]
 name = "libslinux"
 version = "0.0.1"
-description = "https://code.ill.fr/scientific-software/crysfml/-/jobs/40798/artifacts/download"
+description = "Calculation engine libraries: CFML, GSAS-II"
 category = "main"
 optional = false
 python-versions = "^3.7, <3.8"
@@ -348,12 +348,12 @@ develop = false
 type = "git"
 url = 'ssh://git@github.com/easyScience/libsLinux.git'
 reference = 'main'
-resolved_reference = "f9e0c1838e6e91282ce08afdaf12c5bb2e6dde0b"
+resolved_reference = "f2330d82714b2b1f7958afb1179f6bfa5eb71783"
 
 [[package]]
 name = "libswin32"
 version = "0.0.1"
-description = "https://code.ill.fr/scientific-software/crysfml/-/jobs/40802/artifacts/download"
+description = "Calculation engine libraries: CFML, GSAS-II"
 category = "main"
 optional = false
 python-versions = "^3.7, <3.8"
@@ -363,7 +363,7 @@ develop = false
 type = "git"
 url = 'ssh://git@github.com/easyScience/libsWin32.git'
 reference = 'main'
-resolved_reference = "b91db2ea91fb91bd4de37a2c72f68558cf1d0bf5"
+resolved_reference = "ce7689dae1e4c0ce599d0281a40614f73a228a71"
 
 [[package]]
 name = "lmfit"

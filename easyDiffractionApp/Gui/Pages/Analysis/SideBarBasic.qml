@@ -53,7 +53,7 @@ EaComponents.SideBarColumn {
                     { value: "", text: formatFilterText("infinity", "All parameters") },
                     { value: "phases.", text: formatFilterText("gem", "Phases") },
                     { value: "instrument.", text: formatFilterText("microscope", "Instrument") },
-                    { value: "cell.", text: formatFilterText("cube", "Cell") },
+                    { value: "lattice.", text: formatFilterText("cube", "Cell") },
                     { value: "atoms.", text: formatFilterText("atom", "Atoms") },
                     { value: "fract_", text: formatFilterText("map-marker-alt", "Coordinates") },
                     { value: "adp.", text: formatFilterText("arrows-alt", "ADPs") },

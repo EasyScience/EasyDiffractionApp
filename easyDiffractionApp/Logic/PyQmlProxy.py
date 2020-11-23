@@ -68,7 +68,12 @@ class PyQmlProxy(QObject):
         #self.background = PointBackground(linked_experiment='NEED_TO_CHANGE')
         self.background = PointBackground(BackgroundPoint.from_pars(0, 200), BackgroundPoint.from_pars(140, 200), linked_experiment='NEED_TO_CHANGE')
 
-        x_data = np.linspace(0, 140, 1401)
+        self._simulation_parameters = { "x_min": 10.0, "x_max": 150.0, "x_step": 0.1 }
+        x_min = self._simulation_parameters['x_min']
+        x_max = self._simulation_parameters['x_max']
+        x_step = self._simulation_parameters['x_step']
+        num_points = int((x_max - x_min) / x_step + 1)
+        x_data = np.linspace(x_min, x_max, num_points)
         self.data = DataStore()
         self.data.append(
             DataSet1D(name='D1A@ILL data',
@@ -92,7 +97,6 @@ class PyQmlProxy(QObject):
 
         self._fit_results = { "success": None, "nvarys": None, "GOF": None, "redchi": None }
         self._experiment_loaded = False
-        self._simulation_parameters = { "x_min": 0.0, "x_max": 180.0, "x_step": 0.1 }
 
         # when to emit status bar items cnahged
         self.calculatorChanged.connect(self.statusChanged)
@@ -128,8 +132,14 @@ class PyQmlProxy(QObject):
     def loadExperimentDataFromTxt(self, file_path):
         file_path = generalizePath(file_path)
         print(f"Load data from: {file_path}")
+        print("---1---self.simulationParameters", self._simulation_parameters)
         data = self.data.experiments[0]
         data.x, data.y, data.e = np.loadtxt(file_path, unpack=True)
+        x_min = data.x[0]
+        x_max = data.x[-1]
+        x_step = (x_max - x_min) / (len(data.x) - 1)
+        self.simulationParameters = json.dumps({ "x_min": x_min, "x_max": x_max, "x_step": x_step })
+        print("---2---self.simulationParameters", self._simulation_parameters)
         self.matplotlib_bridge.updateWithCanvas(self._experiment_figure_obj_name, data)
         self.experiments = [{"label": "D1A@ILL", "color": "steelblue"}]
         self.experimentDataChanged.emit()
@@ -191,11 +201,13 @@ class PyQmlProxy(QObject):
 
     def onSimulationParametersChanged(self):
         print("------------ self._simulation_parameters", self._simulation_parameters)
-        x_min = self._simulation_parameters['x_min']
-        x_max = self._simulation_parameters['x_max']
-        x_step = self._simulation_parameters['x_step']
-        num_points = (x_max - x_min) / x_step
-        self.data.simulations[0].x = np.linspace(x_min, x_max, num_points)
+        x_min = float(self._simulation_parameters['x_min'])
+        x_max = float(self._simulation_parameters['x_max'])
+        x_step = float(self._simulation_parameters['x_step'])
+        num_points = int((x_max - x_min) / x_step + 1)
+        sim = self.data.simulations[0]
+        sim.x = np.linspace(x_min, x_max, num_points)
+        sim.y = self.interface.fit_func(sim.x)
         self.updateCalculatedData()
 
     # Pattern parameters
@@ -237,6 +249,12 @@ class PyQmlProxy(QObject):
             zeros = DataSet1D(name='',
                               x_label='2theta (deg)', y_label='Intensity (arb. units)',
                               x=[sim.x[0]], y=[sim.y[0]])  # Temp solution to have proper color for sim curve
+            x_min = float(self._simulation_parameters['x_min'])
+            x_max = float(self._simulation_parameters['x_max'])
+            x_step = float(self._simulation_parameters['x_step'])
+            num_points = int((x_max - x_min) / x_step + 1)
+            sim.x = np.linspace(x_min, x_max, num_points)
+            sim.y = self.interface.fit_func(sim.x)
             data = [zeros, sim]
         self.matplotlib_bridge.updateWithCanvas(self._analysis_figure_obj_name, data)
         self.modelChanged.emit()

@@ -18,6 +18,7 @@ Row {
     }
     EaElements.Parameter {
         id: xMin
+        enabled: !ExGlobals.Variables.experimentLoaded
         width: textFieldWidth()
         units: "deg"
         //text: typeof ExGlobals.Constants.proxy.simulationParameters !== "undefined" ? ExGlobals.Constants.proxy.simulationParameters.x_min : ""
@@ -38,6 +39,7 @@ Row {
     }
     EaElements.Parameter {
         id: xMax
+        enabled: !ExGlobals.Variables.experimentLoaded
         width: textFieldWidth()
         units: "deg"
         //text: typeof ExGlobals.Constants.proxy.simulationParameters !== "undefined" ? ExGlobals.Constants.proxy.simulationParameters.x_max : ""
@@ -58,6 +60,7 @@ Row {
     }
     EaElements.Parameter {
         id: xStep
+        enabled: !ExGlobals.Variables.experimentLoaded
         width: textFieldWidth()
         units: "deg"
         //text: typeof ExGlobals.Constants.proxy.simulationParameters !== "undefined" ? ExGlobals.Constants.proxy.simulationParameters.x_step : ""
@@ -76,6 +79,8 @@ Row {
     }
 
     function updateParameters() {
-        ExGlobals.Constants.proxy.simulationParameters = { "x_min": xMin.text, "x_max": xMax.text, "x_step": xStep.text }
+        const json = { "x_min": xMin.text, "x_max": xMax.text, "x_step": xStep.text }
+        //print("json", JSON.stringify(json))
+        ExGlobals.Constants.proxy.simulationParameters = JSON.stringify(json)
     }
 }

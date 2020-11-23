@@ -34,6 +34,8 @@ class DisplayBridge(QtCore.QObject):
         canvas_ = self.context.findChild(QtCore.QObject, canvas)
         if canvas not in self.canvas_data.keys():
             self.canvas_data[canvas] = DisplayAdapter(canvas_, dataset, parent=self)
+        else:
+            self.canvas_data[canvas].current_canvas_data = dataset
         self.redraw()
 
     def redraw(self, items: List['DisplayAdapter'] = None):

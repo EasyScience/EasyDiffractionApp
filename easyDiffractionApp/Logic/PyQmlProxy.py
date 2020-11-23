@@ -46,6 +46,7 @@ class PyQmlProxy(QObject):
 
     parameterChanged = Signal()
     fitResultsChanged = Signal()
+    experimentLoadedChanged = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -64,7 +65,7 @@ class PyQmlProxy(QObject):
         self.sample.parameters.resolution_y = 0.0
 
         #self.background = PointBackground(linked_experiment='NEED_TO_CHANGE')
-        self.background = PointBackground(BackgroundPoint.from_pars(0, 200), BackgroundPoint.from_pars(140, 250), linked_experiment='NEED_TO_CHANGE')
+        self.background = PointBackground(BackgroundPoint.from_pars(0, 200), BackgroundPoint.from_pars(140, 200), linked_experiment='NEED_TO_CHANGE')
 
         x_data = np.linspace(0, 140, 14001)
         self.data = DataStore()
@@ -89,11 +90,15 @@ class PyQmlProxy(QObject):
         self._analysis_figure_obj_name = None
 
         self._fit_results = { "success": None, "nvarys": None, "GOF": None, "redchi": None }
+        self._experiment_loaded = False
 
         # when to emit status bar items cnahged
         self.calculatorChanged.connect(self.statusChanged)
         self.minimizerChanged.connect(self.statusChanged)
         self.parameterChanged.connect(self.experimentDataChanged)
+
+        #
+        #self.experimentLoadedChanged.connect(self.onExperimentLoaded)
 
         # Create a connection between this signal and a receiver, the receiver can be a Python callable, a Slot or a
         # Signal. But why does it not work :-(
@@ -147,6 +152,29 @@ class PyQmlProxy(QObject):
         self.bridge.updateWithCanvas('figureEXP', data)
         self.experimentDataChanged.emit()
 
+    @Property(bool, notify=experimentLoadedChanged)
+    def experimentLoaded(self):
+        return self._experiment_loaded
+
+    @experimentLoaded.setter
+    def setExperimentLoaded(self, experiment_loaded: bool):
+        if self._experiment_loaded == experiment_loaded:
+            return
+        self._experiment_loaded = experiment_loaded
+        self.experimentLoadedChanged.emit()
+
+    def onExperimentLoaded(self):
+        print("-onExperimentLoaded-")
+        #if not self._experiment_loaded:
+        #    return
+        #exp = self.data.experiments[0]
+        #sim = self.data.simulations[0]
+        #sim.x = exp.x
+        #sim.y = self.interface.fit_func(sim.x)
+        #self.matplotlib_bridge.updateWithCanvas(self._analysis_figure_obj_name, [exp, sim])
+        #else:
+        #    self.matplotlib_bridge.updateWithCanvas(self._analysis_figure_obj_name, data)
+
     # Pattern parameters
 
     @Property('QVariant', notify=experimentDataChanged)
@@ -175,13 +203,16 @@ class PyQmlProxy(QObject):
         if self._analysis_figure_obj_name is None:
             return
         self.sample.output_index = self.currentPhaseIndex
-        data = self.data.simulations[0]
-        exp = self.data.experiments[0]
         #  THIS IS WHERE WE WOULD LOOK UP CURRENT EXP INDEX
-        # data = data[0]
-        data.x = exp.x
-        data.y = self.interface.fit_func(data.x)
-        self.matplotlib_bridge.updateWithCanvas(self._analysis_figure_obj_name, [self.data.experiments[0], data])
+        exp = self.data.experiments[0]
+        sim = self.data.simulations[0]
+        sim.x = exp.x
+        sim.y = self.interface.fit_func(sim.x)
+        zeros = DataSet1D(name='', x_label='2theta (deg)', y_label='Intensity (arb. units)', x=[sim.x[0]], y=[sim.y[0]])  # Temp solution to have proper color for sim curve
+        data = [zeros, sim]
+        if self.experimentLoaded:
+            data = [exp, sim]
+        self.matplotlib_bridge.updateWithCanvas(self._analysis_figure_obj_name, data)
         self.modelChanged.emit()
 
     # Calculator
@@ -614,7 +645,7 @@ class PyQmlProxy(QObject):
                              "nvarys": result.engine_result.nvarys,
                              "GOF": result.goodness_of_fit,
                              "redchi": float(result.engine_result.redchi)}
-        print(f"self._fit_results 1: {self._fit_results}")
+        #print(f"self._fit_results 1: {self._fit_results}")
         self.fitResultsChanged.emit()
         self.updateStructureView()
         self.updateCalculatedData()
@@ -623,5 +654,5 @@ class PyQmlProxy(QObject):
 
     @Property('QVariant', notify=fitResultsChanged)
     def fitResults(self):
-        print(f"self._fit_results 2: {self._fit_results}")
+        #print(f"self._fit_results 2: {self._fit_results}")
         return self._fit_results

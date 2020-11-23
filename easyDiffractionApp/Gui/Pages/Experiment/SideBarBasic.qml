@@ -123,9 +123,10 @@ EaComponents.SideBarColumn {
         id: loadExperimentDataFileDialog
         nameFilters: [ "XYE files (*.xye)"]
         onAccepted: {
-            ExGlobals.Constants.proxy.loadExperimentDataFromTxt(fileUrl)
             ExGlobals.Variables.experimentLoaded = true
+            ExGlobals.Constants.proxy.experimentLoaded = true
             ExGlobals.Variables.analysisPageEnabled = true
+            ExGlobals.Constants.proxy.loadExperimentDataFromTxt(fileUrl)
         }
     }
 

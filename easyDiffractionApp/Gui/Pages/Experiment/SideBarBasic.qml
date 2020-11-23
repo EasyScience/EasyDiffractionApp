@@ -56,6 +56,13 @@ EaComponents.SideBarColumn {
     }
 
     EaElements.GroupBox {
+        title: qsTr("Simulation parameters")
+        enabled: ExGlobals.Variables.experimentLoaded || ExGlobals.Variables.experimentSkipped
+
+        ExComponents.ExperimentSimulationSetup {}
+    }
+
+    EaElements.GroupBox {
         title: qsTr("Instrument setup")
         enabled: ExGlobals.Variables.experimentLoaded || ExGlobals.Variables.experimentSkipped
 

@@ -18,7 +18,7 @@ Row {
     }
     EaElements.Parameter {
         width: textFieldWidth()
-        units: typeof ExGlobals.Constants.proxy.patternParameters.zero_shift != "undefined" ? ExGlobals.Constants.proxy.patternParameters.zero_shift.units : ""
+        units: "deg" //typeof ExGlobals.Constants.proxy.patternParameters.zero_shift != "undefined" ? ExGlobals.Constants.proxy.patternParameters.zero_shift.units : ""
         text: typeof ExGlobals.Constants.proxy.patternParameters.zero_shift != "undefined" ? ExGlobals.Constants.proxy.patternParameters.zero_shift.value : ""
         onEditingFinished: editParameterValue(ExGlobals.Constants.proxy.patternParameters.zero_shift["@id"], text)
     }
@@ -36,7 +36,7 @@ Row {
     }
     EaElements.Parameter {
         width: textFieldWidth()
-        units: typeof ExGlobals.Constants.proxy.instrumentParameters.wavelength != "undefined" ? ExGlobals.Constants.proxy.instrumentParameters.wavelength.units : ""
+        units: "Å" //typeof ExGlobals.Constants.proxy.instrumentParameters.wavelength != "undefined" ? ExGlobals.Constants.proxy.instrumentParameters.wavelength.units : ""
         text: typeof ExGlobals.Constants.proxy.instrumentParameters.wavelength != "undefined" ? ExGlobals.Constants.proxy.instrumentParameters.wavelength.value : ""
         onEditingFinished: editParameterValue(ExGlobals.Constants.proxy.instrumentParameters.wavelength["@id"], text)
     }

@@ -47,6 +47,7 @@ class PyQmlProxy(QObject):
     parameterChanged = Signal()
     fitResultsChanged = Signal()
     experimentLoadedChanged = Signal()
+    simulationParametersChanged = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -67,7 +68,7 @@ class PyQmlProxy(QObject):
         #self.background = PointBackground(linked_experiment='NEED_TO_CHANGE')
         self.background = PointBackground(BackgroundPoint.from_pars(0, 200), BackgroundPoint.from_pars(140, 200), linked_experiment='NEED_TO_CHANGE')
 
-        x_data = np.linspace(0, 140, 14001)
+        x_data = np.linspace(0, 140, 1401)
         self.data = DataStore()
         self.data.append(
             DataSet1D(name='D1A@ILL data',
@@ -91,6 +92,7 @@ class PyQmlProxy(QObject):
 
         self._fit_results = { "success": None, "nvarys": None, "GOF": None, "redchi": None }
         self._experiment_loaded = False
+        self._simulation_parameters = { "x_min": 0.0, "x_max": 180.0, "x_step": 0.1 }
 
         # when to emit status bar items cnahged
         self.calculatorChanged.connect(self.statusChanged)
@@ -99,6 +101,7 @@ class PyQmlProxy(QObject):
 
         #
         #self.experimentLoadedChanged.connect(self.onExperimentLoaded)
+        self.simulationParametersChanged.connect(self.onSimulationParametersChanged)
 
         # Create a connection between this signal and a receiver, the receiver can be a Python callable, a Slot or a
         # Signal. But why does it not work :-(
@@ -177,6 +180,26 @@ class PyQmlProxy(QObject):
 
     # Pattern parameters
 
+    @Property('QVariant', notify=simulationParametersChanged)
+    def simulationParameters(self):
+        return self._simulation_parameters
+
+    @simulationParameters.setter
+    def setSimulationParameters(self, json_str):
+        self._simulation_parameters = json.loads(json_str)
+        self.simulationParametersChanged.emit()
+
+    def onSimulationParametersChanged(self):
+        print("------------ self._simulation_parameters", self._simulation_parameters)
+        x_min = self._simulation_parameters['x_min']
+        x_max = self._simulation_parameters['x_max']
+        x_step = self._simulation_parameters['x_step']
+        num_points = (x_max - x_min) / x_step
+        self.data.simulations[0].x = np.linspace(x_min, x_max, num_points)
+        self.updateCalculatedData()
+
+    # Pattern parameters
+
     @Property('QVariant', notify=experimentDataChanged)
     def patternParameters(self):
         parameters = self.sample.pattern.as_dict()
@@ -204,14 +227,17 @@ class PyQmlProxy(QObject):
             return
         self.sample.output_index = self.currentPhaseIndex
         #  THIS IS WHERE WE WOULD LOOK UP CURRENT EXP INDEX
-        exp = self.data.experiments[0]
         sim = self.data.simulations[0]
-        sim.x = exp.x
-        sim.y = self.interface.fit_func(sim.x)
-        zeros = DataSet1D(name='', x_label='2theta (deg)', y_label='Intensity (arb. units)', x=[sim.x[0]], y=[sim.y[0]])  # Temp solution to have proper color for sim curve
-        data = [zeros, sim]
         if self.experimentLoaded:
+            exp = self.data.experiments[0]
+            sim.x = exp.x
+            sim.y = self.interface.fit_func(sim.x)
             data = [exp, sim]
+        else:
+            zeros = DataSet1D(name='',
+                              x_label='2theta (deg)', y_label='Intensity (arb. units)',
+                              x=[sim.x[0]], y=[sim.y[0]])  # Temp solution to have proper color for sim curve
+            data = [zeros, sim]
         self.matplotlib_bridge.updateWithCanvas(self._analysis_figure_obj_name, data)
         self.modelChanged.emit()
 

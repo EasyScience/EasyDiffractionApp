@@ -105,6 +105,10 @@ class PyQmlProxy {
         return -1
     }
 
+    get simulationParameters() {
+        return {"x_min":0.0,"x_max":180.0,"x_step":0.1}
+    }
+
     // Functions
 
     addLowerMeasuredSeriesRef(series) {}

@@ -26,12 +26,13 @@ EaComponents.SideBarColumn {
             EaElements.TextField {
                 id: filterCriteriaField
 
-                width: (EaStyle.Sizes.sideBarContentWidth - parent.spacing) / 2
+                width: (EaStyle.Sizes.sideBarContentWidth - 2 * parent.spacing) / 3
 
-                placeholderText: "Filter parameters"
+                placeholderText: qsTr("Filter parameters")
 
                 onTextChanged: {
                     exampleFilterCriteria.currentIndex = exampleFilterCriteria.indexOfValue(text)
+                    namesFilterCriteria.currentIndex = namesFilterCriteria.indexOfValue(text)
                     ExGlobals.Constants.proxy.setFilterCriteria(text)
                 }
             }
@@ -42,24 +43,57 @@ EaComponents.SideBarColumn {
                 topInset: 0
                 bottomInset: 0
 
-                width: (EaStyle.Sizes.sideBarContentWidth - parent.spacing) / 2
+                width: (EaStyle.Sizes.sideBarContentWidth - 2 * parent.spacing) / 3
 
                 textRole: "text"
                 valueRole: "value"
 
-                displayText: currentIndex === -1 ? "Custom filter criteria" : currentText
+                displayText: currentIndex === -1 ? qsTr("Filter by type") : currentText
 
                 model: [
-                    { value: "", text: formatFilterText("infinity", "All parameters") },
-                    { value: "phases.", text: formatFilterText("gem", "Phases") },
-                    { value: "instrument.", text: formatFilterText("microscope", "Instrument") },
-                    { value: "lattice.", text: formatFilterText("cube", "Cell") },
-                    { value: "atoms.", text: formatFilterText("atom", "Atoms") },
-                    { value: "fract_", text: formatFilterText("map-marker-alt", "Coordinates") },
-                    { value: "adp.", text: formatFilterText("arrows-alt", "ADPs") },
-                    { value: "resolution_", text: formatFilterText("grip-lines-vertical", "Resolution") }, //"delicious"//"grip-lines"//"flipboard"
-                    { value: "background.", text: formatFilterText("wave-square", "Background") } //"water"
+                    { value: "", text: qsTr("All types") },
+                    { value: "phases.", text: formatFilterText("gem", "", "Phases") },
+                    { value: "instrument.", text: formatFilterText("microscope", "", "Instrument") },
+                    { value: ".lattice.", text: formatFilterText("gem", "cube", "Cell") },
+                    { value: ".atoms.", text: formatFilterText("gem", "atom", "Atoms") },
+                    { value: ".fract_", text: formatFilterText("gem", "map-marker-alt", "Coordinates") },
+                    { value: ".adp.", text: formatFilterText("gem", "arrows-alt", "ADPs") },
+                    { value: ".resolution_", text: formatFilterText("microscope", "grip-lines-vertical", "Resolution") }, //"delicious"//"grip-lines"//"flipboard"
+                    { value: ".background.", text: formatFilterText("microscope", "wave-square", "Background") } //"water"
                 ]
+
+                onActivated: filterCriteriaField.text = currentValue
+            }
+
+            EaElements.ComboBox {
+                id: namesFilterCriteria
+
+                topInset: 0
+                bottomInset: 0
+
+                width: (EaStyle.Sizes.sideBarContentWidth - 2 * parent.spacing) / 3
+
+                textRole: "text"
+                valueRole: "value"
+
+                displayText: currentIndex === -1 ? qsTr("Filter by name") : currentText
+
+                model: {
+                    if (typeof ExGlobals.Constants.proxy.phaseList === 'undefined' || typeof ExGlobals.Constants.proxy.phaseList[0] === 'undefined' ) {
+                        return []
+                    }
+                    const phase_name = ExGlobals.Constants.proxy.phaseList[0].name
+                    let m = [
+                            { value: "", text: qsTr("All names") },
+                            { value: `.${phase_name}.`, text: formatFilterText("gem", "", phase_name) },
+                            { value: ".D1A@ILL.", text: formatFilterText("microscope", "", "D1A@ILL") },
+                            ]
+                    for (let i in ExGlobals.Constants.proxy.phaseList[0].atoms.data) {
+                        const atom_label = ExGlobals.Constants.proxy.phaseList[0].atoms.data[i].label.value
+                        m.push({ value: `.${atom_label}.`, text: formatFilterText("gem", "atom", atom_label) })
+                    }
+                    return m
+                }
 
                 onActivated: filterCriteriaField.text = currentValue
             }
@@ -159,8 +193,10 @@ EaComponents.SideBarColumn {
 
     // Logic
 
-    function formatFilterText(icon, text) {
-        return `<font face="${EaStyle.Fonts.iconsFamily}">${icon}</font>&nbsp;&nbsp;${text}</font>`
+    function formatFilterText(group_icon, icon, text) {
+        if (icon === "")
+            return `<font face="${EaStyle.Fonts.iconsFamily}">${group_icon}</font>&nbsp;&nbsp;${text}</font>`
+        return `<font face="${EaStyle.Fonts.iconsFamily}">${group_icon}</font>&nbsp;&nbsp;<font face="${EaStyle.Fonts.iconsFamily}">${icon}</font>&nbsp;&nbsp;${text}</font>`
     }
 
     function min(value) {

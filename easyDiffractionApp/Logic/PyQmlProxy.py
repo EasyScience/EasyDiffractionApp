@@ -705,10 +705,9 @@ class PyQmlProxy(QObject):
         # print(result)
         result = self.fitter.fit(exp_data.x, exp_data.y, weights=1/exp_data.e, method=method)
         self._fit_results = {"success": result.success,
-                             #"nvarys": result.engine_result.nvarys,
-                             "GOF": result.goodness_of_fit
-                             #"redchi": float(result.engine_result.redchi)
-                             }
+                             "nvarys": len(result.p),
+                             "gof": float(result.goodness_of_fit),
+                             "redchi2": float(result.goodness_of_fit / (len(result.y_calc) - len(result.p)))}
         #print(f"self._fit_results 1: {self._fit_results}")
         self.fitResultsChanged.emit()
         self.updateStructureView()

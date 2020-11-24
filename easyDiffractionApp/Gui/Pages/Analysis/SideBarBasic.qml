@@ -206,13 +206,12 @@ EaComponents.SideBarColumn {
         modal: true
         standardButtons: Dialog.Ok
 
-        title: "Refinement Results"
+        title: qsTr("Refinement Results")
 
         Column {
             EaElements.Label { text: typeof ExGlobals.Constants.proxy.fitResults !== 'undefined' ? `Success: ${ExGlobals.Constants.proxy.fitResults.success}` : "" }
-            EaElements.Label { text: typeof ExGlobals.Constants.proxy.fitResults !== 'undefined' && typeof ExGlobals.Constants.proxy.fitResults.GOF !== 'undefined' ? `Goodness-of-fit: ${ExGlobals.Constants.proxy.fitResults.GOF.toFixed(2)}` : "" }
-            //EaElements.Label { text: typeof ExGlobals.Constants.proxy.fitResults !== 'undefined' && typeof ExGlobals.Constants.proxy.fitResults.redchi !== 'undefined' ? `Goodness-of-fit (\u03c7\u00b2): ${ExGlobals.Constants.proxy.fitResults.redchi.toFixed(2)}` : "" }
-            //EaElements.Label { text: typeof ExGlobals.Constants.proxy.fitResults !== 'undefined' ? `Num. refined parameters: ${ExGlobals.Constants.proxy.fitResults.nvarys}` : "" }
+            EaElements.Label { text: typeof ExGlobals.Constants.proxy.fitResults !== 'undefined' ? `Num. refined parameters: ${ExGlobals.Constants.proxy.fitResults.nvarys}` : "" }
+            EaElements.Label { text: typeof ExGlobals.Constants.proxy.fitResults !== 'undefined' && typeof ExGlobals.Constants.proxy.fitResults.redchi2 !== 'undefined' ? `Goodness-of-fit (reduced \u03c7\u00b2): ${ExGlobals.Constants.proxy.fitResults.redchi2.toFixed(2)}` : "" }
         }
     }
 

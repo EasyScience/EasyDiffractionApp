@@ -6,6 +6,28 @@ import numpy as np
 import vtk
 
 
+import random
+
+def get_random_color(pastel_factor = 0.5):
+    return [(x+pastel_factor)/(1.0+pastel_factor) for x in [random.uniform(0,1.0) for i in [1,2,3]]]
+
+def color_distance(c1,c2):
+    return sum([abs(x[0]-x[1]) for x in zip(c1,c2)])
+
+def generate_new_color(existing_colors,pastel_factor = 0.5):
+    max_distance = None
+    best_color = None
+    for i in range(0,100):
+        color = get_random_color(pastel_factor = pastel_factor)
+        if not existing_colors:
+            return color
+        best_distance = min([color_distance(color,c) for c in existing_colors])
+        if not max_distance or best_distance > max_distance:
+            max_distance = best_distance
+            best_color = color
+    return best_color
+
+
 class VTKcanvasHandler(QObject):
 
     def __init__(self, parent=None):
@@ -45,8 +67,9 @@ class VTKcanvasHandler(QObject):
 
     def plot_system2(self, crystal):
         lattice_actors = self.create_lattice2(crystal.cell)
+        bond_actors = self.plot_bonds(crystal)
         atom_actors = self.create_atoms2(crystal)
-        self.actors = [*lattice_actors, *atom_actors]
+        self.actors = [*lattice_actors, *bond_actors, *atom_actors]
         self.fbo.addActors(self.actors)
         Xmin = np.Inf
         Xmax = -np.Inf
@@ -102,6 +125,90 @@ class VTKcanvasHandler(QObject):
         self.fbo.update()
         # trans_matrix = np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]])*system.lattice[0:3]  # This will be a property of the lattice.
         # self.fbo.setFocalPoint(trans_matrix.dot([0.5, 0.5, 0.5]))
+
+    def plot_bonds(self, phase):
+        from easyCore.Symmetry.Bonding import generate_bonds
+
+        bonds = generate_bonds(phase, max_distance=2)
+        all_atoms = phase.get_orbits(magnetic_only=False)
+        all_atoms_r = np.vstack([np.array(all_atoms[key]) for key in all_atoms.keys()])
+
+        # generate all cell translations
+        cTr1, cTr2, cTr3 = np.mgrid[0:2, 0:2, 0:2]
+        # cell origin translations: Na x Nb x Nc x 1 x 1 x3
+        pos = np.stack([cTr1, cTr2, cTr3], axis=0).reshape((3, -1, 1), order='F')
+        R1 = (pos + all_atoms_r[bonds.atom1, :].T.reshape((3, -1, 1)).transpose((0, 2, 1))).reshape((3, -1), order='F')
+        R2 = (pos + (all_atoms_r[bonds.atom2, :].T + bonds.dl).reshape((3, -1, 1)).transpose((0, 2, 1))).reshape((3, -1), order='F')
+        IDX = np.tile(bonds.idx, (pos.shape[1]))
+        
+        lattice = phase.cell
+        pos = []
+        radius = 0.05
+        colors = []
+        for _ in range(int(bonds.nSym)):
+            colors.append(generate_new_color(colors, pastel_factor=0.9))
+
+        def rotation_matrix_from_vectors(vec1, vec2):
+            """ Find the rotation matrix that aligns vec1 to vec2
+            :param vec1: A 3d "source" vector
+            :param vec2: A 3d "destination" vector
+            :return mat: A transform matrix (3x3) which when applied to vec1, aligns it with vec2.
+            """
+            a, b = (vec1 / np.linalg.norm(vec1)).reshape(3), (vec2 / np.linalg.norm(vec2)).reshape(3)
+            v = np.cross(a, b)
+            c = np.dot(a, b)
+            s = np.linalg.norm(v)
+            kmat = np.array([[0, -v[2], v[1]], [v[2], 0, -v[0]], [-v[1], v[0], 0]])
+            if np.all(kmat == 0):
+                return np.eye(3)
+            rotation_matrix = np.eye(3) + kmat + kmat.dot(kmat) * ((1 - c) / (s ** 2))
+            return rotation_matrix
+
+        for r1, r2, idx in zip(R1.T, R2.T, IDX):
+            if np.any(r1 < 0) | np.any(r2 < 0) |\
+                    np.any(r1 > 1) | np.any(r2 > 1):
+                # In this silly example we only think about extent = [1, 1, 1]
+                continue
+
+            sp = lattice.get_cartesian_coords(r1)
+            ep = lattice.get_cartesian_coords(r2)
+            cp = (ep - sp) / 2
+            polyDataSource = vtk.vtkCylinderSource()
+            polyDataSource.SetRadius(radius)
+            length = np.linalg.norm(ep - sp)
+            polyDataSource.SetHeight(length)
+
+            transform = vtk.vtkTransform()
+            rot = rotation_matrix_from_vectors([0, 1, 0], cp)
+            np.linalg.norm(sp-ep)
+            wxyz = np.identity(4)
+            wxyz[0:3, 0:3] = rot
+            wxyz[0:3, 3] = sp + cp
+
+            m = vtk.vtkMatrix4x4()
+            m.DeepCopy(wxyz.ravel())
+            transform.SetMatrix(m)
+            transformPD = vtk.vtkTransformPolyDataFilter()
+            transformPD.SetTransform(transform)
+            transformPD.SetInputConnection(polyDataSource.GetOutputPort())
+
+            transform2 = vtk.vtkTransform()
+            wxyz2 = np.identity(4)
+            wxyz2[0:3, 3] = - lattice.get_cartesian_coords([0.5, 0.5, 0.5])
+            m2 = vtk.vtkMatrix4x4()
+            m2.DeepCopy(wxyz2.ravel())
+            transform2.SetMatrix(m2)
+            transformPD2 = vtk.vtkTransformPolyDataFilter()
+            transformPD2.SetTransform(transform2)
+            transformPD2.SetInputConnection(transformPD.GetOutputPort())
+
+            mapper = vtk.vtkPolyDataMapper()
+            mapper.SetInputConnection(transformPD2.GetOutputPort())
+            actor = vtk.vtkActor()
+            actor.SetMapper(mapper)
+            actor.GetProperty().SetColor(*colors[idx])
+            pos.append(actor)
+        return pos
 
     def create_lattice2(self, lattice):
         cubeVertices = np.array([[0, 0, 0], [0, 0, 1], [0, 1, 0], [0, 1, 1], [1, 0, 0], [1, 0, 1], [1, 1, 0], [1, 1, 1]])

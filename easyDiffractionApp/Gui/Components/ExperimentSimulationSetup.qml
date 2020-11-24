@@ -14,7 +14,7 @@ Row {
     EaComponents.TableViewLabel{
         horizontalAlignment: Text.AlignRight
         width: labelWidth()
-        text: qsTr("2θ-min")
+        text: qsTr("2θ-min:")
     }
     EaElements.Parameter {
         id: xMin
@@ -35,7 +35,7 @@ Row {
     EaComponents.TableViewLabel{
         horizontalAlignment: Text.AlignRight
         width: labelWidth()
-        text: qsTr("2θ-max")
+        text: qsTr("2θ-max:")
     }
     EaElements.Parameter {
         id: xMax
@@ -56,7 +56,7 @@ Row {
     EaComponents.TableViewLabel{
         horizontalAlignment: Text.AlignRight
         width: labelWidth()
-        text: qsTr("2θ-step")
+        text: qsTr("2θ-step:")
     }
     EaElements.Parameter {
         id: xStep

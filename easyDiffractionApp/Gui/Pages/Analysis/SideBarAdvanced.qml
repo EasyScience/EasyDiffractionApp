@@ -47,7 +47,7 @@ EaComponents.SideBarColumn {
                 model: ExGlobals.Constants.proxy.minimizerList
 
                 onCurrentValueChanged: {
-                    print("currentValue 1", currentValue)
+                    //print("currentValue 1", currentValue)
                     ExGlobals.Constants.proxy.minimizerIndex = currentIndex
                 }
 

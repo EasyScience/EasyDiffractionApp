@@ -116,6 +116,32 @@ class PyQmlProxy(QObject):
 
     # Structure view
 
+    @Property(bool, notify=False)
+    def showBonds(self):
+        if self.vtkHandler is None:
+            return True
+        return self.vtkHandler.show_bonds
+
+    @showBonds.setter
+    def setShowBonds(self, show_bonds: bool):
+        if self.vtkHandler is None:
+            return
+        self.vtkHandler.show_bonds = show_bonds
+        self.updateStructureView()
+
+    @Property(float, notify=False)
+    def maxDistance(self):
+        if self.vtkHandler is None:
+            return 2.0
+        return self.vtkHandler.max_distance
+
+    @maxDistance.setter
+    def setMaxDistance(self, max_distance: float):
+        if self.vtkHandler is None:
+            return
+        self.vtkHandler.max_distance = max_distance
+        self.updateStructureView()
+
     def updateStructureView(self):
         if self.vtkHandler is None or len(self.sample.phases) == 0:
             return
@@ -134,14 +160,14 @@ class PyQmlProxy(QObject):
     def loadExperimentDataFromTxt(self, file_path):
         file_path = generalizePath(file_path)
         print(f"Load data from: {file_path}")
-        print("---1---self.simulationParameters", self._simulation_parameters)
+        #print("---1---self.simulationParameters", self._simulation_parameters)
         data = self.data.experiments[0]
         data.x, data.y, data.e = np.loadtxt(file_path, unpack=True)
         x_min = data.x[0]
         x_max = data.x[-1]
         x_step = (x_max - x_min) / (len(data.x) - 1)
         self.simulationParameters = json.dumps({ "x_min": x_min, "x_max": x_max, "x_step": x_step })
-        print("---2---self.simulationParameters", self._simulation_parameters)
+        #print("---2---self.simulationParameters", self._simulation_parameters)
         self.matplotlib_bridge.updateWithCanvas(self._experiment_figure_obj_name, data)
         self.experiments = [{"label": "D1A@ILL", "color": "steelblue"}]
         self.experimentDataChanged.emit()
@@ -202,7 +228,7 @@ class PyQmlProxy(QObject):
         self.simulationParametersChanged.emit()
 
     def onSimulationParametersChanged(self):
-        print("------------ self._simulation_parameters", self._simulation_parameters)
+        #print("------------ self._simulation_parameters", self._simulation_parameters)
         x_min = float(self._simulation_parameters['x_min'])
         x_max = float(self._simulation_parameters['x_max'])
         x_step = float(self._simulation_parameters['x_step'])

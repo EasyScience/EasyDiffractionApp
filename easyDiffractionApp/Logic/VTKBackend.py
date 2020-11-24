@@ -35,6 +35,8 @@ class VTKcanvasHandler(QObject):
         self.fbo = None
         self.context = None
         self.actors = []
+        self.max_distance = 2
+        self.show_bonds = True
 
     @Slot()
     def clearScene(self):
@@ -67,9 +69,12 @@ class VTKcanvasHandler(QObject):
 
     def plot_system2(self, crystal):
         lattice_actors = self.create_lattice2(crystal.cell)
-        bond_actors = self.plot_bonds(crystal)
         atom_actors = self.create_atoms2(crystal)
-        self.actors = [*lattice_actors, *bond_actors, *atom_actors]
+        if self.show_bonds:
+            bond_actors = self.plot_bonds(crystal)
+            self.actors = [*lattice_actors, *bond_actors, *atom_actors]
+        else:
+            self.actors = [*lattice_actors, *atom_actors]
         self.fbo.addActors(self.actors)
         Xmin = np.Inf
         Xmax = -np.Inf
@@ -129,7 +134,7 @@ class VTKcanvasHandler(QObject):
     def plot_bonds(self, phase):
         from easyCore.Symmetry.Bonding import generate_bonds
 
-        bonds = generate_bonds(phase, max_distance=2)
+        bonds = generate_bonds(phase, max_distance=self.max_distance)
         all_atoms = phase.get_orbits(magnetic_only=False)
         all_atoms_r = np.vstack([np.array(all_atoms[key]) for key in all_atoms.keys()])
 

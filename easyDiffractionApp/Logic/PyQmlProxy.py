@@ -717,5 +717,5 @@ class PyQmlProxy(QObject):
 
     @Property('QVariant', notify=fitResultsChanged)
     def fitResults(self):
-        print(f"self._fit_results 2: {self._fit_results}")
+        #print(f"self._fit_results 2: {self._fit_results}")
         return self._fit_results

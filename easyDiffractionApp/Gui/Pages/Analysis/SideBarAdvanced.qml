@@ -65,11 +65,11 @@ EaComponents.SideBarColumn {
 
                 model: {
                     if (minimizerSelector.currentValue === 'lmfit') {
-                        return ['leastsq', 'brute', 'bfgs']
+                        return ['leastsq', 'least_squares', 'powell', 'cg', 'cobyla', 'bfgs', 'tnc', 'shgo']
                     } else if (minimizerSelector.currentValue === 'bumps') {
-                        return ['amoeba', 'de', 'dream', 'lm', 'mp', 'newton']
+                        return ['amoeba', 'lm', 'newton']
                     } else {
-                        return [""]
+                        return ['']
                     }
                 }
 
@@ -77,7 +77,7 @@ EaComponents.SideBarColumn {
                     if (minimizerSelector.currentValue === 'lmfit') {
                         currentIndex = 0
                     } else if (minimizerSelector.currentValue === 'bumps') {
-                        currentIndex = 3
+                        currentIndex = 1
                     }
                 }
 

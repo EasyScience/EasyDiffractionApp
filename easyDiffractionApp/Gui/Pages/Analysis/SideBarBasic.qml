@@ -187,7 +187,7 @@ EaComponents.SideBarColumn {
 
             onClicked: {
                 //print("Start fitting button clicked")
-                ExGlobals.Constants.proxy.fit()
+                ExGlobals.Constants.proxy.fit(ExGlobals.Constants.minimizerMethod)
                 refinementResultsDialog.open()
             }
         }
@@ -210,8 +210,9 @@ EaComponents.SideBarColumn {
 
         Column {
             EaElements.Label { text: typeof ExGlobals.Constants.proxy.fitResults !== 'undefined' ? `Success: ${ExGlobals.Constants.proxy.fitResults.success}` : "" }
-            EaElements.Label { text: typeof ExGlobals.Constants.proxy.fitResults !== 'undefined' && typeof ExGlobals.Constants.proxy.fitResults.redchi !== 'undefined' ? `Goodness-of-fit (\u03c7\u00b2): ${ExGlobals.Constants.proxy.fitResults.redchi.toFixed(2)}` : "" }
-            EaElements.Label { text: typeof ExGlobals.Constants.proxy.fitResults !== 'undefined' ? `Num. refined parameters: ${ExGlobals.Constants.proxy.fitResults.nvarys}` : "" }
+            EaElements.Label { text: typeof ExGlobals.Constants.proxy.fitResults !== 'undefined' && typeof ExGlobals.Constants.proxy.fitResults.GOF !== 'undefined' ? `Goodness-of-fit: ${ExGlobals.Constants.proxy.fitResults.GOF.toFixed(2)}` : "" }
+            //EaElements.Label { text: typeof ExGlobals.Constants.proxy.fitResults !== 'undefined' && typeof ExGlobals.Constants.proxy.fitResults.redchi !== 'undefined' ? `Goodness-of-fit (\u03c7\u00b2): ${ExGlobals.Constants.proxy.fitResults.redchi.toFixed(2)}` : "" }
+            //EaElements.Label { text: typeof ExGlobals.Constants.proxy.fitResults !== 'undefined' ? `Num. refined parameters: ${ExGlobals.Constants.proxy.fitResults.nvarys}` : "" }
         }
     }
 

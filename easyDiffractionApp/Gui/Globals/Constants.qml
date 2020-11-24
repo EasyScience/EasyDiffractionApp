@@ -19,4 +19,6 @@ QtObject {
 
     readonly property int sampleScale: 100
 
+    property string minimizerMethod
+
 }

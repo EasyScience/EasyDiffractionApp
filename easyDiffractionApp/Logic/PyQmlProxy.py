@@ -98,6 +98,8 @@ class PyQmlProxy(QObject):
         self._fit_results = { "success": None, "nvarys": None, "GOF": None, "redchi": None }
         self._experiment_loaded = False
 
+        self.fitter = Fitter(self.sample, self.interface.fit_func)
+
         # when to emit status bar items cnahged
         self.calculatorChanged.connect(self.statusChanged)
         self.minimizerChanged.connect(self.statusChanged)
@@ -259,6 +261,21 @@ class PyQmlProxy(QObject):
         self.matplotlib_bridge.updateWithCanvas(self._analysis_figure_obj_name, data)
         self.modelChanged.emit()
 
+    # Minimizer
+
+    @Property('QVariant', notify=minimizerChanged)
+    def minimizerList(self):
+        return self.fitter.available_engines
+
+    @Property(int, notify=minimizerChanged)
+    def minimizerIndex(self):
+        return self.minimizerList.index(self.fitter.current_engine.name)
+
+    @minimizerIndex.setter
+    def setMinimizer(self, index: int):
+        self.fitter.switch_engine(self.minimizerList[index])
+        self.minimizerChanged.emit()
+
     # Calculator
 
     @Property('QVariant', notify=calculatorChanged)
@@ -314,7 +331,8 @@ class PyQmlProxy(QObject):
 
     @Property(str, notify=statusChanged)
     def statusModelAsXml(self):
-        items = [{"label": "Engine", "value": self.interface.current_interface_name}]
+        items = [{"label": "Engine", "value": self.interface.current_interface_name},
+                 {"label": "Minimizer", "value": self.fitter.current_engine.name}]
         xml = dicttoxml(items, attr_type=False)
         xml = xml.decode()
         return xml
@@ -678,17 +696,19 @@ class PyQmlProxy(QObject):
 
     #
 
-    @Slot()
-    def fit(self):
-        f = Fitter(self.sample, self.interface.fit_func)
+    @Slot(str)
+    def fit(self, method: str):
+        if not method:
+            method = 'leastsq'
         exp_data = self.data.experiments[0]
         # result = f.fit(exp_data.x, exp_data.y, method='brute')
         # print(result)
-        result = f.fit(exp_data.x, exp_data.y, weights=1/exp_data.e**2)
+        result = self.fitter.fit(exp_data.x, exp_data.y, weights=1/exp_data.e, method=method)
         self._fit_results = {"success": result.success,
-                             "nvarys": result.engine_result.nvarys,
-                             "GOF": result.goodness_of_fit,
-                             "redchi": float(result.engine_result.redchi)}
+                             #"nvarys": result.engine_result.nvarys,
+                             "GOF": result.goodness_of_fit
+                             #"redchi": float(result.engine_result.redchi)
+                             }
         #print(f"self._fit_results 1: {self._fit_results}")
         self.fitResultsChanged.emit()
         self.updateStructureView()
@@ -698,5 +718,5 @@ class PyQmlProxy(QObject):
 
     @Property('QVariant', notify=fitResultsChanged)
     def fitResults(self):
-        #print(f"self._fit_results 2: {self._fit_results}")
+        print(f"self._fit_results 2: {self._fit_results}")
         return self._fit_results

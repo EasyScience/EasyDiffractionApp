@@ -33,6 +33,65 @@ EaComponents.SideBarColumn {
     }
 
     EaElements.GroupBox {
+        title: qsTr("Minimizer")
+        collapsed: false
+
+        Row {
+            spacing: EaStyle.Sizes.fontPixelSize
+
+            EaElements.ComboBox {
+                id: minimizerSelector
+
+                width: (EaStyle.Sizes.sideBarContentWidth - EaStyle.Sizes.fontPixelSize) / 2
+
+                model: ExGlobals.Constants.proxy.minimizerList
+
+                onCurrentValueChanged: {
+                    print("currentValue 1", currentValue)
+                    ExGlobals.Constants.proxy.minimizerIndex = currentIndex
+                }
+
+                //currentIndex: ExGlobals.Constants.proxy.calculatorIndex
+                Component.onCompleted: {
+                    //ExGlobals.Variables.minimizerSelector = minimizerSelector
+                    currentIndex = ExGlobals.Constants.proxy.minimizerIndex
+                }
+            }
+
+            EaElements.ComboBox {
+                id: methodSelector
+
+                width: (EaStyle.Sizes.sideBarContentWidth - EaStyle.Sizes.fontPixelSize) / 2
+
+                model: {
+                    if (minimizerSelector.currentValue === 'lmfit') {
+                        return ['leastsq', 'brute', 'bfgs']
+                    } else if (minimizerSelector.currentValue === 'bumps') {
+                        return ['amoeba', 'de', 'dream', 'lm', 'mp', 'newton']
+                    } else {
+                        return [""]
+                    }
+                }
+
+                onModelChanged: {
+                    if (minimizerSelector.currentValue === 'lmfit') {
+                        currentIndex = 0
+                    } else if (minimizerSelector.currentValue === 'bumps') {
+                        currentIndex = 3
+                    }
+                }
+
+                onCurrentValueChanged: {
+                    if (typeof currentValue !== 'undefined') {
+                        ExGlobals.Constants.minimizerMethod = currentValue
+                    }
+                }
+            }
+        }
+
+    }
+
+    EaElements.GroupBox {
         title: qsTr("Plot settings")
         collapsed: false
 

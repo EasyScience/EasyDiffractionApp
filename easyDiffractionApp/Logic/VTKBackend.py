@@ -97,7 +97,7 @@ class VTKcanvasHandler(QObject):
             if thisZmax > Zmax:
                 Zmax = thisZmax
         camera = self.fbo.getCamera()
-        camera.SetPosition(3*Zmax, 6*Ymax, 3*Zmax)
+        camera.SetPosition(4*Zmax, 7*Ymax, 4*Zmax)
         self.fbo.update()
 
     def plot_system(self, system):
@@ -126,7 +126,7 @@ class VTKcanvasHandler(QObject):
             if thisZmax > Zmax:
                 Zmax = thisZmax
         camera = self.fbo.getCamera()
-        camera.SetPosition(3*Zmax, 6*Ymax, 3*Zmax)
+        camera.SetPosition(4*Zmax, 7*Ymax, 4*Zmax)
         self.fbo.update()
         # trans_matrix = np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]])*system.lattice[0:3]  # This will be a property of the lattice.
         # self.fbo.setFocalPoint(trans_matrix.dot([0.5, 0.5, 0.5]))
@@ -357,7 +357,7 @@ class VTKcanvasHandler(QObject):
         lattice = system.cell
         actors = []
         colors = ["#ff7f50", "#4682b4", "#6b8e23", "#d2691e", "#5f9ea0", "#8fbc8f", "#6495ed"]
-        radii = [(0.06 + 0.004*i) * min(lattice.lengths) for i in range(len(colors))]
+        radii = [(0.1 + 0.004*i) * min(lattice.lengths) for i in range(len(colors))]
         res = 50
 
         for atom_index, atom_name in enumerate(atoms.keys()):

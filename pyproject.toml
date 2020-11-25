@@ -14,7 +14,7 @@ readme = 'README.md'
 homepage = 'https://github.com/tempscience'
 repository = 'https://easyscience.apptimity.com/'
 documentation = 'https://github.com/tempscience'
-include = ['CHANGELOG.md'] 
+include = ['CHANGELOG.md']
 packages = [ { include = 'easyDiffractionApp' } ]
 
 [tool.poetry.dependencies]
@@ -44,6 +44,7 @@ requests = '^2.24'
 dephell_licenses = '^0.1'
 ffmpeg-python = '^0.2'
 googletrans = '^3.0'
+gTTS = '^2.2'
 # easyScience
 #easyCore = { path = '../easyCore/' }
 #easyDiffractionLib = { path = '../easyDiffractionLib/' }
@@ -124,6 +125,9 @@ languages = [ { code = 'en', name = 'English' }, { code = 'fr', name = 'Françai
               { code = 'es', name = 'Español' }, { code = 'it', name = 'Italiano' },  { code = 'pt', name = 'Português' },
               { code = 'da', name = 'Dansk' },   { code = 'sv', name = 'Svenska' },   { code = 'pl', name = 'Polski' },
               { code = 'ru', name = 'Русский' } ]
+
+[ci.app.audio]
+dir = 'Gui/Resources/Audio'
 
 [ci.poetry]
 venv_path = { macOS = '/Users/runner/Library/Caches/pypoetry/virtualenvs', Linux = '/home/runner/.cache/pypoetry/virtualenvs', Windows = 'C:\Users\runneradmin\AppData\Local\pypoetry\Cache\virtualenvs' }

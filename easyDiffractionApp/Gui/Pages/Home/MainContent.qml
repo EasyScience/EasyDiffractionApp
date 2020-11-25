@@ -1,6 +1,5 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
-import QtTest 1.14
 
 import easyAppGui.Style 1.0 as EaStyle
 import easyAppGui.Globals 1.0 as EaGlobals
@@ -132,6 +131,7 @@ Item {
 
     EaElements.RemoteController {
         id: rc
+        audioDir: Qt.resolvedUrl("../../Resources/Audio")
     }
 
     Timer {
@@ -253,35 +253,51 @@ Item {
 
         // Start
 
+        let x_pos = undefined
+        let y_pos = undefined
+
         startSavingScreenshots()
         rc.wait(1000)
         rc.posToCenter()
         rc.show()
 
+        //return
+
         // Home Tab
 
+        rc.say("To start working with easy diffraction, just click start button.")
         rc.mouseClick(ExGlobals.Variables.startButton)
+
+        //return
 
         // Project Tab
 
+        rc.say("Here, you can create a new project.")
         rc.mouseClick(ExGlobals.Variables.createProjectButton)
+
+        //return
 
         // Sample Tab
 
+        rc.say("Use application toolbar to switch to the sample description page.")
         rc.mouseClick(ExGlobals.Variables.sampleTabButton)
 
+        rc.say("Use can set new phase from file or manually.")
         rc.mouseClick(ExGlobals.Variables.setNewSampleManuallyButton)
 
+        rc.say("Now, you can change the symmetry and cell parameters.")
         rc.mouseClick(ExGlobals.Variables.symmetryGroup, 15)
-        rc.mouseClick(ExGlobals.Variables.cellLengthALabel)
+        x_pos = ExGlobals.Variables.cellLengthALabel.width
+        rc.mouseClick(ExGlobals.Variables.cellLengthALabel, x_pos)
         rc.hide()
-        rc.keyClick(Qt.Key_Right)
-        rc.keyClick(Qt.Key_Right)
+        //rc.keyClick(Qt.Key_Right)
+        //rc.keyClick(Qt.Key_Right)
         rc.clearText(4)
         rc.typeText("4.55")
         rc.keyClick(Qt.Key_Enter)
         rc.show()
 
+        rc.say("Append or remove new atoms.")
         rc.mouseClick(ExGlobals.Variables.atomsGroup, 15)
         rc.mouseClick(ExGlobals.Variables.appendNewAtomButton)
 
@@ -289,23 +305,28 @@ Item {
 
         // Experiment Tab
 
+        rc.say("When the sample is fully described, use application toolbar to switch to the experiment description page.")
         rc.mouseClick(ExGlobals.Variables.experimentTabButton)
 
+        rc.say("If you don't have experimental data, just click continue without experiment button to enable analysis page and some parameters needed for simulation.")
         rc.mouseClick(ExGlobals.Variables.continueWithoutExperimentDataButton)
 
         // Analysis Tab
 
+        rc.say("Now, you can switch to the analysis page to see and control the simulated diffraction pattern.")
         rc.mouseClick(ExGlobals.Variables.analysisTabButton)
         rc.wait(1000)
+        rc.say("In the advanced controls, you can choose between different calculation engines.")
         rc.mouseClick(ExGlobals.Variables.analysisAdvancedControlsTabButton)
         // CFML
         rc.mouseClick(ExGlobals.Variables.calculatorSelector)
-        const x_pos = undefined
-        let y_pos = EaStyle.Sizes.comboBoxHeight * 1.5
+        x_pos = undefined
+        y_pos = EaStyle.Sizes.comboBoxHeight * 1.5
         rc.mouseClick(ExGlobals.Variables.calculatorSelector, x_pos, y_pos)
         rc.wait(1000)
         // GSAS
         rc.mouseClick(ExGlobals.Variables.calculatorSelector)
+        x_pos = undefined
         y_pos = EaStyle.Sizes.comboBoxHeight * 2.5
         rc.mouseClick(ExGlobals.Variables.calculatorSelector, x_pos, y_pos)
         rc.wait(1000)
@@ -317,6 +338,7 @@ Item {
         // End
 
         rc.hide()
+        rc.say("Thank you for using easy diffraction.")
         rc.wait(1000)
         endSavingScreenshots()
     }
@@ -351,5 +373,21 @@ Item {
         rc.wait(1000)
         endSavingScreenshots()
     }
+
+
+
+    // TESTS
+
+    /*
+    TestCase {
+        name: "GeometryTests"
+        when: windowShown
+        id: test1
+
+        function test_width() {
+            compare(root.width, 120)
+        }
+    }
+    */
 
 }

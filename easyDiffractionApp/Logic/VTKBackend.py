@@ -70,11 +70,10 @@ class VTKcanvasHandler(QObject):
     def plot_system2(self, crystal):
         lattice_actors = self.create_lattice2(crystal.cell)
         atom_actors = self.create_atoms2(crystal)
+        bond_actors = []
         if self.show_bonds:
             bond_actors = self.plot_bonds(crystal)
-            self.actors = [*lattice_actors, *bond_actors, *atom_actors]
-        else:
-            self.actors = [*lattice_actors, *atom_actors]
+        self.actors = [*lattice_actors, *bond_actors, *atom_actors]
         self.fbo.addActors(self.actors)
         Xmin = np.Inf
         Xmax = -np.Inf

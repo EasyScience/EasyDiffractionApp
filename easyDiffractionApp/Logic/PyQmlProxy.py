@@ -639,7 +639,7 @@ class PyQmlProxy(QObject):
         self.currentPhaseSitesChanged.emit()
         self.updateStructureView()
         self.updateCalculatedData()
-        
+
     # Fitables
 
     def _setFitablesList(self):

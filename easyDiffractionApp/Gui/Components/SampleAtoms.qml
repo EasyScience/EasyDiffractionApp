@@ -27,7 +27,7 @@ EaComponents.TableView {
 
         XmlRole { name: "label"; query: "label/value/string()" }
         XmlRole { name: "type"; query: "specie/value/string()" }
-        XmlRole { name: "color"; query: "color/string()" }
+        //XmlRole { name: "color"; query: "color/string()" }
         XmlRole { name: "x"; query: "fract_x/value/number()" }
         XmlRole { name: "y"; query: "fract_y/value/number()" }
         XmlRole { name: "z"; query: "fract_z/value/number()" }
@@ -107,7 +107,7 @@ EaComponents.TableView {
 
         EaComponents.TableViewLabel {
             headerText: "Color"
-            backgroundColor: model.color ? model.color : "transparent"
+            backgroundColor: atomColor(model.index)//model.color ? model.color : "transparent"
         }
 
         EaComponents.TableViewButton {
@@ -131,6 +131,14 @@ EaComponents.TableView {
 
     function editDescriptorValue(id, value) {
         ExGlobals.Constants.proxy.editDescriptorValue(id, value)
+    }
+
+    function atomColor(index) {
+        if (index < 0) {
+            return "transparent"
+        }
+        const colors = ["#ff7f50", "#4682b4", "#6b8e23", "#d2691e", "#5f9ea0", "#8fbc8f", "#6495ed"]
+        return colors[index]
     }
 
 }

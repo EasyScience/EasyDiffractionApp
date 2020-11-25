@@ -187,7 +187,7 @@ EaComponents.SideBarColumn {
 
             onClicked: {
                 //print("Start fitting button clicked")
-                ExGlobals.Constants.proxy.fit(ExGlobals.Constants.minimizerMethod)
+                ExGlobals.Constants.proxy.fit()
                 refinementResultsDialog.open()
             }
         }

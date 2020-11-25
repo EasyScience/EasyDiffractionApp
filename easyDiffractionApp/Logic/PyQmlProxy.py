@@ -34,6 +34,7 @@ class PyQmlProxy(QObject):
     constraintsChanged = Signal()
     calculatorChanged = Signal()
     minimizerChanged = Signal()
+    minimizerMethodChanged = Signal()
     statusChanged = Signal()
     phasesChanged = Signal()
     modelChanged = Signal()
@@ -98,10 +99,12 @@ class PyQmlProxy(QObject):
         self._experiment_loaded = False
 
         self.fitter = Fitter(self.sample, self.interface.fit_func)
+        self._minimizer_method = self.fitter.available_methods()[0]
 
         # when to emit status bar items cnahged
         self.calculatorChanged.connect(self.statusChanged)
         self.minimizerChanged.connect(self.statusChanged)
+        self.minimizerMethodChanged.connect(self.statusChanged)
         self.parameterChanged.connect(self.experimentDataChanged)
 
         #
@@ -292,6 +295,20 @@ class PyQmlProxy(QObject):
     def setMinimizer(self, index: int):
         self.fitter.switch_engine(self.minimizerList[index])
         self.minimizerChanged.emit()
+        self.minimizerMethodChanged.emit()
+
+    @Property('QVariant', notify=minimizerChanged)
+    def minimizerMethodList(self):
+        return self.fitter.available_methods()
+
+    @Property(int, notify=minimizerMethodChanged)
+    def minimizerMethodIndex(self):
+        return self._minimizer_method
+
+    @minimizerMethodIndex.setter
+    def setMinimizerMethodIndex(self, index: int):
+        self._minimizer_method = self.minimizerMethodList[index]
+        self.minimizerMethodChanged.emit()
 
     # Calculator
 
@@ -349,7 +366,8 @@ class PyQmlProxy(QObject):
     @Property(str, notify=statusChanged)
     def statusModelAsXml(self):
         items = [{"label": "Engine", "value": self.interface.current_interface_name},
-                 {"label": "Minimizer", "value": self.fitter.current_engine.name}]
+                 {"label": "Minimizer", "value": self.fitter.current_engine.name},
+                 {"label": "Method", "value": self._minimizer_method}]
         xml = dicttoxml(items, attr_type=False)
         xml = xml.decode()
         return xml
@@ -713,18 +731,16 @@ class PyQmlProxy(QObject):
 
     #
 
-    @Slot(str)
-    def fit(self, method: str):
-        if not method:
-            method = 'leastsq'
+    @Slot()
+    def fit(self):
         exp_data = self.data.experiments[0]
         # result = f.fit(exp_data.x, exp_data.y, method='brute')
         # print(result)
-        result = self.fitter.fit(exp_data.x, exp_data.y, weights=1/exp_data.e, method=method)
+        result = self.fitter.fit(exp_data.x, exp_data.y, weights=1/exp_data.e, method=self._minimizer_method)
         self._fit_results = {"success": result.success,
-                             "nvarys": len(result.p),
+                             "nvarys": result.n_pars,
                              "gof": float(result.goodness_of_fit),
-                             "redchi2": float(result.goodness_of_fit / (len(result.y_calc) - len(result.p)))}
+                             "redchi2": float(result.reduced_chi)}
         #print(f"self._fit_results 1: {self._fit_results}")
         self.fitResultsChanged.emit()
         self.updateStructureView()

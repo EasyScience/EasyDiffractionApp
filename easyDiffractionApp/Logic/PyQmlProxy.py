@@ -46,7 +46,6 @@ class PyQmlProxy(QObject):
 
     parameterChanged = Signal()
     fitResultsChanged = Signal()
-    experimentLoadedChanged = Signal()
     simulationParametersChanged = Signal()
 
     def __init__(self, parent=None):
@@ -106,7 +105,6 @@ class PyQmlProxy(QObject):
         self.parameterChanged.connect(self.experimentDataChanged)
 
         #
-        #self.experimentLoadedChanged.connect(self.onExperimentLoaded)
         self.simulationParametersChanged.connect(self.onSimulationParametersChanged)
 
         # Create a connection between this signal and a receiver, the receiver can be a Python callable, a Slot or a
@@ -173,6 +171,11 @@ class PyQmlProxy(QObject):
         self.experimentDataChanged.emit()
         self.updateCalculatedData()
 
+    @Slot()
+    def removeExperiment(self):
+        self.experiments = []
+        self.experimentDataChanged.emit()
+
     def createFakeExperiment(self):
         self.experiments = [{"label": "D2B_300K", "color": "steelblue"}]
         data = self.data.experiments
@@ -193,7 +196,7 @@ class PyQmlProxy(QObject):
         self.bridge.updateWithCanvas('figureEXP', data)
         self.experimentDataChanged.emit()
 
-    @Property(bool, notify=experimentLoadedChanged)
+    @Property(bool, notify=False)
     def experimentLoaded(self):
         return self._experiment_loaded
 
@@ -202,19 +205,7 @@ class PyQmlProxy(QObject):
         if self._experiment_loaded == experiment_loaded:
             return
         self._experiment_loaded = experiment_loaded
-        self.experimentLoadedChanged.emit()
-
-    def onExperimentLoaded(self):
-        print("-onExperimentLoaded-")
-        #if not self._experiment_loaded:
-        #    return
-        #exp = self.data.experiments[0]
-        #sim = self.data.simulations[0]
-        #sim.x = exp.x
-        #sim.y = self.interface.fit_func(sim.x)
-        #self.matplotlib_bridge.updateWithCanvas(self._analysis_figure_obj_name, [exp, sim])
-        #else:
-        #    self.matplotlib_bridge.updateWithCanvas(self._analysis_figure_obj_name, data)
+        self.updateCalculatedData()
 
     # Pattern parameters
 
@@ -629,11 +620,11 @@ class PyQmlProxy(QObject):
     @Slot(str)
     def removeAtom(self, atom_label: str):
         del self.sample.phases[self.currentPhaseIndex].atoms[atom_label]
-        self.updateStructureView()
-        self.updateCalculatedData()
         self.phasesChanged.emit()
         self.currentPhaseChanged.emit()
         self.currentPhaseSitesChanged.emit()
+        self.updateStructureView()
+        self.updateCalculatedData()
 
     @Slot()
     def addAtom(self):
@@ -643,12 +634,12 @@ class PyQmlProxy(QObject):
             self.sample.phases[self.currentPhaseIndex].add_atom(atom)
         except AttributeError:
             return
-        self.updateStructureView()
-        self.updateCalculatedData()
         self.phasesChanged.emit()
         self.currentPhaseChanged.emit()
         self.currentPhaseSitesChanged.emit()
-
+        self.updateStructureView()
+        self.updateCalculatedData()
+        
     # Fitables
 
     def _setFitablesList(self):

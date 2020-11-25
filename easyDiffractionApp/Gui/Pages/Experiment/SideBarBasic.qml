@@ -34,7 +34,7 @@ EaComponents.SideBarColumn {
             EaElements.SideBarButton {
                 id: continueWithoutExperimentDataButton
 
-                enabled: !ExGlobals.Variables.experimentLoaded
+                enabled: !ExGlobals.Variables.experimentLoaded && !ExGlobals.Variables.experimentSkipped
 
                 fontIcon: "chevron-circle-right"
                 text: qsTr("Continue without experiment data")
@@ -132,6 +132,7 @@ EaComponents.SideBarColumn {
         id: loadExperimentDataFileDialog
         nameFilters: [ "XYE files (*.xye)"]
         onAccepted: {
+            ExGlobals.Variables.experimentSkipped = false
             ExGlobals.Variables.experimentLoaded = true
             ExGlobals.Constants.proxy.experimentLoaded = true
             ExGlobals.Variables.analysisPageEnabled = true

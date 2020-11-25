@@ -243,10 +243,10 @@ EaComponents.ApplicationWindow {
             mainContent: EaComponents.MainContent {
                 tabs: [
                     EaElements.TabButton {
-                        text: ExGlobals.Constants.proxy.experimentLoaded ? qsTr("Fitting") : qsTr("Simulation")
+                        text: ExGlobals.Variables.experimentLoaded ? qsTr("Fitting") : qsTr("Simulation")
                     },
                     EaElements.TabButton {
-                        visible: ExGlobals.Constants.proxy.experimentLoaded
+                        visible: ExGlobals.Variables.experimentLoaded
                         enabled: false
                         text: ExGlobals.Constants.proxy.projectInfoAsJson.calculations
                     }

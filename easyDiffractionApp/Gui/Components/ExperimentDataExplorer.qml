@@ -52,8 +52,13 @@ EaComponents.TableView {
             id: deleteRowColumn
             headerText: "Del." //"\uf2ed"
             fontIcon: "minus-circle"
-            ToolTip.text: qsTr("Remove this data")
-            //onClicked: ExGlobals.Constants.proxy.removePhase(model.label)
+            ToolTip.text: qsTr("Remove this dataset")
+            onClicked: {
+                ExGlobals.Variables.experimentLoaded = false
+                ExGlobals.Constants.proxy.experimentLoaded = false
+                ExGlobals.Constants.proxy.removeExperiment()
+                ExGlobals.Variables.experimentSkipped = true
+            }
         }
 
     }

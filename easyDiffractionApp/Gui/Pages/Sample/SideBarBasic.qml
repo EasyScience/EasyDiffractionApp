@@ -121,7 +121,6 @@ EaComponents.SideBarColumn {
             ExGlobals.Constants.proxy.addSampleFromCif(fileUrl)
             ExGlobals.Variables.experimentPageEnabled = true
             ExGlobals.Variables.sampleLoaded = true
-            ExGlobals.Variables.analysisPageEnabled = true
         }
     }
 

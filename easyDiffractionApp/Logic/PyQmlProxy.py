@@ -260,6 +260,10 @@ class PyQmlProxy(QObject):
         xml = xml.decode()
         return xml
 
+    @Slot(str)
+    def updateFigureMargins(self, obj_name: str):
+        self.matplotlib_bridge.updateWithCanvas(obj_name)
+
     # Calculated data
 
     @Slot()
@@ -270,7 +274,7 @@ class PyQmlProxy(QObject):
         #  THIS IS WHERE WE WOULD LOOK UP CURRENT EXP INDEX
         sim = self.data.simulations[0]
         zeros_sim = DataSet1D(name='', x=[sim.x[0]], y=[sim.y[0]])  # Temp solution to have proper color for sim curve
-        zeros_diff = DataSet1D(name='', x_label='', x=[sim.x[0]])  # Temp solution to have proper color for sim curve
+        zeros_diff = DataSet1D(name='', x=[sim.x[0]])  # Temp solution to have proper color for sim curve
         if self.experimentLoaded:
             exp = self.data.experiments[0]
             sim.x = exp.x
@@ -280,6 +284,7 @@ class PyQmlProxy(QObject):
             diff.y = exp.y - sim.y
             data = [exp, sim]
             zeros_diff.y = [exp.y[0] - sim.y[0]]
+            zeros_diff.x_label = diff.x_label
             zeros_diff.y_label = diff.y_label
             self.matplotlib_bridge.updateWithCanvas(self._difference_figure_obj_name, [zeros_diff, zeros_diff, diff])
         else:

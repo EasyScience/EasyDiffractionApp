@@ -14,84 +14,111 @@ Rectangle {
     property bool isDarkTheme: EaStyle.Colors.isDarkTheme
     property bool isExperimentStepDone: ExGlobals.Variables.experimentLoaded || ExGlobals.Variables.experimentSkipped
 
-    color: "white"
+    color: EaStyle.Colors.mainContentBackground
 
-    FigureCanvas {
-        id: experimentDataChart
-        objectName: "experimentDataChart"
+    Rectangle {
+        id: chartControlsContainer
 
-        anchors.fill: parent
-        anchors.topMargin: -25
-        anchors.bottomMargin: 0
-        anchors.rightMargin: -55
-        dpi_ratio: Screen.devicePixelRatio
+        height: EaStyle.Sizes.toolButtonHeight + EaStyle.Sizes.fontPixelSize
 
-        Component.onCompleted: ExGlobals.Constants.proxy.setExperimentFigureObjName(objectName)
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+
+        color: EaStyle.Colors.mainContentBackground
+
+        Row {
+            anchors.centerIn: parent
+            spacing: 5
+
+            EaElements.ToolButton {
+                fontIcon: "home"
+                ToolTip.text: qsTr("Home")
+
+                onClicked: _matplotlibBridge.home(experimentDataChart.objectName)
+            }
+
+            EaElements.ToolButton {
+                fontIcon: "\uf2ea"
+                ToolTip.text: qsTr("Back")
+
+                onClicked: _matplotlibBridge.back(experimentDataChart.objectName)
+            }
+
+            EaElements.ToolButton {
+                fontIcon: "\uf2f9"
+                ToolTip.text: qsTr("Forward")
+
+                onClicked: _matplotlibBridge.forward(experimentDataChart.objectName)
+            }
+
+            Rectangle {
+                width: 4
+                height: 4
+                radius: 2
+                anchors.verticalCenter: parent.verticalCenter
+                color: EaStyle.Colors.themeForeground
+            }
+
+            EaElements.ToolButton {
+                id: pan
+
+                fontIcon: "arrows-alt"
+                ToolTip.text: qsTr("Pan")
+                checkable: true
+
+                onClicked: {
+                    if (zoom.checked) {
+                        zoom.checked = false
+                    }
+                    _matplotlibBridge.pan(experimentDataChart.objectName)
+                }
+            }
+
+            EaElements.ToolButton {
+                id: zoom
+
+                fontIcon: "expand"
+                ToolTip.text: qsTr("Zoom")
+                checkable: true
+
+                onClicked: {
+                    if (pan.checked) {
+                        pan.checked = false
+                    }
+                    _matplotlibBridge.zoom(experimentDataChart.objectName)
+                }
+            }
+        }
     }
 
-    Row {
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: parent.top
-        anchors.topMargin: 10
-        spacing: 5
+    Rectangle {
+        id: experimentDataChartContainer
 
-        EaElements.ToolButton {
-            fontIcon: "home"
-            ToolTip.text: qsTr("Home")
+        anchors.top: chartControlsContainer.bottom
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
 
-            onClicked: _matplotlibBridge.home(experimentDataChart.objectName)
-        }
+        onHeightChanged: ExGlobals.Constants.proxy.updateFigureMargins("experimentDataChart")
+        onWidthChanged: ExGlobals.Constants.proxy.updateFigureMargins("experimentDataChart")
 
-        EaElements.ToolButton {
-            fontIcon: "\uf2ea"
-            ToolTip.text: qsTr("Back")
+        color: EaStyle.Colors.mainContentBackground
 
-            onClicked: _matplotlibBridge.back(experimentDataChart.objectName)
-        }
+        FigureCanvas {
+            id: experimentDataChart
+            objectName: "experimentDataChart"
 
-        EaElements.ToolButton {
-            fontIcon: "\uf2f9"
-            ToolTip.text: qsTr("Forward")
+            anchors.fill: parent
 
-            onClicked: _matplotlibBridge.forward(experimentDataChart.objectName)
-        }
+            anchors.topMargin: -0.5 * EaStyle.Sizes.fontPixelSize
+            anchors.bottomMargin: EaStyle.Sizes.fontPixelSize
+            anchors.leftMargin: EaStyle.Sizes.fontPixelSize
+            anchors.rightMargin: EaStyle.Sizes.fontPixelSize
 
-        Rectangle {
-            width: 4
-            height: 4
-            radius: 2
-            anchors.verticalCenter: parent.verticalCenter
-            color: EaStyle.Colors.themeForeground
-        }
+            dpi_ratio: Screen.devicePixelRatio
 
-        EaElements.ToolButton {
-            id: pan
-
-            fontIcon: "arrows-alt"
-            ToolTip.text: qsTr("Pan")
-            checkable: true
-
-            onClicked: {
-                if (zoom.checked) {
-                    zoom.checked = false
-                }
-                _matplotlibBridge.pan(experimentDataChart.objectName)
-            }
-        }
-
-        EaElements.ToolButton {
-            id: zoom
-
-            fontIcon: "expand"
-            ToolTip.text: qsTr("Zoom")
-            checkable: true
-
-            onClicked: {
-                if (pan.checked) {
-                    pan.checked = false
-                }
-                _matplotlibBridge.zoom(experimentDataChart.objectName)
-            }
+            Component.onCompleted: ExGlobals.Constants.proxy.setExperimentFigureObjName(objectName)
         }
     }
 
@@ -108,4 +135,5 @@ Rectangle {
                                       experimentDataChart.objectName)
     }
 }
+
 

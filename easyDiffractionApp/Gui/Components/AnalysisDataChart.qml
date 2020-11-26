@@ -19,9 +19,7 @@ Rectangle {
     Rectangle {
         id: chartControlsContainer
 
-        z: 900
-
-        height: 50
+        height: EaStyle.Sizes.toolButtonHeight + EaStyle.Sizes.fontPixelSize
 
         anchors.top: parent.top
         anchors.left: parent.left
@@ -97,12 +95,13 @@ Rectangle {
     Rectangle {
         id: analysisDataChartContainer
 
-        z: 800
-
         anchors.top: chartControlsContainer.bottom
         anchors.bottom: differenceDataChartContainer.top
         anchors.left: parent.left
         anchors.right: parent.right
+
+        onHeightChanged: ExGlobals.Constants.proxy.updateFigureMargins("analysisDataChart")
+        onWidthChanged: ExGlobals.Constants.proxy.updateFigureMargins("analysisDataChart")
 
         color: EaStyle.Colors.mainContentBackground
 
@@ -112,10 +111,10 @@ Rectangle {
 
             anchors.fill: parent
 
-            anchors.topMargin: -52
-            anchors.bottomMargin: 0
-            anchors.leftMargin: 5
-            anchors.rightMargin: -50
+            anchors.topMargin: -0.5 * EaStyle.Sizes.fontPixelSize
+            anchors.bottomMargin: EaStyle.Sizes.fontPixelSize
+            anchors.leftMargin: EaStyle.Sizes.fontPixelSize
+            anchors.rightMargin: EaStyle.Sizes.fontPixelSize
 
             dpi_ratio: Screen.devicePixelRatio
 
@@ -126,12 +125,15 @@ Rectangle {
     Rectangle {
         id: differenceDataChartContainer
 
-        height: ExGlobals.Variables.experimentLoaded ? parent.height * 0.3 : 0
+        visible: ExGlobals.Variables.experimentLoaded
+        height: ExGlobals.Variables.experimentLoaded ? parent.height * 0.25 : 0
 
         anchors.bottom: parent.bottom
         anchors.left: analysisDataChartContainer.anchors.left
         anchors.right: analysisDataChartContainer.anchors.right
 
+        onHeightChanged: ExGlobals.Constants.proxy.updateFigureMargins("differenceDataChart")
+        onWidthChanged: ExGlobals.Constants.proxy.updateFigureMargins("differenceDataChart")
 
         color: EaStyle.Colors.mainContentBackground
 
@@ -141,8 +143,8 @@ Rectangle {
 
             anchors.fill: parent
 
-            anchors.topMargin: 0
-            anchors.bottomMargin: 15
+            anchors.topMargin: -3.5 * EaStyle.Sizes.fontPixelSize
+            anchors.bottomMargin: analysisDataChart.anchors.bottomMargin
             anchors.leftMargin: analysisDataChart.anchors.leftMargin
             anchors.rightMargin: analysisDataChart.anchors.rightMargin
 

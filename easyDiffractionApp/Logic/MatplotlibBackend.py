@@ -31,11 +31,14 @@ class DisplayBridge(QtCore.QObject):
         self.canvas_data = {}
 
     def updateWithCanvas(self, canvas=None, dataset=None):
+        if self.context is None:
+            return
         canvas_ = self.context.findChild(QtCore.QObject, canvas)
-        if canvas not in self.canvas_data.keys():
-            self.canvas_data[canvas] = DisplayAdapter(canvas_, dataset, parent=self)
-        else:
-            self.canvas_data[canvas].current_canvas_data = dataset
+        if dataset is not None:
+            if canvas not in self.canvas_data.keys():
+                self.canvas_data[canvas] = DisplayAdapter(canvas_, dataset, parent=self)
+            else:
+                self.canvas_data[canvas].current_canvas_data = dataset
         self.redraw()
 
     def redraw(self, items: List['DisplayAdapter'] = None):
@@ -127,7 +130,6 @@ class DisplayAdapter(QtCore.QObject):
         self.current_canvas_data = dataset
 
     def redraw(self):
-
         dataset = self.current_canvas_data
 
         if not isinstance(dataset, list):
@@ -142,6 +144,14 @@ class DisplayAdapter(QtCore.QObject):
         self.figure.patch.set_color(self.style.current_style['figure.facecolor'])
         self.figure.clf()
         self.toolbar = NavigationToolbar2QtQuick(canvas=self.current_canvas)
+
+        # set margins (!!! should be calculated based on the font size from QML)
+        left_margin = 90 / self.figure.bbox.width
+        right_margin = 15 / self.figure.bbox.width
+        top_margin = 10 / self.figure.bbox.height
+        bottom_margin = 55 / self.figure.bbox.height
+        self.figure.subplots_adjust(left=left_margin, right=1-right_margin, top=1-top_margin, bottom=bottom_margin)
+        self.figure.tight_layout()
 
         # make a small plot
         self.axes = self.figure.add_subplot(111)
@@ -194,6 +204,7 @@ class DisplayAdapter(QtCore.QObject):
         """
         Update the coordinates on the display
         """
+
         if event.inaxes == self.axes:
             self.coordinates = f"({event.xdata:.2f}, {event.ydata:.2f})"
 

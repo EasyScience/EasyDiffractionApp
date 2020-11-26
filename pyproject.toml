@@ -145,7 +145,7 @@ auto_exclude = { macos = ['_tkinter'], ubuntu = ['_tkinter'], windows = [''], al
                 '_opcode', '_queue', '_opcode', '_uuid', '_win32sysloader', 'grp', 'readline', 'termios' ] }
 manual_exclude = [ 'd3dcompiler*', 'libbispeu*', 'libdqag*', 'libvode*', 'mfc*', 'msvcp*', 'VCRUNTIME*',
                    '*Qt*3D*', '*Qt*Bluetooth*', '*Qt*Bodymovin*', '*Qt*Concurrent*', '*Qt*Gamepad*', '*Qt*Location*',
-                   '*Qt*Multimedia*', '*Qt*Nfc*', '*Qt*Positioning*', '*Qt*Purchasing*', '*Qt*QuickParticles*', '*Qt*QuickShapes*',
+                   '*Qt*Nfc*', '*Qt*Positioning*', '*Qt*Purchasing*', '*Qt*QuickParticles*', '*Qt*QuickShapes*',
                    '*Qt*RemoteObjects*', '*Qt*Scxml*', '*Qt*Sensors*', '*Qt*Sql*', '*Qt*VirtualKeyboard*', '*Qt*Wayland*', '*Qt*Web*' ]
 
 [ci.qtifw.setup]

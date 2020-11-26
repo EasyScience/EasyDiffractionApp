@@ -6,6 +6,9 @@ import QtQuick.Controls.Material 2.12
 import QtCharts 2.3
 import QtVTK 1.0
 
+import easyAppGui.Style 1.0 as EaStyle
+import easyAppGui.Elements 1.0 as EaElements
+
 //Rectangle {
 //    property real xAxisLength: 1.0
 //    property real yAxisLength: 1.0
@@ -246,6 +249,27 @@ import QtVTK 1.0
             }
         }
 
+        EaElements.Label {
+            anchors.top: parent.top
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.topMargin: EaStyle.Sizes.fontPixelSize
+
+            topPadding: 0.5*EaStyle.Sizes.fontPixelSize
+            bottomPadding: 0.5*EaStyle.Sizes.fontPixelSize
+            leftPadding: EaStyle.Sizes.fontPixelSize
+            rightPadding: EaStyle.Sizes.fontPixelSize
+
+            background: Rectangle {
+                color: EaStyle.Colors.mainContentBackground
+                opacity: 0.5
+            }
+
+            textFormat: Text.RichText
+
+            text: `Axes colors: <font color=red>a</font>, <font color=#008000>b</font>, <font color=blue>c</font>`
+        }
+
+
         /*
         Button {
             id: clearScene
@@ -275,6 +299,9 @@ import QtVTK 1.0
             ToolTip.text: "Open a 3D model into the canvas"
         }
         */
+
+
+
     }
 
 

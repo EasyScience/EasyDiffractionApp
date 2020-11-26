@@ -275,7 +275,16 @@ class VTKcanvasHandler(QObject):
             mapper.SetInputConnection(transformPD2.GetOutputPort())
             actor = vtk.vtkActor()
             actor.SetMapper(mapper)
-            actor.GetProperty().SetColor([0.40, 0.40, 0.40]) # Lattice color
+
+            # Lattice color
+            if (edge == np.array([0, 4])).all():
+                actor.GetProperty().SetColor([1, 0, 0])  # a-axis is red
+            elif (edge == np.array([0, 2])).all():
+                actor.GetProperty().SetColor([0, 1, 0])  # b-axis is green
+            elif (edge == np.array([0, 1])).all():
+                actor.GetProperty().SetColor([0, 0, 1])  # c-axis is blue
+            else:
+                actor.GetProperty().SetColor([0.90, 0.90, 0.90])
 
             actors.append(actor)
         return actors

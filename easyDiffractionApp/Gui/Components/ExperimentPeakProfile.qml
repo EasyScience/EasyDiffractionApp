@@ -39,35 +39,35 @@ EaComponents.TableView {
             id: uLabel
             width: EaStyle.Sizes.fontPixelSize * 7.1
             headerText: "U"
-            text: model.u
+            text: EaLogic.Utils.toFixed(model.u)
             onEditingFinished: editParameterValue(model.uId, text)
         }
 
         EaComponents.TableViewTextInput {
             width: uLabel.width
             headerText: "V"
-            text: model.v
+            text: EaLogic.Utils.toFixed(model.v)
             onEditingFinished: editParameterValue(model.vId, text)
         }
 
         EaComponents.TableViewTextInput {
             width: uLabel.width
             headerText: "W"
-            text: model.w
+            text: EaLogic.Utils.toFixed(model.w)
             onEditingFinished: editParameterValue(model.wId, text)
         }
 
         EaComponents.TableViewTextInput {
             width: uLabel.width
             headerText: "X"
-            text: model.x
+            text: EaLogic.Utils.toFixed(model.x)
             onEditingFinished: editParameterValue(model.xId, text)
         }
 
         EaComponents.TableViewTextInput {
             width: uLabel.width
             headerText: "Y"
-            text: model.y
+            text: EaLogic.Utils.toFixed(model.y)
             onEditingFinished: editParameterValue(model.yId, text)
         }
 

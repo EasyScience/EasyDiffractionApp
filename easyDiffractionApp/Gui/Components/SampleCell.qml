@@ -50,7 +50,7 @@ EaComponents.TableView {
             id: cellLengthALabel
             width: EaStyle.Sizes.fontPixelSize * 5.8
             headerText: "a (Å)"
-            text: model.a
+            text: EaLogic.Utils.toFixed(model.a)
             onEditingFinished: editParameterValue(model.aId, text)
             enabled: model.a_enabled === 'True'
             Component.onCompleted: ExGlobals.Variables.cellLengthALabel = cellLengthALabel
@@ -59,7 +59,7 @@ EaComponents.TableView {
         EaComponents.TableViewTextInput {
             width: cellLengthALabel.width
             headerText: "b (Å)"
-            text: model.b
+            text: EaLogic.Utils.toFixed(model.b)
             onEditingFinished: editParameterValue(model.bId, text)
             enabled: model.b_enabled === 'True'
         }
@@ -67,7 +67,7 @@ EaComponents.TableView {
         EaComponents.TableViewTextInput {
             width: cellLengthALabel.width
             headerText: "c (Å)"
-            text: model.c
+            text: EaLogic.Utils.toFixed(model.c)
             onEditingFinished: editParameterValue(model.cId, text)
             enabled: model.c_enabled === 'True'
         }
@@ -75,7 +75,7 @@ EaComponents.TableView {
         EaComponents.TableViewTextInput {
             width: cellLengthALabel.width
             headerText: "alpha (°)"
-            text: model.alpha
+            text: EaLogic.Utils.toFixed(model.alpha)
             onEditingFinished: editParameterValue(model.alphaId, text)
             enabled: model.alpha_enabled === 'True'
         }
@@ -83,7 +83,7 @@ EaComponents.TableView {
         EaComponents.TableViewTextInput {
             width: cellLengthALabel.width
             headerText: "beta (°)"
-            text: model.beta
+            text: EaLogic.Utils.toFixed(model.beta)
             onEditingFinished: editParameterValue(model.betaId, text)
             enabled: model.beta_enabled === 'True'
         }
@@ -91,7 +91,7 @@ EaComponents.TableView {
         EaComponents.TableViewTextInput {
             width: cellLengthALabel.width
             headerText: "gamma (°)"
-            text: model.gamma
+            text: EaLogic.Utils.toFixed(model.gamma)
             onEditingFinished: editParameterValue(model.gammaId, text)
             enabled: model.gamma_enabled === 'True'
         }

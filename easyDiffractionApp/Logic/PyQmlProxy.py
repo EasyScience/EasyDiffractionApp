@@ -750,6 +750,7 @@ class PyQmlProxy(QObject):
         # self.phasesChanged.emit()
         # self.backgroundChanged.emit()
         self.parameterChanged.emit()
+        self.modelChanged.emit()
 
     @Slot(str, str)
     def editDescriptorValue(self, obj_id: str, new_value: str):

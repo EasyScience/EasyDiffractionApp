@@ -80,28 +80,28 @@ EaComponents.TableView {
         EaComponents.TableViewTextInput {
             width: atomLabel.width
             headerText: "x"
-            text: model.x
+            text: EaLogic.Utils.toFixed(model.x)
             onEditingFinished: editParameterValue(model.xId, text)
         }
 
         EaComponents.TableViewTextInput {
             width: atomLabel.width
             headerText: "y"
-            text: model.y
+            text: EaLogic.Utils.toFixed(model.y)
             onEditingFinished: editParameterValue(model.yId, text)
        }
 
         EaComponents.TableViewTextInput {
             width: atomLabel.width
             headerText: "z"
-            text: model.z
+            text: EaLogic.Utils.toFixed(model.z)
             onEditingFinished: editParameterValue(model.zId, text)
         }
 
         EaComponents.TableViewTextInput {
             width: atomLabel.width
             headerText: "Occ."
-            text: model.occupancy
+            text: EaLogic.Utils.toFixed(model.occupancy)
             onEditingFinished: editParameterValue(model.occupancyId, text)
         }
 

@@ -52,7 +52,8 @@ EaComponents.TableView {
             id: scaleColumn
             horizontalAlignment: Text.AlignRight
             headerText: "Scale"
-            text: typeof ExGlobals.Constants.proxy.patternParameters.scale != "undefined" ? ExGlobals.Constants.proxy.patternParameters.scale.value : ""
+            //text: typeof ExGlobals.Constants.proxy.patternParameters.scale != "undefined" ? EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.patternParameters.scale.value) : ""
+            text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.patternParameters.scale.value)
             onEditingFinished: editParameterValue(ExGlobals.Constants.proxy.patternParameters.scale["@id"], text)
         }
 

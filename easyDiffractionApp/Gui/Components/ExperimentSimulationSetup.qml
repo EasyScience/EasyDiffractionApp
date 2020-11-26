@@ -4,11 +4,12 @@ import QtQuick.Controls 2.13
 import easyAppGui.Style 1.0 as EaStyle
 import easyAppGui.Elements 1.0 as EaElements
 import easyAppGui.Components 1.0 as EaComponents
+import easyAppGui.Logic 1.0 as EaLogic
 
 import Gui.Globals 1.0 as ExGlobals
 
 Row {
-    spacing: EaStyle.Sizes.fontPixelSize
+    spacing: EaStyle.Sizes.fontPixelSize * 0.5
 
     // Min
     EaComponents.TableViewLabel{
@@ -21,14 +22,8 @@ Row {
         enabled: !ExGlobals.Variables.experimentLoaded
         width: textFieldWidth()
         units: "deg"
-        //text: typeof ExGlobals.Constants.proxy.simulationParameters !== "undefined" ? ExGlobals.Constants.proxy.simulationParameters.x_min : ""
-        text: ExGlobals.Constants.proxy.simulationParameters.x_min
+        text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.simulationParameters.x_min, 3)
         onEditingFinished: updateParameters()
-    }
-
-    // Spacer
-    EaElements.Label {
-        width: EaStyle.Sizes.fontPixelSize * 0.5
     }
 
     // Max
@@ -42,14 +37,8 @@ Row {
         enabled: !ExGlobals.Variables.experimentLoaded
         width: textFieldWidth()
         units: "deg"
-        //text: typeof ExGlobals.Constants.proxy.simulationParameters !== "undefined" ? ExGlobals.Constants.proxy.simulationParameters.x_max : ""
-        text: ExGlobals.Constants.proxy.simulationParameters.x_max
+        text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.simulationParameters.x_max, 3)
         onEditingFinished: updateParameters()
-    }
-
-    // Spacer
-    EaElements.Label {
-        width: EaStyle.Sizes.fontPixelSize * 0.5
     }
 
     // Step
@@ -63,24 +52,22 @@ Row {
         enabled: !ExGlobals.Variables.experimentLoaded
         width: textFieldWidth()
         units: "deg"
-        //text: typeof ExGlobals.Constants.proxy.simulationParameters !== "undefined" ? ExGlobals.Constants.proxy.simulationParameters.x_step : ""
-        text: ExGlobals.Constants.proxy.simulationParameters.x_step
+        text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.simulationParameters.x_step, 3)
         onEditingFinished: updateParameters()
     }
 
     // Logic
 
     function labelWidth() {
-        return EaStyle.Sizes.fontPixelSize * 3.33
+        return (EaStyle.Sizes.sideBarContentWidth - spacing * 5 - textFieldWidth() * 3) / 3
     }
 
     function textFieldWidth() {
-        return EaStyle.Sizes.fontPixelSize * 6.5
+        return EaStyle.Sizes.fontPixelSize * 7.0
     }
 
     function updateParameters() {
         const json = { "x_min": xMin.text, "x_max": xMax.text, "x_step": xStep.text }
-        //print("json", JSON.stringify(json))
         ExGlobals.Constants.proxy.simulationParameters = JSON.stringify(json)
     }
 }

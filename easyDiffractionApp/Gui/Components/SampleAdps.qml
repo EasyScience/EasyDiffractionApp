@@ -6,6 +6,7 @@ import easyAppGui.Globals 1.0 as EaGlobals
 import easyAppGui.Style 1.0 as EaStyle
 import easyAppGui.Elements 1.0 as EaElements
 import easyAppGui.Components 1.0 as EaComponents
+import easyAppGui.Logic 1.0 as EaLogic
 
 import Gui.Globals 1.0 as ExGlobals
 
@@ -69,49 +70,49 @@ EaComponents.TableView {
         EaComponents.TableViewTextInput {
             width: adpAtomLabel.width
             headerText: "Iso"
-            text: model.adpIso
+            text: EaLogic.Utils.toFixed(model.adpIso)
             onEditingFinished: editParameterValue(model.adpIsoId, text)
         }
 
         EaComponents.TableViewTextInput {
             width: adpAtomLabel.width
             headerText: "Ani11"
-            text: model.adpAni11
+            text: EaLogic.Utils.toFixed(model.adpAni11)
             onEditingFinished: editParameterValue(model.adpAniId11, text)
         }
 
         EaComponents.TableViewTextInput {
             width: adpAtomLabel.width
             headerText: "Ani22"
-            text: model.adpAni22
+            text: EaLogic.Utils.toFixed(model.adpAni22)
             onEditingFinished: editParameterValue(model.adpAniId22, text)
         }
 
         EaComponents.TableViewTextInput {
             width: adpAtomLabel.width
             headerText: "Ani33"
-            text: model.adpAni33
+            text: EaLogic.Utils.toFixed(model.adpAni33)
             onEditingFinished: editParameterValue(model.adpAniId33, text)
         }
 
         EaComponents.TableViewTextInput {
             width: adpAtomLabel.width
             headerText: "Ani12"
-            text: model.adpAni12
+            text: EaLogic.Utils.toFixed(model.adpAni12)
             onEditingFinished: editParameterValue(model.adpAniId12, text)
         }
 
         EaComponents.TableViewTextInput {
             width: adpAtomLabel.width
             headerText: "Ani13"
-            text: model.adpAni13
+            text: EaLogic.Utils.toFixed(model.adpAni13)
             onEditingFinished: editParameterValue(model.adpAniId13, text)
         }
 
         EaComponents.TableViewTextInput {
             width: adpAtomLabel.width
             headerText: "Ani23"
-            text: model.adpAni23
+            text: EaLogic.Utils.toFixed(model.adpAni23)
             onEditingFinished: editParameterValue(model.adpAniId23, text)
         }
 

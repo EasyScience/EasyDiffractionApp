@@ -44,7 +44,7 @@ EaComponents.TableView {
             horizontalAlignment: Text.AlignRight
             width: EaStyle.Sizes.fontPixelSize * 11.6
             headerText: "2theta"
-            text: model.x
+            text: EaLogic.Utils.toFixed(model.x)
             onEditingFinished: editParameterValue(model.xId, text)
         }
 
@@ -53,7 +53,7 @@ EaComponents.TableView {
             horizontalAlignment: Text.AlignRight
             width: xLabel.width
             headerText: "Intensity"
-            text: model.y
+            text: EaLogic.Utils.toFixed(model.y)
             onEditingFinished: editParameterValue(model.yId, text)
         }
 

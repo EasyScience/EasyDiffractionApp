@@ -14,87 +14,143 @@ Rectangle {
     property bool isDarkTheme: EaStyle.Colors.isDarkTheme
     property bool isExperimentStepDone: ExGlobals.Variables.experimentLoaded || ExGlobals.Variables.experimentSkipped
 
-    color: "white"
+    color: EaStyle.Colors.mainContentBackground
 
-    FigureCanvas {
-        id: analysisDataChart
-        objectName: "analysisDataChart"
+    Rectangle {
+        id: chartControlsContainer
 
-        anchors.fill: parent
-        anchors.topMargin: -25
-        anchors.bottomMargin: 0
-        anchors.rightMargin: -55
-        dpi_ratio: Screen.devicePixelRatio
+        z: 900
 
-        Component.onCompleted: ExGlobals.Constants.proxy.setAnalysisFigureObjName(objectName)
-    }
+        height: 50
 
-    Row {
-        anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
-        anchors.topMargin: 10
-        spacing: 5
+        anchors.left: parent.left
+        anchors.right: parent.right
 
-        EaElements.ToolButton {
-            fontIcon: "home"
-            ToolTip.text: qsTr("Home")
+        color: EaStyle.Colors.mainContentBackground
 
-            onClicked: _matplotlibBridge.home(analysisDataChart.objectName)
-        }
+        Row {
+            anchors.centerIn: parent
+            spacing: 5
 
-        EaElements.ToolButton {
-            fontIcon: "\uf2ea"
-            ToolTip.text: qsTr("Back")
+            EaElements.ToolButton {
+                fontIcon: "home"
+                ToolTip.text: qsTr("Home")
 
-            onClicked: _matplotlibBridge.back(analysisDataChart.objectName)
-        }
-
-        EaElements.ToolButton {
-            fontIcon: "\uf2f9"
-            ToolTip.text: qsTr("Forward")
-
-            onClicked: _matplotlibBridge.forward(analysisDataChart.objectName)
-        }
-
-        Rectangle {
-            width: 4
-            height: 4
-            radius: 2
-            anchors.verticalCenter: parent.verticalCenter
-            color: EaStyle.Colors.themeForeground
-        }
-
-        EaElements.ToolButton {
-            id: pan
-
-            fontIcon: "arrows-alt"
-            ToolTip.text: qsTr("Pan")
-            checkable: true
-
-            onClicked: {
-                if (zoom.checked) {
-                    zoom.checked = false
-                }
-                _matplotlibBridge.pan(analysisDataChart.objectName)
+                onClicked: _matplotlibBridge.home(analysisDataChart.objectName)
             }
-        }
 
-        EaElements.ToolButton {
-            id: zoom
+            EaElements.ToolButton {
+                fontIcon: "\uf2ea"
+                ToolTip.text: qsTr("Back")
 
-            fontIcon: "expand"
-            ToolTip.text: qsTr("Zoom")
-            checkable: true
+                onClicked: _matplotlibBridge.back(analysisDataChart.objectName)
+            }
 
-            onClicked: {
-                if (pan.checked) {
-                    pan.checked = false
+            EaElements.ToolButton {
+                fontIcon: "\uf2f9"
+                ToolTip.text: qsTr("Forward")
+
+                onClicked: _matplotlibBridge.forward(analysisDataChart.objectName)
+            }
+
+            Rectangle {
+                width: 4
+                height: 4
+                radius: 2
+                anchors.verticalCenter: parent.verticalCenter
+                color: EaStyle.Colors.themeForeground
+            }
+
+            EaElements.ToolButton {
+                id: pan
+
+                fontIcon: "arrows-alt"
+                ToolTip.text: qsTr("Pan")
+                checkable: true
+
+                onClicked: {
+                    if (zoom.checked) {
+                        zoom.checked = false
+                    }
+                    _matplotlibBridge.pan(analysisDataChart.objectName)
                 }
-                _matplotlibBridge.zoom(analysisDataChart.objectName)
+            }
+
+            EaElements.ToolButton {
+                id: zoom
+
+                fontIcon: "expand"
+                ToolTip.text: qsTr("Zoom")
+                checkable: true
+
+                onClicked: {
+                    if (pan.checked) {
+                        pan.checked = false
+                    }
+                    _matplotlibBridge.zoom(analysisDataChart.objectName)
+                }
             }
         }
     }
 
+    Rectangle {
+        id: analysisDataChartContainer
+
+        z: 800
+
+        anchors.top: chartControlsContainer.bottom
+        anchors.bottom: differenceDataChartContainer.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+
+        color: EaStyle.Colors.mainContentBackground
+
+        FigureCanvas {
+            id: analysisDataChart
+            objectName: "analysisDataChart"
+
+            anchors.fill: parent
+
+            anchors.topMargin: -52
+            anchors.bottomMargin: 0
+            anchors.leftMargin: 5
+            anchors.rightMargin: -50
+
+            dpi_ratio: Screen.devicePixelRatio
+
+            Component.onCompleted: ExGlobals.Constants.proxy.setAnalysisFigureObjName(objectName)
+        }
+    }
+
+    Rectangle {
+        id: differenceDataChartContainer
+
+        height: ExGlobals.Variables.experimentLoaded ? parent.height * 0.3 : 0
+
+        anchors.bottom: parent.bottom
+        anchors.left: analysisDataChartContainer.anchors.left
+        anchors.right: analysisDataChartContainer.anchors.right
+
+
+        color: EaStyle.Colors.mainContentBackground
+
+        FigureCanvas {
+            id: differenceDataChart
+            objectName: "differenceDataChart"
+
+            anchors.fill: parent
+
+            anchors.topMargin: 0
+            anchors.bottomMargin: 15
+            anchors.leftMargin: analysisDataChart.anchors.leftMargin
+            anchors.rightMargin: analysisDataChart.anchors.rightMargin
+
+            dpi_ratio: Screen.devicePixelRatio
+
+            Component.onCompleted: ExGlobals.Constants.proxy.setDifferenceFigureObjName(objectName)
+        }
+    }
 
     onIsDarkThemeChanged: updateMatplotlibStyle()
     onIsExperimentStepDoneChanged: updateMatplotlibStyle()

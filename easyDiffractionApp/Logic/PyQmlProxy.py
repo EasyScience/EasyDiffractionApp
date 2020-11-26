@@ -87,6 +87,12 @@ class PyQmlProxy(QObject):
                       x_label='2theta (deg)', y_label='Intensity (arb. units)',
                       data_type='simulation')
         )
+        self.data.append(
+            DataSet1D(name='Difference',
+                      x=x_data, y=np.zeros_like(x_data),
+                      x_label='2theta (deg)', y_label='Intensity (arb. units)',
+                      data_type='simulation')
+        )
         self.project_info = self.initProjectInfo()
         self._current_phase_index = 0
         self._fitables_list = []
@@ -94,6 +100,7 @@ class PyQmlProxy(QObject):
 
         self._experiment_figure_obj_name = None
         self._analysis_figure_obj_name = None
+        self._difference_figure_obj_name = None
 
         self._fit_results = { "success": None, "nvarys": None, "GOF": None, "redchi": None }
         self._experiment_loaded = False
@@ -262,22 +269,29 @@ class PyQmlProxy(QObject):
         self.sample.output_index = self.currentPhaseIndex
         #  THIS IS WHERE WE WOULD LOOK UP CURRENT EXP INDEX
         sim = self.data.simulations[0]
+        zeros_sim = DataSet1D(name='', x=[sim.x[0]], y=[sim.y[0]])  # Temp solution to have proper color for sim curve
+        zeros_diff = DataSet1D(name='', x_label='', x=[sim.x[0]])  # Temp solution to have proper color for sim curve
         if self.experimentLoaded:
             exp = self.data.experiments[0]
             sim.x = exp.x
             sim.y = self.interface.fit_func(sim.x)
+            diff = self.data.simulations[1]
+            diff.x = exp.x
+            diff.y = exp.y - sim.y
             data = [exp, sim]
+            zeros_diff.y = [exp.y[0] - sim.y[0]]
+            zeros_diff.y_label = diff.y_label
+            self.matplotlib_bridge.updateWithCanvas(self._difference_figure_obj_name, [zeros_diff, zeros_diff, diff])
         else:
-            zeros = DataSet1D(name='',
-                              x_label='2theta (deg)', y_label='Intensity (arb. units)',
-                              x=[sim.x[0]], y=[sim.y[0]])  # Temp solution to have proper color for sim curve
             x_min = float(self._simulation_parameters['x_min'])
             x_max = float(self._simulation_parameters['x_max'])
             x_step = float(self._simulation_parameters['x_step'])
             num_points = int((x_max - x_min) / x_step + 1)
             sim.x = np.linspace(x_min, x_max, num_points)
             sim.y = self.interface.fit_func(sim.x)
-            data = [zeros, sim]
+            zeros_sim.x_label = sim.x_label
+            zeros_sim.y_label = sim.y_label
+            data = [zeros_sim, sim]
         self.matplotlib_bridge.updateWithCanvas(self._analysis_figure_obj_name, data)
         self.modelChanged.emit()
 
@@ -360,6 +374,13 @@ class PyQmlProxy(QObject):
         if self._analysis_figure_obj_name == name:
             return
         self._analysis_figure_obj_name = name
+
+
+    @Slot(str)
+    def setDifferenceFigureObjName(self, name):
+        if self._difference_figure_obj_name == name:
+            return
+        self._difference_figure_obj_name = name
 
     # Status
 

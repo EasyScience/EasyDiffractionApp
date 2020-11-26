@@ -257,7 +257,7 @@ class Style:
             'ytick.color':      text_color,
             'lines.linewidth':  2,
             'axes.labelpad':    12,
-            'axes.prop_cycle':  matplotlib.rcsetup.cycler(color=['#00a3e3', '#ff7f50']),
+            'axes.prop_cycle':  matplotlib.rcsetup.cycler(color=['#00a3e3', '#ff7f50', '#6b8e23']),
             'axes.edgecolor':   '#ddd',
             'grid.color':       '#ddd',
             'axes.xmargin':     0.

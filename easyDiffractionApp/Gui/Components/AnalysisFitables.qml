@@ -172,7 +172,7 @@ EaComponents.TableView {
             if (list[i] === previousList[i]) {
                 list[i] = `<font color=${EaStyle.Colors.themeForegroundMinor}>${list[i]}</font>`
                 if (ExGlobals.Variables.iconifiedNames) {
-                    list[i] = list[i].replace("cell", `<font color=${iconColor} face="${EaStyle.Fonts.iconsFamily}">cube</font>`)
+                    list[i] = list[i].replace("lattice", `<font color=${iconColor} face="${EaStyle.Fonts.iconsFamily}">cube</font>`)
                     list[i] = list[i].replace("length", `<font color=${iconColor} face="${EaStyle.Fonts.iconsFamily}">ruler</font>`)
                     list[i] = list[i].replace("angle", `<font color=${iconColor} face="${EaStyle.Fonts.iconsFamily}">less-than</font>`)
                     list[i] = list[i].replace("atoms", `<font color=${iconColor} face="${EaStyle.Fonts.iconsFamily}">atom</font>`)
@@ -184,7 +184,7 @@ EaComponents.TableView {
             } else {
                 list[i] = `${list[i]}`
                 if (ExGlobals.Variables.iconifiedNames) {
-                    list[i] = list[i].replace("cell", `<font face="${EaStyle.Fonts.iconsFamily}">cube</font>`)
+                    list[i] = list[i].replace("lattice", `<font face="${EaStyle.Fonts.iconsFamily}">cube</font>`)
                     list[i] = list[i].replace("length", `<font face="${EaStyle.Fonts.iconsFamily}">ruler</font>`)
                     list[i] = list[i].replace("angle", `<font face="${EaStyle.Fonts.iconsFamily}">less-than</font>`)
                     list[i] = list[i].replace("atoms", `<font face="${EaStyle.Fonts.iconsFamily}">atom</font>`)
@@ -206,7 +206,6 @@ EaComponents.TableView {
         } else {
             label = list.join(`<font color=${EaStyle.Colors.themeForegroundMinor}>.</font>`)
             label = label.replace("fract<font color=#aaaaaa>.", "fract_").replace("<font color=#aaaaaa>fract</font><font color=#aaaaaa>.", "fract_")
-            label = label.replace("cell<font color=#aaaaaa>.", "cell_").replace("<font color=#aaaaaa>cell</font><font color=#aaaaaa>.", "cell_")
             label = label.replace("length<font color=#aaaaaa>.", "length_").replace("<font color=#aaaaaa>length</font><font color=#aaaaaa>.", "length_")
             label = label.replace("angle<font color=#aaaaaa>.", "angle_").replace("<font color=#aaaaaa>angle</font><font color=#aaaaaa>.", "angle_")
         }

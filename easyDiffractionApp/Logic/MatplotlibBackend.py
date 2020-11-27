@@ -220,7 +220,7 @@ class DisplayAdapter(QtCore.QObject):
         self.redraw()
 
     def showLegend(self, show_legend):
-        self.data.show_legend = show_legend
+        self.show_legend = show_legend
         self.redraw()
 
 

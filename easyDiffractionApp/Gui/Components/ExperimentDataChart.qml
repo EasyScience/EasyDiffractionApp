@@ -12,6 +12,7 @@ import Gui.Globals 1.0 as ExGlobals
 Rectangle {
     property bool isDarkTheme: EaStyle.Colors.isDarkTheme
     property bool isExperimentStepDone: ExGlobals.Variables.experimentLoaded || ExGlobals.Variables.experimentSkipped
+    property bool showLegend: ExGlobals.Variables.showLegend
 
     color: EaStyle.Colors.mainContentBackground
 
@@ -123,6 +124,8 @@ Rectangle {
 
     onIsDarkThemeChanged: updateMatplotlibStyle()
     onIsExperimentStepDoneChanged: updateMatplotlibStyle()
+
+    onShowLegendChanged: _matplotlibBridge.showLegend(showLegend, experimentDataChart.objectName)
 
     // Logic
 

@@ -69,6 +69,6 @@ QtObject {
     property real currentParameterValue
 
     // Analysis tab settings
-    property bool showLegend: false
+    property bool showLegend: true
     property bool iconifiedNames: true
 }

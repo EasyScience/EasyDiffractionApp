@@ -13,6 +13,7 @@ import Gui.Components 1.0 as ExComponents
 Rectangle {
     property bool isDarkTheme: EaStyle.Colors.isDarkTheme
     property bool isExperimentStepDone: ExGlobals.Variables.experimentLoaded || ExGlobals.Variables.experimentSkipped
+    property bool showLegend: ExGlobals.Variables.showLegend
 
     color: EaStyle.Colors.mainContentBackground
 
@@ -156,6 +157,11 @@ Rectangle {
 
     onIsDarkThemeChanged: updateMatplotlibStyle()
     onIsExperimentStepDoneChanged: updateMatplotlibStyle()
+
+    onShowLegendChanged: {
+        _matplotlibBridge.showLegend(showLegend, analysisDataChart.objectName)
+        _matplotlibBridge.showLegend(showLegend, differenceDataChart.objectName)
+    }
 
     // Logic
 

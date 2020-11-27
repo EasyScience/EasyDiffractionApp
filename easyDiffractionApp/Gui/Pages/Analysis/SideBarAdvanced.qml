@@ -62,8 +62,22 @@ EaComponents.SideBarColumn {
                 id: minimizerSelector
 
                 width: (EaStyle.Sizes.sideBarContentWidth - minimizerLabel.width * 2 - EaStyle.Sizes.fontPixelSize * 4) / 2
+
                 model: ExGlobals.Constants.proxy.minimizerList
-                onCurrentValueChanged: ExGlobals.Constants.proxy.minimizerIndex = currentIndex
+
+                onCurrentValueChanged: {
+                    ExGlobals.Constants.proxy.minimizerIndex = currentIndex
+                    let idx = 0
+                    if (currentValue === 'lmfit') {
+                        idx = methodSelector.model.indexOf('leastsq')
+                    } else if (currentValue === 'bumps') {
+                        idx = methodSelector.model.indexOf('lm')
+                    }
+                    if (idx > -1) {
+                        methodSelector.currentIndex = idx
+                    }
+                }
+
                 Component.onCompleted: currentIndex = ExGlobals.Constants.proxy.minimizerIndex
             }
 

@@ -47,7 +47,6 @@ EaComponents.SideBarColumn {
                 Component.onCompleted: ExGlobals.Variables.continueWithoutExperimentDataButton = continueWithoutExperimentDataButton
             }
         }
-
     }
 
     EaElements.GroupBox {
@@ -130,7 +129,9 @@ EaComponents.SideBarColumn {
 
     Dialogs1.FileDialog{
         id: loadExperimentDataFileDialog
-        nameFilters: [ "XYE files (*.xye)"]
+
+        nameFilters: [ qsTr("Data files") + " (*.xye *.xys *.xy)" ]
+
         onAccepted: {
             ExGlobals.Variables.experimentSkipped = false
             ExGlobals.Variables.experimentLoaded = true

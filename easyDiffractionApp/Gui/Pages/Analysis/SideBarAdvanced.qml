@@ -6,10 +6,7 @@ import easyAppGui.Style 1.0 as EaStyle
 import easyAppGui.Elements 1.0 as EaElements
 import easyAppGui.Components 1.0 as EaComponents
 
-import easyAppGui.Globals 1.0 as EaGlobals
-
 import Gui.Globals 1.0 as ExGlobals
-import Gui.Components 1.0 as ExComponents
 
 EaComponents.SideBarColumn {
 
@@ -67,6 +64,7 @@ EaComponents.SideBarColumn {
 
                 onCurrentValueChanged: {
                     ExGlobals.Constants.proxy.minimizerIndex = currentIndex
+
                     let idx = 0
                     if (currentValue === 'lmfit') {
                         idx = methodSelector.model.indexOf('leastsq')

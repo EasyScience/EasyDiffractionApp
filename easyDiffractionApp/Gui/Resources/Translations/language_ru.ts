@@ -1,6 +1,55 @@
 <?xml version='1.0' encoding='utf8'?>
 <TS language="ru_RU" version="2.1">
 <context>
+    <name>AnalysisConstraints</name>
+    <message>
+        <location filename="../../Components/AnalysisConstraints.qml" line="15" />
+        <source>No Constraints Added</source>
+        <translation>Никаких ограничений не добавлено</translation>
+    </message>
+    <message>
+        <location filename="../../Components/AnalysisConstraints.qml" line="101" />
+        <source>Remove this constraint</source>
+        <translation>Удалить это ограничение</translation>
+    </message>
+</context>
+<context>
+    <name>AnalysisDataChart</name>
+    <message>
+        <location filename="../../Components/AnalysisDataChart.qml" line="36" />
+        <source>Home</source>
+        <translation>Домой</translation>
+    </message>
+    <message>
+        <location filename="../../Components/AnalysisDataChart.qml" line="43" />
+        <source>Back</source>
+        <translation>Назад</translation>
+    </message>
+    <message>
+        <location filename="../../Components/AnalysisDataChart.qml" line="50" />
+        <source>Forward</source>
+        <translation>Вперед</translation>
+    </message>
+    <message>
+        <location filename="../../Components/AnalysisDataChart.qml" line="67" />
+        <source>Pan</source>
+        <translation>Кастрюля</translation>
+    </message>
+    <message>
+        <location filename="../../Components/AnalysisDataChart.qml" line="82" />
+        <source>Zoom</source>
+        <translation>Увеличить</translation>
+    </message>
+</context>
+<context>
+    <name>AnalysisFitables</name>
+    <message>
+        <location filename="../../Components/AnalysisFitables.qml" line="16" />
+        <source>No Parameters Found</source>
+        <translation>Параметры не найдены</translation>
+    </message>
+</context>
+<context>
     <name>ApplicationWindow</name>
     <message>
         <location filename="../../Components/ApplicationWindow.qml" line="30" />
@@ -98,8 +147,9 @@
         <translation>Образцы не добавлены / не загружены</translation>
     </message>
     <message>
+        <location filename="../../Components/ApplicationWindow.qml" line="154" />
         <source>No Project Created/Opened</source>
-        <translation type="vanished">Ни один проект не создан / не открыт</translation>
+        <translation>Ни один проект не создан / не открыт</translation>
     </message>
     <message>
         <location filename="../../Components/ApplicationWindow.qml" line="158" />
@@ -114,8 +164,8 @@
         <location filename="../../Components/ApplicationWindow.qml" line="170" />
         <location filename="../../Components/ApplicationWindow.qml" line="199" />
         <location filename="../../Components/ApplicationWindow.qml" line="230" />
-        <location filename="../../Components/ApplicationWindow.qml" line="259" />
-        <location filename="../../Components/ApplicationWindow.qml" line="290" />
+        <location filename="../../Components/ApplicationWindow.qml" line="265" />
+        <location filename="../../Components/ApplicationWindow.qml" line="296" />
         <source>Basic controls</source>
         <translation>Основные элементы управления</translation>
     </message>
@@ -123,8 +173,8 @@
         <location filename="../../Components/ApplicationWindow.qml" line="171" />
         <location filename="../../Components/ApplicationWindow.qml" line="200" />
         <location filename="../../Components/ApplicationWindow.qml" line="231" />
-        <location filename="../../Components/ApplicationWindow.qml" line="264" />
-        <location filename="../../Components/ApplicationWindow.qml" line="291" />
+        <location filename="../../Components/ApplicationWindow.qml" line="270" />
+        <location filename="../../Components/ApplicationWindow.qml" line="297" />
         <source>Advanced controls</source>
         <translation>Расширенное управление</translation>
     </message>
@@ -138,8 +188,9 @@
         <translation>Структурный вид</translation>
     </message>
     <message>
+        <location filename="../../Components/ApplicationWindow.qml" line="212" />
         <source>No Experiments Loaded</source>
-        <translation type="vanished">Эксперименты не загружены</translation>
+        <translation>Эксперименты не загружены</translation>
     </message>
     <message>
         <location filename="../../Components/ApplicationWindow.qml" line="216" />
@@ -152,12 +203,17 @@
         <translation>Табличное представление</translation>
     </message>
     <message>
-        <location filename="../../Components/ApplicationWindow.qml" line="245" />
+        <location filename="../../Components/ApplicationWindow.qml" line="246" />
         <source>Fitting</source>
         <translation>Монтаж</translation>
     </message>
     <message>
-        <location filename="../../Components/ApplicationWindow.qml" line="280" />
+        <location filename="../../Components/ApplicationWindow.qml" line="246" />
+        <source>Simulation</source>
+        <translation>Моделирование</translation>
+    </message>
+    <message>
+        <location filename="../../Components/ApplicationWindow.qml" line="286" />
         <source>Report</source>
         <translation>Отчет</translation>
     </message>
@@ -165,68 +221,163 @@
 <context>
     <name>AtomsView</name>
     <message>
-        <location filename="../../Components/AtomsView.qml" line="118" />
         <source>Remove this atom</source>
-        <translation>Удалить этот атом</translation>
+        <translation type="vanished">Удалить этот атом</translation>
     </message>
 </context>
 <context>
     <name>ConstraintsView</name>
     <message>
-        <location filename="../../Components/ConstraintsView.qml" line="15" />
         <source>No Constraints Added</source>
-        <translation>Никаких ограничений не добавлено</translation>
+        <translation type="vanished">Никаких ограничений не добавлено</translation>
     </message>
     <message>
-        <location filename="../../Components/ConstraintsView.qml" line="101" />
         <source>Remove this constraint</source>
-        <translation>Удалить это ограничение</translation>
+        <translation type="vanished">Удалить это ограничение</translation>
+    </message>
+</context>
+<context>
+    <name>ExperimentAssociatedPhases</name>
+    <message>
+        <location filename="../../Components/ExperimentAssociatedPhases.qml" line="16" />
+        <source>No Associated Phases</source>
+        <translation>Нет связанных фаз</translation>
+    </message>
+    <message>
+        <location filename="../../Components/ExperimentAssociatedPhases.qml" line="71" />
+        <source>Remove this phase</source>
+        <translation>Удалить этот этап</translation>
+    </message>
+</context>
+<context>
+    <name>ExperimentBackground</name>
+    <message>
+        <location filename="../../Components/ExperimentBackground.qml" line="15" />
+        <source>No Background Points Added</source>
+        <translation>Очки фона не добавлены</translation>
+    </message>
+    <message>
+        <location filename="../../Components/ExperimentBackground.qml" line="67" />
+        <source>Remove this point</source>
+        <translation>Удалить эту точку</translation>
+    </message>
+</context>
+<context>
+    <name>ExperimentDataChart</name>
+    <message>
+        <location filename="../../Components/ExperimentDataChart.qml" line="35" />
+        <source>Home</source>
+        <translation>Домой</translation>
+    </message>
+    <message>
+        <location filename="../../Components/ExperimentDataChart.qml" line="42" />
+        <source>Back</source>
+        <translation>Назад</translation>
+    </message>
+    <message>
+        <location filename="../../Components/ExperimentDataChart.qml" line="49" />
+        <source>Forward</source>
+        <translation>Вперед</translation>
+    </message>
+    <message>
+        <location filename="../../Components/ExperimentDataChart.qml" line="66" />
+        <source>Pan</source>
+        <translation>Кастрюля</translation>
+    </message>
+    <message>
+        <location filename="../../Components/ExperimentDataChart.qml" line="81" />
+        <source>Zoom</source>
+        <translation>Увеличить</translation>
+    </message>
+</context>
+<context>
+    <name>ExperimentDataExplorer</name>
+    <message>
+        <location filename="../../Components/ExperimentDataExplorer.qml" line="16" />
+        <source>No Experiments Loaded</source>
+        <translation>Эксперименты не загружены</translation>
+    </message>
+    <message>
+        <location filename="../../Components/ExperimentDataExplorer.qml" line="55" />
+        <source>Remove this dataset</source>
+        <translation>Удалить этот набор данных</translation>
+    </message>
+</context>
+<context>
+    <name>ExperimentInstrumentSetup</name>
+    <message>
+        <location filename="../../Components/ExperimentInstrumentSetup.qml" line="18" />
+        <source>Zero shift:</source>
+        <translation>Нулевой сдвиг:</translation>
+    </message>
+    <message>
+        <location filename="../../Components/ExperimentInstrumentSetup.qml" line="31" />
+        <source>Wavelength:</source>
+        <translation>Длина волны:</translation>
+    </message>
+</context>
+<context>
+    <name>ExperimentSimulationSetup</name>
+    <message>
+        <location filename="../../Components/ExperimentSimulationSetup.qml" line="18" />
+        <source>2θ-min:</source>
+        <translation>2θ-мин:</translation>
+    </message>
+    <message>
+        <location filename="../../Components/ExperimentSimulationSetup.qml" line="33" />
+        <source>2θ-max:</source>
+        <translation>2θ-макс:</translation>
+    </message>
+    <message>
+        <location filename="../../Components/ExperimentSimulationSetup.qml" line="48" />
+        <source>2θ-step:</source>
+        <translation>2θ-шаг:</translation>
     </message>
 </context>
 <context>
     <name>MainContent</name>
     <message>
-        <location filename="../../Pages/Home/MainContent.qml" line="66" />
+        <location filename="../../Pages/Home/MainContent.qml" line="67" />
         <source>Start</source>
         <translation>Начало</translation>
     </message>
     <message>
-        <location filename="../../Pages/Home/MainContent.qml" line="88" />
+        <location filename="../../Pages/Home/MainContent.qml" line="89" />
         <source>Online documentation</source>
         <translation>Онлайн-документация</translation>
     </message>
     <message>
-        <location filename="../../Pages/Home/MainContent.qml" line="92" />
+        <location filename="../../Pages/Home/MainContent.qml" line="93" />
         <source>Get in touch online</source>
         <translation>Свяжитесь с нами онлайн</translation>
     </message>
     <message>
-        <location filename="../../Pages/Home/MainContent.qml" line="101" />
+        <location filename="../../Pages/Home/MainContent.qml" line="103" />
         <source>Tutorial 1</source>
         <translation>Урок 1</translation>
     </message>
     <message>
-        <location filename="../../Pages/Home/MainContent.qml" line="101" />
+        <location filename="../../Pages/Home/MainContent.qml" line="103" />
         <source>Data fitting</source>
         <translation>Подгонка данных</translation>
     </message>
     <message>
-        <location filename="../../Pages/Home/MainContent.qml" line="105" />
+        <location filename="../../Pages/Home/MainContent.qml" line="111" />
         <source>Tutorial 2</source>
         <translation>Урок 2</translation>
     </message>
     <message>
-        <location filename="../../Pages/Home/MainContent.qml" line="105" />
+        <location filename="../../Pages/Home/MainContent.qml" line="111" />
         <source>Data simulation</source>
         <translation>Моделирование данных</translation>
     </message>
     <message>
-        <location filename="../../Pages/Home/MainContent.qml" line="109" />
+        <location filename="../../Pages/Home/MainContent.qml" line="119" />
         <source>Tutorial 3</source>
         <translation>Урок 3</translation>
     </message>
     <message>
-        <location filename="../../Pages/Home/MainContent.qml" line="109" />
+        <location filename="../../Pages/Home/MainContent.qml" line="119" />
         <source>App settings</source>
         <translation>Настройки приложения</translation>
     </message>
@@ -250,27 +401,27 @@
 <context>
     <name>MainContentDescription</name>
     <message>
-        <location filename="../../Pages/Project/MainContentDescription.qml" line="36" />
+        <location filename="../../Pages/Project/MainContentDescription.qml" line="38" />
         <source>Keywords:</source>
         <translation>Ключевые слова:</translation>
     </message>
     <message>
-        <location filename="../../Pages/Project/MainContentDescription.qml" line="45" />
+        <location filename="../../Pages/Project/MainContentDescription.qml" line="47" />
         <source>Samples:</source>
         <translation>Образцы:</translation>
     </message>
     <message>
-        <location filename="../../Pages/Project/MainContentDescription.qml" line="54" />
+        <location filename="../../Pages/Project/MainContentDescription.qml" line="56" />
         <source>Experiments:</source>
         <translation>Эксперименты:</translation>
     </message>
     <message>
-        <location filename="../../Pages/Project/MainContentDescription.qml" line="63" />
+        <location filename="../../Pages/Project/MainContentDescription.qml" line="65" />
         <source>Calculations:</source>
         <translation>Расчеты:</translation>
     </message>
     <message>
-        <location filename="../../Pages/Project/MainContentDescription.qml" line="72" />
+        <location filename="../../Pages/Project/MainContentDescription.qml" line="74" />
         <source>Modified:</source>
         <translation>Изменено:</translation>
     </message>
@@ -278,29 +429,24 @@
 <context>
     <name>MainContentFitting</name>
     <message>
-        <location filename="../../Pages/Analysis/MainContentFitting.qml" line="42" />
         <source>Home</source>
-        <translation>Домой</translation>
+        <translation type="vanished">Домой</translation>
     </message>
     <message>
-        <location filename="../../Pages/Analysis/MainContentFitting.qml" line="49" />
         <source>Back</source>
-        <translation>Назад</translation>
+        <translation type="vanished">Назад</translation>
     </message>
     <message>
-        <location filename="../../Pages/Analysis/MainContentFitting.qml" line="56" />
         <source>Forward</source>
-        <translation>Вперед</translation>
+        <translation type="vanished">Вперед</translation>
     </message>
     <message>
-        <location filename="../../Pages/Analysis/MainContentFitting.qml" line="73" />
         <source>Pan</source>
-        <translation>Кастрюля</translation>
+        <translation type="vanished">Кастрюля</translation>
     </message>
     <message>
-        <location filename="../../Pages/Analysis/MainContentFitting.qml" line="88" />
         <source>Zoom</source>
-        <translation>Увеличить</translation>
+        <translation type="vanished">Увеличить</translation>
     </message>
 </context>
 <context>
@@ -314,34 +460,134 @@
 <context>
     <name>PhasesView</name>
     <message>
-        <location filename="../../Components/PhasesView.qml" line="16" />
+        <source>No Samples Added/Loaded</source>
+        <translation type="vanished">Образцы не добавлены / не загружены</translation>
+    </message>
+    <message>
+        <source>Remove this phase</source>
+        <translation type="vanished">Удалить этот этап</translation>
+    </message>
+</context>
+<context>
+    <name>SampleAtoms</name>
+    <message>
+        <location filename="../../Components/SampleAtoms.qml" line="118" />
+        <source>Remove this atom</source>
+        <translation>Удалить этот атом</translation>
+    </message>
+</context>
+<context>
+    <name>SamplePhasesExplorer</name>
+    <message>
+        <location filename="../../Components/SamplePhasesExplorer.qml" line="16" />
         <source>No Samples Added/Loaded</source>
         <translation>Образцы не добавлены / не загружены</translation>
     </message>
     <message>
-        <location filename="../../Components/PhasesView.qml" line="81" />
+        <location filename="../../Components/SamplePhasesExplorer.qml" line="81" />
         <source>Remove this phase</source>
         <translation>Удалить этот этап</translation>
     </message>
 </context>
 <context>
+    <name>SampleSymmetry</name>
+    <message>
+        <location filename="../../Components/SampleSymmetry.qml" line="18" />
+        <source>Crystal system</source>
+        <translation>Кристаллическая система</translation>
+    </message>
+    <message>
+        <location filename="../../Components/SampleSymmetry.qml" line="35" />
+        <source>Space group</source>
+        <translation>Космическая группа</translation>
+    </message>
+    <message>
+        <location filename="../../Components/SampleSymmetry.qml" line="51" />
+        <source>Setting</source>
+        <translation>Настройка</translation>
+    </message>
+</context>
+<context>
     <name>SideBarAdvanced</name>
     <message>
-        <location filename="../../Pages/Analysis/SideBarAdvanced.qml" line="15" />
         <source>Calculator</source>
-        <translation>Калькулятор</translation>
+        <translation type="vanished">Калькулятор</translation>
     </message>
     <message>
         <source>Minimizer</source>
         <translation type="vanished">Минимайзер</translation>
     </message>
+    <message>
+        <location filename="../../Pages/Analysis/SideBarAdvanced.qml" line="17" />
+        <source>Calculation</source>
+        <translation>Расчет</translation>
+    </message>
+    <message>
+        <location filename="../../Pages/Analysis/SideBarAdvanced.qml" line="27" />
+        <source>Engine:</source>
+        <translation>Двигатель:</translation>
+    </message>
+    <message>
+        <location filename="../../Pages/Analysis/SideBarAdvanced.qml" line="46" />
+        <source>Minimization</source>
+        <translation>Минимизация</translation>
+    </message>
+    <message>
+        <location filename="../../Pages/Analysis/SideBarAdvanced.qml" line="59" />
+        <source>Minimizer:</source>
+        <translation>Минимайзер:</translation>
+    </message>
+    <message>
+        <location filename="../../Pages/Analysis/SideBarAdvanced.qml" line="77" />
+        <source>Method:</source>
+        <translation>Метод:</translation>
+    </message>
+    <message>
+        <location filename="../../Pages/Analysis/SideBarAdvanced.qml" line="91" />
+        <source>Plot settings</source>
+        <translation>Настройки сюжета</translation>
+    </message>
+    <message>
+        <location filename="../../Pages/Analysis/SideBarAdvanced.qml" line="96" />
+        <source>Show legend</source>
+        <translation>Показать легенду</translation>
+    </message>
+    <message>
+        <location filename="../../Pages/Analysis/SideBarAdvanced.qml" line="103" />
+        <source>Parameters settings</source>
+        <translation>Настройки параметров</translation>
+    </message>
+    <message>
+        <location filename="../../Pages/Analysis/SideBarAdvanced.qml" line="109" />
+        <source>Iconified names</source>
+        <translation>Иконизированные имена</translation>
+    </message>
+    <message>
+        <location filename="../../Pages/Sample/SideBarAdvanced.qml" line="13" />
+        <source>Bonds</source>
+        <translation>Облигации</translation>
+    </message>
+    <message>
+        <location filename="../../Pages/Sample/SideBarAdvanced.qml" line="22" />
+        <source>Show bonds</source>
+        <translation>Показать облигации</translation>
+    </message>
+    <message>
+        <location filename="../../Pages/Sample/SideBarAdvanced.qml" line="35" />
+        <source>Min distance:</source>
+        <translation>Мин. расстояние:</translation>
+    </message>
+    <message>
+        <location filename="../../Pages/Sample/SideBarAdvanced.qml" line="52" />
+        <source>Max distance:</source>
+        <translation>Максимальное расстояние:</translation>
+    </message>
 </context>
 <context>
     <name>SideBarBasic</name>
     <message>
-        <location filename="../../Pages/Experiment/SideBarBasic.qml" line="13" />
         <source>Measured data</source>
-        <translation>Измеренные данные</translation>
+        <translation type="vanished">Измеренные данные</translation>
     </message>
     <message>
         <source>Generate measured data</source>
@@ -352,8 +598,46 @@
         <translation type="vanished">Подходящие параметры</translation>
     </message>
     <message>
+        <location filename="../../Pages/Analysis/SideBarBasic.qml" line="30" />
+        <source>Filter by text</source>
+        <translation>Фильтр по тексту</translation>
+    </message>
+    <message>
+        <location filename="../../Pages/Analysis/SideBarBasic.qml" line="38" />
+        <source>Filter parameters</source>
+        <translation>Параметры фильтра</translation>
+    </message>
+    <message>
+        <location filename="../../Pages/Analysis/SideBarBasic.qml" line="52" />
+        <location filename="../../Pages/Analysis/SideBarBasic.qml" line="66" />
+        <source>Filter by type</source>
+        <translation>Фильтр по типу</translation>
+    </message>
+    <message>
+        <location filename="../../Pages/Analysis/SideBarBasic.qml" line="69" />
+        <source>All types</source>
+        <translation>Все типы</translation>
+    </message>
+    <message>
+        <location filename="../../Pages/Analysis/SideBarBasic.qml" line="88" />
+        <location filename="../../Pages/Analysis/SideBarBasic.qml" line="102" />
+        <source>Filter by name</source>
+        <translation>Фильтр по имени</translation>
+    </message>
+    <message>
+        <location filename="../../Pages/Analysis/SideBarBasic.qml" line="110" />
+        <source>All names</source>
+        <translation>Все имена</translation>
+    </message>
+    <message>
+        <location filename="../../Pages/Analysis/SideBarBasic.qml" line="184" />
         <source>Start fitting</source>
-        <translation type="vanished">Начать примерку</translation>
+        <translation>Начать примерку</translation>
+    </message>
+    <message>
+        <location filename="../../Pages/Analysis/SideBarBasic.qml" line="209" />
+        <source>Refinement Results</source>
+        <translation>Результаты уточнения</translation>
     </message>
     <message>
         <source>Instrumental parameters</source>
@@ -389,27 +673,26 @@
         <translation>Начать</translation>
     </message>
     <message>
-        <location filename="../../Pages/Project/SideBarBasic.qml" line="23" />
+        <location filename="../../Pages/Project/SideBarBasic.qml" line="24" />
         <source>Create a new project</source>
         <translation>Создать новый проект</translation>
     </message>
     <message>
-        <location filename="../../Pages/Project/SideBarBasic.qml" line="34" />
+        <location filename="../../Pages/Project/SideBarBasic.qml" line="35" />
         <source>Open an existing project</source>
         <translation>Открыть существующий проект</translation>
     </message>
     <message>
-        <location filename="../../Pages/Project/SideBarBasic.qml" line="41" />
+        <location filename="../../Pages/Project/SideBarBasic.qml" line="42" />
         <source>Test Group</source>
         <translation>Группа тестирования</translation>
     </message>
     <message>
-        <location filename="../../Pages/Project/SideBarBasic.qml" line="51" />
+        <location filename="../../Pages/Project/SideBarBasic.qml" line="52" />
         <source>First Parameter: 200</source>
         <translation>Первый параметр: 200</translation>
     </message>
     <message>
-        <location filename="../../Pages/Project/SideBarBasic.qml" line="52" />
         <location filename="../../Pages/Project/SideBarBasic.qml" line="53" />
         <location filename="../../Pages/Project/SideBarBasic.qml" line="54" />
         <location filename="../../Pages/Project/SideBarBasic.qml" line="55" />
@@ -426,11 +709,12 @@
         <location filename="../../Pages/Project/SideBarBasic.qml" line="66" />
         <location filename="../../Pages/Project/SideBarBasic.qml" line="67" />
         <location filename="../../Pages/Project/SideBarBasic.qml" line="68" />
+        <location filename="../../Pages/Project/SideBarBasic.qml" line="69" />
         <source>Parameter: 100</source>
         <translation>Параметр: 100</translation>
     </message>
     <message>
-        <location filename="../../Pages/Project/SideBarBasic.qml" line="69" />
+        <location filename="../../Pages/Project/SideBarBasic.qml" line="70" />
         <source>Last Parameter: 300</source>
         <translation>Последний параметр: 300</translation>
     </message>
@@ -450,52 +734,118 @@
         <translation>Установить новую фазу из cif</translation>
     </message>
     <message>
-        <location filename="../../Pages/Sample/SideBarBasic.qml" line="42" />
+        <location filename="../../Pages/Sample/SideBarBasic.qml" line="40" />
         <source>Set new phase manually</source>
         <translation>Установить новую фазу вручную</translation>
     </message>
     <message>
-        <location filename="../../Pages/Sample/SideBarBasic.qml" line="60" />
+        <location filename="../../Pages/Sample/SideBarBasic.qml" line="57" />
         <source>Symmetry and cell parameters</source>
         <translation>Симметрия и параметры ячейки</translation>
     </message>
     <message>
-        <location filename="../../Pages/Sample/SideBarBasic.qml" line="74" />
+        <location filename="../../Pages/Sample/SideBarBasic.qml" line="71" />
         <source>Atoms, atomic coordinates and occupations</source>
         <translation>Атомы, координаты атомов и занятия</translation>
     </message>
     <message>
-        <location filename="../../Pages/Sample/SideBarBasic.qml" line="86" />
+        <location filename="../../Pages/Sample/SideBarBasic.qml" line="83" />
         <source>Append new atom</source>
         <translation>Добавить новый атом</translation>
     </message>
     <message>
-        <location filename="../../Pages/Sample/SideBarBasic.qml" line="96" />
+        <location filename="../../Pages/Sample/SideBarBasic.qml" line="93" />
         <source>Duplicate selected atom</source>
         <translation>Дублировать выбранный атом</translation>
     </message>
     <message>
-        <location filename="../../Pages/Sample/SideBarBasic.qml" line="107" />
+        <location filename="../../Pages/Sample/SideBarBasic.qml" line="104" />
         <source>Atomic displacement parameters</source>
         <translation>Параметры атомного смещения</translation>
+    </message>
+    <message>
+        <location filename="../../Pages/Experiment/SideBarBasic.qml" line="17" />
+        <source>Experimental data</source>
+        <translation>Экспериментальные данные</translation>
+    </message>
+    <message>
+        <location filename="../../Pages/Experiment/SideBarBasic.qml" line="29" />
+        <source>Import data from local drive</source>
+        <translation>Импортировать данные с локального диска</translation>
+    </message>
+    <message>
+        <location filename="../../Pages/Experiment/SideBarBasic.qml" line="40" />
+        <source>Continue without experiment data</source>
+        <translation>Продолжить без данных эксперимента</translation>
+    </message>
+    <message>
+        <location filename="../../Pages/Experiment/SideBarBasic.qml" line="53" />
+        <source>Associated phases</source>
+        <translation>Связанные фазы</translation>
+    </message>
+    <message>
+        <location filename="../../Pages/Experiment/SideBarBasic.qml" line="60" />
+        <source>Simulation range</source>
+        <translation>Диапазон моделирования</translation>
+    </message>
+    <message>
+        <location filename="../../Pages/Experiment/SideBarBasic.qml" line="67" />
+        <source>Instrument setup</source>
+        <translation>Настройка инструмента</translation>
+    </message>
+    <message>
+        <location filename="../../Pages/Experiment/SideBarBasic.qml" line="74" />
+        <source>Peak profile</source>
+        <translation>Пиковый профиль</translation>
+    </message>
+    <message>
+        <location filename="../../Pages/Experiment/SideBarBasic.qml" line="84" />
+        <source>Instrument resolution function</source>
+        <translation>Функция разрешения прибора</translation>
+    </message>
+    <message>
+        <location filename="../../Pages/Experiment/SideBarBasic.qml" line="96" />
+        <source>Profile parameters</source>
+        <translation>Параметры профиля</translation>
+    </message>
+    <message>
+        <location filename="../../Pages/Experiment/SideBarBasic.qml" line="105" />
+        <source>Background</source>
+        <translation>Задний план</translation>
+    </message>
+    <message>
+        <location filename="../../Pages/Experiment/SideBarBasic.qml" line="116" />
+        <source>Append new point</source>
+        <translation>Добавить новую точку</translation>
+    </message>
+    <message>
+        <location filename="../../Pages/Experiment/SideBarBasic.qml" line="123" />
+        <source>Insert point before selected</source>
+        <translation>Вставить точку перед выбранным</translation>
+    </message>
+    <message>
+        <location filename="../../Pages/Experiment/SideBarBasic.qml" line="133" />
+        <source>Data files</source>
+        <translation>Дата файлы</translation>
+    </message>
+    <message>
+        <source>XYE files %1</source>
+        <translation type="vanished">Xye файлы% 1</translation>
     </message>
 </context>
 <context>
     <name>SymmetryView</name>
     <message>
-        <location filename="../../Components/SymmetryView.qml" line="18" />
         <source>Crystal system</source>
-        <translation>Кристаллическая система</translation>
+        <translation type="vanished">Кристаллическая система</translation>
     </message>
     <message>
-        <location filename="../../Components/SymmetryView.qml" line="35" />
         <source>Space group</source>
-        <translation>Космическая группа</translation>
+        <translation type="vanished">Космическая группа</translation>
     </message>
     <message>
-        <location filename="../../Components/SymmetryView.qml" line="51" />
         <source>Setting</source>
-        <translation>Настройка</translation>
+        <translation type="vanished">Настройка</translation>
     </message>
 </context>
 </TS>

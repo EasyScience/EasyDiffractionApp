@@ -35,6 +35,7 @@ easyAppGui = { git = 'https://github.com/easyScience/easyAppGui.git', rev = 'mas
 pyinstaller = '^4.0'
 #pyinstaller = { git = 'https://github.com/pyinstaller/pyinstaller.git', rev = 'develop' }
 macholib = '^1.14'
+numpy = '1.19.3'
 pywin32-ctypes = { version = '^0.2', platform = 'win32' }
 pypiwin32 = { version = '^223', platform = 'win32' }
 pefile = { version = '^2019.4', platform = 'win32' }

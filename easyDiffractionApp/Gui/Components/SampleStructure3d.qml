@@ -21,7 +21,7 @@ import easyAppGui.Elements 1.0 as EaElements
 //    property real zTargetInitial: 0.0
 //    property int animationDuration: 1000
 //    property var currentPhaseAllSites: ExGlobals.Constants.proxy.currentPhaseAllSites
-//    property var phaseList: ExGlobals.Constants.proxy.phaseList
+//    property var phasesAsList: ExGlobals.Constants.proxy.phasesAsList
 //
 //    color: EaStyle.Colors.mainContentBackground
 //
@@ -117,7 +117,7 @@ import easyAppGui.Elements 1.0 as EaElements
 //
 //    // Update atoms
 //    //onCurrentPhaseAllSitesChanged: updateCell()
-//    onPhaseListChanged: updateCell()
+//    onphasesAsListChanged: updateCell()
 //
 //    // Logic
 //
@@ -150,12 +150,12 @@ import easyAppGui.Elements 1.0 as EaElements
 //
 //    function updateCell() {
 //        // Get phase
-//        const phase = ExGlobals.Constants.proxy.phaseList[ExGlobals.Constants.proxy.currentPhaseIndex]
+//        const phase = ExGlobals.Constants.proxy.phasesAsList[ExGlobals.Constants.proxy.currentPhaseIndex]
 //        if (typeof phase === 'undefined' || !Object.keys(phase).length) {
 //            return
 //        }
 //
-//        ///print(JSON.stringify(ExGlobals.Constants.proxy.phaseList))
+//        ///print(JSON.stringify(ExGlobals.Constants.proxy.phasesAsList))
 //
 //        // Unit cell parameters
 //        const a = phase.cell.length_a.value

@@ -23,7 +23,7 @@ EaComponents.SideBarColumn {
             spacing: EaStyle.Sizes.fontPixelSize
 
             EaElements.SideBarButton {
-                enabled: ExGlobals.Constants.proxy.phaseList.length === 0
+                enabled: ExGlobals.Constants.proxy.phasesAsList.length === 0
 
                 fontIcon: "upload"
                 text: qsTr("Set new phase from CIF")
@@ -34,7 +34,7 @@ EaComponents.SideBarColumn {
             EaElements.SideBarButton {
                 id: setNewSampleManuallyButton
 
-                enabled: ExGlobals.Constants.proxy.phaseList.length === 0
+                enabled: ExGlobals.Constants.proxy.phasesAsList.length === 0
 
                 fontIcon: "plus-circle"
                 text: qsTr("Set new phase manually")

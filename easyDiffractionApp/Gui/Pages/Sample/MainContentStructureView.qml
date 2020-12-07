@@ -13,15 +13,15 @@ Rectangle {
 
     EaElements.Label {
         anchors.centerIn: parent
-        text: "Structure view: Phase " + ExGlobals.Constants.proxy.phaseList[ExGlobals.Constants.proxy.currentPhaseIndex].name
+        text: "Structure view: Phase " + ExGlobals.Constants.proxy.phasesAsList[ExGlobals.Constants.proxy.currentPhaseIndex].name
     }
 }
 */
 
 /*
 Rectangle {
-    property double amplitude: ExGlobals.Constants.proxy.phaseList[ExGlobals.Constants.proxy.currentPhaseIndex].parameters[ExGlobals.Variables.parametersCurrentIndex].amplitude
-    property double period: ExGlobals.Constants.proxy.phaseList[ExGlobals.Constants.proxy.currentPhaseIndex].parameters[ExGlobals.Variables.parametersCurrentIndex].period
+    property double amplitude: ExGlobals.Constants.proxy.phasesAsList[ExGlobals.Constants.proxy.currentPhaseIndex].parameters[ExGlobals.Variables.parametersCurrentIndex].amplitude
+    property double period: ExGlobals.Constants.proxy.phasesAsList[ExGlobals.Constants.proxy.currentPhaseIndex].parameters[ExGlobals.Variables.parametersCurrentIndex].period
 
     visible: ExGlobals.Variables.experimentPageEnabled
 
@@ -35,7 +35,7 @@ Rectangle {
 
         opacity: 0.8
 
-        color: ExGlobals.Constants.proxy.phaseList[ExGlobals.Constants.proxy.currentPhaseIndex].color
+        color: ExGlobals.Constants.proxy.phasesAsList[ExGlobals.Constants.proxy.currentPhaseIndex].color
         Behavior on color {
             PropertyAnimation { duration: 500; easing.type: Easing.InOutQuad }
         }

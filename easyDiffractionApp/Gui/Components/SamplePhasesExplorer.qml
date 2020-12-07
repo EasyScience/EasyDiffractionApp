@@ -27,7 +27,7 @@ EaComponents.TableView {
         XmlRole { name: "color"; query: "color/string()" }
 
         onXmlChanged: {
-            if (ExGlobals.Constants.proxy.phaseList.length === 0) {
+            if (ExGlobals.Constants.proxy.phasesAsList.length === 0) {
                 ExGlobals.Variables.experimentPageEnabled = false
                 ExGlobals.Variables.sampleLoaded = false
                 ExGlobals.Variables.analysisPageEnabled = false

@@ -102,17 +102,17 @@ EaComponents.SideBarColumn {
                     displayText: currentIndex === -1 ? qsTr("Filter by name") : currentText
 
                     model: {
-                        if (typeof ExGlobals.Constants.proxy.phaseList === 'undefined' || typeof ExGlobals.Constants.proxy.phaseList[0] === 'undefined' ) {
+                        if (typeof ExGlobals.Constants.proxy.phasesAsList === 'undefined' || typeof ExGlobals.Constants.proxy.phasesAsList[0] === 'undefined' ) {
                             return []
                         }
-                        const phase_name = ExGlobals.Constants.proxy.phaseList[0].name
+                        const phase_name = ExGlobals.Constants.proxy.phasesAsList[0].name
                         let m = [
                                 { value: "", text: qsTr("All names") },
                                 { value: `.${phase_name}.`, text: formatFilterText("gem", "", phase_name) },
                                 { value: ".D1A@ILL.", text: formatFilterText("microscope", "", "D1A@ILL") },
                                 ]
-                        for (let i in ExGlobals.Constants.proxy.phaseList[0].atoms.data) {
-                            const atom_label = ExGlobals.Constants.proxy.phaseList[0].atoms.data[i].label.value
+                        for (let i in ExGlobals.Constants.proxy.phasesAsList[0].atoms.data) {
+                            const atom_label = ExGlobals.Constants.proxy.phasesAsList[0].atoms.data[i].label.value
                             m.push({ value: `.${atom_label}.`, text: formatFilterText("gem", "atom", atom_label) })
                         }
                         return m

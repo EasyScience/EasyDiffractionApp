@@ -1,6 +1,8 @@
 import json
 from dicttoxml import dicttoxml
 
+import timeit
+
 from PySide2.QtCore import QObject, Slot, Signal, Property
 
 from easyCore import np
@@ -36,10 +38,7 @@ class PyQmlProxy(QObject):
     minimizerChanged = Signal()
     minimizerMethodChanged = Signal()
     statusChanged = Signal()
-    phasesChanged = Signal()
     modelChanged = Signal()
-    currentPhaseChanged = Signal()
-    currentPhaseSitesChanged = Signal()
     spaceGroupChanged = Signal()
     backgroundChanged = Signal()
     instrumentResolutionChanged = Signal()
@@ -48,6 +47,15 @@ class PyQmlProxy(QObject):
     parameterChanged = Signal()
     fitResultsChanged = Signal()
     simulationParametersChanged = Signal()
+
+
+    phasesChanged = Signal()
+    phasesAsListChanged = Signal()
+    phasesAsXmlChanged = Signal()
+    phasesAsCifChanged = Signal()
+    currentPhaseChanged = Signal()
+    currentPhaseSitesChanged = Signal()
+
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -94,7 +102,6 @@ class PyQmlProxy(QObject):
                       data_type='simulation')
         )
         self.project_info = self.initProjectInfo()
-        self._current_phase_index = 0
         self._fitables_list = []
         self._filter_criteria = ""
 
@@ -121,6 +128,14 @@ class PyQmlProxy(QObject):
         # Signal. But why does it not work :-(
         # self.phaseChanged.connect(self.updateStructureView)
         # self.currentPhaseChanged.connect(self.updateStructureView)
+
+
+        self._phases_as_list = []
+        self._phases_as_xml = ""
+        self._phases_as_cif = ""
+        self._current_phase_index = 0
+        self.phasesChanged.connect(self.onPhasesChanged)
+
 
     # Structure view
 
@@ -422,12 +437,62 @@ class PyQmlProxy(QObject):
         self.project_info[key] = value
         self.projectInfoChanged.emit()
 
+    ####################################################################################################################
     # Phases
+    ####################################################################################################################
 
-    @Property('QVariant', notify=phasesChanged)
-    def phaseList(self):
-        phases = self.sample.phases.as_dict()['data']
-        return phases
+    def onPhasesChanged(self):
+        self.phasesAsList = self.sample.phases.as_dict()['data']                     # 0.025 s
+        self.phasesAsXml = dicttoxml(self._phases_as_list, attr_type=True).decode()  # 0.065 s
+        self.phasesAsCif = str(self.sample.phases.cif)                               # 0.010 s
+
+    @Property('QVariant', notify=phasesAsListChanged)
+    def phasesAsList(self):
+        #print("+ phasesAsList")
+        return self._phases_as_list
+
+    @phasesAsList.setter
+    def setPhasesAsList(self, phases_as_list):
+        print("+ setPhasesAsList")
+        self._phases_as_list = phases_as_list
+        self.phasesAsListChanged.emit()
+
+    @Property(str, notify=phasesAsXmlChanged)
+    def phasesAsXml(self):
+        #print("+ phasesAsXml")
+        return self._phases_as_xml
+
+    @phasesAsXml.setter
+    def setPhasesAsXml(self, phases_as_xml_str):
+        print("+ setPhasesAsXml")
+        self._phases_as_xml = phases_as_xml_str
+        self.phasesAsXmlChanged.emit()
+
+    @Property(str, notify=phasesAsCifChanged)
+    def phasesAsCif(self):
+        #print("+ phasesAsCif")
+        return self._phases_as_cif
+
+    @phasesAsCif.setter
+    def setPhasesAsCif(self, phases_as_cif_str):
+        print("+ setPhasesAsCif")
+        self._phases_as_cif = self.sample.phases = Phases.from_cif_str(phases_as_cif_str)
+        self.phasesAsCifChanged.emit()
+
+#    @phasesAsCif.setter
+#    def setPhasesAsCif(self, cif_str):
+#        print("- setPhasesAsCif")
+#        self.phases = Phases.from_cif_str(cif_str)
+#        self.sample.phases = self.phases
+#        self.updateStructureView()
+#        self.updateCalculatedData()
+#        self.phasesChanged.emit()
+#        self.currentPhaseChanged.emit()
+#        self.currentPhaseSitesChanged.emit()
+#        self.spaceGroupChanged.emit()
+
+    ####################################################################################################################
+
 
     def _onSampleAdded(self):
         if self.interface.current_interface_name != 'CrysPy':
@@ -473,28 +538,25 @@ class PyQmlProxy(QObject):
         self.currentPhaseSitesChanged.emit()
         self.spaceGroupChanged.emit()
 
-    @Property(str, notify=phasesChanged)
-    def phasesAsXml(self):
+
+
+
+    def __qwe(self):
+        print("------------------- onPhasesChanged")
+        start_time = timeit.default_timer()
         phases = self.sample.phases.as_dict()['data']
+        print("==> A: {0:.4f}".format(timeit.default_timer() - start_time))
+        start_time = timeit.default_timer()
         xml = dicttoxml(phases, attr_type=True)
-        xml = xml.decode()
-        return xml
+        print("    B: {0:.4f}".format(timeit.default_timer() - start_time))
+        start_time = timeit.default_timer()
+        self._phases_as_xml = xml.decode()
+        print("    C: {0:.4f}".format(timeit.default_timer() - start_time))
+        self.phasesAsXmlChanged.emit()
 
-    @Property(str, notify=phasesChanged)
-    def phasesAsCif(self):
-        cif = str(self.sample.phases.cif)
-        return cif
 
-    @phasesAsCif.setter
-    def setPhasesAsCif(self, cif_str):
-        self.phases = Phases.from_cif_str(cif_str)
-        self.sample.phases = self.phases
-        self.updateStructureView()
-        self.updateCalculatedData()
-        self.phasesChanged.emit()
-        self.currentPhaseChanged.emit()
-        self.currentPhaseSitesChanged.emit()
-        self.spaceGroupChanged.emit()
+
+
 
     @Slot(str)
     def modifyPhaseName(self, new_value: str):
@@ -684,7 +746,9 @@ class PyQmlProxy(QObject):
         self.updateStructureView()
         self.updateCalculatedData()
 
-    # Fitables
+    ####################################################################################################################
+    # Parameters
+    ####################################################################################################################
 
     def _setFitablesList(self):
         self._fitables_list = []
@@ -757,6 +821,9 @@ class PyQmlProxy(QObject):
         self._editValue(obj_id, new_value)
 
     #
+
+    ####################################################################################################################
+
 
     @Slot()
     def fit(self):

@@ -5,6 +5,7 @@ import os, sys
 import xml.dom.minidom
 import dephell_licenses
 import Functions, Config
+import Signatures
 
 
 CONFIG = Config.Config()
@@ -284,6 +285,16 @@ def createOnlineRepository():
     else:
         Functions.printSuccessMessage(message)
 
+
+def signInstaller():
+    if CONFIG.os == 'windows':
+        Signatures.sign_windows()
+    elif CONFIG.os == 'macos':
+        Signatures.sign_macos()
+    else:
+        Signatures.sign_linux()
+
+
 def createInstaller():
     try:
         message = 'create installer'
@@ -307,6 +318,7 @@ def createInstaller():
     else:
         Functions.printSuccessMessage(message)
 
+
 if __name__ == "__main__":
     downloadQtInstallerFramework()
     osDependentPreparation()
@@ -314,3 +326,4 @@ if __name__ == "__main__":
     createInstallerSourceDir()
     createOnlineRepository()
     createInstaller()
+    signInstaller()

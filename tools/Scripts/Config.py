@@ -34,12 +34,21 @@ class Config():
         # Application repository
         self.repository_dir_suffix = self.__dict__['ci']['app']['setup']['repository_dir_suffix']
 
-
         # Project
         self.package_name = f'{self.app_name}App'
         self.license_file = self.__dict__['ci']['project']['license_file']
 
-
+        # Certificates
+        #print(self.__dict__['ci']['scripts']['certificate_name'][Functions.osName()])
+        print(Functions.osName())
+        print(self.__dict__['ci']['project']['subdirs']['certificates_path'])
+        print(self.__dict__['ci']['scripts']['certificate_name'])
+        self.certificate_path = os.path.join(self.__dict__['ci']['project']['subdirs']['certificates_path'],
+                                             self.__dict__['ci']['scripts']['certificate_name'] + "_" +
+                                             Functions.osName()[0:3])
+        self.certificate_zip_path = os.path.join(self.__dict__['ci']['project']['subdirs']['certificates_path'],
+                                                 'codesigning.zip')
+        print(self.certificate_path)
 
 
     def __getitem__(self, key):

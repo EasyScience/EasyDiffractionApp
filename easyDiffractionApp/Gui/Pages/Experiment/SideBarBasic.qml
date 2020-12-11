@@ -40,8 +40,10 @@ EaComponents.SideBarColumn {
                 text: qsTr("Continue without experiment data")
 
                 onClicked: {
-                    ExGlobals.Variables.experimentSkipped = true
                     ExGlobals.Variables.analysisPageEnabled = true
+
+                    ExGlobals.Variables.experimentSkipped = true
+                    ExGlobals.Constants.proxy.experimentSkipped = true
                 }
 
                 Component.onCompleted: ExGlobals.Variables.continueWithoutExperimentDataButton = continueWithoutExperimentDataButton
@@ -133,11 +135,15 @@ EaComponents.SideBarColumn {
         nameFilters: [ qsTr("Data files") + " (*.xye *.xys *.xy)" ]
 
         onAccepted: {
+            ExGlobals.Variables.analysisPageEnabled = true
+
             ExGlobals.Variables.experimentSkipped = false
+            ExGlobals.Constants.proxy.experimentSkipped = false
+
             ExGlobals.Variables.experimentLoaded = true
             ExGlobals.Constants.proxy.experimentLoaded = true
-            ExGlobals.Variables.analysisPageEnabled = true
-            ExGlobals.Constants.proxy.loadExperimentDataFromTxt(fileUrl)
+
+            ExGlobals.Constants.proxy.addExperimentDataFromXye(fileUrl)
         }
     }
 

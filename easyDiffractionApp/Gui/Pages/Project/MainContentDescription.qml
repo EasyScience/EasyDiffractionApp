@@ -25,7 +25,7 @@ Rectangle {
             font.pixelSize: EaStyle.Sizes.fontPixelSize * 3
             font.weight: Font.ExtraLight
             text: ExGlobals.Constants.proxy.projectInfoAsJson.name
-            onEditingFinished: ExGlobals.Constants.proxy.editProjectInfoByKey("name", text)
+            onEditingFinished: ExGlobals.Constants.proxy.editProjectInfo("name", text)
         }
 
         Grid {
@@ -39,7 +39,7 @@ Rectangle {
             }
             EaElements.TextInput {
                 text: ExGlobals.Constants.proxy.projectInfoAsJson.keywords
-                onEditingFinished: ExGlobals.Constants.proxy.editProjectInfoByKey("keywords", text)
+                onEditingFinished: ExGlobals.Constants.proxy.editProjectInfo("keywords", text)
             }
 
             EaElements.Label {
@@ -48,7 +48,7 @@ Rectangle {
             }
             EaElements.TextInput {
                 text: ExGlobals.Constants.proxy.projectInfoAsJson.samples
-                onEditingFinished: ExGlobals.Constants.proxy.editProjectInfoByKey("samples", text)
+                onEditingFinished: ExGlobals.Constants.proxy.editProjectInfo("samples", text)
             }
 
             EaElements.Label {
@@ -57,7 +57,7 @@ Rectangle {
             }
             EaElements.TextInput {
                 text: ExGlobals.Constants.proxy.projectInfoAsJson.experiments
-                onEditingFinished: ExGlobals.Constants.proxy.editProjectInfoByKey("experiments", text)
+                onEditingFinished: ExGlobals.Constants.proxy.editProjectInfo("experiments", text)
             }
 
             EaElements.Label {
@@ -66,7 +66,7 @@ Rectangle {
             }
             EaElements.TextInput {
                 text: ExGlobals.Constants.proxy.projectInfoAsJson.calculations
-                onEditingFinished: ExGlobals.Constants.proxy.editProjectInfoByKey("calculations", text)
+                onEditingFinished: ExGlobals.Constants.proxy.editProjectInfo("calculations", text)
             }
 
             EaElements.Label {

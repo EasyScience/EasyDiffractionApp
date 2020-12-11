@@ -27,13 +27,13 @@ EaComponents.SideBarColumn {
                 id: calculatorSelector
 
                 width: minimizerSelector.width
-                model: ExGlobals.Constants.proxy.calculatorList
-                onActivated: ExGlobals.Constants.proxy.calculatorIndex = currentIndex
+                model: ExGlobals.Constants.proxy.calculatorNames
+                onActivated: ExGlobals.Constants.proxy.changeCurrentCalculator(currentIndex)
 
                 //currentIndex: ExGlobals.Constants.proxy.calculatorIndex
                 Component.onCompleted: {
                     ExGlobals.Variables.calculatorSelector = calculatorSelector
-                    currentIndex = ExGlobals.Constants.proxy.calculatorIndex
+                    currentIndex = ExGlobals.Constants.proxy.currentCalculatorIndex
                 }
             }
         }
@@ -60,10 +60,10 @@ EaComponents.SideBarColumn {
 
                 width: (EaStyle.Sizes.sideBarContentWidth - minimizerLabel.width * 2 - EaStyle.Sizes.fontPixelSize * 4) / 2
 
-                model: ExGlobals.Constants.proxy.minimizerList
+                model: ExGlobals.Constants.proxy.minimizerNames
 
                 onCurrentValueChanged: {
-                    ExGlobals.Constants.proxy.minimizerIndex = currentIndex
+                    ExGlobals.Constants.proxy.changeCurrentMinimizer(currentIndex)
 
                     let idx = 0
                     if (currentValue === 'lmfit') {
@@ -76,7 +76,7 @@ EaComponents.SideBarColumn {
                     }
                 }
 
-                Component.onCompleted: currentIndex = ExGlobals.Constants.proxy.minimizerIndex
+                Component.onCompleted: currentIndex = ExGlobals.Constants.proxy.currentMinimizerIndex
             }
 
             // Spacer
@@ -92,8 +92,9 @@ EaComponents.SideBarColumn {
                 id: methodSelector
 
                 width: minimizerSelector.width
-                model: ExGlobals.Constants.proxy.minimizerMethodList
-                onCurrentValueChanged: ExGlobals.Constants.proxy.minimizerMethodIndex = currentIndex
+                model: ExGlobals.Constants.proxy.minimizerMethodNames
+                onCurrentValueChanged: ExGlobals.Constants.proxy.changeCurrentMinimizerMethod(currentIndex)
+                Component.onCompleted: currentIndex = ExGlobals.Constants.proxy.currentMinimizerMethodIndex
             }
         }
 

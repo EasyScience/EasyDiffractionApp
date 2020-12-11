@@ -20,7 +20,8 @@ EaComponents.TableView {
     model: XmlListModel {
         id: fitablesModel
 
-        xml: ExGlobals.Constants.proxy.fitablesListAsXml
+        //xml: ExGlobals.Constants.proxy.fitablesListAsXml
+        xml: ExGlobals.Constants.proxy.parametersAsXml
 
         query: "/root/item"
 
@@ -112,10 +113,11 @@ EaComponents.TableView {
     }
 
     function editParameterValue(id, value) {
-        ExGlobals.Constants.proxy.editParameterValue(id, parseFloat(value))
+        //ExGlobals.Constants.proxy.editParameter(id, parseFloat(value))
+        ExGlobals.Constants.proxy.editParameter(id, parseFloat(value))
     }
     function editParameterFit(id, value) {
-        ExGlobals.Constants.proxy.editParameterFit(id, value)
+        ExGlobals.Constants.proxy.editParameter(id, value)
     }
 
     function formatLabel(index, label) {

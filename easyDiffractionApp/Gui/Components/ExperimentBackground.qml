@@ -73,7 +73,7 @@ EaComponents.TableView {
     // Logic
 
     function editParameterValue(id, value) {
-        ExGlobals.Constants.proxy.editParameterValue(id, parseFloat(value))
+        ExGlobals.Constants.proxy.editParameter(id, parseFloat(value))
     }
 
 }

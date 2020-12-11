@@ -40,7 +40,7 @@ EaComponents.SideBarColumn {
                 text: qsTr("Set new phase manually")
 
                 onClicked: {
-                    ExGlobals.Constants.proxy.addSampleManual()
+                    ExGlobals.Constants.proxy.addDefaultPhase()
                     ExGlobals.Variables.experimentPageEnabled = true
                     ExGlobals.Variables.sampleLoaded = true
                 }

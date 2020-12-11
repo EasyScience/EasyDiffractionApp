@@ -61,11 +61,11 @@ class PyQmlProxy {
         return "<root><item><label>Co2SiO4</label><color>darkolivegreen</color><crystal_system>orthorhombic</crystal_system><space_group_name>P n m a</space_group_name><space_group_setting>abc</space_group_setting><cell_length_a>10.28</cell_length_a><cell_length_b>10.28</cell_length_b><cell_length_c>10.28</cell_length_c><cell_angle_alpha>90.0</cell_angle_alpha><cell_angle_beta>90.0</cell_angle_beta><cell_angle_gamma>90.0</cell_angle_gamma><atoms><item><label>Co1</label><type>Co</type><color>coral</color><x>0.0</x><y>0.0</y><z>0.0</z><occupancy>1.0</occupancy><adp_type>Uiso</adp_type><adp_iso>0.004</adp_iso></item><item><label>Co2</label><type>Co</type><color>coral</color><x>0.279</x><y>0.279</y><z>0.279</z><occupancy>1.0</occupancy><adp_type>Uiso</adp_type><adp_iso>0.007</adp_iso></item><item><label>Si</label><type>Si</type><color>steelblue</color><x>0.094</x><y>0.094</y><z>0.094</z><occupancy>1.0</occupancy><adp_type>Uiso</adp_type><adp_iso>0.005</adp_iso></item><item><label>O1</label><type>O</type><color>darkolivegreen</color><x>0.091</x><y>0.091</y><z>0.091</z><occupancy>1.0</occupancy><adp_type>Uiso</adp_type><adp_iso>0.008</adp_iso></item><item><label>O2</label><type>O</type><color>darkolivegreen</color><x>0.448</x><y>0.448</y><z>0.448</z><occupancy>1.0</occupancy><adp_type>Uiso</adp_type><adp_iso>0.008</adp_iso></item><item><label>O3</label><type>O</type><color>darkolivegreen</color><x>0.164</x><y>0.164</y><z>0.164</z><occupancy>1.0</occupancy><adp_type>Uiso</adp_type><adp_iso>0.011</adp_iso></item></atoms></item><item><label>CoO</label><color>steelblue</color><crystal_system>cubic</crystal_system><space_group_name>F m -3 m</space_group_name><space_group_setting>1</space_group_setting><cell_length_a>3.02</cell_length_a><cell_length_b>3.02</cell_length_b><cell_length_c>3.02</cell_length_c><cell_angle_alpha>90.0</cell_angle_alpha><cell_angle_beta>90.0</cell_angle_beta><cell_angle_gamma>90.0</cell_angle_gamma><atoms><item><label>Co</label><type>Co</type><color>coral</color><x>0.0</x><y>0.0</y><z>0.0</z><occupancy>1.0</occupancy><adp_type>Uiso</adp_type><adp_iso>0.0</adp_iso></item><item><label>O</label><type>O</type><color>darkolivegreen</color><x>0.2471</x><y>0.4986</y><z>0.7497</z><occupancy>1.0</occupancy><adp_type>Uiso</adp_type><adp_iso>0.0</adp_iso></item></atoms></item></root>"
     }
 
-    get patternParameters() {
+    get patternParametersAsObj() {
         return '{"@class":"Pars1D","@id":"289857289003165349435392304205278839965","@module":"easyDiffractionLib.Elements.Experiments.Instrument","@version":"0.0.1","u_resolution":{"@class":"Parameter","@id":"190802142075267106673772563447888499596","@module":"easyCore.Objects.Base","@version":"0.0.1","enabled":true,"error":"","fixed":true,"max":null,"min":null,"name":"u_resolution","units":"dimensionless","value":0.4},"v_resolution":{"@class":"Parameter","@id":"273181372300021220998396671000443462503","@module":"easyCore.Objects.Base","@version":"0.0.1","enabled":true,"error":"","fixed":true,"max":null,"min":null,"name":"v_resolution","units":"dimensionless","value":-0.5},"w_resolution":{"@class":"Parameter","@id":"30030196644492625540726254594186606452","@module":"easyCore.Objects.Base","@version":"0.0.1","enabled":true,"error":"","fixed":true,"max":null,"min":null,"name":"w_resolution","units":"dimensionless","value":0.9},"wavelength":{"@class":"Parameter","@id":"228373188824216032162890899335778023793","@module":"easyCore.Objects.Base","@version":"0.0.1","enabled":true,"error":"","fixed":true,"max":null,"min":null,"name":"wavelength","units":"angstrom","value":1.54056},"x_resolution":{"@class":"Parameter","@id":"306304673619577410211065720144740440524","@module":"easyCore.Objects.Base","@version":"0.0.1","enabled":true,"error":"","fixed":true,"max":null,"min":null,"name":"x_resolution","units":"dimensionless","value":0}}'
     }
 
-    get instrumentParameters() {
+    get instrumentParametersAsObj() {
         return '{"@class":"Pars1D","@id":"289857289003165349435392304205278839965","@module":"easyDiffractionLib.Elements.Experiments.Instrument","@version":"0.0.1","u_resolution":{"@class":"Parameter","@id":"190802142075267106673772563447888499596","@module":"easyCore.Objects.Base","@version":"0.0.1","enabled":true,"error":"","fixed":true,"max":null,"min":null,"name":"u_resolution","units":"dimensionless","value":0.4},"v_resolution":{"@class":"Parameter","@id":"273181372300021220998396671000443462503","@module":"easyCore.Objects.Base","@version":"0.0.1","enabled":true,"error":"","fixed":true,"max":null,"min":null,"name":"v_resolution","units":"dimensionless","value":-0.5},"w_resolution":{"@class":"Parameter","@id":"30030196644492625540726254594186606452","@module":"easyCore.Objects.Base","@version":"0.0.1","enabled":true,"error":"","fixed":true,"max":null,"min":null,"name":"w_resolution","units":"dimensionless","value":0.9},"wavelength":{"@class":"Parameter","@id":"228373188824216032162890899335778023793","@module":"easyCore.Objects.Base","@version":"0.0.1","enabled":true,"error":"","fixed":true,"max":null,"min":null,"name":"wavelength","units":"angstrom","value":1.54056},"x_resolution":{"@class":"Parameter","@id":"306304673619577410211065720144740440524","@module":"easyCore.Objects.Base","@version":"0.0.1","enabled":true,"error":"","fixed":true,"max":null,"min":null,"name":"x_resolution","units":"dimensionless","value":0}}'
     }
 
@@ -93,7 +93,7 @@ class PyQmlProxy {
         return {"O1":[[0,0.5,0.25],[0,0.5,0.75],[0.5,0,0.25],[0.5,0,0.75],[0.5,1,0.25],[0.5,1,0.75],[1,0.5,0.25],[1,0.5,0.75]],"O2":[[0.25,0.25,0],[0.25,0.25,0.5],[0.25,0.25,1],[0.25,0.75,0],[0.25,0.75,0.5],[0.75,0.25,0],[0.75,0.25,0.5],[0.75,0.25,1],[0.75,0.75,0.5]],"Sr":[[0,0,0.25],[0,0,0.75],[0,1,0.25],[0,1,0.75],[0.5,0.5,0.25],[0.5,0.5,0.75],[1,0,0.25],[1,0,0.75],[1,1,0.25],[1,1,0.75]],"Ti":[[0,0.5,0],[0,0.5,0.5],[0,0.5,1],[0.5,0,0],[0.5,0,0.5],[0.5,0,1],[0.5,1,0],[0.5,1,0.5],[0.5,1,1],[1,0.5,0],[1,0.5,0.5],[1,0.5,1]]}
     }
 
-    get spaceGroupsInts() {
+    get spaceGroupModel() {
         return {"display": []}
     }
 
@@ -105,7 +105,7 @@ class PyQmlProxy {
         return -1
     }
 
-    get simulationParameters() {
+    get simulationParametersAsObj() {
         return {"x_min":0.0,"x_max":180.0,"x_step":0.1}
     }
 
@@ -129,7 +129,7 @@ class PyQmlProxy {
 
     toggleConstraintByIndex(index, enabled) {}
 
-    editProjectInfoByKey(key, value) {}
+    editProjectInfo(key, value) {}
 
     editPhase(p1, p2, p3) {}
 }

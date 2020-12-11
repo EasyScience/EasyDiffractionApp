@@ -22,7 +22,7 @@ Row {
         enabled: !ExGlobals.Variables.experimentLoaded
         width: textFieldWidth()
         units: "deg"
-        text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.simulationParameters.x_min, 3)
+        text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.simulationParametersAsObj.x_min, 3)
         onEditingFinished: updateParameters()
     }
 
@@ -37,7 +37,7 @@ Row {
         enabled: !ExGlobals.Variables.experimentLoaded
         width: textFieldWidth()
         units: "deg"
-        text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.simulationParameters.x_max, 3)
+        text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.simulationParametersAsObj.x_max, 3)
         onEditingFinished: updateParameters()
     }
 
@@ -52,7 +52,7 @@ Row {
         enabled: !ExGlobals.Variables.experimentLoaded
         width: textFieldWidth()
         units: "deg"
-        text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.simulationParameters.x_step, 3)
+        text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.simulationParametersAsObj.x_step, 3)
         onEditingFinished: updateParameters()
     }
 
@@ -68,6 +68,6 @@ Row {
 
     function updateParameters() {
         const json = { "x_min": xMin.text, "x_max": xMax.text, "x_step": xStep.text }
-        ExGlobals.Constants.proxy.simulationParameters = JSON.stringify(json)
+        ExGlobals.Constants.proxy.simulationParametersAsObj = JSON.stringify(json)
     }
 }

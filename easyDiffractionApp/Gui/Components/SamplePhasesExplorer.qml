@@ -51,7 +51,7 @@ EaComponents.TableView {
             width: EaStyle.Sizes.fontPixelSize * 27.9
             headerText: "Label"
             text: model.label
-            onEditingFinished: ExGlobals.Constants.proxy.modifyPhaseName(text)
+            //onEditingFinished: ExGlobals.Constants.proxy.changePhaseName(text) // use Id
         }
 
         /*

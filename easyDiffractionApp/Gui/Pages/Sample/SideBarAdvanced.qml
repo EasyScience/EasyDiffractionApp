@@ -54,8 +54,8 @@ EaComponents.SideBarColumn {
             EaElements.Parameter {
                 anchors.verticalCenter: parent.verticalCenter
                 width: 75
-                onEditingFinished: ExGlobals.Constants.proxy.maxDistance = text
-                Component.onCompleted: text = ExGlobals.Constants.proxy.maxDistance
+                onEditingFinished: ExGlobals.Constants.proxy.bondsMaxDistance = text
+                Component.onCompleted: text = ExGlobals.Constants.proxy.bondsMaxDistance
             }
 
         }

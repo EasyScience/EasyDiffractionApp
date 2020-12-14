@@ -46,15 +46,15 @@ def sign_windows():
     print('* Sign code with imported certificate')
     Functions.run(
         signtool_exe_path, 'sign',              # info - https://msdn.microsoft.com/en-us/data/ff551778(v=vs.71)
-        #'/f', certificate_file_path,           # signing certificate in a file
-        #'/p', certificate_password,            # password to use when opening a PFX file
+        '/f', certificate_file_path,           # signing certificate in a file
+        '/p', certificate_password,            # password to use when opening a PFX file
         '/sm',                                  # use a machine certificate store instead of a user certificate store
         '/d', app_name,                         # description of the signed content
         '/du', app_url,                         # URL for the expanded description of the signed content
         '/t', 'http://timestamp.digicert.com',  # URL to a timestamp server
-        '/debug',
+        #'/debug',
         '/v',                                   # display the verbose version of operation and warning messages
-        '/a',
+        '/a',                                   # Select the best signing cert automatically
         installer_exe_path
         )
 

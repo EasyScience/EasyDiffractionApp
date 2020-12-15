@@ -115,6 +115,9 @@ class PyQmlProxy(QObject):
         self._experiment_figure_obj_name = None
         self._analysis_figure_obj_name = None
         self._difference_figure_obj_name = None
+        self._experiment_figure_obj_ref = None
+        self._analysis_figure_obj_ref = None
+        self._difference_figure_obj_ref = None
 
         # Project
         self._project_info = self._defaultProjectInfo()
@@ -124,9 +127,17 @@ class PyQmlProxy(QObject):
         self._parameters_as_xml = []
 
         self.parametersChanged.connect(self._onParametersChanged)
-        self.parametersChanged.connect(self.phasesChanged)
-        self.parametersChanged.connect(self.patternParametersChanged)
-        self.parametersChanged.connect(self.instrumentParametersChanged)
+#        self.parametersChanged.connect(self.phasesChanged)
+#        self.parametersChanged.connect(self.patternParametersChanged)
+#        self.parametersChanged.connect(self.instrumentParametersChanged)
+        self.parametersChanged.connect(self._onCalculatedDataChanged)
+        self.parametersChanged.connect(self._onPhasesChanged)
+        self.parametersChanged.connect(self._onStructureViewChanged)
+        self.parametersChanged.connect(self._onPatternParametersChanged)
+        self.parametersChanged.connect(self._onInstrumentParametersChanged)
+
+
+
 
         self._parameters_filter_criteria = ""
         self.parametersFilterCriteriaChanged.connect(self._onParametersFilterCriteriaChanged)
@@ -137,11 +148,20 @@ class PyQmlProxy(QObject):
         self._phases_as_cif = ""
 
         self.phaseAdded.connect(self._onPhaseAdded)
-        self.phaseRemoved.connect(self._onPhaseRemoved)
+        self.phaseAdded.connect(self._onPhasesChanged)
+        self.phaseAdded.connect(self._onStructureViewChanged)
+        self.phaseAdded.connect(self._onCalculatedDataChanged)
 
+        self.phaseRemoved.connect(self._onPhaseRemoved)
+        self.phaseRemoved.connect(self._onPhasesChanged)
+        self.phaseRemoved.connect(self._onStructureViewChanged)
+        self.phaseRemoved.connect(self._onCalculatedDataChanged)
+
+#        self.phasesChanged.connect(self.calculatedDataChanged)
+#        self.phasesChanged.connect(self.structureViewChanged)
         self.phasesChanged.connect(self._onPhasesChanged)
-        self.phasesChanged.connect(self.structureViewChanged)
-        self.phasesChanged.connect(self.calculatedDataChanged)
+        self.phasesChanged.connect(self._onStructureViewChanged)
+        self.phasesChanged.connect(self._onCalculatedDataChanged)
 
         self._current_phase_index = 0
         self.currentPhaseChanged.connect(self._onCurrentPhaseChanged)
@@ -242,6 +262,24 @@ class PyQmlProxy(QObject):
     def updateFigureMargins(self, obj_name: str):
         self.matplotlib_bridge.updateWithCanvas(obj_name)
 
+    @Slot('QVariant')
+    def setExperimentFigureObjRef(self, ref):
+        if self._experiment_figure_obj_ref == ref:
+            return
+        self._experiment_figure_obj_ref = ref
+
+    @Slot('QVariant')
+    def setAnalysisFigureObjRef(self, ref):
+        if self._analysis_figure_obj_ref == ref:
+            return
+        self._analysis_figure_obj_ref = ref
+
+    @Slot('QVariant')
+    def setDifferenceFigureObjRef(self, ref):
+        if self._difference_figure_obj_ref == ref:
+            return
+        self._difference_figure_obj_ref = ref
+
     ####################################################################################################################
     ####################################################################################################################
     # PROJECT
@@ -323,18 +361,21 @@ class PyQmlProxy(QObject):
         self.phasesChanged.emit()
 
     def _setPhasesAsList(self):
-        print("+ _setPhasesAsList")
+        start_time = timeit.default_timer()
         self._phases_as_list = self._sample.phases.as_dict()['data']
+        print("+ _setPhasesAsList: {0:.3f} s".format(timeit.default_timer() - start_time))
         self.phasesAsListChanged.emit()
 
     def _setPhasesAsXml(self):
-        print("+ _setPhasesAsXml")
+        start_time = timeit.default_timer()
         self._phases_as_xml = dicttoxml(self._phases_as_list, attr_type=True).decode()
+        print("+ _setPhasesAsXml: {0:.3f} s".format(timeit.default_timer() - start_time))
         self.phasesAsXmlChanged.emit()
 
     def _setPhasesAsCif(self):
-        print("+ _setPhasesAsCif")
+        start_time = timeit.default_timer()
         self._phases_as_cif = str(self._sample.phases.cif)
+        print("+ _setPhasesAsCif: {0:.3f} s".format(timeit.default_timer() - start_time))
         self.phasesAsCifChanged.emit()
 
     def _onPhasesChanged(self):
@@ -381,7 +422,7 @@ class PyQmlProxy(QObject):
         ## self.vtkHandler.plot_system2(self._sample.phases[0])
         self._sample.phases.name = 'Phases'
         #self._sample.set_background(self._background)
-        self.phasesChanged.emit()
+#        self.phasesChanged.emit()
         #self.currentPhaseChanged.emit()
         #self.currentPhaseSitesChanged.emit()
         #self.spaceGroupChanged.emit()
@@ -390,7 +431,7 @@ class PyQmlProxy(QObject):
     def _onPhaseRemoved(self):
         print("***** _onPhaseRemoved")
         ## self.vtkHandler.clearScene()
-        self.phasesChanged.emit()
+#        self.phasesChanged.emit()
         #self.currentPhaseChanged.emit()
         #self.currentPhaseSitesChanged.emit()
         #self.spaceGroupChanged.emit()
@@ -593,11 +634,12 @@ class PyQmlProxy(QObject):
         self.structureViewChanged.emit()
 
     def _updateStructureView(self):
-        print("+ _updateStructureView")
+        start_time = timeit.default_timer()
         if self.vtkHandler is None or not self._sample.phases:
             return
         self.vtkHandler.clearScene()
         self.vtkHandler.plot_system2(self._sample.phases[0])
+        print("+ _updateStructureView: {0:.3f} s".format(timeit.default_timer() - start_time))
 
     def _onStructureViewChanged(self):
         print("***** _onStructureViewChanged")
@@ -709,7 +751,7 @@ class PyQmlProxy(QObject):
         self._experiment_parameters = self._experimentDataParameters(self._experiment_data)
         self.simulationParametersAsObj = json.dumps(self._experiment_parameters)
         self.experiments = [self._defaultExperiment()]
-        self.matplotlib_bridge.updateWithCanvas(self._experiment_figure_obj_name, self._experiment_data)
+        self.matplotlib_bridge.updateWithCanvas(self._experiment_figure_obj_ref, self._experiment_data)
         self.experimentDataChanged.emit()
 
     def _onExperimentDataRemoved(self):
@@ -794,9 +836,10 @@ class PyQmlProxy(QObject):
         return self._pattern_parameters_as_obj
 
     def _setPatternParametersAsObj(self):
-        print("+ _setPatternParametersAsObj")
+        start_time = timeit.default_timer()
         parameters = self._sample.pattern.as_dict()
         self._pattern_parameters_as_obj = parameters
+        print("+ _setPatternParametersAsObj: {0:.3f} s".format(timeit.default_timer() - start_time))
         self.patternParametersAsObjChanged.emit()
 
     def _onPatternParametersChanged(self):
@@ -826,15 +869,17 @@ class PyQmlProxy(QObject):
         return self._instrument_parameters_as_xml
 
     def _setInstrumentParametersAsObj(self):
-        print("+ _setInstrumentParametersAsObj")
+        start_time = timeit.default_timer()
         parameters = self._sample.parameters.as_dict()
         self._instrument_parameters_as_obj = parameters
+        print("+ _setInstrumentParametersAsObj: {0:.3f} s".format(timeit.default_timer() - start_time))
         self.instrumentParametersAsObjChanged.emit()
 
     def _setInstrumentParametersAsXml(self):
-        print("+ _setInstrumentParametersAsXml")
+        start_time = timeit.default_timer()
         parameters = [self._instrument_parameters_as_obj]
         self._instrument_parameters_as_xml = dicttoxml(parameters, attr_type=True).decode()
+        print("+ _setInstrumentParametersAsXml: {0:.3f} s".format(timeit.default_timer() - start_time))
         self.instrumentParametersAsXmlChanged.emit()
 
     def _onInstrumentParametersChanged(self):
@@ -897,7 +942,8 @@ class PyQmlProxy(QObject):
     ####################################################################################################################
 
     def _updateCalculatedData(self):
-        print("+ _updateCalculatedData")
+        start_time = timeit.default_timer()
+
         if not self.experimentLoaded and not self.experimentSkipped:
             return
 
@@ -928,7 +974,7 @@ class PyQmlProxy(QObject):
 
             data = [exp, sim]
 
-            self.matplotlib_bridge.updateWithCanvas(self._difference_figure_obj_name, [zeros_diff, zeros_diff, diff])
+            self.matplotlib_bridge.updateWithCanvas(self._difference_figure_obj_ref, [zeros_diff, zeros_diff, diff])
 
         elif self.experimentSkipped:
             x_min = float(self._simulation_parameters_as_obj['x_min'])
@@ -937,7 +983,7 @@ class PyQmlProxy(QObject):
             num_points = int((x_max - x_min) / x_step + 1)
 
             sim.x = np.linspace(x_min, x_max, num_points)
-            sim.y = self._interface.fit_func(sim.x)
+            sim.y = self._interface.fit_func(sim.x)  # CrysPy: 0.5 s, CrysFML: 0.005 s, GSAS-II: 0.25 s
 
             zeros_sim.x_label = sim.x_label
             zeros_sim.y_label = sim.y_label
@@ -947,9 +993,8 @@ class PyQmlProxy(QObject):
         else:
             print("???")
 
-        self.matplotlib_bridge.updateWithCanvas(self._analysis_figure_obj_name, data)
-
-        #self.modelChanged.emit()
+        self.matplotlib_bridge.updateWithCanvas(self._analysis_figure_obj_ref, data)
+        print("+ _updateCalculatedData: {0:.3f} s".format(timeit.default_timer() - start_time))
 
     def _onCalculatedDataChanged(self):
         print("***** _onCalculatedDataChanged")
@@ -971,8 +1016,8 @@ class PyQmlProxy(QObject):
 
     @Slot(str, 'QVariant')
     def editParameter(self, obj_id: str, new_value: [bool, float, str]):  # covers both parameter and descriptor
-        print(f"+ editParameter {new_value}, {type(new_value)}")
         obj = self._parameterObj(obj_id)
+        print(f"\n\n+ editParameter {obj_id} of {type(new_value)} from {obj.raw_value} to {new_value}")
 
         if type(new_value) is bool:
             if obj.fixed == (not new_value):
@@ -989,16 +1034,14 @@ class PyQmlProxy(QObject):
             self.parametersChanged.emit()
 
     def _parameterObj(self, obj_id: str):
-        print(f"+ _parameterObj {obj_id}")
         if not obj_id:
             return
         obj_id = int(obj_id)
         obj = borg.map.get_item_by_key(obj_id)
-        print(f"  _parameterObj {obj_id} {obj.value}")
         return obj
 
     def _setParametersAsObj(self):
-        print("+ _setParametersAsObj")
+        start_time = timeit.default_timer()
         self._parameters_as_obj.clear()
 
         par_ids, par_paths = generatePath(self._sample, True)
@@ -1022,12 +1065,14 @@ class PyQmlProxy(QObject):
                 "fit": int(not par.fixed)
             })
 
+        print("+ _setParametersAsObj: {0:.3f} s".format(timeit.default_timer() - start_time))
         self.parametersAsObjChanged.emit()
 
     def _setParametersAsXml(self):
-        print("+ _setParametersAsXml")
+        start_time = timeit.default_timer()
         # print(f" _setParametersAsObj self._parameters_as_obj id C {id(self._parameters_as_obj)}")
         self._parameters_as_xml = dicttoxml(self._parameters_as_obj, attr_type=False).decode()
+        print("+ _setParametersAsXml: {0:.3f} s".format(timeit.default_timer() - start_time))
         self.parametersAsXmlChanged.emit()
 
     def _onParametersChanged(self):

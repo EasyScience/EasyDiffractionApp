@@ -101,8 +101,8 @@ Rectangle {
         anchors.left: parent.left
         anchors.right: parent.right
 
-        onHeightChanged: ExGlobals.Constants.proxy.updateFigureMargins("analysisDataChart")
-        onWidthChanged: ExGlobals.Constants.proxy.updateFigureMargins("analysisDataChart")
+//        onHeightChanged: ExGlobals.Constants.proxy.updateFigureMargins("analysisDataChart")
+//        onWidthChanged: ExGlobals.Constants.proxy.updateFigureMargins("analysisDataChart")
 
         color: EaStyle.Colors.mainContentBackground
 
@@ -119,7 +119,10 @@ Rectangle {
 
             dpi_ratio: Screen.devicePixelRatio
 
-            Component.onCompleted: ExGlobals.Constants.proxy.setAnalysisFigureObjName(objectName)
+            Component.onCompleted: {
+                ExGlobals.Constants.proxy.setAnalysisFigureObjName(objectName)
+                ExGlobals.Constants.proxy.setAnalysisFigureObjRef(analysisDataChart)
+            }
         }
     }
 
@@ -133,8 +136,8 @@ Rectangle {
         anchors.left: analysisDataChartContainer.anchors.left
         anchors.right: analysisDataChartContainer.anchors.right
 
-        onHeightChanged: ExGlobals.Constants.proxy.updateFigureMargins("differenceDataChart")
-        onWidthChanged: ExGlobals.Constants.proxy.updateFigureMargins("differenceDataChart")
+//        onHeightChanged: ExGlobals.Constants.proxy.updateFigureMargins("differenceDataChart")
+//        onWidthChanged: ExGlobals.Constants.proxy.updateFigureMargins("differenceDataChart")
 
         color: EaStyle.Colors.mainContentBackground
 
@@ -151,7 +154,10 @@ Rectangle {
 
             dpi_ratio: Screen.devicePixelRatio
 
-            Component.onCompleted: ExGlobals.Constants.proxy.setDifferenceFigureObjName(objectName)
+            Component.onCompleted: {
+                ExGlobals.Constants.proxy.setDifferenceFigureObjName(objectName)
+                ExGlobals.Constants.proxy.setDifferenceFigureObjRef(differenceDataChart)
+            }
         }
     }
 

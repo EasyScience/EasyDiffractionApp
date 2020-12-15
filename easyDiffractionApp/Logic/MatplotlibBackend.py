@@ -31,14 +31,14 @@ class DisplayBridge(QtCore.QObject):
         self.canvas_data = {}
 
     def updateWithCanvas(self, canvas=None, dataset=None):
+        canvas_name = canvas.objectName()
         if self.context is None:
             return
-        canvas_ = self.context.findChild(QtCore.QObject, canvas)
         if dataset is not None:
-            if canvas not in self.canvas_data.keys():
-                self.canvas_data[canvas] = DisplayAdapter(canvas_, dataset, parent=self)
+            if canvas_name not in self.canvas_data.keys():
+                self.canvas_data[canvas_name] = DisplayAdapter(canvas, dataset, parent=self)
             else:
-                self.canvas_data[canvas].current_canvas_data = dataset
+                self.canvas_data[canvas_name].current_canvas_data = dataset
         self.redraw()
 
     def redraw(self, items: List['DisplayAdapter'] = None):
@@ -129,6 +129,8 @@ class DisplayAdapter(QtCore.QObject):
         self.current_canvas = canvas
         self.current_canvas_data = dataset
 
+        self.lines = []
+
     def redraw(self):
         dataset = self.current_canvas_data
 
@@ -140,30 +142,49 @@ class DisplayAdapter(QtCore.QObject):
         if self.current_canvas is None:
             return
 
-        self.figure = self.current_canvas.figure
-        self.figure.patch.set_color(self.style.current_style['figure.facecolor'])
-        self.figure.clf()
-        self.toolbar = NavigationToolbar2QtQuick(canvas=self.current_canvas)
+        if not self.current_canvas.figure.axes:
+            self.toolbar = NavigationToolbar2QtQuick(canvas=self.current_canvas)
+            self.figure = self.current_canvas.figure
 
-        # set margins (!!! should be calculated based on the font size from QML)
-        left_margin = 90 / self.figure.bbox.width
-        right_margin = 15 / self.figure.bbox.width
-        top_margin = 10 / self.figure.bbox.height
-        bottom_margin = 55 / self.figure.bbox.height
-        self.figure.subplots_adjust(left=left_margin, right=1-right_margin, top=1-top_margin, bottom=bottom_margin)
-        self.figure.tight_layout()
+            #self.figure.clf()  # 0.02 s
+            self.figure.patch.set_color(self.style.current_style['figure.facecolor'])
 
-        # make a small plot
-        self.axes = self.figure.add_subplot(111)
-        self.axes.grid(True)
-        self.axes.tick_params(width=0)
+            # set margins (!!! should be calculated based on the font size from QML)
+            left_margin = 90 / self.figure.bbox.width
+            right_margin = 15 / self.figure.bbox.width
+            top_margin = 10 / self.figure.bbox.height
+            bottom_margin = 55 / self.figure.bbox.height
+            self.figure.subplots_adjust(left=left_margin, right=1-right_margin, top=1-top_margin, bottom=bottom_margin)
+            self.figure.tight_layout()
 
-        for data in dataset:
-            self.axes.plot(data.x, data.y, label=data.name)
+            # make a small plot
+            self.axes = self.figure.add_subplot(111)  # 0.01 s
+            self.axes.grid(True)
+            self.axes.tick_params(width=0)
+
+            # init empty lines for every data in dataset
+            for data in dataset:
+                line, = self.axes.plot([], [])
+                self.lines.append(line)
+
+        # update data for every line
+        for i, data in enumerate(dataset):
+            self.lines[i].set_data(data.x, data.y)
+            self.lines[i].set_label(data.name)
+
+        # rescale
+        self.axes.relim()
+        self.axes.autoscale_view()
+
+        # legend
         if self.show_legend:
             self.axes.legend(loc="upper right")
+
+        # axes labels
         self.axes.set_xlabel(dataset[0].x_label)
         self.axes.set_ylabel(dataset[0].y_label)
+
+        # ...
         self.current_canvas.draw_idle()
 
         # connect for displaying the coordinates

@@ -100,8 +100,8 @@ Rectangle {
         anchors.left: parent.left
         anchors.right: parent.right
 
-        onHeightChanged: ExGlobals.Constants.proxy.updateFigureMargins("experimentDataChart")
-        onWidthChanged: ExGlobals.Constants.proxy.updateFigureMargins("experimentDataChart")
+//        onHeightChanged: ExGlobals.Constants.proxy.updateFigureMargins("experimentDataChart")
+//        onWidthChanged: ExGlobals.Constants.proxy.updateFigureMargins("experimentDataChart")
 
         color: EaStyle.Colors.mainContentBackground
 
@@ -118,7 +118,10 @@ Rectangle {
 
             dpi_ratio: Screen.devicePixelRatio
 
-            Component.onCompleted: ExGlobals.Constants.proxy.setExperimentFigureObjName(objectName)
+            Component.onCompleted: {
+                ExGlobals.Constants.proxy.setExperimentFigureObjName(objectName)
+                ExGlobals.Constants.proxy.setExperimentFigureObjRef(experimentDataChart)
+            }
         }
     }
 

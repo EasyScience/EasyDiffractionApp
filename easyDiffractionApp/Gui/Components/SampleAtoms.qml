@@ -12,8 +12,8 @@ import Gui.Globals 1.0 as ExGlobals
 
 EaComponents.TableView { 
     property bool enableDelButton:
-        typeof ExGlobals.Constants.proxy.phasesAsList[ExGlobals.Constants.proxy.currentPhaseIndex] !== 'undefined'
-        && ExGlobals.Constants.proxy.phasesAsList[ExGlobals.Constants.proxy.currentPhaseIndex].atoms.data.length > 1
+        typeof ExGlobals.Constants.proxy.phasesAsObj[ExGlobals.Constants.proxy.currentPhaseIndex] !== 'undefined'
+        && ExGlobals.Constants.proxy.phasesAsObj[ExGlobals.Constants.proxy.currentPhaseIndex].atoms.data.length > 1
         ? true
         : false
 

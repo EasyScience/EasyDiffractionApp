@@ -82,7 +82,7 @@ EaComponents.SideBarColumn {
                 fontIcon: "plus-circle"
                 text: qsTr("Append new atom")
 
-                onClicked: ExGlobals.Constants.proxy.addAtom()
+                onClicked: ExGlobals.Constants.proxy.addDefaultAtom()
 
                 Component.onCompleted: ExGlobals.Variables.appendNewAtomButton = appendNewAtomButton
             }

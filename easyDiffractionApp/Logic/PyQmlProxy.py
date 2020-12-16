@@ -43,16 +43,18 @@ class PyQmlProxy(QObject):
     simulationParametersChanged = Signal()
     currentPhaseSitesChanged = Signal()
 
-    # Parameters
+    # Any parameter
     parametersChanged = Signal()
     parametersAsObjChanged = Signal()
     parametersAsXmlChanged = Signal()
     parametersFilterCriteriaChanged = Signal()
 
-    # Phases
+    # Structure
+    structureParametersChanged = Signal()
+    structureViewChanged = Signal()
+
     phaseAdded = Signal()
     phaseRemoved = Signal()
-    phasesChanged = Signal()
     phasesAsListChanged = Signal()
     phasesAsXmlChanged = Signal()
     phasesAsCifChanged = Signal()
@@ -74,28 +76,16 @@ class PyQmlProxy(QObject):
     experimentLoadedChanged = Signal()
     experimentSkippedChanged = Signal()
 
-    # Space Group
-    spaceGroupChanged = Signal()
-
-    # Atoms
-    atomsChanged = Signal()
-
-    # Structure View
-    structureViewChanged = Signal()
-
-    # Calculation
+    # Analysis
     calculatedDataChanged = Signal()
 
-    # Minimizer
+    fitFinished = Signal()
+    fitResultsChanged = Signal()
+
     currentMinimizerChanged = Signal()
     currentMinimizerMethodChanged = Signal()
 
-    # Calculator
     currentCalculatorChanged = Signal()
-
-    # Fitting
-    fitFinished = Signal()
-    fitResultsChanged = Signal()
 
     # Status info
     statusInfoChanged = Signal()
@@ -125,53 +115,30 @@ class PyQmlProxy(QObject):
         # Parameters
         self._parameters_as_obj = []
         self._parameters_as_xml = []
-
         self.parametersChanged.connect(self._onParametersChanged)
-#        self.parametersChanged.connect(self.phasesChanged)
-#        self.parametersChanged.connect(self.patternParametersChanged)
-#        self.parametersChanged.connect(self.instrumentParametersChanged)
         self.parametersChanged.connect(self._onCalculatedDataChanged)
-        self.parametersChanged.connect(self._onPhasesChanged)
         self.parametersChanged.connect(self._onStructureViewChanged)
+        self.parametersChanged.connect(self._onStructureParametersChanged)
         self.parametersChanged.connect(self._onPatternParametersChanged)
         self.parametersChanged.connect(self._onInstrumentParametersChanged)
-
-
-
 
         self._parameters_filter_criteria = ""
         self.parametersFilterCriteriaChanged.connect(self._onParametersFilterCriteriaChanged)
 
-        # Phases
+        # Structure
+        self.structureParametersChanged.connect(self._onStructureParametersChanged)
+        self.structureParametersChanged.connect(self._onStructureViewChanged)
+        self.structureParametersChanged.connect(self._onCalculatedDataChanged)
+        self.structureViewChanged.connect(self._onStructureViewChanged)
+
         self._phases_as_list = []
         self._phases_as_xml = ""
         self._phases_as_cif = ""
-
         self.phaseAdded.connect(self._onPhaseAdded)
-        self.phaseAdded.connect(self._onPhasesChanged)
-        self.phaseAdded.connect(self._onStructureViewChanged)
-        self.phaseAdded.connect(self._onCalculatedDataChanged)
-
         self.phaseRemoved.connect(self._onPhaseRemoved)
-        self.phaseRemoved.connect(self._onPhasesChanged)
-        self.phaseRemoved.connect(self._onStructureViewChanged)
-        self.phaseRemoved.connect(self._onCalculatedDataChanged)
-
-#        self.phasesChanged.connect(self.calculatedDataChanged)
-#        self.phasesChanged.connect(self.structureViewChanged)
-        self.phasesChanged.connect(self._onPhasesChanged)
-        self.phasesChanged.connect(self._onStructureViewChanged)
-        self.phasesChanged.connect(self._onCalculatedDataChanged)
 
         self._current_phase_index = 0
         self.currentPhaseChanged.connect(self._onCurrentPhaseChanged)
-
-        # Simulation
-        self._simulation_parameters_as_obj = self.defaultSimulationParameters()
-        self._background = self.defaultBackground()
-        self._data = self.defaultData()
-
-        self.simulationParametersChanged.connect(self._onSimulationParametersChanged)
 
         # Experiment
         self._pattern_parameters_as_obj = self.defaultPatternParameters()
@@ -191,38 +158,31 @@ class PyQmlProxy(QObject):
 
         self._experiment_loaded = False
         self._experiment_skipped = False
-        self.experimentLoadedChanged.connect(self._onParametersChanged)
-        self.experimentLoadedChanged.connect(self.patternParametersChanged)
-        self.experimentLoadedChanged.connect(self.instrumentParametersChanged)
-        self.experimentSkippedChanged.connect(self._onParametersChanged)
-        self.experimentSkippedChanged.connect(self.patternParametersChanged)
-        self.experimentSkippedChanged.connect(self.instrumentParametersChanged)
+        self.experimentLoadedChanged.connect(self._onExperimentLoadedChanged)
+        self.experimentSkippedChanged.connect(self._onExperimentSkippedChanged)
 
-        # Space group
-        self.spaceGroupChanged.connect(self._onSpaceGroupChanged)
 
-        # Atoms
-        self.atomsChanged.connect(self._onAtomsChanged)
+        # Simulation
+        self._simulation_parameters_as_obj = self.defaultSimulationParameters()
+        self._background = self.defaultBackground()
+        self._data = self.defaultData()
 
-        # Structure view
-        self.structureViewChanged.connect(self._onStructureViewChanged)
+        self.simulationParametersChanged.connect(self._onSimulationParametersChanged)
 
-        # Calculation
+
+        # Analysis
         self.calculatedDataChanged.connect(self._onCalculatedDataChanged)
 
-        # Fitting
         self._fit_results = self.defaultFitResults()
         self.fitter = Fitter(self._sample, self._interface.fit_func)
         self.fitFinished.connect(self._onFitFinished)
 
-        # Calculator
-        self.currentCalculatorChanged.connect(self._onCurrentCalculatorChanged)
-
-        # Minimizer
         self._current_minimizer_method_index = 0
         self._current_minimizer_method_name = self.fitter.available_methods()[0]
         self.currentMinimizerChanged.connect(self._onCurrentMinimizerChanged)
         self.currentMinimizerMethodChanged.connect(self._onCurrentMinimizerMethodChanged)
+
+        self.currentCalculatorChanged.connect(self._onCurrentCalculatorChanged)
 
         # Status info
         self.statusInfoChanged.connect(self._onStatusInfoChanged)
@@ -358,7 +318,7 @@ class PyQmlProxy(QObject):
             return
 
         self._sample.phases = Phases.from_cif_str(phases_as_cif)
-        self.phasesChanged.emit()
+        self.structureParametersChanged.emit()
 
     def _setPhasesAsList(self):
         start_time = timeit.default_timer()
@@ -378,8 +338,8 @@ class PyQmlProxy(QObject):
         print("+ _setPhasesAsCif: {0:.3f} s".format(timeit.default_timer() - start_time))
         self.phasesAsCifChanged.emit()
 
-    def _onPhasesChanged(self):
-        print("***** _onPhasesChanged")
+    def _onStructureParametersChanged(self):
+        print("***** _onStructureParametersChanged")
         self._setPhasesAsList()  # 0.025 s
         self._setPhasesAsXml()  # 0.065 s
         self._setPhasesAsCif()  # 0.010 s
@@ -422,7 +382,7 @@ class PyQmlProxy(QObject):
         ## self.vtkHandler.plot_system2(self._sample.phases[0])
         self._sample.phases.name = 'Phases'
         #self._sample.set_background(self._background)
-#        self.phasesChanged.emit()
+        self.structureParametersChanged.emit()
         #self.currentPhaseChanged.emit()
         #self.currentPhaseSitesChanged.emit()
         #self.spaceGroupChanged.emit()
@@ -431,7 +391,7 @@ class PyQmlProxy(QObject):
     def _onPhaseRemoved(self):
         print("***** _onPhaseRemoved")
         ## self.vtkHandler.clearScene()
-#        self.phasesChanged.emit()
+        self.structureParametersChanged.emit()
         #self.currentPhaseChanged.emit()
         #self.currentPhaseSitesChanged.emit()
         #self.spaceGroupChanged.emit()
@@ -442,12 +402,12 @@ class PyQmlProxy(QObject):
 
     # Crystal system
 
-    @Property('QVariant', notify=spaceGroupChanged)
+    @Property('QVariant', notify=structureParametersChanged)
     def crystalSystemList(self):
         systems = [system.capitalize() for system in SpacegroupInfo.get_all_systems()]
         return systems
 
-    @Property(str, notify=spaceGroupChanged)
+    @Property(str, notify=structureParametersChanged)
     def currentCrystalSystem(self):
         phases = self._sample.phases
         if not phases:
@@ -467,7 +427,7 @@ class PyQmlProxy(QObject):
 
     # Space group number and name
 
-    @Property('QVariant', notify=spaceGroupChanged)
+    @Property('QVariant', notify=structureParametersChanged)
     def formattedSpaceGroupList(self):
         def format_display(num):
             name = SpacegroupInfo.get_symbol_from_int_number(num)
@@ -477,7 +437,7 @@ class PyQmlProxy(QObject):
         display_list = [format_display(num) for num in space_group_numbers]
         return display_list
 
-    @Property(int, notify=spaceGroupChanged)
+    @Property(int, notify=structureParametersChanged)
     def currentSpaceGroup(self):
         def space_group_index(number, numbers):
             if number in numbers:
@@ -512,7 +472,7 @@ class PyQmlProxy(QObject):
 
     # Space group setting
 
-    @Property('QVariant', notify=spaceGroupChanged)
+    @Property('QVariant', notify=structureParametersChanged)
     def formattedSpaceGroupSettingList(self):
         def format_display(num, name):
             return f"<font color='#999'>{num}</font> {name}"
@@ -521,7 +481,7 @@ class PyQmlProxy(QObject):
         formatted_list = [format_display(i+1, name) for i, name in enumerate(raw_list)]
         return formatted_list
 
-    @Property(int, notify=spaceGroupChanged)
+    @Property(int, notify=structureParametersChanged)
     def currentSpaceGroupSetting(self):
         phases = self._sample.phases
         if not phases:
@@ -555,33 +515,26 @@ class PyQmlProxy(QObject):
             return
 
         phases[self.currentPhaseIndex].spacegroup.space_group_HM_name = new_name
-        self.spaceGroupChanged.emit()
-
-    def _onSpaceGroupChanged(self):
-        print("***** _onSpaceGroupChanged")
+        self.structureParametersChanged.emit()
 
     ####################################################################################################################
     # Phase: Atoms
     ####################################################################################################################
 
     @Slot()
-    def addAtom(self):
+    def addDefaultAtom(self):
         try:
             atom = Site.default('Label2', 'H')
             atom.add_adp('Uiso', Uiso=0.0)
             self._sample.phases[self.currentPhaseIndex].add_atom(atom)
-            self.atomsChanged.emit()
+            self.structureParametersChanged.emit()
         except AttributeError:
             print("Error: failed to add atom")
 
     @Slot(str)
     def removeAtom(self, atom_label: str):
         del self._sample.phases[self.currentPhaseIndex].atoms[atom_label]
-        self.atomsChanged.emit()
-
-    def _onAtomsChanged(self):
-        print("***** _onAtomsChanged")
-        self.phasesChanged.emit()
+        self.structureParametersChanged.emit()
 
     ####################################################################################################################
     # Current phase
@@ -786,6 +739,21 @@ class PyQmlProxy(QObject):
         self._experiment_skipped = skipped
         self.experimentSkippedChanged.emit()
 
+    def _onExperimentLoadedChanged(self):
+        print("***** _onExperimentLoadedChanged")
+        if self.experimentLoaded:
+            self._onParametersChanged()
+            self.instrumentParametersChanged.emit()
+            self.patternParametersChanged.emit()
+
+    def _onExperimentSkippedChanged(self):
+        print("***** _onExperimentSkippedChanged")
+        if self.experimentSkipped:
+            self._onParametersChanged()
+            self.instrumentParametersChanged.emit()
+            self.patternParametersChanged.emit()
+            self.calculatedDataChanged.emit()
+
     ####################################################################################################################
     # Simulation parameters
     ####################################################################################################################
@@ -810,15 +778,7 @@ class PyQmlProxy(QObject):
         self.simulationParametersChanged.emit()
 
     def _onSimulationParametersChanged(self):
-        x_min = float(self._simulation_parameters_as_obj['x_min'])
-        x_max = float(self._simulation_parameters_as_obj['x_max'])
-        x_step = float(self._simulation_parameters_as_obj['x_step'])
-        num_points = int((x_max - x_min) / x_step + 1)
-
-        sim = self._data.simulations[0]
-        sim.x = np.linspace(x_min, x_max, num_points)
-        sim.y = self._interface.fit_func(sim.x)
-
+        print("***** _onSimulationParametersChanged")
         self.calculatedDataChanged.emit()
 
     ####################################################################################################################
@@ -916,7 +876,7 @@ class PyQmlProxy(QObject):
         self._sample.set_background(self._background)
         self._backgroundChanged.emit()
         self._updateCalculatedData()
-        self.phasesChanged.emit()
+        self.structureParametersChanged.emit()
         #self.modelChanged.emit()
 
     @Slot()
@@ -928,7 +888,7 @@ class PyQmlProxy(QObject):
         self._sample.set_background(self._background)
         self._backgroundChanged.emit()
         self._updateCalculatedData()
-        self.phasesChanged.emit()
+        self.structureParametersChanged.emit()
         #self.modelChanged.emit()
 
     ####################################################################################################################
@@ -1001,7 +961,7 @@ class PyQmlProxy(QObject):
         self._updateCalculatedData()
 
     ####################################################################################################################
-    # Any parameter (parameters table from analysis tab & ...)
+    # Fitables (parameters table from analysis tab & ...)
     ####################################################################################################################
 
     @Property('QVariant', notify=parametersAsObjChanged)
@@ -1013,32 +973,6 @@ class PyQmlProxy(QObject):
     def parametersAsXml(self):
         #print("+ parametersAsXml")
         return self._parameters_as_xml
-
-    @Slot(str, 'QVariant')
-    def editParameter(self, obj_id: str, new_value: [bool, float, str]):  # covers both parameter and descriptor
-        obj = self._parameterObj(obj_id)
-        print(f"\n\n+ editParameter {obj_id} of {type(new_value)} from {obj.raw_value} to {new_value}")
-
-        if type(new_value) is bool:
-            if obj.fixed == (not new_value):
-                return
-
-            obj.fixed = not new_value
-            self._onParametersChanged()
-
-        else:
-            if obj.raw_value == new_value:
-                return
-
-            obj.value = new_value
-            self.parametersChanged.emit()
-
-    def _parameterObj(self, obj_id: str):
-        if not obj_id:
-            return
-        obj_id = int(obj_id)
-        obj = borg.map.get_item_by_key(obj_id)
-        return obj
 
     def _setParametersAsObj(self):
         start_time = timeit.default_timer()
@@ -1092,6 +1026,36 @@ class PyQmlProxy(QObject):
     def _onParametersFilterCriteriaChanged(self):
         print("***** _onParametersFilterCriteriaChanged")
         #self.modelChanged.emit()
+
+    ####################################################################################################################
+    # Any parameter
+    ####################################################################################################################
+
+    @Slot(str, 'QVariant')
+    def editParameter(self, obj_id: str, new_value: [bool, float, str]):  # covers both parameter and descriptor
+        obj = self._parameterObj(obj_id)
+        print(f"\n\n+ editParameter {obj_id} of {type(new_value)} from {obj.raw_value} to {new_value}")
+
+        if type(new_value) is bool:
+            if obj.fixed == (not new_value):
+                return
+
+            obj.fixed = not new_value
+            self._onParametersChanged()
+
+        else:
+            if obj.raw_value == new_value:
+                return
+
+            obj.value = new_value
+            self.parametersChanged.emit()
+
+    def _parameterObj(self, obj_id: str):
+        if not obj_id:
+            return
+        obj_id = int(obj_id)
+        obj = borg.map.get_item_by_key(obj_id)
+        return obj
 
     ####################################################################################################################
     # Minimizer

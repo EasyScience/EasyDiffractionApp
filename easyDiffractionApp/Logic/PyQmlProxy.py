@@ -1027,6 +1027,7 @@ class PyQmlProxy(QObject):
 
     def _onParametersFilterCriteriaChanged(self):
         print("***** _onParametersFilterCriteriaChanged")
+        self._onParametersChanged()
 
     ####################################################################################################################
     # Any parameter

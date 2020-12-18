@@ -228,7 +228,7 @@ EaComponents.ApplicationWindow {
             sideBar: EaComponents.SideBar {
                 tabs: [
                     EaElements.TabButton { text: qsTr("Basic controls") },
-                    EaElements.TabButton { text: qsTr("Advanced controls"); enabled: false }
+                    EaElements.TabButton { text: qsTr("Advanced controls") }
                 ]
 
                 items: [

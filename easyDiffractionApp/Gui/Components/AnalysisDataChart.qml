@@ -11,8 +11,6 @@ import Gui.Globals 1.0 as ExGlobals
 import Gui.Components 1.0 as ExComponents
 
 Rectangle {
-    property bool isDarkTheme: EaStyle.Colors.isDarkTheme
-    property bool isExperimentStepDone: ExGlobals.Variables.experimentLoaded || ExGlobals.Variables.experimentSkipped
     property bool showLegend: ExGlobals.Variables.showLegend
 
     color: EaStyle.Colors.mainContentBackground
@@ -36,21 +34,21 @@ Rectangle {
                 fontIcon: "home"
                 ToolTip.text: qsTr("Home")
 
-                onClicked: _matplotlibBridge.home(analysisDataChart.objectName)
+                onClicked: _matplotlibBridge.home(analysisDataChart)
             }
 
             EaElements.ToolButton {
                 fontIcon: "\uf2ea"
                 ToolTip.text: qsTr("Back")
 
-                onClicked: _matplotlibBridge.back(analysisDataChart.objectName)
+                onClicked: _matplotlibBridge.back(analysisDataChart)
             }
 
             EaElements.ToolButton {
                 fontIcon: "\uf2f9"
                 ToolTip.text: qsTr("Forward")
 
-                onClicked: _matplotlibBridge.forward(analysisDataChart.objectName)
+                onClicked: _matplotlibBridge.forward(analysisDataChart)
             }
 
             Rectangle {
@@ -72,7 +70,7 @@ Rectangle {
                     if (zoom.checked) {
                         zoom.checked = false
                     }
-                    _matplotlibBridge.pan(analysisDataChart.objectName)
+                    _matplotlibBridge.pan(analysisDataChart)
                 }
             }
 
@@ -87,7 +85,7 @@ Rectangle {
                     if (pan.checked) {
                         pan.checked = false
                     }
-                    _matplotlibBridge.zoom(analysisDataChart.objectName)
+                    _matplotlibBridge.zoom(analysisDataChart)
                 }
             }
         }
@@ -101,8 +99,8 @@ Rectangle {
         anchors.left: parent.left
         anchors.right: parent.right
 
-//        onHeightChanged: ExGlobals.Constants.proxy.updateFigureMargins("analysisDataChart")
-//        onWidthChanged: ExGlobals.Constants.proxy.updateFigureMargins("analysisDataChart")
+        onHeightChanged: ExGlobals.Constants.proxy.updateFigureMargins(analysisDataChart)
+        onWidthChanged: ExGlobals.Constants.proxy.updateFigureMargins(analysisDataChart)
 
         color: EaStyle.Colors.mainContentBackground
 
@@ -119,10 +117,7 @@ Rectangle {
 
             dpi_ratio: Screen.devicePixelRatio
 
-            Component.onCompleted: {
-                ExGlobals.Constants.proxy.setAnalysisFigureObjName(objectName)
-                ExGlobals.Constants.proxy.setAnalysisFigureObjRef(analysisDataChart)
-            }
+            Component.onCompleted: ExGlobals.Constants.proxy.setAnalysisFigureCanvas(analysisDataChart)
         }
     }
 
@@ -136,8 +131,8 @@ Rectangle {
         anchors.left: analysisDataChartContainer.anchors.left
         anchors.right: analysisDataChartContainer.anchors.right
 
-//        onHeightChanged: ExGlobals.Constants.proxy.updateFigureMargins("differenceDataChart")
-//        onWidthChanged: ExGlobals.Constants.proxy.updateFigureMargins("differenceDataChart")
+        onHeightChanged: ExGlobals.Constants.proxy.updateFigureMargins(differenceDataChart)
+        onWidthChanged: ExGlobals.Constants.proxy.updateFigureMargins(differenceDataChart)
 
         color: EaStyle.Colors.mainContentBackground
 
@@ -154,28 +149,12 @@ Rectangle {
 
             dpi_ratio: Screen.devicePixelRatio
 
-            Component.onCompleted: {
-                ExGlobals.Constants.proxy.setDifferenceFigureObjName(objectName)
-                ExGlobals.Constants.proxy.setDifferenceFigureObjRef(differenceDataChart)
-            }
+            Component.onCompleted: ExGlobals.Constants.proxy.setDifferenceFigureCanvas(differenceDataChart)
         }
     }
 
-    onIsDarkThemeChanged: updateMatplotlibStyle()
-    onIsExperimentStepDoneChanged: updateMatplotlibStyle()
-
     onShowLegendChanged: {
-        _matplotlibBridge.showLegend(showLegend, analysisDataChart.objectName)
-        _matplotlibBridge.showLegend(showLegend, differenceDataChart.objectName)
-    }
-
-    // Logic
-
-    function updateMatplotlibStyle() {
-        _matplotlibBridge.updateFont(EaStyle.Fonts.fontSource,
-                                     analysisDataChart.objectName)
-        _matplotlibBridge.updateStyle(EaStyle.Colors.isDarkTheme,
-                                      EaStyle.Colors.matplotlibRcParams,
-                                      analysisDataChart.objectName)
+        ExGlobals.Constants.proxy.showMatplotlibLegend(showLegend, analysisDataChart)
+        ExGlobals.Constants.proxy.showMatplotlibLegend(showLegend, differenceDataChart)
     }
 }

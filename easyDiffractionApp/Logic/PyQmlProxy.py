@@ -28,10 +28,6 @@ from easyDiffractionApp.Logic.MatplotlibBackend import DisplayBridge
 
 
 class PyQmlProxy(QObject):
-    # VARIABLES
-
-    matplotlib_bridge = DisplayBridge()
-
     # SIGNALS
 
     # Project
@@ -100,12 +96,11 @@ class PyQmlProxy(QObject):
 
         # Charts
         self.vtkHandler = None
-        self._experiment_figure_obj_name = None
-        self._analysis_figure_obj_name = None
-        self._difference_figure_obj_name = None
-        self._experiment_figure_obj_ref = None
-        self._analysis_figure_obj_ref = None
-        self._difference_figure_obj_ref = None
+
+        self.matplotlib_bridge = DisplayBridge()
+        self._experiment_figure_canvas = None
+        self._analysis_figure_canvas = None
+        self._difference_figure_canvas = None
 
         # Project
         self._project_info = self._defaultProjectInfo()
@@ -192,53 +187,49 @@ class PyQmlProxy(QObject):
 
     ####################################################################################################################
     ####################################################################################################################
-    # Misc
+    # Matplotlib
     ####################################################################################################################
     ####################################################################################################################
+
+    @Slot(str)
+    def setMatplotlibFont(self, font_source):
+        font_path = generalizePath(font_source)  # url -> path
+        self.matplotlib_bridge.setFont(font_path)
+
+    @Slot('QVariant')
+    def updateMatplotlibStyle(self, params):
+        params = params.toVariant()  # PySide2.QtQml.QJSValue -> dict
+        self.matplotlib_bridge.updateStyle(params)
+
+    @Slot(bool, 'QVariant')
+    def showMatplotlibLegend(self, show_legend, canvas):
+        self.matplotlib_bridge.showLegend(show_legend, canvas)
 
     ####################################################################################################################
     # Charts
     ####################################################################################################################
 
-    @Slot(str)
-    def setExperimentFigureObjName(self, name):
-        if self._experiment_figure_obj_name == name:
-            return
-        self._experiment_figure_obj_name = name
-
-    @Slot(str)
-    def setAnalysisFigureObjName(self, name):
-        if self._analysis_figure_obj_name == name:
-            return
-        self._analysis_figure_obj_name = name
-
-    @Slot(str)
-    def setDifferenceFigureObjName(self, name):
-        if self._difference_figure_obj_name == name:
-            return
-        self._difference_figure_obj_name = name
-
-    @Slot(str)
-    def updateFigureMargins(self, obj_name: str):
-        self.matplotlib_bridge.updateWithCanvas(obj_name)
+    @Slot('QVariant')
+    def updateFigureMargins(self, canvas):
+        self.matplotlib_bridge.updateMargins(canvas)
 
     @Slot('QVariant')
-    def setExperimentFigureObjRef(self, ref):
-        if self._experiment_figure_obj_ref == ref:
+    def setExperimentFigureCanvas(self, canvas):
+        if self._experiment_figure_canvas == canvas:
             return
-        self._experiment_figure_obj_ref = ref
+        self._experiment_figure_canvas = canvas
 
     @Slot('QVariant')
-    def setAnalysisFigureObjRef(self, ref):
-        if self._analysis_figure_obj_ref == ref:
+    def setAnalysisFigureCanvas(self, canvas):
+        if self._analysis_figure_canvas == canvas:
             return
-        self._analysis_figure_obj_ref = ref
+        self._analysis_figure_canvas = canvas
 
     @Slot('QVariant')
-    def setDifferenceFigureObjRef(self, ref):
-        if self._difference_figure_obj_ref == ref:
+    def setDifferenceFigureCanvas(self, canvas):
+        if self._difference_figure_canvas == canvas:
             return
-        self._difference_figure_obj_ref = ref
+        self._difference_figure_canvas = canvas
 
     ####################################################################################################################
     ####################################################################################################################
@@ -672,7 +663,7 @@ class PyQmlProxy(QObject):
     def _defaultExperiment(self):
         return {
             "label": "D1A@ILL",
-            "color": "steelblue"
+            "color": "#00a3e3"
         }
 
     def _loadExperimentData(self, file_url):
@@ -698,11 +689,12 @@ class PyQmlProxy(QObject):
         self._experiment_parameters = self._experimentDataParameters(self._experiment_data)
         self.simulationParametersAsObj = json.dumps(self._experiment_parameters)
         self.experiments = [self._defaultExperiment()]
-        self.matplotlib_bridge.updateWithCanvas(self._experiment_figure_obj_ref, self._experiment_data)
+        self.matplotlib_bridge.updateData(self._experiment_figure_canvas, [self._experiment_data])
         self.experimentDataChanged.emit()
 
     def _onExperimentDataRemoved(self):
         print("***** _onExperimentDataRemoved")
+        self.matplotlib_bridge.clearDispalyAdapters()
         self.experimentDataChanged.emit()
 
     ####################################################################################################################
@@ -909,7 +901,7 @@ class PyQmlProxy(QObject):
         if not self.experimentLoaded and not self.experimentSkipped:
             return
 
-        if self._analysis_figure_obj_name is None:
+        if self._analysis_figure_canvas.objectName() is None:
             return
 
         self._sample.output_index = self.currentPhaseIndex
@@ -931,12 +923,11 @@ class PyQmlProxy(QObject):
             diff.y = exp.y - sim.y
 
             zeros_diff.y = [exp.y[0] - sim.y[0]]
-            zeros_diff.x_label = diff.x_label
-            zeros_diff.y_label = diff.y_label
 
-            data = [exp, sim]
+            difference_dataset = [zeros_diff, zeros_diff, diff]
+            analysis_dataset = [exp, sim]
 
-            self.matplotlib_bridge.updateWithCanvas(self._difference_figure_obj_ref, [zeros_diff, zeros_diff, diff])
+            self.matplotlib_bridge.updateData(self._difference_figure_canvas, difference_dataset)
 
         elif self.experimentSkipped:
             x_min = float(self._simulation_parameters_as_obj['x_min'])
@@ -947,15 +938,9 @@ class PyQmlProxy(QObject):
             sim.x = np.linspace(x_min, x_max, num_points)
             sim.y = self._interface.fit_func(sim.x)  # CrysPy: 0.5 s, CrysFML: 0.005 s, GSAS-II: 0.25 s
 
-            zeros_sim.x_label = sim.x_label
-            zeros_sim.y_label = sim.y_label
+            analysis_dataset = [zeros_sim, sim]
 
-            data = [zeros_sim, sim]
-
-        else:
-            print("???")
-
-        self.matplotlib_bridge.updateWithCanvas(self._analysis_figure_obj_ref, data)
+        self.matplotlib_bridge.updateData(self._analysis_figure_canvas, analysis_dataset)
         print("+ _updateCalculatedData: {0:.3f} s".format(timeit.default_timer() - start_time))
 
     def _onCalculatedDataChanged(self):

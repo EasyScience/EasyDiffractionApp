@@ -25,83 +25,96 @@ class DisplayBridge(QtCore.QObject):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        # Add context
         self.context = None
-        # Set data
-        self.canvas_data = {}
+        self.display_adapters = {}
+        self.font_path = ""
+        self.style_params = {}
 
-    def updateWithCanvas(self, canvas=None, dataset=None):
+    def clearDispalyAdapters(self):
+        self.display_adapters.clear()
+
+    def updateData(self, canvas, dataset):
         canvas_name = canvas.objectName()
-        if self.context is None:
-            return
-        if dataset is not None:
-            if canvas_name not in self.canvas_data.keys():
-                self.canvas_data[canvas_name] = DisplayAdapter(canvas, dataset, parent=self)
-            else:
-                self.canvas_data[canvas_name].current_canvas_data = dataset
-        self.redraw()
 
-    def redraw(self, items: List['DisplayAdapter'] = None):
-        if items is None:
-            items = [self.canvas_data[key] for key in self.canvas_data.keys()]
-        if not isinstance(items, list):
-            items = [items]
-        for item in items:
-            item.redraw()
+        # init and add display adapter
+        if canvas_name not in self.display_adapters.keys():
+            display_adapter = DisplayAdapter(canvas, dataset, parent=self)
+            display_adapter.setFont(self.font_path)
+            display_adapter.updateStyle(self.style_params)
+            display_adapter.initPlot()
+            display_adapter.updateStyleAfterPlot()
+            display_adapter.updateMargins()
+            self.display_adapters[canvas_name] = display_adapter
 
-    # Update style
-    @QtCore.Slot(bool, 'QVariant', str)
-    def updateStyle(self, is_dark_theme, rc_params, canvas):
-        rc_params = rc_params.toVariant()  # PySide2.QtQml.QJSValue -> dict
-        _canvas: DisplayAdapter = self.canvas_data.get(canvas, None)
-        if _canvas is not None:
-            _canvas.updateStyle(is_dark_theme, rc_params)
+        # update data of existing adapter
+        else:
+            display_adapter = self.display_adapters[canvas_name]
+            display_adapter.updateData(dataset)
+            display_adapter.autoScale()
 
-    @QtCore.Slot(str, str)
-    def updateFont(self, font_path, canvas):
-        _canvas: DisplayAdapter = self.canvas_data.get(canvas, None)
-        if _canvas is not None:
-            _canvas.updateFont(font_path)
+        # redraw
+        display_adapter.redrawCanvas()
 
-    @QtCore.Slot(bool, str)
+    def setFont(self, font_path):
+        self.font_path = font_path
+
+    def updateStyle(self, params):
+        self.style_params.update(params)
+        for display_adapter in self.display_adapters.values():
+            display_adapter.updateStyle(self.style_params)
+            display_adapter.initPlot()
+            display_adapter.updateStyleAfterPlot()
+            display_adapter.redrawCanvas()
+
+    def displayAdapter(self, canvas):
+        canvas_name = canvas.objectName()
+        display_adapter = self.display_adapters.get(canvas_name, None)
+        return display_adapter
+
+    def updateMargins(self, canvas):
+        display_adapter = self.displayAdapter(canvas)
+        if display_adapter is not None:
+            display_adapter.updateMargins()
+            display_adapter.redrawCanvas()
+
     def showLegend(self, show_legend, canvas):
-        _canvas: DisplayAdapter = self.canvas_data.get(canvas, None)
-        if _canvas is not None:
-            _canvas.showLegend(show_legend)
+        display_adapter = self.displayAdapter(canvas)
+        if display_adapter is not None:
+            display_adapter.showLegend(show_legend)
+            display_adapter.redrawCanvas()
 
     # The toolbar commands
-    @QtCore.Slot(str)
+    @QtCore.Slot('QVariant')
     def pan(self, canvas, *args):
         """Activate the pan tool."""
-        _canvas: DisplayAdapter = self.canvas_data.get(canvas, None)
-        if _canvas is not None:
-            _canvas.toolbar.pan(*args)
+        display_adapter = self.displayAdapter(canvas)
+        if display_adapter is not None:
+            display_adapter.toolbar.pan(*args)
 
-    @QtCore.Slot(str)
+    @QtCore.Slot('QVariant')
     def zoom(self, canvas, *args):
         """activate zoom tool."""
-        _canvas: DisplayAdapter = self.canvas_data.get(canvas, None)
-        if _canvas is not None:
-            _canvas.toolbar.zoom(*args)
+        display_adapter = self.displayAdapter(canvas)
+        if display_adapter is not None:
+            display_adapter.toolbar.zoom(*args)
 
-    @QtCore.Slot(str)
+    @QtCore.Slot('QVariant')
     def home(self, canvas, *args):
-        _canvas: DisplayAdapter = self.canvas_data.get(canvas, None)
-        if _canvas is not None:
-            _canvas.toolbar.home(*args)
+        display_adapter = self.displayAdapter(canvas)
+        if display_adapter is not None:
+            display_adapter.toolbar.home(*args)
 
-    @QtCore.Slot(str)
+    @QtCore.Slot('QVariant')
     def back(self, canvas, *args):
-        _canvas: DisplayAdapter = self.canvas_data.get(canvas, None)
-        if _canvas is not None:
-            _canvas.toolbar.back(*args)
+        display_adapter = self.displayAdapter(canvas)
+        if display_adapter is not None:
+            display_adapter.toolbar.back(*args)
 
-    @QtCore.Slot(str)
+    @QtCore.Slot('QVariant')
     def forward(self, canvas, *args):
-        _canvas: DisplayAdapter = self.canvas_data.get(canvas, None)
-        if _canvas is not None:
-            _canvas.toolbar.forward(*args)
-
+        display_adapter = self.displayAdapter(canvas)
+        if display_adapter is not None:
+            display_adapter.toolbar.forward(*args)
 
 class DisplayAdapter(QtCore.QObject):
     """ A bridge class to interact with the plot in python
@@ -111,148 +124,61 @@ class DisplayAdapter(QtCore.QObject):
     def __init__(self, canvas, dataset, parent=None):
         super().__init__(parent)
 
-        # The figure and toolbar
-        self.figure = None
+        self.canvas = canvas
+        self.dataset = dataset
+
         self.toolbar = None
 
-        # Add context
-        self.context = None
-
-        # this is used to display the coordinates of the mouse in the window
-        self._coordinates = ""
-
-        # Set data
-        self.style = Style()
-
-        self.show_legend = True
-
-        self.current_canvas = canvas
-        self.current_canvas_data = dataset
-
+        self.figure = None
+        self.axes = None
         self.lines = []
 
-    def redraw(self):
-        dataset = self.current_canvas_data
+    def initPlot(self):
+        self.toolbar = NavigationToolbar2QtQuick(canvas=self.canvas)
 
-        if not isinstance(dataset, list):
-            dataset = [dataset]
+        self.figure = self.canvas.figure
+        self.figure.clf()
 
-        self.style.set_style()
+        self.axes = self.figure.add_subplot(111)
+        self.axes.set_xlabel(self.dataset[-1].x_label)
+        self.axes.set_ylabel(self.dataset[-1].y_label)
 
-        if self.current_canvas is None:
-            return
+        self.lines.clear()
+        for data in self.dataset:
+            line, = self.axes.plot(data.x, data.y, label=data.name)
+            self.lines.append(line)
 
-        if not self.current_canvas.figure.axes:
-            self.toolbar = NavigationToolbar2QtQuick(canvas=self.current_canvas)
-            self.figure = self.current_canvas.figure
+        self.axes.legend(loc='upper right')
 
-            #self.figure.clf()  # 0.02 s
-            self.figure.patch.set_color(self.style.current_style['figure.facecolor'])
+    def showLegend(self, show_legend):
+        self.axes.get_legend().set_visible(show_legend)
 
-            # set margins (!!! should be calculated based on the font size from QML)
-            left_margin = 90 / self.figure.bbox.width
-            right_margin = 15 / self.figure.bbox.width
-            top_margin = 10 / self.figure.bbox.height
-            bottom_margin = 55 / self.figure.bbox.height
-            self.figure.subplots_adjust(left=left_margin, right=1-right_margin, top=1-top_margin, bottom=bottom_margin)
-            self.figure.tight_layout()
+    def updateMargins(self):
+        # set margins (!!! should be calculated based on the font size from QML)
+        bbox = self.figure.bbox
+        width = bbox.width
+        height = bbox.height
+        left_margin = 90. / width
+        right_margin = 15. / width
+        top_margin = 10. / height
+        bottom_margin = 55. / height
+        self.figure.subplots_adjust(left=left_margin, right=1-right_margin, top=1-top_margin, bottom=bottom_margin)
+        self.figure.tight_layout()
 
-            # make a small plot
-            self.axes = self.figure.add_subplot(111)  # 0.01 s
-            self.axes.grid(True)
-            self.axes.tick_params(width=0)
+    def updateData(self, dataset):
+        self.dataset = dataset
+        for line, data in zip(self.lines, self.dataset):
+            line.set_data(data.x, data.y)
 
-            # init empty lines for every data in dataset
-            for data in dataset:
-                line, = self.axes.plot([], [])
-                self.lines.append(line)
-
-        # update data for every line
-        for i, data in enumerate(dataset):
-            self.lines[i].set_data(data.x, data.y)
-            self.lines[i].set_label(data.name)
-
-        # rescale
+    def autoScale(self):
         self.axes.relim()
         self.axes.autoscale_view()
 
-        # legend
-        if self.show_legend:
-            self.axes.legend(loc="upper right")
+    def redrawCanvas(self):
+        #self.canvas.draw_idle()
+        self.canvas.draw()
 
-        # axes labels
-        self.axes.set_xlabel(dataset[0].x_label)
-        self.axes.set_ylabel(dataset[0].y_label)
-
-        # ...
-        self.current_canvas.draw_idle()
-
-        # connect for displaying the coordinates
-        self.figure.canvas.mpl_connect('motion_notify_event', self.on_motion)
-
-    # define the coordinates property
-    # (I have had problems using the @QtCore.Property directy in the past)
-    def getCoordinates(self):
-        return self._coordinates
-
-    def setCoordinates(self, coordinates):
-        self._coordinates = coordinates
-        self.coordinatesChanged.emit(self._coordinates)
-
-    coordinates = QtCore.Property(str, getCoordinates, setCoordinates,
-                                  notify=coordinatesChanged)
-
-    # The toolbar commands
-    @QtCore.Slot()
-    def pan(self, *args):
-        """Activate the pan tool."""
-        self.toolbar.pan(*args)
-
-    def zoom(self, *args):
-        """activate zoom tool."""
-        self.toolbar.zoom(*args)
-
-    def home(self, *args):
-        self.toolbar.home(*args)
-
-    def back(self, *args):
-        self.toolbar.back(*args)
-
-    def forward(self, *args):
-        self.toolbar.forward(*args)
-
-    def on_motion(self, event):
-        """
-        Update the coordinates on the display
-        """
-
-        if event.inaxes == self.axes:
-            self.coordinates = f"({event.xdata:.2f}, {event.ydata:.2f})"
-
-    # Update style
-    def updateStyle(self, is_dark_theme, rc_params):
-        self.style.style_override = rc_params
-        self.style.dark_mode = is_dark_theme
-        self.redraw()
-
-    def updateFont(self, font_path):
-        font_path = generalizePath(font_path)
-        self.style.set_font(font_path)
-        self.redraw()
-
-    def showLegend(self, show_legend):
-        self.show_legend = show_legend
-        self.redraw()
-
-
-class Style:
-    def __init__(self, dark_mode=False):
-        self.dark_mode = dark_mode
-        self.current_style = {}
-        self.style_override = {}
-        self._base_style()
-
-    def set_font(self, font_path):
+    def setFont(self, font_path):
         # https://stackoverflow.com/questions/35668219/how-to-set-up-a-custom-font-with-custom-path-to-matplotlib-global-font/43647344
         # https://stackoverflow.com/questions/16574898/how-to-load-ttf-file-in-matplotlib-using-mpl-rcparams
 
@@ -265,44 +191,36 @@ class Style:
         prop = matplotlib.font_manager.FontProperties(fname=font_path)
         matplotlib.rcParams['font.family'] = prop.get_name()
 
-    def set_style(self):
-        self._base_style()
-        if self.dark_mode:
-            self._dark_style()
-        self.current_style.update(self.style_override)
-        matplotlib.rcParams.update(self.current_style)
+    def updateStyle(self, style_params):
+        matplotlib.rcParams.update(style_params)
 
-    def _base_style(self):
-        # matplotlib.style.use('seaborn')
+    def updateStyleAfterPlot(self):
+        # Already automatically applied based on rcParams
+        if False:
+            # background
+            self.axes.set_facecolor(matplotlib.rcParams['axes.facecolor'])
+            # edges
+            self.axes.spines['bottom'].set_color(matplotlib.rcParams['axes.edgecolor'])
+            self.axes.spines['top'].set_color(matplotlib.rcParams['axes.edgecolor'])
+            self.axes.spines['left'].set_color(matplotlib.rcParams['axes.edgecolor'])
+            self.axes.spines['right'].set_color(matplotlib.rcParams['axes.edgecolor'])
+            # axes labels
+            self.axes.xaxis.label.set_color(matplotlib.rcParams['axes.labelcolor'])
+            self.axes.yaxis.label.set_color(matplotlib.rcParams['axes.labelcolor'])
+            # ticks and tick labels
+            for e in self.axes.get_xticklabels():
+                e.set_color(matplotlib.rcParams['xtick.color'])
+            for e in self.axes.get_yticklabels():
+                e.set_color(matplotlib.rcParams['ytick.color'])
+            # grid lines
+            for e in self.axes.get_xgridlines():
+                e.set_color(matplotlib.rcParams['grid.color'])
+            for e in self.axes.get_ygridlines():
+                e.set_color(matplotlib.rcParams['grid.color'])
 
-        # self.set_font()
-
-        bg_color = 'white'
-        axis_color = 'white'
-        text_color = 'black'
-
-        style = {
-            'figure.facecolor': bg_color,
-            'axes.facecolor':   axis_color,
-            'axes.labelcolor':  text_color,
-            'xtick.color':      text_color,
-            'ytick.color':      text_color,
-            'lines.linewidth':  2,
-            'axes.labelpad':    12,
-            'axes.prop_cycle':  matplotlib.rcsetup.cycler(color=['#00a3e3', '#ff7f50', '#6b8e23']),
-            'axes.edgecolor':   '#ddd',
-            'grid.color':       '#ddd',
-            'axes.xmargin':     0.
-        }
-        self.current_style = style
-
-    def _dark_style(self):
-        bg_color = '#4C4C4C'
-        text_color = '#F4F4F4'
-        axis_color = 'f0f0f0'
-
-        self.current_style['figure.facecolor'] = bg_color
-        self.current_style['axes.facecolor'] = axis_color
-        self.current_style['axes.labelcolor'] = text_color
-        self.current_style['xtick.color'] = text_color
-        self.current_style['ytick.color'] = text_color
+        # Manually applied based on rcParams
+        self.figure.patch.set_color(matplotlib.rcParams['figure.facecolor'])
+        self.axes.tick_params(width=0)
+        self.axes.legend().get_frame().set_edgecolor(matplotlib.rcParams['grid.color'])  # doesn't work :(
+        for e in self.axes.legend().get_texts():
+            e.set_color(matplotlib.rcParams['axes.labelcolor'])

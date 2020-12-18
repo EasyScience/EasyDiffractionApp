@@ -10,8 +10,6 @@ import easyAppGui.Elements 1.0 as EaElements
 import Gui.Globals 1.0 as ExGlobals
 
 Rectangle {
-    property bool isDarkTheme: EaStyle.Colors.isDarkTheme
-    property bool isExperimentStepDone: ExGlobals.Variables.experimentLoaded || ExGlobals.Variables.experimentSkipped
     property bool showLegend: ExGlobals.Variables.showLegend
 
     color: EaStyle.Colors.mainContentBackground
@@ -35,21 +33,21 @@ Rectangle {
                 fontIcon: "home"
                 ToolTip.text: qsTr("Home")
 
-                onClicked: _matplotlibBridge.home(experimentDataChart.objectName)
+                onClicked: _matplotlibBridge.home(experimentDataChart)
             }
 
             EaElements.ToolButton {
                 fontIcon: "\uf2ea"
                 ToolTip.text: qsTr("Back")
 
-                onClicked: _matplotlibBridge.back(experimentDataChart.objectName)
+                onClicked: _matplotlibBridge.back(experimentDataChart)
             }
 
             EaElements.ToolButton {
                 fontIcon: "\uf2f9"
                 ToolTip.text: qsTr("Forward")
 
-                onClicked: _matplotlibBridge.forward(experimentDataChart.objectName)
+                onClicked: _matplotlibBridge.forward(experimentDataChart)
             }
 
             Rectangle {
@@ -71,7 +69,7 @@ Rectangle {
                     if (zoom.checked) {
                         zoom.checked = false
                     }
-                    _matplotlibBridge.pan(experimentDataChart.objectName)
+                    _matplotlibBridge.pan(experimentDataChart)
                 }
             }
 
@@ -86,7 +84,7 @@ Rectangle {
                     if (pan.checked) {
                         pan.checked = false
                     }
-                    _matplotlibBridge.zoom(experimentDataChart.objectName)
+                    _matplotlibBridge.zoom(experimentDataChart)
                 }
             }
         }
@@ -100,8 +98,8 @@ Rectangle {
         anchors.left: parent.left
         anchors.right: parent.right
 
-//        onHeightChanged: ExGlobals.Constants.proxy.updateFigureMargins("experimentDataChart")
-//        onWidthChanged: ExGlobals.Constants.proxy.updateFigureMargins("experimentDataChart")
+        onHeightChanged: ExGlobals.Constants.proxy.updateFigureMargins(experimentDataChart)
+        onWidthChanged: ExGlobals.Constants.proxy.updateFigureMargins(experimentDataChart)
 
         color: EaStyle.Colors.mainContentBackground
 
@@ -118,27 +116,11 @@ Rectangle {
 
             dpi_ratio: Screen.devicePixelRatio
 
-            Component.onCompleted: {
-                ExGlobals.Constants.proxy.setExperimentFigureObjName(objectName)
-                ExGlobals.Constants.proxy.setExperimentFigureObjRef(experimentDataChart)
-            }
+            Component.onCompleted: ExGlobals.Constants.proxy.setExperimentFigureCanvas(experimentDataChart)
         }
     }
 
-    onIsDarkThemeChanged: updateMatplotlibStyle()
-    onIsExperimentStepDoneChanged: updateMatplotlibStyle()
-
-    onShowLegendChanged: _matplotlibBridge.showLegend(showLegend, experimentDataChart.objectName)
-
-    // Logic
-
-    function updateMatplotlibStyle() {
-        _matplotlibBridge.updateFont(EaStyle.Fonts.fontSource,
-                                     experimentDataChart.objectName)
-        _matplotlibBridge.updateStyle(EaStyle.Colors.isDarkTheme,
-                                      EaStyle.Colors.matplotlibRcParams,
-                                      experimentDataChart.objectName)
-    }
+    onShowLegendChanged: ExGlobals.Constants.proxy.showMatplotlibLegend(showLegend, experimentDataChart)
 }
 
 

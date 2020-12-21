@@ -24,7 +24,7 @@ from easyDiffractionLib.Elements.Experiments.Pattern import Pattern1D
 from easyAppLogic.Utils.Utils import generalizePath
 
 from easyDiffractionApp.Logic.DataStore import DataSet1D, DataStore
-from easyDiffractionApp.Logic.MatplotlibBackend import DisplayBridge
+from easyDiffractionApp.Logic.Proxies.MatplotlibBackend import DisplayBridge
 
 
 class PyQmlProxy(QObject):
@@ -236,9 +236,9 @@ class PyQmlProxy(QObject):
 
     # Matplotlib
 
-    @Slot('QVariant')
-    def setMatplotlibContext(self, context):
-        self._matplotlib_bridge.setContext(context)
+    @Property('QVariant', constant=True)
+    def matplotlibBridge(self):
+        return self._matplotlib_bridge
 
     @Slot('QVariant')
     def setExperimentFigureCanvas(self, canvas):
@@ -257,46 +257,6 @@ class PyQmlProxy(QObject):
         if self._difference_figure_canvas == canvas:
             return
         self._difference_figure_canvas = canvas
-
-    @Slot('QVariant')
-    def updateFigureMargins(self, canvas):
-        self._matplotlib_bridge.updateMargins(canvas)
-
-    @Slot(str)
-    def setMatplotlibFont(self, font_source):
-        font_path = generalizePath(font_source)  # url -> path
-        self._matplotlib_bridge.setFont(font_path)
-
-    @Slot('QVariant')
-    def updateMatplotlibStyle(self, params):
-        params = params.toVariant()  # PySide2.QtQml.QJSValue -> dict
-        self._matplotlib_bridge.updateStyle(params)
-
-    @Slot(bool, 'QVariant')
-    def showMatplotlibLegend(self, show_legend, canvas):
-        self._matplotlib_bridge.showLegend(show_legend, canvas)
-
-    # The toolbar commands
-
-    @Slot('QVariant')
-    def matplotlibHome(self, canvas):
-        self._matplotlib_bridge.home(canvas)
-
-    @Slot('QVariant')
-    def matplotlibBack(self, canvas):
-        self._matplotlib_bridge.back(canvas)
-
-    @Slot('QVariant')
-    def matplotlibForward(self, canvas):
-        self._matplotlib_bridge.forward(canvas)
-
-    @Slot('QVariant')
-    def matplotlibPan(self, canvas):
-        self._matplotlib_bridge.pan(canvas)
-
-    @Slot('QVariant')
-    def matplotlibZoom(self, canvas):
-        self._matplotlib_bridge.zoom(canvas)
 
     ####################################################################################################################
     ####################################################################################################################

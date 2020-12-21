@@ -2,7 +2,7 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Window 2.12
 
-import MatplotlibBackend 1.0 as Matplotlib
+import MatplotlibBackend 1.0 as MatplotlibBackend
 
 import easyAppGui.Style 1.0 as EaStyle
 import easyAppGui.Elements 1.0 as EaElements
@@ -33,21 +33,21 @@ Rectangle {
                 fontIcon: "home"
                 ToolTip.text: qsTr("Home")
 
-                onClicked: ExGlobals.Constants.proxy.matplotlibHome(experimentDataChart)
+                onClicked: ExGlobals.Constants.proxy.matplotlibBridge.home(experimentDataChart)
             }
 
             EaElements.ToolButton {
                 fontIcon: "\uf2ea"
                 ToolTip.text: qsTr("Back")
 
-                onClicked: ExGlobals.Constants.proxy.matplotlibBack(experimentDataChart)
+                onClicked: ExGlobals.Constants.proxy.matplotlibBridge.back(experimentDataChart)
             }
 
             EaElements.ToolButton {
                 fontIcon: "\uf2f9"
                 ToolTip.text: qsTr("Forward")
 
-                onClicked: ExGlobals.Constants.proxy.matplotlibForward(experimentDataChart)
+                onClicked: ExGlobals.Constants.proxy.matplotlibBridge.forward(experimentDataChart)
             }
 
             Rectangle {
@@ -69,7 +69,7 @@ Rectangle {
                     if (zoom.checked) {
                         zoom.checked = false
                     }
-                    ExGlobals.Constants.proxy.matplotlibPan(experimentDataChart)
+                    ExGlobals.Constants.proxy.matplotlibBridge.pan(experimentDataChart)
                 }
             }
 
@@ -84,7 +84,7 @@ Rectangle {
                     if (pan.checked) {
                         pan.checked = false
                     }
-                    ExGlobals.Constants.proxy.matplotlibZoom(experimentDataChart)
+                    ExGlobals.Constants.proxy.matplotlibBridge.zoom(experimentDataChart)
                 }
             }
         }
@@ -98,12 +98,12 @@ Rectangle {
         anchors.left: parent.left
         anchors.right: parent.right
 
-        onHeightChanged: ExGlobals.Constants.proxy.updateFigureMargins(experimentDataChart)
-        onWidthChanged: ExGlobals.Constants.proxy.updateFigureMargins(experimentDataChart)
+        onHeightChanged: ExGlobals.Constants.proxy.matplotlibBridge.updateMargins(experimentDataChart)
+        onWidthChanged: ExGlobals.Constants.proxy.matplotlibBridge.updateMargins(experimentDataChart)
 
         color: EaStyle.Colors.mainContentBackground
 
-        Matplotlib.FigureCanvas {
+        MatplotlibBackend.FigureCanvas {
             id: experimentDataChart
             objectName: "experimentDataChart"
 
@@ -120,7 +120,7 @@ Rectangle {
         }
     }
 
-    onShowLegendChanged: ExGlobals.Constants.proxy.showMatplotlibLegend(showLegend, experimentDataChart)
+    onShowLegendChanged: ExGlobals.Constants.proxy.matplotlibBridge.showLegend(showLegend, experimentDataChart)
 }
 
 

@@ -2,36 +2,99 @@ __author__ = 'github.com/wardsimon'
 __version__ = '0.0.1'
 
 import os
-from typing import Union, List
 
 import matplotlib
-
-from easyCore import np
-from easyCore.Utils.classUtils import singleton
-
-from easyDiffractionApp.Logic.DataStore import DataStore, DataSet1D
-from easyAppLogic.Utils.Utils import generalizePath
-
 from matplotlib_backend_qtquick.qt_compat import QtGui, QtQml, QtCore
-from matplotlib_backend_qtquick.backend_qtquick import (
-    NavigationToolbar2QtQuick)
+from matplotlib_backend_qtquick.backend_qtquick import NavigationToolbar2QtQuick
+
+from easyCore.Utils.classUtils import singleton
+from easyAppLogic.Utils.Utils import generalizePath
 
 
 @singleton
 class DisplayBridge(QtCore.QObject):
-    """ A bridge class to interact with the plot in python
     """
-    coordinatesChanged = QtCore.Signal(str)
+    A bridge class to interact with the plot in python
+    """
 
     def __init__(self, parent=None):
         super().__init__(parent)
+
         self.context = None
         self.display_adapters = {}
         self.font_path = ""
         self.style_params = {}
 
+    # The toolbar commands
+
+    @QtCore.Slot('QVariant')
+    def pan(self, canvas):
+        display_adapter = self.displayAdapter(canvas)
+        if display_adapter is not None:
+            display_adapter.toolbar.pan()
+
+    @QtCore.Slot('QVariant')
+    def zoom(self, canvas):
+        display_adapter = self.displayAdapter(canvas)
+        if display_adapter is not None:
+            display_adapter.toolbar.zoom()
+
+    @QtCore.Slot('QVariant')
+    def home(self, canvas):
+        display_adapter = self.displayAdapter(canvas)
+        if display_adapter is not None:
+            display_adapter.toolbar.home()
+
+    @QtCore.Slot('QVariant')
+    def back(self, canvas):
+        display_adapter = self.displayAdapter(canvas)
+        if display_adapter is not None:
+            display_adapter.toolbar.back()
+
+    @QtCore.Slot('QVariant')
+    def forward(self, canvas):
+        display_adapter = self.displayAdapter(canvas)
+        if display_adapter is not None:
+            display_adapter.toolbar.forward()
+
+    # Misc
+
+    @QtCore.Slot('QVariant')
     def setContext(self, context):
         self.context = context
+
+    @QtCore.Slot(str)
+    def setFont(self, font_path):
+        self.font_path = font_path
+
+    @QtCore.Slot('QVariant')
+    def updateStyle(self, params):
+        params = params.toVariant()  # PySide2.QtQml.QJSValue -> dict
+        self.style_params.update(params)
+        for display_adapter in self.display_adapters.values():
+            display_adapter.updateStyle(self.style_params)
+            display_adapter.initPlot()
+            display_adapter.updateStyleAfterPlot()
+            display_adapter.redrawCanvas()
+
+    @QtCore.Slot('QVariant')
+    def updateMargins(self, canvas):
+        display_adapter = self.displayAdapter(canvas)
+        if display_adapter is not None:
+            display_adapter.updateMargins()
+            display_adapter.redrawCanvas()
+
+    @QtCore.Slot(bool, 'QVariant')
+    def showLegend(self, show_legend, canvas):
+        display_adapter = self.displayAdapter(canvas)
+        if display_adapter is not None:
+            display_adapter.showLegend(show_legend)
+            display_adapter.redrawCanvas()
+
+    def displayAdapter(self, canvas):
+        canvas_name = canvas.objectName()
+        display_adapter = self.display_adapters.get(canvas_name, None)
+        return display_adapter
 
     def clearDispalyAdapters(self):
         self.display_adapters.clear()
@@ -58,64 +121,11 @@ class DisplayBridge(QtCore.QObject):
         # redraw
         display_adapter.redrawCanvas()
 
-    def setFont(self, font_path):
-        self.font_path = font_path
-
-    def updateStyle(self, params):
-        self.style_params.update(params)
-        for display_adapter in self.display_adapters.values():
-            display_adapter.updateStyle(self.style_params)
-            display_adapter.initPlot()
-            display_adapter.updateStyleAfterPlot()
-            display_adapter.redrawCanvas()
-
-    def displayAdapter(self, canvas):
-        canvas_name = canvas.objectName()
-        display_adapter = self.display_adapters.get(canvas_name, None)
-        return display_adapter
-
-    def updateMargins(self, canvas):
-        display_adapter = self.displayAdapter(canvas)
-        if display_adapter is not None:
-            display_adapter.updateMargins()
-            display_adapter.redrawCanvas()
-
-    def showLegend(self, show_legend, canvas):
-        display_adapter = self.displayAdapter(canvas)
-        if display_adapter is not None:
-            display_adapter.showLegend(show_legend)
-            display_adapter.redrawCanvas()
-
-    # The toolbar commands
-    def pan(self, canvas):
-        display_adapter = self.displayAdapter(canvas)
-        if display_adapter is not None:
-            display_adapter.toolbar.pan()
-
-    def zoom(self, canvas):
-        display_adapter = self.displayAdapter(canvas)
-        if display_adapter is not None:
-            display_adapter.toolbar.zoom()
-
-    def home(self, canvas):
-        display_adapter = self.displayAdapter(canvas)
-        if display_adapter is not None:
-            display_adapter.toolbar.home()
-
-    def back(self, canvas):
-        display_adapter = self.displayAdapter(canvas)
-        if display_adapter is not None:
-            display_adapter.toolbar.back()
-
-    def forward(self, canvas):
-        display_adapter = self.displayAdapter(canvas)
-        if display_adapter is not None:
-            display_adapter.toolbar.forward()
 
 class DisplayAdapter(QtCore.QObject):
-    """ A bridge class to interact with the plot in python
     """
-    coordinatesChanged = QtCore.Signal(str)
+    An adapter for every figure canvas created in QML
+    """
 
     def __init__(self, canvas, dataset, parent=None):
         super().__init__(parent)
@@ -174,10 +184,11 @@ class DisplayAdapter(QtCore.QObject):
         #self.canvas.draw_idle()
         self.canvas.draw()
 
-    def setFont(self, font_path):
+    def setFont(self, font_source):
         # https://stackoverflow.com/questions/35668219/how-to-set-up-a-custom-font-with-custom-path-to-matplotlib-global-font/43647344
         # https://stackoverflow.com/questions/16574898/how-to-load-ttf-file-in-matplotlib-using-mpl-rcparams
 
+        font_path = generalizePath(font_source)  # url -> path
         font_dirs = [os.path.dirname(font_path)]
         font_files = matplotlib.font_manager.findSystemFonts(fontpaths=font_dirs)
         font_list = matplotlib.font_manager.createFontList(font_files)

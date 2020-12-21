@@ -14,13 +14,13 @@ ExComponents.ApplicationWindow {
     // Matplotlib
 
     Component.onCompleted: {
-        ExGlobals.Constants.proxy.setMatplotlibContext(window)
+        ExGlobals.Constants.proxy.matplotlibBridge.setContext(window)
 
-        ExGlobals.Constants.proxy.setMatplotlibFont(EaStyle.Fonts.fontSource)
-        ExGlobals.Constants.proxy.updateMatplotlibStyle(EaStyle.Matplotlib.display)
-        ExGlobals.Constants.proxy.updateMatplotlibStyle(EaStyle.Matplotlib.sizes)
+        ExGlobals.Constants.proxy.matplotlibBridge.setFont(EaStyle.Fonts.fontSource)
+        ExGlobals.Constants.proxy.matplotlibBridge.updateStyle(EaStyle.Matplotlib.display)
+        ExGlobals.Constants.proxy.matplotlibBridge.updateStyle(EaStyle.Matplotlib.sizes)
     }
 
     property var matplotlibColors: EaStyle.Matplotlib.colors
-    onMatplotlibColorsChanged: ExGlobals.Constants.proxy.updateMatplotlibStyle(EaStyle.Matplotlib.colors)
+    onMatplotlibColorsChanged: ExGlobals.Constants.proxy.matplotlibBridge.updateStyle(EaStyle.Matplotlib.colors)
 }

@@ -92,12 +92,12 @@ class PyQmlProxy(QObject):
 
         # Main
         self._interface = InterfaceFactory()
-        self._sample = self.defaultSample()
+        self._sample = self._defaultSample()
 
         # Charts
-        self.vtkHandler = None
+        self._vtk_handler = None
 
-        self.matplotlib_bridge = DisplayBridge()
+        self._matplotlib_bridge = DisplayBridge()
         self._experiment_figure_canvas = None
         self._analysis_figure_canvas = None
         self._difference_figure_canvas = None
@@ -135,20 +135,20 @@ class PyQmlProxy(QObject):
         self.currentPhaseChanged.connect(self._onCurrentPhaseChanged)
 
         # Experiment and calculated data
-        self._data = self.defaultData()
+        self._data = self._defaultDatas()
 
         # Experiment
-        self._pattern_parameters_as_obj = self.defaultPatternParameters()
+        self._pattern_parameters_as_obj = self._defaultPatternParameters()
         self.patternParametersChanged.connect(self._onPatternParametersChanged)
 
-        self._instrument_parameters_as_obj = self.defaultInstrumentParameters()
+        self._instrument_parameters_as_obj = self._defaultInstrumentParameters()
         self._instrument_parameters_as_xml = ""
         self.instrumentParametersChanged.connect(self._onInstrumentParametersChanged)
 
         self._experiment_parameters = None
         self._experiment_data = None
         self._experiment_data_as_xml = ""
-        self.experiments = self.defaultExperiments()
+        self.experiments = self._defaultExperiments()
         self.experimentDataChanged.connect(self._onExperimentDataChanged)
         self.experimentDataAdded.connect(self._onExperimentDataAdded)
         self.experimentDataRemoved.connect(self._onExperimentDataRemoved)
@@ -158,17 +158,17 @@ class PyQmlProxy(QObject):
         self.experimentLoadedChanged.connect(self._onExperimentLoadedChanged)
         self.experimentSkippedChanged.connect(self._onExperimentSkippedChanged)
 
-        self._background_as_obj = self.defaultBackground()
+        self._background_as_obj = self._defaultBackground()
         self._background_as_xml = ""
         self.backgroundChanged.connect(self._onBackgroundChanged)
 
         # Analysis
         self.calculatedDataChanged.connect(self._onCalculatedDataChanged)
 
-        self._simulation_parameters_as_obj = self.defaultSimulationParameters()
+        self._simulation_parameters_as_obj = self._defaultSimulationParameters()
         self.simulationParametersChanged.connect(self._onSimulationParametersChanged)
 
-        self._fit_results = self.defaultFitResults()
+        self._fit_results = self._defaultFitResults()
         self.fitter = Fitter(self._sample, self._interface.fit_func)
         self.fitFinished.connect(self._onFitFinished)
 
@@ -187,31 +187,55 @@ class PyQmlProxy(QObject):
 
     ####################################################################################################################
     ####################################################################################################################
-    # Matplotlib
-    ####################################################################################################################
-    ####################################################################################################################
-
-    @Slot(str)
-    def setMatplotlibFont(self, font_source):
-        font_path = generalizePath(font_source)  # url -> path
-        self.matplotlib_bridge.setFont(font_path)
-
-    @Slot('QVariant')
-    def updateMatplotlibStyle(self, params):
-        params = params.toVariant()  # PySide2.QtQml.QJSValue -> dict
-        self.matplotlib_bridge.updateStyle(params)
-
-    @Slot(bool, 'QVariant')
-    def showMatplotlibLegend(self, show_legend, canvas):
-        self.matplotlib_bridge.showLegend(show_legend, canvas)
-
-    ####################################################################################################################
     # Charts
     ####################################################################################################################
+    ####################################################################################################################
+
+    # Vtk
+
+    @Property(bool, notify=False)
+    def showBonds(self):
+        if self._vtk_handler is None:
+            return True
+        return self._vtk_handler.show_bonds
+
+    @showBonds.setter
+    def showBondsSetter(self, show_bonds: bool):
+        if self._vtk_handler is None or self._vtk_handler.show_bonds == show_bonds:
+            return
+        self._vtk_handler.show_bonds = show_bonds
+        self.structureViewChanged.emit()
+
+    @Property(float, notify=False)
+    def bondsMaxDistance(self):
+        if self._vtk_handler is None:
+            return 2.0
+        return self._vtk_handler.max_distance
+
+    @bondsMaxDistance.setter
+    def bondsMaxDistanceSetter(self, max_distance: float):
+        if self._vtk_handler is None or self._vtk_handler.max_distance == max_distance:
+            return
+        self._vtk_handler.max_distance = max_distance
+        self.structureViewChanged.emit()
+
+    def _updateStructureView(self):
+        start_time = timeit.default_timer()
+        if self._vtk_handler is None or not self._sample.phases:
+            return
+        self._vtk_handler.clearScene()
+        self._vtk_handler.plot_system2(self._sample.phases[0])
+        print("+ _updateStructureView: {0:.3f} s".format(timeit.default_timer() - start_time))
+
+    def _onStructureViewChanged(self):
+        print("***** _onStructureViewChanged")
+        self._updateStructureView()
+
+    # Matplotlib
 
     @Slot('QVariant')
     def updateFigureMargins(self, canvas):
-        self.matplotlib_bridge.updateMargins(canvas)
+        self._matplotlib_bridge.updateMargins(canvas)
 
     @Slot('QVariant')
     def setExperimentFigureCanvas(self, canvas):
@@ -230,6 +254,20 @@ class PyQmlProxy(QObject):
         if self._difference_figure_canvas == canvas:
             return
         self._difference_figure_canvas = canvas
+
+    @Slot(str)
+    def setMatplotlibFont(self, font_source):
+        font_path = generalizePath(font_source)  # url -> path
+        self._matplotlib_bridge.setFont(font_path)
+
+    @Slot('QVariant')
+    def updateMatplotlibStyle(self, params):
+        params = params.toVariant()  # PySide2.QtQml.QJSValue -> dict
+        self._matplotlib_bridge.updateStyle(params)
+
+    @Slot(bool, 'QVariant')
+    def showMatplotlibLegend(self, show_legend, canvas):
+        self._matplotlib_bridge.showLegend(show_legend, canvas)
 
     ####################################################################################################################
     ####################################################################################################################
@@ -271,7 +309,7 @@ class PyQmlProxy(QObject):
     ####################################################################################################################
     ####################################################################################################################
 
-    def defaultSample(self):
+    def _defaultSample(self):
         sample = Sample(parameters=Pars1D.default(), pattern=Pattern1D.default(), interface=self._interface)
         sample.pattern.zero_shift = 0.0
         sample.pattern.scale = 1.0
@@ -370,7 +408,6 @@ class PyQmlProxy(QObject):
         print("***** _onPhaseAdded")
         if self._interface.current_interface_name != 'CrysPy':
             self._interface.generate_sample_binding("filename", self._sample)
-        ## self.vtkHandler.plot_system2(self._sample.phases[0])
         self._sample.phases.name = 'Phases'
         self._sample.set_background(self._background_as_obj)
         self.structureParametersChanged.emit()
@@ -378,7 +415,6 @@ class PyQmlProxy(QObject):
 
     def _onPhaseRemoved(self):
         print("***** _onPhaseRemoved")
-        ## self.vtkHandler.clearScene()
         self.structureParametersChanged.emit()
 
     ####################################################################################################################
@@ -542,60 +578,18 @@ class PyQmlProxy(QObject):
         self.structureViewChanged.emit()
 
     ####################################################################################################################
-    # Structure view
-    ####################################################################################################################
-
-    @Property(bool, notify=False)
-    def showBonds(self):
-        if self.vtkHandler is None:
-            return True
-        return self.vtkHandler.show_bonds
-
-    @showBonds.setter
-    def showBondsSetter(self, show_bonds: bool):
-        if self.vtkHandler is None or self.vtkHandler.show_bonds == show_bonds:
-            return
-        self.vtkHandler.show_bonds = show_bonds
-        self.structureViewChanged.emit()
-
-    @Property(float, notify=False)
-    def bondsMaxDistance(self):
-        if self.vtkHandler is None:
-            return 2.0
-        return self.vtkHandler.max_distance
-
-    @bondsMaxDistance.setter
-    def bondsMaxDistanceSetter(self, max_distance: float):
-        if self.vtkHandler is None or self.vtkHandler.max_distance == max_distance:
-            return
-        self.vtkHandler.max_distance = max_distance
-        self.structureViewChanged.emit()
-
-    def _updateStructureView(self):
-        start_time = timeit.default_timer()
-        if self.vtkHandler is None or not self._sample.phases:
-            return
-        self.vtkHandler.clearScene()
-        self.vtkHandler.plot_system2(self._sample.phases[0])
-        print("+ _updateStructureView: {0:.3f} s".format(timeit.default_timer() - start_time))
-
-    def _onStructureViewChanged(self):
-        print("***** _onStructureViewChanged")
-        self._updateStructureView()
-
-    ####################################################################################################################
     ####################################################################################################################
     # EXPERIMENT
     ####################################################################################################################
     ####################################################################################################################
 
-    def defaultExperiments(self):
+    def _defaultExperiments(self):
         return []
 
-    def defaultData(self):
-        x_min = self.defaultSimulationParameters()['x_min']
-        x_max = self.defaultSimulationParameters()['x_max']
-        x_step = self.defaultSimulationParameters()['x_step']
+    def _defaultDatas(self):
+        x_min = self._defaultSimulationParameters()['x_min']
+        x_max = self._defaultSimulationParameters()['x_max']
+        x_step = self._defaultSimulationParameters()['x_step']
         num_points = int((x_max - x_min) / x_step + 1)
         x_data = np.linspace(x_min, x_max, num_points)
 
@@ -689,12 +683,12 @@ class PyQmlProxy(QObject):
         self._experiment_parameters = self._experimentDataParameters(self._experiment_data)
         self.simulationParametersAsObj = json.dumps(self._experiment_parameters)
         self.experiments = [self._defaultExperiment()]
-        self.matplotlib_bridge.updateData(self._experiment_figure_canvas, [self._experiment_data])
+        self._matplotlib_bridge.updateData(self._experiment_figure_canvas, [self._experiment_data])
         self.experimentDataChanged.emit()
 
     def _onExperimentDataRemoved(self):
         print("***** _onExperimentDataRemoved")
-        self.matplotlib_bridge.clearDispalyAdapters()
+        self._matplotlib_bridge.clearDispalyAdapters()
         self.experimentDataChanged.emit()
 
     ####################################################################################################################
@@ -744,13 +738,6 @@ class PyQmlProxy(QObject):
     # Simulation parameters
     ####################################################################################################################
 
-    def defaultSimulationParameters(self):
-        return {
-            "x_min": 10.0,
-            "x_max": 150.0,
-            "x_step": 0.1
-        }
-
     @Property('QVariant', notify=simulationParametersChanged)
     def simulationParametersAsObj(self):
         return self._simulation_parameters_as_obj
@@ -763,6 +750,13 @@ class PyQmlProxy(QObject):
         self._simulation_parameters_as_obj = json.loads(json_str)
         self.simulationParametersChanged.emit()
 
+    def _defaultSimulationParameters(self):
+        return {
+            "x_min": 10.0,
+            "x_max": 150.0,
+            "x_step": 0.1
+        }
+
     def _onSimulationParametersChanged(self):
         print("***** _onSimulationParametersChanged")
         self.calculatedDataChanged.emit()
@@ -771,15 +765,15 @@ class PyQmlProxy(QObject):
     # Pattern parameters (scale, zero_shift, backgrounds)
     ####################################################################################################################
 
-    def defaultPatternParameters(self):
+    @Property('QVariant', notify=patternParametersAsObjChanged)
+    def patternParametersAsObj(self):
+        return self._pattern_parameters_as_obj
+
+    def _defaultPatternParameters(self):
         return {
             "scale": 1.0,
             "zero_shift": 0.0
         }
-
-    @Property('QVariant', notify=patternParametersAsObjChanged)
-    def patternParametersAsObj(self):
-        return self._pattern_parameters_as_obj
 
     def _setPatternParametersAsObj(self):
         start_time = timeit.default_timer()
@@ -796,7 +790,15 @@ class PyQmlProxy(QObject):
     # Instrument parameters (wavelength, resolution_u, ..., resolution_y)
     ####################################################################################################################
 
-    def defaultInstrumentParameters(self):
+    @Property('QVariant', notify=instrumentParametersAsObjChanged)
+    def instrumentParametersAsObj(self):
+        return self._instrument_parameters_as_obj
+
+    @Property(str, notify=instrumentParametersAsXmlChanged)
+    def instrumentParametersAsXml(self):
+        return self._instrument_parameters_as_xml
+
+    def _defaultInstrumentParameters(self):
         return {
             "wavelength": 1.0,
             "resolution_u": 0.01,
@@ -805,14 +807,6 @@ class PyQmlProxy(QObject):
             "resolution_x": 0.0,
             "resolution_y": 0.0
         }
-
-    @Property('QVariant', notify=instrumentParametersAsObjChanged)
-    def instrumentParametersAsObj(self):
-        return self._instrument_parameters_as_obj
-
-    @Property(str, notify=instrumentParametersAsXmlChanged)
-    def instrumentParametersAsXml(self):
-        return self._instrument_parameters_as_xml
 
     def _setInstrumentParametersAsObj(self):
         start_time = timeit.default_timer()
@@ -837,27 +831,10 @@ class PyQmlProxy(QObject):
     # Background
     ####################################################################################################################
 
-    def defaultBackground(self):
-        #print("+ defaultBackground")
-        background = PointBackground(
-            BackgroundPoint.from_pars(0, 200), 
-            BackgroundPoint.from_pars(140, 200),
-            linked_experiment='NEED_TO_CHANGE'
-        )
-        return background
-
     @Property(str, notify=backgroundAsXmlChanged)
     def backgroundAsXml(self):
         #print("+ backgroundAsXml")
         return self._background_as_xml
-
-    def _setBackgroundAsXml(self):
-        start_time = timeit.default_timer()
-        background = np.array([item.as_dict() for item in self._background_as_obj])
-        idx = np.array([item.x.raw_value for item in self._background_as_obj]).argsort()
-        self._background_as_xml = dicttoxml(background[idx], attr_type=False).decode()
-        print("+ _setBackgroundAsXml: {0:.3f} s".format(timeit.default_timer() - start_time))
-        self.backgroundAsXmlChanged.emit()
 
     @Slot()
     def addBackgroundPoint(self):
@@ -880,6 +857,23 @@ class PyQmlProxy(QObject):
         self._onParametersChanged()
         self.calculatedDataChanged.emit()
         self.backgroundChanged.emit()
+
+    def _defaultBackground(self):
+        #print("+ _defaultBackground")
+        background = PointBackground(
+            BackgroundPoint.from_pars(0, 200),
+            BackgroundPoint.from_pars(140, 200),
+            linked_experiment='NEED_TO_CHANGE'
+        )
+        return background
+
+    def _setBackgroundAsXml(self):
+        start_time = timeit.default_timer()
+        background = np.array([item.as_dict() for item in self._background_as_obj])
+        idx = np.array([item.x.raw_value for item in self._background_as_obj]).argsort()
+        self._background_as_xml = dicttoxml(background[idx], attr_type=False).decode()
+        print("+ _setBackgroundAsXml: {0:.3f} s".format(timeit.default_timer() - start_time))
+        self.backgroundAsXmlChanged.emit()
 
     def _onBackgroundChanged(self):
         print(f"***** _onBackgroundChanged")
@@ -927,7 +921,7 @@ class PyQmlProxy(QObject):
             difference_dataset = [zeros_diff, zeros_diff, diff]
             analysis_dataset = [exp, sim]
 
-            self.matplotlib_bridge.updateData(self._difference_figure_canvas, difference_dataset)
+            self._matplotlib_bridge.updateData(self._difference_figure_canvas, difference_dataset)
 
         elif self.experimentSkipped:
             x_min = float(self._simulation_parameters_as_obj['x_min'])
@@ -940,7 +934,7 @@ class PyQmlProxy(QObject):
 
             analysis_dataset = [zeros_sim, sim]
 
-        self.matplotlib_bridge.updateData(self._analysis_figure_canvas, analysis_dataset)
+        self._matplotlib_bridge.updateData(self._analysis_figure_canvas, analysis_dataset)
         print("+ _updateCalculatedData: {0:.3f} s".format(timeit.default_timer() - start_time))
 
     def _onCalculatedDataChanged(self):
@@ -1126,14 +1120,6 @@ class PyQmlProxy(QObject):
     # Fitting
     ####################################################################################################################
 
-    def defaultFitResults(self):
-        return {
-            "success": None,
-            "nvarys": None,
-            "GOF": None,
-            "redchi": None
-        }
-
     @Slot()
     def fit(self):
         exp_data = self._data.experiments[0]
@@ -1145,18 +1131,26 @@ class PyQmlProxy(QObject):
 
         res = self.fitter.fit(x, y, weights=weights, method=method)
 
-        self.setFitResults(res)
+        self._setFitResults(res)
         self.fitFinished.emit()
 
     @Property('QVariant', notify=fitResultsChanged)
     def fitResults(self):
         return self._fit_results
 
-    def setFitResults(self, res):
+    def _defaultFitResults(self):
+        return {
+            "success": None,
+            "nvarys": None,
+            "GOF": None,
+            "redchi2": None
+        }
+
+    def _setFitResults(self, res):
         self._fit_results = {
             "success": res.success,
             "nvarys": res.n_pars,
-            "gof": float(res.goodness_of_fit),
+            "GOF": float(res.goodness_of_fit),
             "redchi2": float(res.reduced_chi)
         }
         self.fitResultsChanged.emit()

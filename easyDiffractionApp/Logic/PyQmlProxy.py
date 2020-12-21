@@ -135,7 +135,7 @@ class PyQmlProxy(QObject):
         self.currentPhaseChanged.connect(self._onCurrentPhaseChanged)
 
         # Experiment and calculated data
-        self._data = self._defaultDatas()
+        self._data = self._defaultData()
 
         # Experiment
         self._pattern_parameters_as_obj = self._defaultPatternParameters()
@@ -192,6 +192,9 @@ class PyQmlProxy(QObject):
     ####################################################################################################################
 
     # Vtk
+
+    def setVtkHandler(self, vtk_handler):
+        self._vtk_handler = vtk_handler
 
     @Property(bool, notify=False)
     def showBonds(self):
@@ -586,7 +589,7 @@ class PyQmlProxy(QObject):
     def _defaultExperiments(self):
         return []
 
-    def _defaultDatas(self):
+    def _defaultData(self):
         x_min = self._defaultSimulationParameters()['x_min']
         x_max = self._defaultSimulationParameters()['x_max']
         x_step = self._defaultSimulationParameters()['x_step']

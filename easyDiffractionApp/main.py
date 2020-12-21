@@ -150,12 +150,13 @@ def main():
     app.vtkSetup(root_window)
     vtk_handler.fbo = app._m_vtkFboItem
     vtk_handler.context = root_window
-    py_qml_proxy_obj.vtkHandler = vtk_handler
+    py_qml_proxy_obj.setVtkHandler(vtk_handler)
 
     # Event loop
     if not engine.rootObjects():
         sys.exit(-1)
     sys.exit(app.exec_())
+
 
 if __name__ == '__main__':
     main()

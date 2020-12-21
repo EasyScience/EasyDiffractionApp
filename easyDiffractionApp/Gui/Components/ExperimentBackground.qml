@@ -17,7 +17,7 @@ EaComponents.TableView {
     // Table model
 
     model: XmlListModel {
-        xml: ExGlobals.Constants.proxy.backgroundAsXml
+        xml: ExGlobals.Constants.proxy.backgroundProxy.asXml
         query: "/root/item"
 
         XmlRole { name: "x"; query: "x/value/number()" }
@@ -65,7 +65,7 @@ EaComponents.TableView {
             headerText: "Del."
             fontIcon: "minus-circle"
             ToolTip.text: qsTr("Remove this point")
-            onClicked: ExGlobals.Constants.proxy.removeBackgroundPoint(model.pointName)
+            onClicked: ExGlobals.Constants.proxy.backgroundProxy.removePoint(model.pointName)
         }
 
     }

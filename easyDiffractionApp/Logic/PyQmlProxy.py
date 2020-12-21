@@ -13,7 +13,6 @@ from easyCore.Symmetry.tools import SpacegroupInfo
 from easyCore.Fitting.Fitting import Fitter
 from easyCore.Fitting.Constraints import ObjConstraint, NumericConstraint
 from easyCore.Utils.classTools import generatePath
-from easyDiffractionLib.Elements.Backgrounds.Point import PointBackground, BackgroundPoint
 
 from easyDiffractionLib.sample import Sample
 from easyDiffractionLib import Phases, Phase, Lattice, Site, Atoms, SpaceGroup
@@ -24,7 +23,9 @@ from easyDiffractionLib.Elements.Experiments.Pattern import Pattern1D
 from easyAppLogic.Utils.Utils import generalizePath
 
 from easyDiffractionApp.Logic.DataStore import DataSet1D, DataStore
+
 from easyDiffractionApp.Logic.Proxies.MatplotlibBackend import DisplayBridge
+from easyDiffractionApp.Logic.Proxies.BackgroundProxy import BackgroundProxy
 
 
 class PyQmlProxy(QObject):
@@ -66,9 +67,6 @@ class PyQmlProxy(QObject):
     experimentLoadedChanged = Signal()
     experimentSkippedChanged = Signal()
 
-    backgroundChanged = Signal()
-    backgroundAsXmlChanged = Signal()
-
     # Analysis
     calculatedDataChanged = Signal()
 
@@ -104,20 +102,6 @@ class PyQmlProxy(QObject):
 
         # Project
         self._project_info = self._defaultProjectInfo()
-
-        # Parameters
-        self._parameters_as_obj = []
-        self._parameters_as_xml = []
-        self.parametersChanged.connect(self._onParametersChanged)
-        self.parametersChanged.connect(self._onCalculatedDataChanged)
-        self.parametersChanged.connect(self._onStructureViewChanged)
-        self.parametersChanged.connect(self._onStructureParametersChanged)
-        self.parametersChanged.connect(self._onPatternParametersChanged)
-        self.parametersChanged.connect(self._onInstrumentParametersChanged)
-        self.parametersChanged.connect(self._onBackgroundChanged)
-
-        self._parameters_filter_criteria = ""
-        self.parametersFilterCriteriaChanged.connect(self._onParametersFilterCriteriaChanged)
 
         # Structure
         self.structureParametersChanged.connect(self._onStructureParametersChanged)
@@ -158,9 +142,9 @@ class PyQmlProxy(QObject):
         self.experimentLoadedChanged.connect(self._onExperimentLoadedChanged)
         self.experimentSkippedChanged.connect(self._onExperimentSkippedChanged)
 
-        self._background_as_obj = self._defaultBackground()
-        self._background_as_xml = ""
-        self.backgroundChanged.connect(self._onBackgroundChanged)
+        self._background_proxy = BackgroundProxy(self._sample)
+        self._background_proxy.backgroundChanged.connect(self._onParametersChanged)
+        self._background_proxy.backgroundChanged.connect(self.calculatedDataChanged)
 
         # Analysis
         self.calculatedDataChanged.connect(self._onCalculatedDataChanged)
@@ -178,6 +162,20 @@ class PyQmlProxy(QObject):
         self.currentMinimizerMethodChanged.connect(self._onCurrentMinimizerMethodChanged)
 
         self.currentCalculatorChanged.connect(self._onCurrentCalculatorChanged)
+
+        # Parameters
+        self._parameters_as_obj = []
+        self._parameters_as_xml = []
+        self.parametersChanged.connect(self._onParametersChanged)
+        self.parametersChanged.connect(self._onCalculatedDataChanged)
+        self.parametersChanged.connect(self._onStructureViewChanged)
+        self.parametersChanged.connect(self._onStructureParametersChanged)
+        self.parametersChanged.connect(self._onPatternParametersChanged)
+        self.parametersChanged.connect(self._onInstrumentParametersChanged)
+        self.parametersChanged.connect(self._background_proxy.backgroundChanged)
+
+        self._parameters_filter_criteria = ""
+        self.parametersFilterCriteriaChanged.connect(self._onParametersFilterCriteriaChanged)
 
         # Status info
         self.statusInfoChanged.connect(self._onStatusInfoChanged)
@@ -398,9 +396,9 @@ class PyQmlProxy(QObject):
         if self._interface.current_interface_name != 'CrysPy':
             self._interface.generate_sample_binding("filename", self._sample)
         self._sample.phases.name = 'Phases'
-        self._sample.set_background(self._background_as_obj)
+        self._sample.set_background(self._background_proxy.asObj)
+        self._background_proxy.backgroundChanged.emit()
         self.structureParametersChanged.emit()
-        self.backgroundChanged.emit()
 
     def _onPhaseRemoved(self):
         print("***** _onPhaseRemoved")
@@ -820,53 +818,9 @@ class PyQmlProxy(QObject):
     # Background
     ####################################################################################################################
 
-    @Property(str, notify=backgroundAsXmlChanged)
-    def backgroundAsXml(self):
-        #print("+ backgroundAsXml")
-        return self._background_as_xml
-
-    @Slot()
-    def addBackgroundPoint(self):
-        print(f"+ addBackgroundPoint")
-        self._sample.remove_background(self._background_as_obj)
-        point = BackgroundPoint.from_pars(x=180.0, y=0.0)
-        self._background_as_obj.append(point)
-        self._sample.set_background(self._background_as_obj)
-        self._onParametersChanged()
-        self.calculatedDataChanged.emit()
-        self.backgroundChanged.emit()
-
-    @Slot(str)
-    def removeBackgroundPoint(self, background_point_x_name: str):
-        print(f"+ removeBackgroundPoint for background_point_x_name: {background_point_x_name}")
-        self._sample.remove_background(self._background_as_obj)
-        names = self._background_as_obj.names
-        del self._background_as_obj[names.index(background_point_x_name)]
-        self._sample.set_background(self._background_as_obj)
-        self._onParametersChanged()
-        self.calculatedDataChanged.emit()
-        self.backgroundChanged.emit()
-
-    def _defaultBackground(self):
-        #print("+ _defaultBackground")
-        background = PointBackground(
-            BackgroundPoint.from_pars(0, 200),
-            BackgroundPoint.from_pars(140, 200),
-            linked_experiment='NEED_TO_CHANGE'
-        )
-        return background
-
-    def _setBackgroundAsXml(self):
-        start_time = timeit.default_timer()
-        background = np.array([item.as_dict() for item in self._background_as_obj])
-        idx = np.array([item.x.raw_value for item in self._background_as_obj]).argsort()
-        self._background_as_xml = dicttoxml(background[idx], attr_type=False).decode()
-        print("+ _setBackgroundAsXml: {0:.3f} s".format(timeit.default_timer() - start_time))
-        self.backgroundAsXmlChanged.emit()
-
-    def _onBackgroundChanged(self):
-        print(f"***** _onBackgroundChanged")
-        self._setBackgroundAsXml()
+    @Property('QVariant', constant=True)
+    def backgroundProxy(self):
+        return self._background_proxy
 
     ####################################################################################################################
     ####################################################################################################################

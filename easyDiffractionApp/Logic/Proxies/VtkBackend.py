@@ -28,10 +28,10 @@ def generate_new_color(existing_colors,pastel_factor = 0.5):
     return best_color
 
 
-class VTKcanvasHandler(QObject):
+class VtkCanvasHandler(QObject):
 
     def __init__(self, parent=None):
-        super(VTKcanvasHandler, self).__init__(parent=parent)
+        super(VtkCanvasHandler, self).__init__(parent=parent)
         self.fbo = None
         self.context = None
         self.actors = []

@@ -26,7 +26,7 @@ from easyDiffractionApp.Logic.PyQmlProxy import PyQmlProxy
 from matplotlib_backend_qtquick.backend_qtquickagg import FigureCanvasQtQuickAgg
 
 # VTK
-from easyDiffractionApp.Logic.VTKBackend import VTKcanvasHandler
+from easyDiffractionApp.Logic.Proxies.VtkBackend import VtkCanvasHandler
 from easyDiffractionApp.Logic.VTK.QVTKFrameBufferObjectItem import FboItem
 
 # Config
@@ -109,7 +109,7 @@ def main():
     # Python objects to be exposed to QML
     py_qml_proxy_obj = PyQmlProxy()
     translator = Translator(app, engine, translations_path, languages)
-    vtk_handler = VTKcanvasHandler()
+    vtk_handler = VtkCanvasHandler()
 
     # Expose the Python objects to QML
     engine.rootContext().setContextProperty('_pyQmlProxyObj', py_qml_proxy_obj)

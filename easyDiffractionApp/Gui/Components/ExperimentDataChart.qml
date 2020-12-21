@@ -2,7 +2,7 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Window 2.12
 
-import MatplotlibBackend 1.0
+import MatplotlibBackend 1.0 as Matplotlib
 
 import easyAppGui.Style 1.0 as EaStyle
 import easyAppGui.Elements 1.0 as EaElements
@@ -33,21 +33,21 @@ Rectangle {
                 fontIcon: "home"
                 ToolTip.text: qsTr("Home")
 
-                onClicked: _matplotlibBridge.home(experimentDataChart)
+                onClicked: ExGlobals.Constants.proxy.matplotlibHome(experimentDataChart)
             }
 
             EaElements.ToolButton {
                 fontIcon: "\uf2ea"
                 ToolTip.text: qsTr("Back")
 
-                onClicked: _matplotlibBridge.back(experimentDataChart)
+                onClicked: ExGlobals.Constants.proxy.matplotlibBack(experimentDataChart)
             }
 
             EaElements.ToolButton {
                 fontIcon: "\uf2f9"
                 ToolTip.text: qsTr("Forward")
 
-                onClicked: _matplotlibBridge.forward(experimentDataChart)
+                onClicked: ExGlobals.Constants.proxy.matplotlibForward(experimentDataChart)
             }
 
             Rectangle {
@@ -69,7 +69,7 @@ Rectangle {
                     if (zoom.checked) {
                         zoom.checked = false
                     }
-                    _matplotlibBridge.pan(experimentDataChart)
+                    ExGlobals.Constants.proxy.matplotlibPan(experimentDataChart)
                 }
             }
 
@@ -84,7 +84,7 @@ Rectangle {
                     if (pan.checked) {
                         pan.checked = false
                     }
-                    _matplotlibBridge.zoom(experimentDataChart)
+                    ExGlobals.Constants.proxy.matplotlibZoom(experimentDataChart)
                 }
             }
         }
@@ -103,7 +103,7 @@ Rectangle {
 
         color: EaStyle.Colors.mainContentBackground
 
-        FigureCanvas {
+        Matplotlib.FigureCanvas {
             id: experimentDataChart
             objectName: "experimentDataChart"
 

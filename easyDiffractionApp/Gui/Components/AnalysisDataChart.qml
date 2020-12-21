@@ -2,7 +2,7 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Window 2.12
 
-import MatplotlibBackend 1.0
+import MatplotlibBackend 1.0 as Matplotlib
 
 import easyAppGui.Style 1.0 as EaStyle
 import easyAppGui.Elements 1.0 as EaElements
@@ -34,21 +34,21 @@ Rectangle {
                 fontIcon: "home"
                 ToolTip.text: qsTr("Home")
 
-                onClicked: _matplotlibBridge.home(analysisDataChart)
+                onClicked: ExGlobals.Constants.proxy.matplotlibHome(analysisDataChart)
             }
 
             EaElements.ToolButton {
                 fontIcon: "\uf2ea"
                 ToolTip.text: qsTr("Back")
 
-                onClicked: _matplotlibBridge.back(analysisDataChart)
+                onClicked: ExGlobals.Constants.proxy.matplotlibBack(analysisDataChart)
             }
 
             EaElements.ToolButton {
                 fontIcon: "\uf2f9"
                 ToolTip.text: qsTr("Forward")
 
-                onClicked: _matplotlibBridge.forward(analysisDataChart)
+                onClicked: ExGlobals.Constants.proxy.matplotlibForward(analysisDataChart)
             }
 
             Rectangle {
@@ -70,7 +70,7 @@ Rectangle {
                     if (zoom.checked) {
                         zoom.checked = false
                     }
-                    _matplotlibBridge.pan(analysisDataChart)
+                    ExGlobals.Constants.proxy.matplotlibPan(analysisDataChart)
                 }
             }
 
@@ -85,7 +85,7 @@ Rectangle {
                     if (pan.checked) {
                         pan.checked = false
                     }
-                    _matplotlibBridge.zoom(analysisDataChart)
+                    ExGlobals.Constants.proxy.matplotlibZoom(analysisDataChart)
                 }
             }
         }
@@ -104,7 +104,7 @@ Rectangle {
 
         color: EaStyle.Colors.mainContentBackground
 
-        FigureCanvas {
+        Matplotlib.FigureCanvas {
             id: analysisDataChart
             objectName: "analysisDataChart"
 
@@ -136,7 +136,7 @@ Rectangle {
 
         color: EaStyle.Colors.mainContentBackground
 
-        FigureCanvas {
+        Matplotlib.FigureCanvas {
             id: differenceDataChart
             objectName: "differenceDataChart"
 

@@ -110,28 +110,21 @@ def main():
     # QML application engine
     engine = QQmlApplicationEngine()
 
-    # Main proxy object between python logic and QML GUI
+    # Python objects to be exposed to QML
     py_qml_proxy_obj = PyQmlProxy()
-
-    # App translator
     translator = Translator(app, engine, translations_path, languages)
-    #translator.selectSystemLanguage()
-
-    # Matplotlib display bridge
-    matplotlib_bridge = DisplayBridge()
-    qmlRegisterType(FigureCanvasQtQuickAgg, 'MatplotlibBackend', 1, 0, 'FigureCanvas')
-
-    # VTK handler
     vtk_handler = VTKcanvasHandler()
-    qmlRegisterType(FboItem, 'QtVTK', 1, 0, 'VtkFboItem')
 
     # Expose the Python objects to QML
     engine.rootContext().setContextProperty('_pyQmlProxyObj', py_qml_proxy_obj)
     engine.rootContext().setContextProperty('_translator', translator)
+    engine.rootContext().setContextProperty('_vtkHandler', vtk_handler)
     engine.rootContext().setContextProperty('_projectConfig', CONFIG)
     engine.rootContext().setContextProperty('_isTestMode', isTestMode())
-    engine.rootContext().setContextProperty('_matplotlibBridge', matplotlib_bridge)
-    engine.rootContext().setContextProperty('_vtkHandler', vtk_handler)
+
+    # Register types to be instantiated in QML
+    qmlRegisterType(FigureCanvasQtQuickAgg, 'MatplotlibBackend', 1, 0, 'FigureCanvas')
+    qmlRegisterType(FboItem, 'QtVTK', 1, 0, 'VtkFboItem')
 
     # Add paths to search for installed modules
     engine.addImportPath(easyAppGui_path)
@@ -142,9 +135,6 @@ def main():
 
     # Root application window
     root_window = engine.rootObjects()[0]
-
-    # Matplotlib setup
-    matplotlib_bridge.context = root_window
 
     # VTK setup
     app.vtkSetup(root_window)

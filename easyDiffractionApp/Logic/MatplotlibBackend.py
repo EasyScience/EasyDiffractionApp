@@ -30,6 +30,9 @@ class DisplayBridge(QtCore.QObject):
         self.font_path = ""
         self.style_params = {}
 
+    def setContext(self, context):
+        self.context = context
+
     def clearDispalyAdapters(self):
         self.display_adapters.clear()
 
@@ -84,37 +87,30 @@ class DisplayBridge(QtCore.QObject):
             display_adapter.redrawCanvas()
 
     # The toolbar commands
-    @QtCore.Slot('QVariant')
-    def pan(self, canvas, *args):
-        """Activate the pan tool."""
+    def pan(self, canvas):
         display_adapter = self.displayAdapter(canvas)
         if display_adapter is not None:
-            display_adapter.toolbar.pan(*args)
+            display_adapter.toolbar.pan()
 
-    @QtCore.Slot('QVariant')
-    def zoom(self, canvas, *args):
-        """activate zoom tool."""
+    def zoom(self, canvas):
         display_adapter = self.displayAdapter(canvas)
         if display_adapter is not None:
-            display_adapter.toolbar.zoom(*args)
+            display_adapter.toolbar.zoom()
 
-    @QtCore.Slot('QVariant')
-    def home(self, canvas, *args):
+    def home(self, canvas):
         display_adapter = self.displayAdapter(canvas)
         if display_adapter is not None:
-            display_adapter.toolbar.home(*args)
+            display_adapter.toolbar.home()
 
-    @QtCore.Slot('QVariant')
-    def back(self, canvas, *args):
+    def back(self, canvas):
         display_adapter = self.displayAdapter(canvas)
         if display_adapter is not None:
-            display_adapter.toolbar.back(*args)
+            display_adapter.toolbar.back()
 
-    @QtCore.Slot('QVariant')
-    def forward(self, canvas, *args):
+    def forward(self, canvas):
         display_adapter = self.displayAdapter(canvas)
         if display_adapter is not None:
-            display_adapter.toolbar.forward(*args)
+            display_adapter.toolbar.forward()
 
 class DisplayAdapter(QtCore.QObject):
     """ A bridge class to interact with the plot in python

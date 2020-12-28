@@ -106,7 +106,6 @@ Rectangle {
 
         MatplotlibBackend.FigureCanvas {
             id: analysisDataChart
-            objectName: "analysisDataChart"
 
             anchors.fill: parent
 
@@ -138,7 +137,6 @@ Rectangle {
 
         MatplotlibBackend.FigureCanvas {
             id: differenceDataChart
-            objectName: "differenceDataChart"
 
             anchors.fill: parent
 

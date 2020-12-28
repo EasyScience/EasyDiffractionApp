@@ -105,7 +105,6 @@ Rectangle {
 
         MatplotlibBackend.FigureCanvas {
             id: experimentDataChart
-            objectName: "experimentDataChart"
 
             anchors.fill: parent
 

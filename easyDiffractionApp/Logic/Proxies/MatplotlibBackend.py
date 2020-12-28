@@ -92,7 +92,7 @@ class DisplayBridge(QtCore.QObject):
             display_adapter.redrawCanvas()
 
     def displayAdapter(self, canvas):
-        canvas_name = canvas.objectName()
+        canvas_name = hash(canvas)
         display_adapter = self.display_adapters.get(canvas_name, None)
         return display_adapter
 
@@ -100,7 +100,7 @@ class DisplayBridge(QtCore.QObject):
         self.display_adapters.clear()
 
     def updateData(self, canvas, dataset):
-        canvas_name = canvas.objectName()
+        canvas_name = hash(canvas)
 
         # init and add display adapter
         if canvas_name not in self.display_adapters.keys():

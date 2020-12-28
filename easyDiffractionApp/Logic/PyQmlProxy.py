@@ -1,4 +1,6 @@
 import json
+from typing import Union
+
 from dicttoxml import dicttoxml
 
 import timeit
@@ -838,7 +840,7 @@ class PyQmlProxy(QObject):
         if not self.experimentLoaded and not self.experimentSkipped:
             return
 
-        if self._analysis_figure_canvas.objectName() is None:
+        if self._analysis_figure_canvas is None:
             return
 
         self._sample.output_index = self.currentPhaseIndex
@@ -956,11 +958,11 @@ class PyQmlProxy(QObject):
     ####################################################################################################################
 
     @Slot(str, 'QVariant')
-    def editParameter(self, obj_id: str, new_value: [bool, float, str]):  # covers both parameter and descriptor
+    def editParameter(self, obj_id: str, new_value: Union[bool, float, str]):  # covers both parameter and descriptor
         obj = self._parameterObj(obj_id)
         print(f"\n\n+ editParameter {obj_id} of {type(new_value)} from {obj.raw_value} to {new_value}")
 
-        if type(new_value) is bool:
+        if isinstance(new_value, bool):
             if obj.fixed == (not new_value):
                 return
 

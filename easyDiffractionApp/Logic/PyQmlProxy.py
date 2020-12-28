@@ -144,9 +144,10 @@ class PyQmlProxy(QObject):
         self.experimentLoadedChanged.connect(self._onExperimentLoadedChanged)
         self.experimentSkippedChanged.connect(self._onExperimentSkippedChanged)
 
-        self._background_proxy = BackgroundProxy(self._sample)
-        self._background_proxy.backgroundChanged.connect(self._onParametersChanged)
-        self._background_proxy.backgroundChanged.connect(self.calculatedDataChanged)
+        self._background_proxy = BackgroundProxy()
+        self._background_proxy.asObjChanged.connect(self._onParametersChanged)
+        self._background_proxy.asObjChanged.connect(self.calculatedDataChanged)
+        self._background_proxy.asObjChanged.connect(self._sample.set_background)
 
         # Analysis
         self.calculatedDataChanged.connect(self._onCalculatedDataChanged)
@@ -174,7 +175,7 @@ class PyQmlProxy(QObject):
         self.parametersChanged.connect(self._onStructureParametersChanged)
         self.parametersChanged.connect(self._onPatternParametersChanged)
         self.parametersChanged.connect(self._onInstrumentParametersChanged)
-        self.parametersChanged.connect(self._background_proxy.backgroundChanged)
+        self.parametersChanged.connect(self._background_proxy.onAsObjChanged)
 
         self._parameters_filter_criteria = ""
         self.parametersFilterCriteriaChanged.connect(self._onParametersFilterCriteriaChanged)
@@ -399,7 +400,6 @@ class PyQmlProxy(QObject):
             self._interface.generate_sample_binding("filename", self._sample)
         self._sample.phases.name = 'Phases'
         self._sample.set_background(self._background_proxy.asObj)
-        self._background_proxy.backgroundChanged.emit()
         self.structureParametersChanged.emit()
 
     def _onPhaseRemoved(self):
@@ -673,6 +673,7 @@ class PyQmlProxy(QObject):
         self.simulationParametersAsObj = json.dumps(self._experiment_parameters)
         self.experiments = [self._defaultExperiment()]
         self._matplotlib_bridge.updateData(self._experiment_figure_canvas, [self._experiment_data])
+        self._background_proxy.setDefaultPoints()
         self.experimentDataChanged.emit()
 
     def _onExperimentDataRemoved(self):

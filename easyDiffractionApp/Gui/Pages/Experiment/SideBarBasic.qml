@@ -120,9 +120,9 @@ EaComponents.SideBarColumn {
             }
 
             EaElements.SideBarButton {
-                enabled: false
-                fontIcon: "plus-square"
-                text: qsTr("Insert point before selected")
+                fontIcon: "undo-alt"
+                text: qsTr("Reset to default points")
+                onClicked: ExGlobals.Constants.proxy.backgroundProxy.setDefaultPoints()
             }
         }
     }

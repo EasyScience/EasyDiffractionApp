@@ -30,11 +30,15 @@ jobs:
     - name: Check-out repository
       uses: actions/checkout@v2
 
-    - name: Set up access to private repos
-      uses: webfactory/ssh-agent@v0.4.1
-      with:
-        ssh-private-key: ${{ secrets.GH_WEBFACTORY_KEY }}
+    #- name: Set up access to private repos
+    #  uses: webfactory/ssh-agent@v0.4.1
+    #  with:
+    #    ssh-private-key: ${{ secrets.GH_WEBFACTORY_KEY }}
 
+    - name: Set up dependences
+      if: runner.os == 'Linux'
+      run: sudo apt-get install libgfortran4
+      
     - name: Set up Python environment
       uses: actions/setup-python@v2
       with:

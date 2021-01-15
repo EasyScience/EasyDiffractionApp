@@ -292,7 +292,7 @@ Item {
         rc.hide()
         //rc.keyClick(Qt.Key_Right)
         //rc.keyClick(Qt.Key_Right)
-        rc.clearText(4)
+        rc.clearText(6)
         rc.typeText("4.55")
         rc.keyClick(Qt.Key_Enter)
         rc.show()

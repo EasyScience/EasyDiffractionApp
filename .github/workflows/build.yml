@@ -22,7 +22,7 @@ jobs:
     # Build matrix for different platforms
     strategy:
       matrix:
-        os: [macos-10.15] #, ubuntu-latest, windows-latest]
+        os: [macos-10.15, ubuntu-latest, windows-latest]
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -38,7 +38,7 @@ jobs:
     - name: Set up dependences
       if: runner.os == 'Linux'
       run: sudo apt-get install libgfortran4
-      
+
     - name: Set up Python environment
       uses: actions/setup-python@v2
       with:

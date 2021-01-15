@@ -61,6 +61,14 @@ def relinkCrysfml():
     if CONFIG.os == 'windows':
         Functions.printNeutralMessage(f'No CrysFML relinking is needed for platform {CONFIG.os}')
         return
+
+    Functions.printNeutralMessage(f"pythonLibLocation: {pythonLibLocation()}")
+    Functions.printNeutralMessage(f"crysfmlPythonDylib: {crysfmlPythonDylib()}")
+    Functions.printNeutralMessage(f"pythonDylib: {pythonDylib()}")
+    Functions.printNeutralMessage(f"crysfmlRpath: {crysfmlRpath()}")
+    Functions.printNeutralMessage(f"rpath: {rpath()}")
+    Functions.printNeutralMessage(f"crysfmlSoFile: {crysfmlSoFile()}")
+
     try:
         message = f'relink CrysFML from default Python dylib for platform {CONFIG.os}'
         if CONFIG.os == 'macos':
@@ -100,10 +108,4 @@ def relinkCrysfml():
 
 
 if __name__ == "__main__":
-    Functions.printNeutralMessage(f"pythonLibLocation: {pythonLibLocation()}")
-    Functions.printNeutralMessage(f"crysfmlPythonDylib: {crysfmlPythonDylib()}")
-    Functions.printNeutralMessage(f"pythonDylib: {pythonDylib()}")
-    Functions.printNeutralMessage(f"crysfmlRpath: {crysfmlRpath()}")
-    Functions.printNeutralMessage(f"rpath: {rpath()}")
-    Functions.printNeutralMessage(f"crysfmlSoFile: {crysfmlSoFile()}")
     relinkCrysfml()

@@ -46,6 +46,7 @@ Rectangle {
 
         EaCharts.ValueAxis {
             id: axisY
+
             title: mainYAxisTitle
             min: ExGlobals.Constants.proxy.qtCharts.analysisYmin
             max: ExGlobals.Constants.proxy.qtCharts.analysisYmax

@@ -115,11 +115,11 @@ EaComponents.SideBarColumn {
             }
             EaElements.ComboBox {
                 width: minimizerSelector.width
-                model: ExGlobals.Constants.proxy.plottingLibs
-                onActivated: ExGlobals.Constants.proxy.currentPlottingLib = currentValue
+                model: ExGlobals.Constants.proxy.plotting1dLibs
+                onActivated: ExGlobals.Constants.proxy.current1dPlottingLib = currentValue
 
                 Component.onCompleted: {
-                    currentIndex = model.indexOf(ExGlobals.Constants.proxy.currentPlottingLib)
+                    currentIndex = model.indexOf(ExGlobals.Constants.proxy.current1dPlottingLib)
                 }
             }
         }

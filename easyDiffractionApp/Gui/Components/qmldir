@@ -4,8 +4,10 @@ ApplicationWindow 1.0 ApplicationWindow.qml
 
 # Main content components
 
-SampleStructure3d 1.0 SampleStructure3d.qml
-ExperimentDataChart 1.0 ExperimentDataChart.qml
+SampleStructure3dVtk 1.0 SampleStructure3dVtk.qml
+SampleStructure3dQtDataVisualization 1.0 SampleStructure3dQtDataVisualization.qml
+ExperimentDataChartMatplotlib 1.0 ExperimentDataChartMatplotlib.qml
+ExperimentDataChartQtCharts 1.0 ExperimentDataChartQtCharts.qml
 AnalysisDataChartMatplotlib 1.0 AnalysisDataChartMatplotlib.qml
 AnalysisDataChartQtCharts 1.0 AnalysisDataChartQtCharts.qml
 

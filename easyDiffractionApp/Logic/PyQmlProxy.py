@@ -88,7 +88,8 @@ class PyQmlProxy(QObject):
     # Plotting
     showMeasuredSeriesChanged = Signal()
     showDifferenceChartChanged = Signal()
-    currentPlottingLibChanged = Signal()
+    current1dPlottingLibChanged = Signal()
+    current3dPlottingLibChanged = Signal()
 
     # Status info
     statusInfoChanged = Signal()
@@ -116,7 +117,8 @@ class PyQmlProxy(QObject):
         self._show_measured_series = True
         self._show_difference_chart = True
 
-        self.currentPlottingLibChanged.connect(self.onCurrentPlottingLibChanged)
+        self.current1dPlottingLibChanged.connect(self.onCurrent1dPlottingLibChanged)
+        self.current3dPlottingLibChanged.connect(self.onCurrent3dPlottingLibChanged)
 
         # Project
         self._project_info = self._defaultProjectInfo()
@@ -197,8 +199,11 @@ class PyQmlProxy(QObject):
         self.parametersFilterCriteriaChanged.connect(self._onParametersFilterCriteriaChanged)
 
         # Plotting
-        self._plotting_libs = ['matplotlib', 'qtcharts']
-        self._current_plotting_lib = self._plotting_libs[1]
+        self._1d_plotting_libs = ['matplotlib', 'qtcharts']
+        self._current_1d_plotting_lib = self._1d_plotting_libs[1]
+
+        self._3d_plotting_libs = ['vtk', 'qtdatavisualization']
+        self._current_3d_plotting_lib = self._3d_plotting_libs[0]
 
         # Status info
         self.statusInfoChanged.connect(self._onStatusInfoChanged)
@@ -293,23 +298,42 @@ class PyQmlProxy(QObject):
     # Plotting libs
 
     @Property('QVariant', constant=True)
-    def plottingLibs(self):
-        return self._plotting_libs
+    def plotting1dLibs(self):
+        return self._1d_plotting_libs
 
-    @Property('QVariant', notify=currentPlottingLibChanged)
-    def currentPlottingLib(self):
-        return self._current_plotting_lib
+    @Property('QVariant', notify=current1dPlottingLibChanged)
+    def current1dPlottingLib(self):
+        return self._current_1d_plotting_lib
 
-    @currentPlottingLib.setter
-    def currentPlottingLibSetter(self, plotting_lib):
-        self._current_plotting_lib = plotting_lib
-        self.currentPlottingLibChanged.emit()
+    @current1dPlottingLib.setter
+    def current1dPlottingLibSetter(self, plotting_lib):
+        self._current_1d_plotting_lib = plotting_lib
+        self.current1dPlottingLibChanged.emit()
 
-    def onCurrentPlottingLibChanged(self):
-        if self.currentPlottingLib == 'matplotlib':
+    def onCurrent1dPlottingLibChanged(self):
+        if self.current1dPlottingLib == 'matplotlib':
             self._updateCalculatedData()
-        elif self.currentPlottingLib == 'qtcharts':
+        elif self.current1dPlottingLib == 'qtcharts':
             self._qtcharts_bridge.updateAllCharts()
+
+    @Property('QVariant', constant=True)
+    def plotting3dLibs(self):
+        return self._3d_plotting_libs
+
+    @Property('QVariant', notify=current3dPlottingLibChanged)
+    def current3dPlottingLib(self):
+        return self._current_3d_plotting_lib
+
+    @current3dPlottingLib.setter
+    def current3dPlottingLibSetter(self, plotting_lib):
+        self._current_3d_plotting_lib = plotting_lib
+        self.current3dPlottingLibChanged.emit()
+
+    def onCurrent3dPlottingLibChanged(self):
+        if self.current3dPlottingLib == 'vtk':
+            print("Warning: Select Vtk. Not implemented yet.")
+        elif self.current3dPlottingLib == 'qtdatavisualization':
+            print("Warning: Select Qt Data Visualization. Not implemented yet.")
 
     #
 
@@ -745,9 +769,9 @@ class PyQmlProxy(QObject):
 
     def _onExperimentDataAdded(self):
         print("***** _onExperimentDataAdded")
-        if self.currentPlottingLib == 'matplotlib':
+        if self.current1dPlottingLib == 'matplotlib':
             self._matplotlib_bridge.updateData(self._experiment_figure_canvas, [self._experiment_data])
-        elif self.currentPlottingLib == 'qtcharts':
+        elif self.current1dPlottingLib == 'qtcharts':
             self._qtcharts_bridge.setMeasuredData(self._experiment_data.x, self._experiment_data.y, self._experiment_data.e)
         self._experiment_parameters = self._experimentDataParameters(self._experiment_data)
         self.simulationParametersAsObj = json.dumps(self._experiment_parameters)
@@ -920,10 +944,10 @@ class PyQmlProxy(QObject):
         if not self.experimentLoaded and not self.experimentSkipped:
             return
 
-        if self.currentPlottingLib == 'matplotlib' and self._analysis_figure_canvas is None:
+        if self.current1dPlottingLib == 'matplotlib' and self._analysis_figure_canvas is None:
             return
 
-        if self.currentPlottingLib == 'qtchart' and self._calculated_series_ref is None:
+        if self.current1dPlottingLib == 'qtchart' and self._calculated_series_ref is None:
             return
 
         self._sample.output_index = self.currentPhaseIndex
@@ -949,9 +973,9 @@ class PyQmlProxy(QObject):
             difference_dataset = [zeros_diff, zeros_diff, diff]
             analysis_dataset = [exp, sim]
 
-            if self.currentPlottingLib == 'matplotlib':
+            if self.current1dPlottingLib == 'matplotlib':
                 self._matplotlib_bridge.updateData(self._difference_figure_canvas, difference_dataset)
-######            elif self.currentPlottingLib == 'qtcharts':
+######            elif self.current1dPlottingLib == 'qtcharts':
 ######                self._qtcharts_bridge.replacePoints('analysis.measured.lower', exp.x, exp.y - 100)
 ######                self._qtcharts_bridge.replacePoints('analysis.measured.upper', exp.x, exp.y + 100)
             #    self._qtcharts_bridge.replacePoints('analysis.difference.lower', diff.x, diff.y)
@@ -968,9 +992,9 @@ class PyQmlProxy(QObject):
 
             analysis_dataset = [zeros_sim, sim]
 
-        if self.currentPlottingLib == 'matplotlib':
+        if self.current1dPlottingLib == 'matplotlib':
             self._matplotlib_bridge.updateData(self._analysis_figure_canvas, analysis_dataset)
-        elif self.currentPlottingLib == 'qtcharts':
+        elif self.current1dPlottingLib == 'qtcharts':
             self._qtcharts_bridge.setCalculatedData(sim.x, sim.y)
 
         print("+ _updateCalculatedData: {0:.3f} s".format(timeit.default_timer() - start_time))

@@ -6,7 +6,8 @@ ApplicationWindow 1.0 ApplicationWindow.qml
 
 SampleStructure3d 1.0 SampleStructure3d.qml
 ExperimentDataChart 1.0 ExperimentDataChart.qml
-AnalysisDataChart 1.0 AnalysisDataChart.qml
+AnalysisDataChartMatplotlib 1.0 AnalysisDataChartMatplotlib.qml
+AnalysisDataChartQtCharts 1.0 AnalysisDataChartQtCharts.qml
 
 # Sidebar components
 

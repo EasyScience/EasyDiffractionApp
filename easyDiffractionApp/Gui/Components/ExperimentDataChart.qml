@@ -119,7 +119,7 @@ Rectangle {
         }
     }
 
-    onShowLegendChanged: ExGlobals.Constants.proxy.matplotlibBridge.showLegend(showLegend, experimentDataChart)
+    //onShowLegendChanged: ExGlobals.Constants.proxy.matplotlibBridge.showLegend(showLegend, experimentDataChart)
 }
 
 

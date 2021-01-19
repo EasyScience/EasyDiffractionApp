@@ -6,6 +6,8 @@ from dicttoxml import dicttoxml
 import timeit
 
 from PySide2.QtCore import QObject, Slot, Signal, Property
+from PySide2.QtCore import QPointF
+from PySide2.QtCharts import QtCharts
 
 from easyCore import np
 from easyCore import borg
@@ -28,6 +30,7 @@ from easyDiffractionApp.Logic.DataStore import DataSet1D, DataStore
 
 from easyDiffractionApp.Logic.Proxies.MatplotlibBackend import DisplayBridge
 from easyDiffractionApp.Logic.Proxies.BackgroundProxy import BackgroundProxy
+from easyDiffractionApp.Logic.Proxies.QtChartsBackend import QtChartsBridge
 
 
 class PyQmlProxy(QObject):
@@ -82,6 +85,11 @@ class PyQmlProxy(QObject):
 
     currentCalculatorChanged = Signal()
 
+    # Plotting
+    showMeasuredSeriesChanged = Signal()
+    showDifferenceChartChanged = Signal()
+    currentPlottingLibChanged = Signal()
+
     # Status info
     statusInfoChanged = Signal()
 
@@ -97,10 +105,18 @@ class PyQmlProxy(QObject):
         # Charts
         self._vtk_handler = None
 
+        self._qtcharts_bridge = QtChartsBridge()
         self._matplotlib_bridge = DisplayBridge()
         self._experiment_figure_canvas = None
         self._analysis_figure_canvas = None
         self._difference_figure_canvas = None
+
+        self._calculated_series_ref = None
+
+        self._show_measured_series = True
+        self._show_difference_chart = True
+
+        self.currentPlottingLibChanged.connect(self.onCurrentPlottingLibChanged)
 
         # Project
         self._project_info = self._defaultProjectInfo()
@@ -180,6 +196,10 @@ class PyQmlProxy(QObject):
         self._parameters_filter_criteria = ""
         self.parametersFilterCriteriaChanged.connect(self._onParametersFilterCriteriaChanged)
 
+        # Plotting
+        self._plotting_libs = ['matplotlib', 'qtcharts']
+        self._current_plotting_lib = self._plotting_libs[1]
+
         # Status info
         self.statusInfoChanged.connect(self._onStatusInfoChanged)
         self.currentCalculatorChanged.connect(self.statusInfoChanged)
@@ -258,6 +278,62 @@ class PyQmlProxy(QObject):
         if self._difference_figure_canvas == canvas:
             return
         self._difference_figure_canvas = canvas
+
+    # QtCharts
+
+    @Slot(QtCharts.QXYSeries)
+    def setCalculatedSeriesRef(self, series_ref):
+        self._calculated_series_ref = series_ref
+
+    @Property('QVariant', constant=True)
+    #@Property('QVariant', notify=phasesAsXmlChanged)
+    def qtCharts(self):
+        return self._qtcharts_bridge
+
+    # Plotting libs
+
+    @Property('QVariant', constant=True)
+    def plottingLibs(self):
+        return self._plotting_libs
+
+    @Property('QVariant', notify=currentPlottingLibChanged)
+    def currentPlottingLib(self):
+        return self._current_plotting_lib
+
+    @currentPlottingLib.setter
+    def currentPlottingLibSetter(self, plotting_lib):
+        self._current_plotting_lib = plotting_lib
+        self.currentPlottingLibChanged.emit()
+
+    def onCurrentPlottingLibChanged(self):
+        if self.currentPlottingLib == 'matplotlib':
+            self._updateCalculatedData()
+        elif self.currentPlottingLib == 'qtcharts':
+            self._qtcharts_bridge.updateAllCharts()
+
+    #
+
+    @Property(bool, notify=showDifferenceChartChanged)
+    def showDifferenceChart(self):
+        return self._show_difference_chart
+
+    @showDifferenceChart.setter
+    def showDifferenceChartSetter(self, show):
+        if self._show_difference_chart == show:
+            return
+        self._show_difference_chart = show
+        self.showDifferenceChartChanged.emit()
+
+    @Property(bool, notify=showMeasuredSeriesChanged)
+    def showMeasuredSeries(self):
+        return self._show_measured_series
+
+    @showMeasuredSeries.setter
+    def showMeasuredSeriesSetter(self, show):
+        if self._show_measured_series == show:
+            return
+        self._show_measured_series = show
+        self.showMeasuredSeriesChanged.emit()
 
     ####################################################################################################################
     ####################################################################################################################
@@ -588,7 +664,7 @@ class PyQmlProxy(QObject):
             DataSet1D(
                 name='D1A@ILL data',
                 x=x_data, y=np.zeros_like(x_data),
-                x_label='2theta (deg)', y_label='Intensity (arb. units)',
+                x_label='2theta (deg)', y_label='Intensity',
                 data_type='experiment'
             )
         )
@@ -596,7 +672,7 @@ class PyQmlProxy(QObject):
             DataSet1D(
                 name='{:s} engine'.format(self._interface.current_interface_name),
                 x=x_data, y=np.zeros_like(x_data),
-                x_label='2theta (deg)', y_label='Intensity (arb. units)',
+                x_label='2theta (deg)', y_label='Intensity',
                 data_type='simulation'
             )
         )
@@ -604,7 +680,7 @@ class PyQmlProxy(QObject):
             DataSet1D(
                 name='Difference',
                 x=x_data, y=np.zeros_like(x_data),
-                x_label='2theta (deg)', y_label='Intensity (arb. units)',
+                x_label='2theta (deg)', y_label='Difference',
                 data_type='simulation'
             )
         )
@@ -669,10 +745,13 @@ class PyQmlProxy(QObject):
 
     def _onExperimentDataAdded(self):
         print("***** _onExperimentDataAdded")
+        if self.currentPlottingLib == 'matplotlib':
+            self._matplotlib_bridge.updateData(self._experiment_figure_canvas, [self._experiment_data])
+        elif self.currentPlottingLib == 'qtcharts':
+            self._qtcharts_bridge.setMeasuredData(self._experiment_data.x, self._experiment_data.y, self._experiment_data.e)
         self._experiment_parameters = self._experimentDataParameters(self._experiment_data)
         self.simulationParametersAsObj = json.dumps(self._experiment_parameters)
         self.experiments = [self._defaultExperiment()]
-        self._matplotlib_bridge.updateData(self._experiment_figure_canvas, [self._experiment_data])
         self._background_proxy.setDefaultPoints()
         self.experimentDataChanged.emit()
 
@@ -841,7 +920,10 @@ class PyQmlProxy(QObject):
         if not self.experimentLoaded and not self.experimentSkipped:
             return
 
-        if self._analysis_figure_canvas is None:
+        if self.currentPlottingLib == 'matplotlib' and self._analysis_figure_canvas is None:
+            return
+
+        if self.currentPlottingLib == 'qtchart' and self._calculated_series_ref is None:
             return
 
         self._sample.output_index = self.currentPhaseIndex
@@ -867,7 +949,13 @@ class PyQmlProxy(QObject):
             difference_dataset = [zeros_diff, zeros_diff, diff]
             analysis_dataset = [exp, sim]
 
-            self._matplotlib_bridge.updateData(self._difference_figure_canvas, difference_dataset)
+            if self.currentPlottingLib == 'matplotlib':
+                self._matplotlib_bridge.updateData(self._difference_figure_canvas, difference_dataset)
+######            elif self.currentPlottingLib == 'qtcharts':
+######                self._qtcharts_bridge.replacePoints('analysis.measured.lower', exp.x, exp.y - 100)
+######                self._qtcharts_bridge.replacePoints('analysis.measured.upper', exp.x, exp.y + 100)
+            #    self._qtcharts_bridge.replacePoints('analysis.difference.lower', diff.x, diff.y)
+            #    self._qtcharts_bridge.replacePoints('analysis.difference.upper', diff.x, diff.y)
 
         elif self.experimentSkipped:
             x_min = float(self._simulation_parameters_as_obj['x_min'])
@@ -880,7 +968,11 @@ class PyQmlProxy(QObject):
 
             analysis_dataset = [zeros_sim, sim]
 
-        self._matplotlib_bridge.updateData(self._analysis_figure_canvas, analysis_dataset)
+        if self.currentPlottingLib == 'matplotlib':
+            self._matplotlib_bridge.updateData(self._analysis_figure_canvas, analysis_dataset)
+        elif self.currentPlottingLib == 'qtcharts':
+            self._qtcharts_bridge.setCalculatedData(sim.x, sim.y)
+
         print("+ _updateCalculatedData: {0:.3f} s".format(timeit.default_timer() - start_time))
 
     def _onCalculatedDataChanged(self):

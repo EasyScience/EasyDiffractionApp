@@ -151,8 +151,11 @@ Rectangle {
         }
     }
 
+    /*
     onShowLegendChanged: {
         ExGlobals.Constants.proxy.matplotlibBridge.showLegend(showLegend, analysisDataChart)
         ExGlobals.Constants.proxy.matplotlibBridge.showLegend(showLegend, differenceDataChart)
     }
+    */
+
 }

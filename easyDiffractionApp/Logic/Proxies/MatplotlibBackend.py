@@ -154,7 +154,7 @@ class DisplayAdapter(QtCore.QObject):
             line, = self.axes.plot(data.x, data.y, label=data.name)
             self.lines.append(line)
 
-        self.axes.legend(loc='upper right')
+        ###self.axes.legend(loc='upper right')
 
     def showLegend(self, show_legend):
         self.axes.get_legend().set_visible(show_legend)
@@ -181,8 +181,10 @@ class DisplayAdapter(QtCore.QObject):
         self.axes.autoscale_view()
 
     def redrawCanvas(self):
-        #self.canvas.draw_idle()
-        self.canvas.draw()
+        #self.axes.get_legend().remove()
+        self.showLegend(False)
+        self.canvas.draw_idle()
+        #self.canvas.draw()
 
     def setFont(self, font_source):
         # https://stackoverflow.com/questions/35668219/how-to-set-up-a-custom-font-with-custom-path-to-matplotlib-global-font/43647344

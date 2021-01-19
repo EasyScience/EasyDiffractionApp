@@ -101,14 +101,54 @@ EaComponents.SideBarColumn {
     }
 
     EaElements.GroupBox {
+        title: qsTr("Plotting")
+        collapsed: false
+
+        Row {
+            spacing: EaStyle.Sizes.fontPixelSize
+
+            // Plotting
+            EaComponents.TableViewLabel{
+                horizontalAlignment: Text.AlignRight
+                width: EaStyle.Sizes.fontPixelSize * 5.0
+                text: qsTr("Library:")
+            }
+            EaElements.ComboBox {
+                width: minimizerSelector.width
+                model: ExGlobals.Constants.proxy.plottingLibs
+                onActivated: ExGlobals.Constants.proxy.currentPlottingLib = currentValue
+
+                Component.onCompleted: {
+                    currentIndex = model.indexOf(ExGlobals.Constants.proxy.currentPlottingLib)
+                }
+            }
+        }
+    }
+
+    EaElements.GroupBox {
         title: qsTr("Plot settings")
         collapsed: false
 
-        EaElements.CheckBox {
-            topPadding: 0
-            text: qsTr("Show legend")
-            checked: ExGlobals.Variables.showLegend
-            onCheckedChanged: ExGlobals.Variables.showLegend = checked //_matplotlibBridge.showLegend(checked, "figure")
+        Row {
+            spacing: EaStyle.Sizes.fontPixelSize
+
+            EaElements.CheckBox {
+                text: qsTr("Show legend")
+                checked: ExGlobals.Variables.showLegend
+                onCheckedChanged: ExGlobals.Variables.showLegend = checked //_matplotlibBridge.showLegend(checked, "figure")
+            }
+
+            EaElements.CheckBox {
+                text: qsTr("Show measured")
+                checked: ExGlobals.Constants.proxy.showMeasuredSeries
+                onCheckedChanged: ExGlobals.Constants.proxy.showMeasuredSeries = checked
+            }
+
+            EaElements.CheckBox {
+                text: qsTr("Show difference")
+                checked: ExGlobals.Constants.proxy.showDifferenceChart
+                onCheckedChanged: ExGlobals.Constants.proxy.showDifferenceChart = checked
+            }
         }
     }
 

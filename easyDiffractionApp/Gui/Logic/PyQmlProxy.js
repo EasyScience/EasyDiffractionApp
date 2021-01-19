@@ -47,6 +47,7 @@ class PyQmlProxy {
     get currentCalculatorIndex() { return 0 }
     get minimizerNames() { return ["lmfit", "bumps", "dfo_ls"] }
     get currentMinimizerIndex() { return 0 }
+    get minimizerMethodNames() { return ["leastsq", "lm"] }
     get currentMinimizerMethodIndex() { return 0 }
 
     get projectInfoAsJson() { return {"calculations":"experiments.cif","experiments":"experiments.cif","keywords":"sine, cosine, lmfit, bumps","modified":"18.09.2020, 09:24","name":"Example Project","samples":"samples.cif"} }

@@ -200,7 +200,7 @@ class PyQmlProxy(QObject):
 
         # Plotting
         self._1d_plotting_libs = ['matplotlib', 'qtcharts']
-        self._current_1d_plotting_lib = self._1d_plotting_libs[1]
+        self._current_1d_plotting_lib = self._1d_plotting_libs[0]
 
         self._3d_plotting_libs = ['vtk', 'qtdatavisualization']
         self._current_3d_plotting_lib = self._3d_plotting_libs[0]

@@ -54,12 +54,8 @@ EaComponents.TableView {
             fontIcon: "minus-circle"
             ToolTip.text: qsTr("Remove this dataset")
             onClicked: {
-                ExGlobals.Variables.experimentLoaded = false
                 ExGlobals.Constants.proxy.experimentLoaded = false
-
-                ExGlobals.Variables.experimentSkipped = true
                 ExGlobals.Constants.proxy.experimentSkipped = true
-
                 ExGlobals.Constants.proxy.removeExperiment()
             }
         }

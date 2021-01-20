@@ -23,7 +23,7 @@ EaComponents.SideBarColumn {
             spacing: EaStyle.Sizes.fontPixelSize
 
             EaElements.SideBarButton {
-                enabled: !ExGlobals.Variables.experimentLoaded
+                enabled: !ExGlobals.Constants.proxy.experimentLoaded
 
                 fontIcon: "upload"
                 text: qsTr("Import data from local drive")
@@ -34,15 +34,13 @@ EaComponents.SideBarColumn {
             EaElements.SideBarButton {
                 id: continueWithoutExperimentDataButton
 
-                enabled: !ExGlobals.Variables.experimentLoaded && !ExGlobals.Variables.experimentSkipped
+                enabled: !ExGlobals.Constants.proxy.experimentLoaded && !ExGlobals.Constants.proxy.experimentSkipped
 
                 fontIcon: "chevron-circle-right"
                 text: qsTr("Continue without experiment data")
 
                 onClicked: {
                     ExGlobals.Variables.analysisPageEnabled = true
-
-                    ExGlobals.Variables.experimentSkipped = true
                     ExGlobals.Constants.proxy.experimentSkipped = true
                 }
 
@@ -53,28 +51,28 @@ EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
         title: qsTr("Associated phases")
-        enabled: ExGlobals.Variables.experimentLoaded
+        enabled: ExGlobals.Constants.proxy.experimentLoaded
 
         ExComponents.ExperimentAssociatedPhases {}
     }
 
     EaElements.GroupBox {
         title: qsTr("Simulation range")
-        enabled: ExGlobals.Variables.experimentLoaded || ExGlobals.Variables.experimentSkipped
+        enabled: ExGlobals.Constants.proxy.experimentLoaded || ExGlobals.Constants.proxy.experimentSkipped
 
         ExComponents.ExperimentSimulationSetup {}
     }
 
     EaElements.GroupBox {
         title: qsTr("Instrument setup")
-        enabled: ExGlobals.Variables.experimentLoaded || ExGlobals.Variables.experimentSkipped
+        enabled: ExGlobals.Constants.proxy.experimentLoaded || ExGlobals.Constants.proxy.experimentSkipped
 
         ExComponents.ExperimentInstrumentSetup {}
     }
 
     EaElements.GroupBox {
         title: qsTr("Peak profile")
-        enabled: ExGlobals.Variables.experimentLoaded || ExGlobals.Variables.experimentSkipped
+        enabled: ExGlobals.Constants.proxy.experimentLoaded || ExGlobals.Constants.proxy.experimentSkipped
 
         Column {
 
@@ -106,7 +104,7 @@ EaComponents.SideBarColumn {
     EaElements.GroupBox {
         title: qsTr("Background")
         last: true
-        enabled: ExGlobals.Variables.experimentLoaded || ExGlobals.Variables.experimentSkipped
+        enabled: ExGlobals.Constants.proxy.experimentLoaded || ExGlobals.Constants.proxy.experimentSkipped
 
         ExComponents.ExperimentBackground {}
 
@@ -136,13 +134,8 @@ EaComponents.SideBarColumn {
 
         onAccepted: {
             ExGlobals.Variables.analysisPageEnabled = true
-
-            ExGlobals.Variables.experimentSkipped = false
             ExGlobals.Constants.proxy.experimentSkipped = false
-
-            ExGlobals.Variables.experimentLoaded = true
             ExGlobals.Constants.proxy.experimentLoaded = true
-
             ExGlobals.Constants.proxy.addExperimentDataFromXye(fileUrl)
         }
     }

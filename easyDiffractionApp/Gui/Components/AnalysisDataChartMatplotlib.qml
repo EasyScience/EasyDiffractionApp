@@ -122,8 +122,8 @@ Rectangle {
     Rectangle {
         id: differenceDataChartContainer
 
-        visible: ExGlobals.Variables.experimentLoaded
-        height: ExGlobals.Variables.experimentLoaded ? parent.height * 0.25 : 0
+        visible: ExGlobals.Constants.proxy.experimentLoaded
+        height: ExGlobals.Constants.proxy.experimentLoaded ? parent.height * 0.25 : 0
 
         anchors.bottom: parent.bottom
         anchors.left: analysisDataChartContainer.anchors.left

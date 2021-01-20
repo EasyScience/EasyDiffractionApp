@@ -209,7 +209,7 @@ EaComponents.ApplicationWindow {
 
         // Experiment page
         EaComponents.ContentPage {
-            defaultInfo: ExGlobals.Variables.experimentLoaded ? "" : qsTr("No Experiments Loaded")
+            defaultInfo: ExGlobals.Constants.proxy.experimentLoaded ? "" : qsTr("No Experiments Loaded")
 
             mainContent: EaComponents.MainContent {
                 tabs: [
@@ -243,10 +243,10 @@ EaComponents.ApplicationWindow {
             mainContent: EaComponents.MainContent {
                 tabs: [
                     EaElements.TabButton {
-                        text: ExGlobals.Variables.experimentLoaded ? qsTr("Fitting") : qsTr("Simulation")
+                        text: ExGlobals.Constants.proxy.experimentLoaded ? qsTr("Fitting") : qsTr("Simulation")
                     },
                     EaElements.TabButton {
-                        visible: ExGlobals.Variables.experimentLoaded
+                        visible: ExGlobals.Constants.proxy.experimentLoaded
                         enabled: false
                         text: ExGlobals.Constants.proxy.projectInfoAsJson.calculations
                     }

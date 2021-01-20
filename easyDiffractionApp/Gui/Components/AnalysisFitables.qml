@@ -92,7 +92,7 @@ EaComponents.TableView {
         }
 
         EaComponents.TableViewCheckBox {
-            enabled: ExGlobals.Variables.experimentLoaded
+            enabled: ExGlobals.Constants.proxy.experimentLoaded
             id: useColumn
             headerText: "Fit"
             checked: model.fit

@@ -6,16 +6,23 @@ class MatplotlibBridge {
 
 
 class QtCharts {
-    get experimentXmin() { return 0. }
-    get experimentXmax() { return 100. }
+    get experimentXmin() { return 26. }
+    get experimentXmax() { return 30. }
     get experimentYmin() { return 0. }
-    get experimentYmax() { return 100. }
-    get analysisXmin() { return 0. }
-    get analysisXmax() { return 100. }
+    get experimentYmax() { return 2500. }
+    get analysisXmin() { return 26. }
+    get analysisXmax() { return 30. }
     get analysisYmin() { return 0. }
-    get analysisYmax() { return 100. }
-    get differenceYmin() { return 0. }
-    get differenceYmax() { return 100. }
+    get analysisYmax() { return 2500. }
+    get differenceYmin() { return -10000. }
+    get differenceYmax() { return 10000. }
+
+    get arrays() { return {
+        'x': [ 26.0, 26.2, 26.4, 26.6, 26.8, 27.0, 27.2, 27.4, 27.6, 27.8, 28.0, 28.2, 28.4, 28.6, 28.8, 29.0, 29.2, 29.4, 29.6, 29.8, 30.0 ],
+        'yMeas': [ 296.59, 318.59, 365.30, 438.73, 574.80, 726.73, 944.50, 1227.01, 1578.38, 1956.35, 2272.28, 2236.92, 1913.52, 1436.91, 1010.69, 689.72, 482.57, 361.06, 312.79, 298.80, 289.26],
+        'syMeas': [ 9., 9., 9., 9., 9., 10., 10., 11., 15., 17., 19., 17., 15., 11., 10., 9., 8., 8., 7., 7., 7. ],
+        'yCalc': [ 300., 315., 370., 450., 580., 700., 1000., 1200., 1600., 2000., 2300., 2350., 1950., 1500., 1100., 700., 500., 350., 310., 300., 280.]
+    } }
 
     setExperimentMeasuredLower() {}
     setExperimentMeasuredUpper() {}
@@ -39,6 +46,9 @@ class BackgroundProxy {
 class PyQmlProxy {
     get showBonds() { return true }
     get bondsMaxDistance() { return 2. }
+
+    get experimentLoaded() { return true }
+    get experimentSkipped() { return false }
 
     get showMeasuredSeries() { return true }
     get showDifferenceChart() { return true }

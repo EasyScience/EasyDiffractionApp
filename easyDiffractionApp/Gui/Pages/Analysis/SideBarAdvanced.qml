@@ -41,7 +41,7 @@ EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
         title: qsTr("Minimization")
-        enabled: ExGlobals.Variables.experimentLoaded
+        enabled: ExGlobals.Constants.proxy.experimentLoaded
         collapsed: false
 
         Row {

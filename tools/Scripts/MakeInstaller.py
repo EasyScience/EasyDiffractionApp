@@ -2,6 +2,7 @@ __author__ = "github.com/AndrewSazonov"
 __version__ = '0.0.1'
 
 import os, sys
+import requests
 import xml.dom.minidom
 import dephell_licenses
 import Functions, Config
@@ -18,10 +19,39 @@ def qtifwSetupFileName():
 def qtifwSetupDownloadDest():
     return os.path.join(CONFIG['ci']['project']['subdirs']['download'], f'{qtifwSetupFileName()}')
 
+def urlOk(url):
+    try:
+        message = f'access url {url}'
+        status_code = requests.head(url, timeout=10).status_code
+        if status_code == 200:
+            Functions.printSuccessMessage(message)
+            return True
+        else:
+            message += f' with status: {status_code}'
+            Functions.printFailMessage(message)
+            return False
+    except Exception as exception:
+        Functions.printFailMessage(message, exception)
+        return False
+
 def qtifwSetupDownloadUrl():
-    base_url = CONFIG['ci']['qtifw']['setup']['base_url']
+    repos = CONFIG['ci']['qtifw']['setup']['https_mirrors']
+    base_path = CONFIG['ci']['qtifw']['setup']['base_path']
     qtifw_version = CONFIG['ci']['qtifw']['setup']['version']
-    return f'{base_url}/{qtifw_version}/{qtifwSetupFileName()}'
+    try:
+        message = f'access Qt Installer Framework download url'
+        for repo in repos:
+            url = f'https://{repo}/{base_path}/{qtifw_version}/{qtifwSetupFileName()}'
+            if urlOk(url):
+                message += f' {url}'
+                break
+    except Exception as exception:
+        message += f'from any of {repos}'
+        Functions.printFailMessage(message, exception)
+        sys.exit()
+    else:
+        Functions.printSuccessMessage(message)
+        return url
 
 def qtifwSetupExe():
     setup_name, _ = os.path.splitext(qtifwSetupFileName())

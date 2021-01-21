@@ -149,7 +149,7 @@ manual_exclude = [ 'd3dcompiler*', 'libbispeu*', 'libdqag*', 'libvode*', 'mfc*',
                    '*Qt*RemoteObjects*', '*Qt*Scxml*', '*Qt*Sensors*', '*Qt*Sql*', '*Qt*VirtualKeyboard*', '*Qt*Wayland*', '*Qt*Web*' ]
 
 [ci.qtifw.setup]
-version = '3.2.2'
+version = '4.0.1'
 https_mirrors = ['download.qt.io', 'ftp.fau.de/qtproject', 'mirrors.dotsrc.org/qtproject']
 base_path = 'official_releases/qt-installer-framework'
 file_name_base = 'QtInstallerFramework-'

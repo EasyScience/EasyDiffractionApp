@@ -22,10 +22,9 @@ EaComponents.SideBarColumn {
                 id: createProjectButton
                 fontIcon: "plus-circle"
                 text: qsTr("Create a new project")
-                onClicked: {
-                    ExGlobals.Variables.samplePageEnabled = true
-                    ExGlobals.Variables.projectCreated = true
-                }
+
+                onClicked: EaGlobals.Variables.showProjectDescriptionDialog = true
+
                 Component.onCompleted: ExGlobals.Variables.createProjectButton = createProjectButton
             }
 
@@ -34,7 +33,6 @@ EaComponents.SideBarColumn {
                 fontIcon: "upload"
                 text: qsTr("Open an existing project")
             }
-
         }
     }
 

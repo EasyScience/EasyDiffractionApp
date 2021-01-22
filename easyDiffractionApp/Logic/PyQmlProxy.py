@@ -380,13 +380,16 @@ class PyQmlProxy(QObject):
 
     @Slot(str, str)
     def editProjectInfo(self, key, value):
+        if self._project_info[key] == value:
+            return
+
         self._project_info[key] = value
         self.projectInfoChanged.emit()
 
     def _defaultProjectInfo(self):
         return dict(
             name="Example Project",
-            keywords="diffraction, cfml, cryspy",
+            keywords="diffraction, powder, 1D",
             samples="samples.cif",
             experiments="experiments.cif",
             calculations="calculation.cif",

@@ -471,8 +471,8 @@ class PyQmlProxy(QObject):
     ####################################################################################################################
 
     @Slot(str)
-    def addSampleFromCif(self, cif_path):
-        cif_path = generalizePath(cif_path)
+    def addSampleFromCif(self, cif_url):
+        cif_path = generalizePath(cif_url)
         self._sample.phases = Phases.from_cif_file(cif_path)
         self.phaseAdded.emit()
 

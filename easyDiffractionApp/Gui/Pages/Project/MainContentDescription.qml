@@ -44,6 +44,14 @@ Rectangle {
 
             EaElements.Label {
                 font.bold: true
+                text: qsTr("Location:")
+            }
+            EaElements.Label {
+                text: ExGlobals.Constants.proxy.projectInfoAsJson.location
+            }
+
+            EaElements.Label {
+                font.bold: true
                 text: qsTr("Samples:")
             }
             EaElements.TextInput {

@@ -1,3 +1,6 @@
+import os
+import datetime
+
 import json
 from typing import Union
 
@@ -383,17 +386,21 @@ class PyQmlProxy(QObject):
         if self._project_info[key] == value:
             return
 
+        #if key == 'location':
+        #    value = generalizePath(value)
+
         self._project_info[key] = value
         self.projectInfoChanged.emit()
 
     def _defaultProjectInfo(self):
         return dict(
             name="Example Project",
+            location=os.path.join(os.path.expanduser("~"), "Example Project"),
             keywords="diffraction, powder, 1D",
             samples="samples.cif",
             experiments="experiments.cif",
             calculations="calculation.cif",
-            modified="18.09.2020, 09:24"
+            modified=datetime.datetime.now().strftime("%d.%m.%Y %H:%M")
         )
 
     ####################################################################################################################

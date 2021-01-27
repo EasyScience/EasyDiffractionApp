@@ -156,7 +156,7 @@ EaComponents.ApplicationWindow {
             mainContent: EaComponents.MainContent {
                 tabs: [
                     EaElements.TabButton { text: qsTr("Description") },
-                    EaElements.TabButton { text: "project.json" }
+                    EaElements.TabButton { text: "project.cif" }
                 ]
 
                 items: [

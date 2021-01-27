@@ -381,25 +381,49 @@ class PyQmlProxy(QObject):
         self._project_info = json.loads(json_str)
         self.projectInfoChanged.emit()
 
+    @Property(str, notify=projectInfoChanged)
+    def projectInfoAsCif(self):
+        cif_list = []
+        for key, value in self.projectInfoAsJson.items():
+            if ' ' in value:
+                value = f"'{value}'"
+            cif_list.append(f'_{key} {value}')
+        cif_str = '\n'.join(cif_list)
+        return cif_str
+
     @Slot(str, str)
     def editProjectInfo(self, key, value):
         if self._project_info[key] == value:
             return
 
-        #if key == 'location':
-        #    value = generalizePath(value)
-
         self._project_info[key] = value
         self.projectInfoChanged.emit()
+
+    @Slot()
+    def createProject(self):
+        projectPath = self.projectInfoAsJson['location']
+        mainCif = os.path.join(projectPath, 'project.cif')
+        samplesPath = os.path.join(projectPath, 'samples')
+        experimentsPath = os.path.join(projectPath, 'experiments')
+        calculationsPath = os.path.join(projectPath, 'calculations')
+        if not os.path.exists(projectPath):
+            os.makedirs(projectPath)
+            os.makedirs(samplesPath)
+            os.makedirs(experimentsPath)
+            os.makedirs(calculationsPath)
+            with open(mainCif, 'w') as file:
+                file.write(self.projectInfoAsCif)
+        else:
+            print(f"ERROR: Directory {projectPath} already exists")
 
     def _defaultProjectInfo(self):
         return dict(
             name="Example Project",
             location=os.path.join(os.path.expanduser("~"), "Example Project"),
-            shortDescription="diffraction, powder, 1D",
-            samples="samples.cif",
-            experiments="experiments.cif",
-            calculations="calculation.cif",
+            short_description="diffraction, powder, 1D",
+            samples="Not loaded",
+            experiments="Not loaded",
+            calculations="Not created",
             modified=datetime.datetime.now().strftime("%d.%m.%Y %H:%M")
         )
 

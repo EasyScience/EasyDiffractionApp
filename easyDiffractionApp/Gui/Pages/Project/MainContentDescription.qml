@@ -38,8 +38,8 @@ Rectangle {
                 text: qsTr("Short description:")
             }
             EaElements.TextInput {
-                text: ExGlobals.Constants.proxy.projectInfoAsJson.shortDescription
-                onEditingFinished: ExGlobals.Constants.proxy.editProjectInfo("shortDescription", text)
+                text: ExGlobals.Constants.proxy.projectInfoAsJson.short_description
+                onEditingFinished: ExGlobals.Constants.proxy.editProjectInfo("short_description", text)
             }
 
             EaElements.Label {

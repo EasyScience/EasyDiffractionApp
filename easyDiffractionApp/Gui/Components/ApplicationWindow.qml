@@ -185,7 +185,11 @@ EaComponents.ApplicationWindow {
             mainContent: EaComponents.MainContent {
                 tabs: [
                     EaElements.TabButton { text: qsTr("Structure view") },
-                    EaElements.TabButton { text: ExGlobals.Constants.proxy.projectInfoAsJson.samples }
+                    EaElements.TabButton {
+                        text: ExGlobals.Constants.proxy.phasesAsObj.length > 0
+                              ? 'samples/' + ExGlobals.Constants.proxy.phasesAsObj[ExGlobals.Constants.proxy.currentPhaseIndex].name + '.cif'
+                              : 'Unknown'
+                    }
                 ]
 
                 items: [
@@ -215,7 +219,7 @@ EaComponents.ApplicationWindow {
                 tabs: [
                     EaElements.TabButton { text: qsTr("Plot view") },
                     EaElements.TabButton { enabled: false; text: qsTr("Table view") },
-                    EaElements.TabButton { enabled: false; text: ExGlobals.Constants.proxy.projectInfoAsJson.experiments }
+                    EaElements.TabButton { enabled: false; text: 'experiments/D1A@ILL.cif' }
                 ]
 
                 items: [
@@ -248,7 +252,7 @@ EaComponents.ApplicationWindow {
                     EaElements.TabButton {
                         visible: ExGlobals.Constants.proxy.experimentLoaded
                         enabled: false
-                        text: ExGlobals.Constants.proxy.projectInfoAsJson.calculations
+                        text: 'calculations/calculations.cif' //ExGlobals.Constants.proxy.projectInfoAsJson.calculations
                     }
                 ]
 

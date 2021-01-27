@@ -71,6 +71,9 @@ QtObject {
     property bool showLegend: false
     property bool iconifiedNames: true
 
+    // Dialogs
+    property var projectDescriptionDialog
+
     // Plotting
     //property var plottingLibrary: 'qtcharts'
 

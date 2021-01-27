@@ -15,16 +15,17 @@ EaComponents.SideBarColumn {
         last: true
         collapsible: false
 
-        Row {
+        Grid {
+            columns: 2
             spacing: EaStyle.Sizes.fontPixelSize
 
             EaElements.SideBarButton {
                 id: createProjectButton
+
                 fontIcon: "plus-circle"
                 text: qsTr("Create a new project")
 
                 onClicked: EaGlobals.Variables.showProjectDescriptionDialog = true
-
                 Component.onCompleted: ExGlobals.Variables.createProjectButton = createProjectButton
             }
 
@@ -33,39 +34,18 @@ EaComponents.SideBarColumn {
                 fontIcon: "upload"
                 text: qsTr("Open an existing project")
             }
-        }
-    }
 
-    EaElements.GroupBox {
-        title: qsTr("Test Group")
-        visible: false
-        //collapsed: false
+            EaElements.SideBarButton {
+                enabled: false
+                fontIcon: "clone"
+                text: qsTr("Clone an existing project")
+            }
 
-        Grid {
-            columns: 1
-            columnSpacing: 20
-            rowSpacing: 10
-            verticalItemAlignment: Grid.AlignVCenter
-
-            EaElements.Label { text: qsTr("First Parameter: 200") }
-            EaElements.Label { text: qsTr("Parameter: 100") }
-            EaElements.Label { text: qsTr("Parameter: 100") }
-            EaElements.Label { text: qsTr("Parameter: 100") }
-            EaElements.Label { text: qsTr("Parameter: 100") }
-            EaElements.Label { text: qsTr("Parameter: 100") }
-            EaElements.Label { text: qsTr("Parameter: 100") }
-            EaElements.Label { text: qsTr("Parameter: 100") }
-            EaElements.Label { text: qsTr("Parameter: 100") }
-            EaElements.Label { text: qsTr("Parameter: 100") }
-            EaElements.Label { text: qsTr("Parameter: 100") }
-            EaElements.Label { text: qsTr("Parameter: 100") }
-            EaElements.Label { text: qsTr("Parameter: 100") }
-            EaElements.Label { text: qsTr("Parameter: 100") }
-            EaElements.Label { text: qsTr("Parameter: 100") }
-            EaElements.Label { text: qsTr("Parameter: 100") }
-            EaElements.Label { text: qsTr("Parameter: 100") }
-            EaElements.Label { text: qsTr("Parameter: 100") }
-            EaElements.Label { text: qsTr("Last Parameter: 300") }
+            EaElements.SideBarButton {
+                enabled: false
+                fontIcon: "download"
+                text: qsTr("Save project as...")
+            }
         }
     }
 

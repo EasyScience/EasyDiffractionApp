@@ -10,14 +10,14 @@ EaComponents.ProjectDescriptionDialog {
     onClosed: EaGlobals.Variables.showProjectDescriptionDialog = false
 
     onProjectNameChanged: ExGlobals.Constants.proxy.editProjectInfo("name", projectName)
-    onProjectKeywordsChanged: ExGlobals.Constants.proxy.editProjectInfo("keywords", projectKeywords)
+    onProjectShortDescriptionChanged: ExGlobals.Constants.proxy.editProjectInfo("shortDescription", projectShortDescription)
     onProjectLocationChanged: ExGlobals.Constants.proxy.editProjectInfo("location", projectLocation)
 
     onAccepted: print(`Not implemented yet: Create project in '${projectLocation}'`)
 
     Component.onCompleted: {
         projectName = ExGlobals.Constants.proxy.projectInfoAsJson.name
-        projectKeywords = ExGlobals.Constants.proxy.projectInfoAsJson.keywords
+        projectShortDescription = ExGlobals.Constants.proxy.projectInfoAsJson.shortDescription
         projectLocation = ExGlobals.Constants.proxy.projectInfoAsJson.location
     }
 }

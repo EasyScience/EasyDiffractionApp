@@ -396,7 +396,7 @@ class PyQmlProxy(QObject):
         return dict(
             name="Example Project",
             location=os.path.join(os.path.expanduser("~"), "Example Project"),
-            keywords="diffraction, powder, 1D",
+            shortDescription="diffraction, powder, 1D",
             samples="samples.cif",
             experiments="experiments.cif",
             calculations="calculation.cif",

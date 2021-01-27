@@ -6,8 +6,6 @@ import easyAppGui.Components 1.0 as EaComponents
 import Gui.Globals 1.0 as ExGlobals
 
 EaComponents.ProjectDescriptionDialog {
-    id: projectDescriptionDialog
-
     visible: EaGlobals.Variables.showProjectDescriptionDialog
     onClosed: EaGlobals.Variables.showProjectDescriptionDialog = false
 
@@ -18,8 +16,6 @@ EaComponents.ProjectDescriptionDialog {
     onAccepted: ExGlobals.Constants.proxy.createProject()
 
     Component.onCompleted: {
-        ExGlobals.Variables.projectDescriptionDialog = projectDescriptionDialog.buttonBox
-
         projectName = ExGlobals.Constants.proxy.projectInfoAsJson.name
         projectShortDescription = ExGlobals.Constants.proxy.projectInfoAsJson.short_description
         projectLocation = ExGlobals.Constants.proxy.projectInfoAsJson.location

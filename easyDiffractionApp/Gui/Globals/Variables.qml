@@ -41,6 +41,7 @@ QtObject {
     // Main content and sidebar buttons
     property var startButton
     property var createProjectButton
+    property var continnueWithoutProjectButton
     property var setNewSampleManuallyButton
     property var appendNewAtomButton
     property var continueWithoutExperimentDataButton
@@ -70,9 +71,6 @@ QtObject {
     // Analysis tab settings
     property bool showLegend: false
     property bool iconifiedNames: true
-
-    // Dialogs
-    property var projectDescriptionDialog
 
     // Plotting
     //property var plottingLibrary: 'qtcharts'

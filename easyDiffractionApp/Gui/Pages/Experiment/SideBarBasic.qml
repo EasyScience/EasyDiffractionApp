@@ -36,7 +36,7 @@ EaComponents.SideBarColumn {
 
                 enabled: !ExGlobals.Constants.proxy.experimentLoaded && !ExGlobals.Constants.proxy.experimentSkipped
 
-                fontIcon: "chevron-circle-right"
+                fontIcon: "arrow-circle-right"
                 text: qsTr("Continue without experiment data")
 
                 onClicked: {

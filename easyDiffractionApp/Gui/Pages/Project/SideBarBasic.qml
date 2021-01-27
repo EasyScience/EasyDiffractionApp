@@ -30,19 +30,25 @@ EaComponents.SideBarColumn {
             }
 
             EaElements.SideBarButton {
+                id: continnueWithoutProjectButton
+
+                fontIcon: "arrow-circle-right"
+                text: qsTr("Continue without a project")
+
+                onClicked: ExGlobals.Variables.samplePageEnabled = true
+                Component.onCompleted: ExGlobals.Variables.continnueWithoutProjectButton = continnueWithoutProjectButton
+            }
+
+            EaElements.SideBarButton {
                 enabled: false
+
                 fontIcon: "upload"
                 text: qsTr("Open an existing project")
             }
 
             EaElements.SideBarButton {
                 enabled: false
-                fontIcon: "clone"
-                text: qsTr("Clone an existing project")
-            }
 
-            EaElements.SideBarButton {
-                enabled: false
                 fontIcon: "download"
                 text: qsTr("Save project as...")
             }

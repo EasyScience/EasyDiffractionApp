@@ -269,13 +269,11 @@ Item {
 
         // Project Tab
 
-        rc.say("Here, you can create a new project.")
-        rc.mouseClick(ExGlobals.Variables.createProjectButton)
+        //rc.say("Here, you can create a new project.")
+        //rc.mouseClick(ExGlobals.Variables.createProjectButton)
 
-        x_pos = ExGlobals.Variables.projectDescriptionDialog.width - 26
-        y_pos = ExGlobals.Variables.projectDescriptionDialog.height - 26
-        //y_pos = ExGlobals.Variables.projectDescriptionDialog.height - ExGlobals.Variables.projectDescriptionDialog.footer.bottomPadding
-        rc.mouseClick(ExGlobals.Variables.projectDescriptionDialog, x_pos, y_pos)
+        rc.say("Now, you can continue without creating a project.")
+        rc.mouseClick(ExGlobals.Variables.continnueWithoutProjectButton)
 
         // Sample Tab
 

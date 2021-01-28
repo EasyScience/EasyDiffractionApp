@@ -113,7 +113,7 @@ app_package_subdir = 'app'
 #docs_package_version = '2020.7.11'
 
 [ci.app.tutorials.video]
-fps = 16                # Frames per Second
+fps = 25                # Frames per Second
 crf = 18                # Constant Rate Factor
 preset = 'slower'
 movflags = 'faststart'
@@ -163,4 +163,3 @@ base_url = 'https://evermeet.cx/ffmpeg'
 file_name_base = 'ffmpeg-'
 file_ext = '.zip'
 exe = 'ffmpeg'
-

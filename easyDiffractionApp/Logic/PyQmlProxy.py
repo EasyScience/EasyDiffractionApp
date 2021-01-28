@@ -1264,9 +1264,8 @@ class PyQmlProxy(QObject):
     @Property(str, notify=statusInfoChanged)
     def statusModelAsXml(self):
         model = [
-            {"label": "Engine", "value": self._interface.current_interface_name},
-            {"label": "Minimizer", "value": self.fitter.current_engine.name},
-            {"label": "Method", "value": self._current_minimizer_method_name}
+            {"label": "Calculation", "value": self._interface.current_interface_name},
+            {"label": "Minimization", "value": f'{self.fitter.current_engine.name} ({self._current_minimizer_method_name})'}
         ]
         xml = dicttoxml(model, attr_type=False)
         xml = xml.decode()

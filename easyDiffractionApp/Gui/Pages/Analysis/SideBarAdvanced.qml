@@ -42,7 +42,7 @@ EaComponents.SideBarColumn {
     EaElements.GroupBox {
         title: qsTr("Minimization")
         enabled: ExGlobals.Constants.proxy.experimentLoaded
-        collapsed: false
+        //collapsed: false
 
         Row {
             spacing: EaStyle.Sizes.fontPixelSize
@@ -102,7 +102,7 @@ EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
         title: qsTr("Plotting")
-        collapsed: false
+        //collapsed: false
 
         Row {
             spacing: EaStyle.Sizes.fontPixelSize
@@ -127,7 +127,7 @@ EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
         title: qsTr("Plot settings")
-        collapsed: false
+        //collapsed: false
 
         Row {
             spacing: EaStyle.Sizes.fontPixelSize
@@ -155,7 +155,7 @@ EaComponents.SideBarColumn {
     EaElements.GroupBox {
         title: qsTr("Parameters settings")
         last: true
-        collapsed: false
+        //collapsed: false
 
         EaElements.CheckBox {
             topPadding: 0

@@ -187,7 +187,7 @@ EaComponents.ApplicationWindow {
                     EaElements.TabButton { text: qsTr("Structure view") },
                     EaElements.TabButton {
                         text: typeof ExGlobals.Constants.proxy.phasesAsObj[ExGlobals.Constants.proxy.currentPhaseIndex] !== 'undefined' && ExGlobals.Constants.proxy.phasesAsObj.length > 0
-                              ? 'samples/' + ExGlobals.Constants.proxy.phasesAsObj[ExGlobals.Constants.proxy.currentPhaseIndex].name + '.cif'
+                              ? ExGlobals.Constants.proxy.phasesAsObj[ExGlobals.Constants.proxy.currentPhaseIndex].name + '.cif'
                               : 'Unknown'
                     }
                 ]
@@ -219,7 +219,7 @@ EaComponents.ApplicationWindow {
                 tabs: [
                     EaElements.TabButton { text: qsTr("Plot view") },
                     EaElements.TabButton { enabled: false; text: qsTr("Table view") },
-                    EaElements.TabButton { enabled: false; text: 'experiments/D1A@ILL.cif' }
+                    EaElements.TabButton { enabled: false; text: 'D1A@ILL.cif' }
                 ]
 
                 items: [
@@ -252,7 +252,7 @@ EaComponents.ApplicationWindow {
                     EaElements.TabButton {
                         visible: ExGlobals.Constants.proxy.experimentLoaded
                         enabled: false
-                        text: 'calculations/calculations.cif' //ExGlobals.Constants.proxy.projectInfoAsJson.calculations
+                        text: 'calculations.cif' //ExGlobals.Constants.proxy.projectInfoAsJson.calculations
                     }
                 ]
 
@@ -314,6 +314,7 @@ EaComponents.ApplicationWindow {
     /////////////
 
     statusBar: EaElements.StatusBar {
+        visible: EaGlobals.Variables.appBarCurrentIndex !== 0
 
         model: XmlListModel {
             xml: ExGlobals.Constants.proxy.statusModelAsXml

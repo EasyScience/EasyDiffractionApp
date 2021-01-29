@@ -17,6 +17,8 @@ import Gui.Pages.Summary 1.0 as ExSummaryPage
 
 EaComponents.ApplicationWindow {
 
+    title: ' ' //`${ExGlobals.Constants.appName} ${ExGlobals.Constants.appVersion}`
+
     ///////////////////
     // APPLICATION BAR
     ///////////////////

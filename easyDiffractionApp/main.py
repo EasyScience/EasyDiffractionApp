@@ -141,7 +141,7 @@ def main():
 
     # Customize app window titlebar
     if platform.system() == "Darwin":
-        import objc, ctypes, Cocoa
+        import ctypes, objc, Cocoa
 
         ptr = int(root_window.winId())
         view = objc.objc_object(c_void_p=ctypes.c_void_p(ptr))

@@ -24,7 +24,8 @@ python = '^3.7, <3.8'
 matplotlib = '^3.2, <3.3'
 matplotlib_backend_qtquick = { git = 'https://github.com/easyScience/matplotlib_backend_qtquick', rev = 'master' }
 vtk = '^8.1'
-pyobjc = { version = '^7.1', platform = 'darwin' }
+pyobjc-core = { version = '^7.1', platform = 'darwin' }
+pyobjc-framework-cocoa = { version = '^7.1', platform = 'darwin' }
 # easyScience
 easyCore = { git = 'https://github.com/easyScience/easyCore.git', rev = 'develop' }
 easyDiffractionLib = { git = 'https://github.com/easyScience/easyDiffractionLib.git', rev = 'develop' }

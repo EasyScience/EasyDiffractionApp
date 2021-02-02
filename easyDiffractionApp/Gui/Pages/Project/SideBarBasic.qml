@@ -30,13 +30,13 @@ EaComponents.SideBarColumn {
             }
 
             EaElements.SideBarButton {
-                id: continnueWithoutProjectButton
+                id: continueWithoutProjectButton
 
                 fontIcon: "arrow-circle-right"
                 text: qsTr("Continue without a project")
 
                 onClicked: ExGlobals.Variables.samplePageEnabled = true
-                Component.onCompleted: ExGlobals.Variables.continnueWithoutProjectButton = continnueWithoutProjectButton
+                Component.onCompleted: ExGlobals.Variables.continueWithoutProjectButton = continueWithoutProjectButton
             }
 
             EaElements.SideBarButton {

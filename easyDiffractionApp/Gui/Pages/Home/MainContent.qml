@@ -273,7 +273,7 @@ Item {
         //rc.mouseClick(ExGlobals.Variables.createProjectButton)
 
         rc.say("Now, you can continue without creating a project.")
-        rc.mouseClick(ExGlobals.Variables.continnueWithoutProjectButton)
+        rc.mouseClick(ExGlobals.Variables.continueWithoutProjectButton)
 
         // Sample Tab
 

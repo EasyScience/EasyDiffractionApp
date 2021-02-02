@@ -84,10 +84,7 @@ Item {
                     enabled: true
                     id: aboutButton
                     text: qsTr("About %1".arg(ExGlobals.Constants.appName))
-                    onPressed: {
-                        updateAppGuiGlobals()
-                        onClicked: EaGlobals.Variables.showAppAboutDialog = true
-                    }
+                    onClicked: EaGlobals.Variables.showAppAboutDialog = true
                 }
                 EaElements.Button {
                     enabled: false
@@ -174,19 +171,6 @@ Item {
             print('DEBUG MODE')
             runTutorialTimer.start()
         }
-    }
-
-
-    function updateAppGuiGlobals(){
-        // Update globals for easyAppGui
-        EaGlobals.Variables.appIconPath = ExGlobals.Constants.appLogo
-        EaGlobals.Variables.essIconPath = ExGlobals.Constants.essLogo
-        EaGlobals.Variables.eulaUrl = ExGlobals.Constants.eulaUrl
-        EaGlobals.Variables.oslUrl = ExGlobals.Constants.oslUrl
-        EaGlobals.Variables.appUrl = ExGlobals.Constants.appUrl
-        EaGlobals.Variables.appPrefixName = ExGlobals.Constants.appPrefixName
-        EaGlobals.Variables.appSuffixName = ExGlobals.Constants.appSuffixName
-        EaGlobals.Variables.description = ExGlobals.Constants.description
     }
 
     // Tutorials related logic

@@ -320,4 +320,14 @@ EaComponents.ApplicationWindow {
         }
     }
 
+    ///////////////
+    // Init dialogs
+    ///////////////
+
+    // Application dialogs (invisible at the beginning)
+    ExProjectPage.AboutDialog {
+        x: (parent.width - width) * 0.5
+        y: (parent.height - height) * 0.5
+
+    }
 }

@@ -30,7 +30,7 @@ pyobjc-framework-cocoa = { version = '^7.1', platform = 'darwin' }
 easyCore = { git = 'https://github.com/easyScience/easyCore.git', rev = 'develop' }
 easyDiffractionLib = { git = 'https://github.com/easyScience/easyDiffractionLib.git', rev = 'develop' }
 easyAppLogic = { git = 'https://github.com/easyScience/easyAppLogic.git', rev = 'develop' }
-easyAppGui = { git = 'https://github.com/easyScience/easyAppGui.git', rev = 'DAS-293' }
+easyAppGui = { git = 'https://github.com/easyScience/easyAppGui.git', rev = 'DAS-294' }
 
 [tool.poetry.dev-dependencies]
 # PyInstaller

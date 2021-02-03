@@ -10,6 +10,8 @@ import easyAppGui.Elements 1.0 as EaElements
 import Gui.Globals 1.0 as ExGlobals
 
 Rectangle {
+    id: chartContainer
+
     property bool showLegend: ExGlobals.Variables.showLegend
 
     color: EaStyle.Colors.mainContentBackground
@@ -156,5 +158,27 @@ Rectangle {
         ExGlobals.Constants.proxy.matplotlibBridge.showLegend(showLegend, differenceDataChart)
     }
     */
+
+    // Save chart
+
+    property int chartChangedTime: ExGlobals.Constants.proxy.analysisChartChangedTime
+    onChartChangedTimeChanged: saveChartTimer.restart()
+
+    Timer {
+        id: saveChartTimer
+        interval: 1000
+        onTriggered: saveChart()
+    }
+
+    function saveChart() {
+        const imgWidth = chartContainer.width
+        const imgHeight = chartContainer.height / chartContainer.width * imgWidth
+        chartContainer.grabToImage(
+                    function(result) {
+                        ExGlobals.Variables.analysisImageSource = ExGlobals.Constants.proxy.imageToSource(result.image)
+                    },
+                    Qt.size(imgWidth, imgHeight)
+                    )
+    }
 
 }

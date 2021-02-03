@@ -4,7 +4,7 @@ import QtQuick 2.13
 
 QtObject {
     // Debug mode
-    property bool isDebugMode: typeof _pyQmlProxyObj === "undefined"
+    property bool isDebugMode: true//typeof _pyQmlProxyObj === "undefined"
 
     // Initial application components accessibility
     property bool homePageEnabled: isDebugMode ? true : true
@@ -74,5 +74,7 @@ QtObject {
 
     // Plotting
     //property var plottingLibrary: 'qtcharts'
+    property var analysisImageSource
+    property var structureImageSource
 
 }

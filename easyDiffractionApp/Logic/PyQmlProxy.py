@@ -1,5 +1,7 @@
 import os
 import datetime
+import time
+import pathlib
 
 import json
 from typing import Union
@@ -9,8 +11,10 @@ from dicttoxml import dicttoxml
 import timeit
 
 from PySide2.QtCore import QObject, Slot, Signal, Property
+from PySide2.QtCore import QByteArray, QBuffer, QIODevice
 from PySide2.QtCore import QPointF
 from PySide2.QtCharts import QtCharts
+from PySide2.QtGui import QPdfWriter, QTextDocument
 
 from easyCore import np
 from easyCore import borg
@@ -51,6 +55,7 @@ class PyQmlProxy(QObject):
     # Structure
     structureParametersChanged = Signal()
     structureViewChanged = Signal()
+    structureViewUpdated = Signal()
 
     phaseAdded = Signal()
     phaseRemoved = Signal()
@@ -77,6 +82,7 @@ class PyQmlProxy(QObject):
 
     # Analysis
     calculatedDataChanged = Signal()
+    calculatedDataUpdated = Signal()
 
     simulationParametersChanged = Signal()
 
@@ -208,6 +214,9 @@ class PyQmlProxy(QObject):
         self._3d_plotting_libs = ['vtk', 'qtdatavisualization']
         self._current_3d_plotting_lib = self._3d_plotting_libs[0]
 
+        # Report
+        self._report = ""
+
         # Status info
         self.statusInfoChanged.connect(self._onStatusInfoChanged)
         self.currentCalculatorChanged.connect(self.statusInfoChanged)
@@ -262,6 +271,7 @@ class PyQmlProxy(QObject):
     def _onStructureViewChanged(self):
         print("***** _onStructureViewChanged")
         self._updateStructureView()
+        self.structureViewUpdated.emit()
 
     # Matplotlib
 
@@ -361,6 +371,27 @@ class PyQmlProxy(QObject):
             return
         self._show_measured_series = show
         self.showMeasuredSeriesChanged.emit()
+
+    # Charts for report
+
+    @Property(int, notify=structureViewUpdated)
+    def structureChartChangedTime(self):
+        return int(time.time())
+
+    @Property(int, notify=calculatedDataUpdated)
+    def analysisChartChangedTime(self):
+        return int(time.time())
+
+    @Slot('QVariant', result=str)
+    def imageToSource(self, image):
+        ba = QByteArray()
+        buffer = QBuffer(ba)
+        buffer.open(QIODevice.WriteOnly)
+        image.save(buffer, 'png')
+        data = ba.toBase64().data().decode('utf-8')
+        source = f'data:image/png;base64,{data}'
+        return source
+
 
     ####################################################################################################################
     ####################################################################################################################
@@ -1036,6 +1067,7 @@ class PyQmlProxy(QObject):
     def _onCalculatedDataChanged(self):
         print("***** _onCalculatedDataChanged")
         self._updateCalculatedData()
+        self.calculatedDataUpdated.emit()
 
     ####################################################################################################################
     # Fitables (parameters table from analysis tab & ...)
@@ -1072,7 +1104,7 @@ class PyQmlProxy(QObject):
                 "label": par_path,
                 "value": par.raw_value,
                 "unit": '{:~P}'.format(par.unit),
-                "error": par.error,
+                "error": float(par.error),
                 "fit": int(not par.fixed)
             })
 
@@ -1261,6 +1293,47 @@ class PyQmlProxy(QObject):
     ####################################################################################################################
     ####################################################################################################################
 
+    @Slot(str)
+    def setReport(self, report):
+        """
+        Keep the QML generated HTML report for saving
+        """
+        self._report = report
+
+    @Slot(str)
+    def saveReport(self, filepath):
+        """
+        Save the generated report to the specified file
+        Currently only html
+        """
+        extension = pathlib.Path(filepath).suffix
+        if extension == '.html':
+            # HTML can contain non-ascii, so need to open with right encoding
+            with open(filepath, 'w', encoding='utf-8') as f:
+                f.write(self._report)
+        elif extension == '.pdf':
+            document = QTextDocument(parent=None)
+            document.setHtml(self._report)
+            printer = QPdfWriter(filepath)
+            printer.setPageSize(printer.A3)  # A3 to fit A4 page
+            document.print_(printer)
+        else:
+            raise NotImplementedError
+
+    ####################################################################################################################
+    ####################################################################################################################
+    # STATUS
+    ####################################################################################################################
+    ####################################################################################################################
+
+    @Property('QVariant', notify=statusInfoChanged)
+    def statusModelAsObj(self):
+        obj = {
+            "calculation": self._interface.current_interface_name,
+            "minimization": f'{self.fitter.current_engine.name} ({self._current_minimizer_method_name})'
+        }
+        return obj
+
     @Property(str, notify=statusInfoChanged)
     def statusModelAsXml(self):
         model = [
@@ -1273,3 +1346,4 @@ class PyQmlProxy(QObject):
 
     def _onStatusInfoChanged(self):
         print("***** _onStatusInfoChanged")
+

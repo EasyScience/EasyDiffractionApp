@@ -205,14 +205,14 @@ class QtChartsBridge(QObject):
     def setCalculatedData(self, xarray, yarray):
         self._calculated_xarray = xarray
         self._calculated_yarray = yarray
-        self.replaceCalculatedDataOnChart()
         self.changeAnalysisChartXRange()
         self.changeAnalysisChartYRange()
+        self.replaceCalculatedDataOnChart()
 
         if len(self._measured_yarray):
             self._difference_yarray = self._measured_yarray - self._calculated_yarray
-            self.replaceDifferenceDataOnChart()
             self.changeDifferenceChartYRange()
+            self.replaceDifferenceDataOnChart()
 
     def replaceMeasuredDataOnChart(self):
         lower_points = [QPointF(x, y) for x, y in zip(self._measured_xarray, self._measured_yarray - self._measured_syarray)]

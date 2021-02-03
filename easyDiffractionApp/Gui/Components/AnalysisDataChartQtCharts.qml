@@ -9,6 +9,8 @@ import easyAppGui.Charts 1.0 as EaCharts
 import Gui.Globals 1.0 as ExGlobals
 
 Rectangle {
+    id: chartContainer
+
     property bool showMeasured: false
     property bool showDifference: false
 
@@ -89,6 +91,8 @@ Rectangle {
 
             axisX: topAxisX
             axisY: topAxisY
+
+            onPointsReplaced: saveChartTimer.restart()
 
             Component.onCompleted: {
                 setDefaultCalculatedSeries()
@@ -198,7 +202,24 @@ Rectangle {
         visible: false
     }
 
+    Timer {
+        id: saveChartTimer
+        interval: 1000
+        onTriggered: saveChart()
+    }
+
     // Logic
+
+    function saveChart() {
+        const imgWidth = chartContainer.width
+        const imgHeight =  chartContainer.height / chartContainer.width * imgWidth
+        chartContainer.grabToImage(
+                    function(result) {
+                        ExGlobals.Variables.analysisImageSource = ExGlobals.Constants.proxy.imageToSource(result.image)
+                    },
+                    Qt.size(imgWidth, imgHeight)
+                    )
+    }
 
     function setDefaultCalculatedSeries() {
         const arrays = ExGlobals.Constants.proxy.qtCharts.arrays
@@ -308,7 +329,6 @@ Rectangle {
             topChart.anchors.leftMargin = defaultLeftMargin - extraMargin
         }
     }
-
 
 }
 

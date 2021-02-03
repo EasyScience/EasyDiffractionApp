@@ -132,7 +132,7 @@ EaComponents.ApplicationWindow {
         // Summary tab
         EaElements.AppBarTabButton {
             id: summaryTabButton
-            enabled: false // ExGlobals.Variables.summaryPageEnabled
+            enabled: ExGlobals.Variables.summaryPageEnabled
             fontIcon: "clipboard-list"
             text: qsTr("Summary")
             ToolTip.text: qsTr("Summary of the work done")
@@ -333,9 +333,6 @@ EaComponents.ApplicationWindow {
 
     // Application dialogs (invisible at the beginning)
     ExProjectPage.ProjectDescriptionDialog {
-        x: (parent.width - width) * 0.5
-        y: (parent.height - height) * 0.5
-
         onAccepted: {
             ExGlobals.Variables.samplePageEnabled = true
             ExGlobals.Variables.projectCreated = true

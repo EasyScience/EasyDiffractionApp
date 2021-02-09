@@ -25,7 +25,7 @@ matplotlib = '^3.2, <3.3'
 matplotlib_backend_qtquick = { git = 'https://github.com/easyScience/matplotlib_backend_qtquick', rev = 'master' }
 vtk = '^8.1'
 # easyScience
-easyCore = { git = 'https://github.com/easyScience/easyCore.git', rev = 'develop' }
+easyCore = { git = 'https://github.com/easyScience/easyCore.git', rev = 'xarray' }
 easyDiffractionLib = { git = 'https://github.com/easyScience/easyDiffractionLib.git', rev = 'develop' }
 easyAppLogic = { git = 'https://github.com/easyScience/easyAppLogic.git', rev = 'develop' }
 easyAppGui = { git = 'https://github.com/easyScience/easyAppGui.git', rev = 'develop' }

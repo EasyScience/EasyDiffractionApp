@@ -4,7 +4,7 @@ import QtQuick 2.13
 
 QtObject {
     // Debug mode
-    property bool isDebugMode: true//typeof _pyQmlProxyObj === "undefined"
+    property bool isDebugMode: typeof _pyQmlProxyObj === "undefined"
 
     // Initial application components accessibility
     property bool homePageEnabled: isDebugMode ? true : true
@@ -18,6 +18,17 @@ QtObject {
     property bool projectCreated: false
     property bool sampleLoaded: false
     property bool experimentSkipped: false
+
+
+    // //////////
+    // HTML parts
+    // //////////
+    property string analysisChartHeadScript: ""
+    property string analysisChartHeadStyle: ""
+    property string analysisChartHtml: ""
+    property string reportHtml: ""
+
+    //property string reportFilePath: ""
 
     // //////////////////////////
     // References to GUI elements
@@ -76,5 +87,8 @@ QtObject {
     //property var plottingLibrary: 'qtcharts'
     property var analysisImageSource
     property var structureImageSource
+
+    // Summary
+    property var reportWebView
 
 }

@@ -35,9 +35,10 @@ from easyAppLogic.Utils.Utils import generalizePath
 
 from easyDiffractionApp.Logic.DataStore import DataSet1D, DataStore
 
-from easyDiffractionApp.Logic.Proxies.MatplotlibBackend import DisplayBridge
 from easyDiffractionApp.Logic.Proxies.BackgroundProxy import BackgroundProxy
+from easyDiffractionApp.Logic.Proxies.MatplotlibBackend import MatplotlibBridge
 from easyDiffractionApp.Logic.Proxies.QtChartsBackend import QtChartsBridge
+from easyDiffractionApp.Logic.Proxies.BokehBackend import BokehBridge
 
 
 class PyQmlProxy(QObject):
@@ -115,8 +116,9 @@ class PyQmlProxy(QObject):
         # Charts
         self._vtk_handler = None
 
+        self._matplotlib_bridge = MatplotlibBridge()
         self._qtcharts_bridge = QtChartsBridge()
-        self._matplotlib_bridge = DisplayBridge()
+        self._bokeh_bridge = BokehBridge()
         self._experiment_figure_canvas = None
         self._analysis_figure_canvas = None
         self._difference_figure_canvas = None
@@ -124,7 +126,7 @@ class PyQmlProxy(QObject):
         self._calculated_series_ref = None
 
         self._show_measured_series = True
-        self._show_difference_chart = True
+        self._show_difference_chart = False
 
         self.current1dPlottingLibChanged.connect(self.onCurrent1dPlottingLibChanged)
         self.current3dPlottingLibChanged.connect(self.onCurrent3dPlottingLibChanged)
@@ -208,7 +210,7 @@ class PyQmlProxy(QObject):
         self.parametersFilterCriteriaChanged.connect(self._onParametersFilterCriteriaChanged)
 
         # Plotting
-        self._1d_plotting_libs = ['matplotlib', 'qtcharts']
+        self._1d_plotting_libs = ['matplotlib', 'qtcharts', 'bokeh']
         self._current_1d_plotting_lib = self._1d_plotting_libs[0]
 
         self._3d_plotting_libs = ['vtk', 'qtdatavisualization']
@@ -299,14 +301,15 @@ class PyQmlProxy(QObject):
 
     # QtCharts
 
-    @Slot(QtCharts.QXYSeries)
-    def setCalculatedSeriesRef(self, series_ref):
-        self._calculated_series_ref = series_ref
-
     @Property('QVariant', constant=True)
-    #@Property('QVariant', notify=phasesAsXmlChanged)
     def qtCharts(self):
         return self._qtcharts_bridge
+
+    # Bokeh
+
+    @Property('QVariant', constant=True)
+    def bokeh(self):
+        return self._bokeh_bridge
 
     # Plotting libs
 
@@ -325,9 +328,8 @@ class PyQmlProxy(QObject):
 
     def onCurrent1dPlottingLibChanged(self):
         if self.current1dPlottingLib == 'matplotlib':
+            self._matplotlib_bridge.updateData(self._experiment_figure_canvas, [self._experiment_data])
             self._updateCalculatedData()
-        elif self.current1dPlottingLib == 'qtcharts':
-            self._qtcharts_bridge.updateAllCharts()
 
     @Property('QVariant', constant=True)
     def plotting3dLibs(self):
@@ -494,6 +496,16 @@ class PyQmlProxy(QObject):
     def phasesAsCif(self):
         #print("+ phasesAsCif")
         return self._phases_as_cif
+
+    @Property(str, notify=phasesAsCifChanged)
+    def phasesAsExtendedCif(self):
+        if len(self._sample.phases) == 0:
+            return
+        symm_ops = self._sample.phases[0].spacegroup.symmetry_opts
+        symm_ops_cif_loop = "loop_\n _symmetry_equiv_pos_as_xyz\n"
+        for symm_op in symm_ops:
+            symm_ops_cif_loop += f' {symm_op.as_xyz_string()}\n'
+        return self._phases_as_cif + symm_ops_cif_loop
 
     @phasesAsCif.setter
     def phasesAsCifSetter(self, phases_as_cif):
@@ -836,8 +848,9 @@ class PyQmlProxy(QObject):
         print("***** _onExperimentDataAdded")
         if self.current1dPlottingLib == 'matplotlib':
             self._matplotlib_bridge.updateData(self._experiment_figure_canvas, [self._experiment_data])
-        elif self.current1dPlottingLib == 'qtcharts':
-            self._qtcharts_bridge.setMeasuredData(self._experiment_data.x, self._experiment_data.y, self._experiment_data.e)
+        self._qtcharts_bridge.setMeasuredData(self._experiment_data.x, self._experiment_data.y, self._experiment_data.e)
+        self._bokeh_bridge.setMeasuredData(self._experiment_data.x, self._experiment_data.y, self._experiment_data.e)
+
         self._experiment_parameters = self._experimentDataParameters(self._experiment_data)
         self.simulationParametersAsObj = json.dumps(self._experiment_parameters)
         self.experiments = [self._defaultExperiment()]
@@ -1038,13 +1051,8 @@ class PyQmlProxy(QObject):
             difference_dataset = [zeros_diff, zeros_diff, diff]
             analysis_dataset = [exp, sim]
 
-            if self.current1dPlottingLib == 'matplotlib':
-                self._matplotlib_bridge.updateData(self._difference_figure_canvas, difference_dataset)
-######            elif self.current1dPlottingLib == 'qtcharts':
-######                self._qtcharts_bridge.replacePoints('analysis.measured.lower', exp.x, exp.y - 100)
-######                self._qtcharts_bridge.replacePoints('analysis.measured.upper', exp.x, exp.y + 100)
-            #    self._qtcharts_bridge.replacePoints('analysis.difference.lower', diff.x, diff.y)
-            #    self._qtcharts_bridge.replacePoints('analysis.difference.upper', diff.x, diff.y)
+            #if self.current1dPlottingLib == 'matplotlib':
+            #    self._matplotlib_bridge.updateData(self._difference_figure_canvas, difference_dataset)
 
         elif self.experimentSkipped:
             x_min = float(self._simulation_parameters_as_obj['x_min'])
@@ -1059,8 +1067,8 @@ class PyQmlProxy(QObject):
 
         if self.current1dPlottingLib == 'matplotlib':
             self._matplotlib_bridge.updateData(self._analysis_figure_canvas, analysis_dataset)
-        elif self.current1dPlottingLib == 'qtcharts':
-            self._qtcharts_bridge.setCalculatedData(sim.x, sim.y)
+        self._qtcharts_bridge.setCalculatedData(sim.x, sim.y)
+        self._bokeh_bridge.setCalculatedData(sim.x, sim.y)
 
         print("+ _updateCalculatedData: {0:.3f} s".format(timeit.default_timer() - start_time))
 
@@ -1068,6 +1076,14 @@ class PyQmlProxy(QObject):
         print("***** _onCalculatedDataChanged")
         self._updateCalculatedData()
         self.calculatedDataUpdated.emit()
+
+    @Property(str, notify=calculatedDataUpdated)
+    def calculatedDataXStr(self):
+        return self._calculated_data_x_str
+
+    @Property(str, notify=calculatedDataUpdated)
+    def calculatedDataYStr(self):
+        return self._calculated_data_y_str
 
     ####################################################################################################################
     # Fitables (parameters table from analysis tab & ...)

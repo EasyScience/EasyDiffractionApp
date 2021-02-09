@@ -16,7 +16,8 @@ Item {
         EaElements.TextArea {
             font.family: EaStyle.Fonts.monoFontFamily
             text: ExGlobals.Constants.proxy.phasesAsCif
-            onEditingFinished: ExGlobals.Constants.proxy.phasesAsCif = text
+            //text: ExGlobals.Constants.proxy.phasesAsExtendedCif
+            //onEditingFinished: ExGlobals.Constants.proxy.phasesAsCif = text
         }
     }
 

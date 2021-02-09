@@ -16,6 +16,7 @@ from PySide2.QtCore import QCoreApplication, QUrl, qDebug, qCritical
 from PySide2.QtWidgets import QApplication
 from PySide2.QtGui import Qt, QSurfaceFormat
 from PySide2.QtQml import QQmlApplicationEngine, qmlRegisterType
+from PySide2.QtWebEngine import QtWebEngine
 
 # easyScience
 import pyproject
@@ -82,6 +83,7 @@ class App(QApplication):
 def main():
     # Settings
     QCoreApplication.setAttribute(Qt.AA_EnableHighDpiScaling)  # DOESN'T WORK, USE SCRIPT INSTEAD
+    QCoreApplication.setAttribute(Qt.AA_UseDesktopOpenGL, True)
 
     # Paths
     current_path = os.path.dirname(sys.argv[0])
@@ -96,6 +98,9 @@ def main():
     languages = CONFIG['ci']['app']['translations']['languages']
     translations_dir = CONFIG['ci']['app']['translations']['dir']
     translations_path = os.path.join(package_path, *translations_dir.split('/'))
+
+    # QtWebEngine
+    QtWebEngine.initialize()
 
     # Application
     app = App(sys.argv)

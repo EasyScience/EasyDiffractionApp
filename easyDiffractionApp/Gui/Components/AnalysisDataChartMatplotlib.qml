@@ -96,7 +96,7 @@ Rectangle {
         id: analysisDataChartContainer
 
         anchors.top: chartControlsContainer.bottom
-        anchors.bottom: differenceDataChartContainer.top
+        anchors.bottom: parent.bottom //differenceDataChartContainer.top
         anchors.left: parent.left
         anchors.right: parent.right
 
@@ -121,11 +121,12 @@ Rectangle {
         }
     }
 
+    /*
     Rectangle {
         id: differenceDataChartContainer
 
-        visible: ExGlobals.Constants.proxy.experimentLoaded
-        height: ExGlobals.Constants.proxy.experimentLoaded ? parent.height * 0.25 : 0
+        visible: ExGlobals.Constants.proxy.showDifferenceChart && ExGlobals.Constants.proxy.experimentLoaded
+        height: visible ? parent.height * 0.25 : 0
 
         anchors.bottom: parent.bottom
         anchors.left: analysisDataChartContainer.anchors.left
@@ -151,6 +152,7 @@ Rectangle {
             Component.onCompleted: ExGlobals.Constants.proxy.setDifferenceFigureCanvas(differenceDataChart)
         }
     }
+    */
 
     /*
     onShowLegendChanged: {
@@ -161,6 +163,7 @@ Rectangle {
 
     // Save chart
 
+    /*
     property int chartChangedTime: ExGlobals.Constants.proxy.analysisChartChangedTime
     onChartChangedTimeChanged: saveChartTimer.restart()
 
@@ -180,5 +183,6 @@ Rectangle {
                     Qt.size(imgWidth, imgHeight)
                     )
     }
+    */
 
 }

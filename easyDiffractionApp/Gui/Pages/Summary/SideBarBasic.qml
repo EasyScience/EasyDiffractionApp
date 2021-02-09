@@ -2,6 +2,7 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Dialogs 1.3 as QtQuickDialogs1
 import Qt.labs.settings 1.0
+import QtWebEngine 1.10
 
 import easyAppGui.Style 1.0 as EaStyle
 import easyAppGui.Elements 1.0 as EaElements
@@ -101,6 +102,8 @@ EaComponents.SideBarColumn {
 
                     onClicked: reportParentDirDialog.open()
                 }
+
+                //onTextChanged: ExGlobals.Variables.reportFilePath = text
             }
         }
 
@@ -111,7 +114,17 @@ EaComponents.SideBarColumn {
 
             wide: true
 
-            onClicked: ExGlobals.Constants.proxy.saveReport(reportLocationField.text)
+            onClicked: {
+                //ExGlobals.Constants.proxy.saveReport(reportLocationField.text)
+                if (reportFormatField.currentValue === 'html') {
+                    ExGlobals.Constants.proxy.saveReport(reportLocationField.text)
+                    //print("WebEngineView.Reload", WebEngineView.Reload)
+                    //print("WebEngineView.SavePage", WebEngineView.SavePage)
+                    //ExGlobals.Variables.reportWebView.triggerWebAction(WebEngineView.Reload)
+                } else if (reportFormatField.currentValue === 'pdf') {
+                    ExGlobals.Variables.reportWebView.printToPdf(reportLocationField.text)
+                }
+            }
         }
 
     }

@@ -17,5 +17,8 @@ QtObject {
     readonly property string appDate: new Date().toISOString().slice(0,10) // TODO: Get from phython logic formatted as "9 Apr 2020"
     readonly property string appLogo: Qt.resolvedUrl("../Resources/Logo/App.svg")
 
+    //readonly property string chemDoodleWebJs: "../Logic/ChemDoodleWeb.js"
+    readonly property string chemDoodleWebJs: "http://easyscience.apptimity.com/easyDiffraction/libs/ChemDoodleWeb.js"
+
     readonly property int sampleScale: 100
 }

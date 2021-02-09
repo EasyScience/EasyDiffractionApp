@@ -16,6 +16,7 @@ EaComponents.SideBarColumn {
     EaElements.GroupBox {
         title: qsTr("Export report")
         collapsible: false
+        last: true
 
         // Name-Format
         Row {

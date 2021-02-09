@@ -306,6 +306,8 @@ def createOnlineRepository():
         Functions.printNeutralMessage("localRepositoryDir {}".format(localRepositoryDir()))
         Functions.printNeutralMessage("repository_dir_path: {}".format(repository_dir_path))
         Functions.printNeutralMessage("packagesDirPath: {}".format(packagesDirPath()))
+        if os.path.isdir(repository_dir_path):
+            os.mkdir(repository_dir_path)
 
         Functions.run(
             qtifw_repogen_path,

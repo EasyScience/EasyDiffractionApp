@@ -6,7 +6,7 @@ build-backend = 'poetry.masonry.api'
 
 [tool.poetry]
 name = 'easyDiffraction'
-version = '0.0.4'
+version = '0.0.5'
 description = 'Making diffraction data analysis and modelling easy.'
 license = 'GPL-3.0-only'
 authors = ['Andrew Sazonov', 'Simon Ward']
@@ -144,12 +144,12 @@ missing_pyside2_files = { macos = ['libshiboken2.abi3.*.dylib'], ubuntu = [], wi
 missing_pyside2_plugins = { macos = [], ubuntu = ['Qt/plugins/xcbglintegrations'], windows = [] } # EGL and GLX plugins
 auto_exclude = { macos = ['_tkinter'], ubuntu = ['_tkinter'], windows = [''], all = [ 'lib2to3', '_bisect',
                 '_codecs_cn', '_codecs_hk', '_codecs_iso2022', '_codecs_jp', '_codecs_kr', '_codecs_tw',
-                '_curses', '_elementtree', '_hashlib', '_heapq', '_lzma', '_multibytecodec', '_multiprocessing',
+                '_curses', '_elementtree', '_hashlib', '_heapq', '_multibytecodec', '_multiprocessing',
                 '_opcode', '_queue', '_opcode', '_uuid', '_win32sysloader', 'grp', 'readline', 'termios' ] }
 manual_exclude = [ 'd3dcompiler*', 'libbispeu*', 'libdqag*', 'libvode*', 'mfc*', 'msvcp*', 'VCRUNTIME*',
                    '*Qt*3D*', '*Qt*Bluetooth*', '*Qt*Bodymovin*', '*Qt*Concurrent*', '*Qt*Gamepad*', '*Qt*Location*',
-                   '*Qt*Nfc*', '*Qt*Positioning*', '*Qt*Purchasing*', '*Qt*QuickParticles*', '*Qt*QuickShapes*',
-                   '*Qt*RemoteObjects*', '*Qt*Scxml*', '*Qt*Sensors*', '*Qt*Sql*', '*Qt*VirtualKeyboard*', '*Qt*Wayland*' ]
+                   '*Qt*Nfc*', '*Qt*Purchasing*', '*Qt*QuickParticles*', '*Qt*QuickShapes*', '*Qt*RemoteObjects*',
+                   '*Qt*Scxml*', '*Qt*Sensors*', '*Qt*Sql*', '*Qt*VirtualKeyboard*', '*Qt*Wayland*' ]
 
 [ci.qtifw.setup]
 version = '4.0.1'

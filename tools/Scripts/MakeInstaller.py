@@ -302,6 +302,11 @@ def createOnlineRepository():
         qtifw_bin_dir_path = os.path.join(qtifwDirPath(), 'bin')
         qtifw_repogen_path = os.path.join(qtifw_bin_dir_path, 'repogen')
         repository_dir_path = os.path.join(CONFIG['ci']['project']['subdirs']['distribution'], localRepositoryDir())
+        Functions.printNeutralMessage("qtifw_repogen_path: {}".format(qtifw_repogen_path))
+        Functions.printNeutralMessage("localRepositoryDir {}".format(localRepositoryDir()))
+        Functions.printNeutralMessage("repository_dir_path: {}".format(repository_dir_path))
+        Functions.printNeutralMessage("packagesDirPath: {}".format(packagesDirPath()))
+
         Functions.run(
             qtifw_repogen_path,
             '--update-new-components',
@@ -310,9 +315,14 @@ def createOnlineRepository():
         )
     except Exception as exception:
         Functions.printFailMessage(message, exception)
+        files = os.listdir(repository_dir_path)
+        Functions.printNeutralMessage(str(files))
         sys.exit()
     else:
+        files = os.listdir(repository_dir_path)
+        Functions.printNeutralMessage(str(files))
         Functions.printSuccessMessage(message)
+        Functions.printNeutralMessage(os.path.join(repository_dir_path, 'app'))
 
 def createInstaller():
     try:

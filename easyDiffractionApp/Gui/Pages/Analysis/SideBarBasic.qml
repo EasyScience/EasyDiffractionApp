@@ -18,6 +18,7 @@ EaComponents.SideBarColumn {
         title: qsTr("Parameters")
         last: true
         collapsible: false
+        enabled: ExGlobals.Constants.proxy.isFitFinished
 
         // Filter parameters widget
         Row {
@@ -179,44 +180,31 @@ EaComponents.SideBarColumn {
 
         // Start fitting button
         EaElements.SideBarButton {
+            id: fitButton
             enabled: ExGlobals.Constants.proxy.experimentLoaded
             fontIcon: "play-circle"
-            text: qsTr("Start fitting")
-
+            text: ExGlobals.Constants.proxy.isFitFinished ? qsTr("Start fitting") : qsTr("Stop fitting")
             wide: true
-
-            onClicked: {
-                //print("Start fitting button clicked")
-                ExGlobals.Constants.proxy.fit()
-                refinementResultsDialog.open()
-            }
+            onClicked: fitButtonClicked(this)
         }
     }
 
-    // Info dialog (after refinement)
-
-    EaElements.Dialog {
+    ExComponents.ResultsDialog {
         id: refinementResultsDialog
-
-        parent: Overlay.overlay
-
         x: (parent.width - width) * 0.5
         y: (parent.height - height) * 0.5
-
-        modal: true
-        standardButtons: Dialog.Ok
-
-        title: qsTr("Refinement Results")
-
-        Column {
-            EaElements.Label { text: typeof ExGlobals.Constants.proxy.fitResults !== 'undefined' ? `Success: ${ExGlobals.Constants.proxy.fitResults.success}` : "" }
-            EaElements.Label { text: typeof ExGlobals.Constants.proxy.fitResults !== 'undefined' ? `Num. refined parameters: ${ExGlobals.Constants.proxy.fitResults.nvarys}` : "" }
-            EaElements.Label { text: typeof ExGlobals.Constants.proxy.fitResults !== 'undefined' && typeof ExGlobals.Constants.proxy.fitResults.redchi2 !== 'undefined' ? `Goodness-of-fit (reduced \u03c7\u00b2): ${ExGlobals.Constants.proxy.fitResults.redchi2.toFixed(2)}` : "" }
-        }
     }
 
     // Logic
 
+    function fitButtonClicked(button){
+        button.fontIcon = "pause-circle";
+        button.text = qsTr("Fitting in progress...");
+        button.enabled = false;
+        ExGlobals.Constants.proxy.fit()
+        // the dialog is no longer synchronous
+        refinementResultsDialog.open()
+    }
     function formatFilterText(group_icon, icon, text) {
         if (icon === "")
             return `<font face="${EaStyle.Fonts.iconsFamily}">${group_icon}</font>&nbsp;&nbsp;${text}</font>`

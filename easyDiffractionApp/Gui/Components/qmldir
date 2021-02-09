@@ -2,6 +2,9 @@ module Components
 
 ApplicationWindow 1.0 ApplicationWindow.qml
 
+# Separate popup windows
+ResultsDialog 1.0 ResultsDialog.qml
+
 # Main content components
 
 SampleStructure3dVtk 1.0 SampleStructure3dVtk.qml

@@ -49,6 +49,7 @@ class PyQmlProxy {
 
     get experimentLoaded() { return true }
     get experimentSkipped() { return false }
+    get isFitFinished() { return true }
 
     get showMeasuredSeries() { return true }
     get showDifferenceChart() { return true }

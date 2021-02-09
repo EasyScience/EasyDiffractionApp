@@ -315,8 +315,11 @@ def createOnlineRepository():
         )
     except Exception as exception:
         Functions.printFailMessage(message, exception)
-        files = os.listdir(repository_dir_path)
-        Functions.printNeutralMessage(str(files))
+        if os.path.isdir(repository_dir_path):
+            files = os.listdir(repository_dir_path)
+            Functions.printNeutralMessage(str(files))
+        else:
+            Functions.printNeutralMessage("repository_dir_path does not exist")
         sys.exit()
     else:
         files = os.listdir(repository_dir_path)

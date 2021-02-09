@@ -15,7 +15,7 @@ Item {
 
     property bool isFitting: typeof ExGlobals.Constants.proxy.fitResults.redchi2 !== 'undefined'
     property string htmlBackground: EaStyle.Colors.contentBackground
-    property int chartWidth: 550
+    property int chartWidth: 520
 
     // Structure chart
 

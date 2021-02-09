@@ -128,12 +128,15 @@ Item {
         s += '    background-color: '+htmlBackground+';' + '\n'
         s += '}' + '\n'
         s += 'body {' + '\n'
-        s += '    padding: '+dataChartPadding+'px;' + '\n'
+        s += '    padding: '+(EaStyle.Sizes.fontPixelSize).toString()+'px;' + '\n'
         s += '    color: '+EaStyle.Colors.themeForeground+';' + '\n'
         s += '}' + '\n'
         s += 'article {' + '\n'
         s += '    width: '+structureChartWidth+'px;' + '\n'
         s += '    margin: 0 auto;' + '\n'
+        s += '}' + '\n'
+        s += 'h2 {' + '\n'
+        s += '    margin-top: '+(EaStyle.Sizes.fontPixelSize * 3).toString()+'px;' + '\n'
         s += '}' + '\n'
         s += 'a:link {' + '\n'
         s += '    color: '+EaStyle.Colors.themeAccent+';' + '\n'
@@ -243,7 +246,7 @@ Item {
         s += '<th align="right">No.</th>'
         s += '<th align="left">Parameter</th>'
         s += '<th align="right">Value</th>'
-        s += '<th align="left"></th>'
+        s += '<th align="left">Units</th>'
         if (isFitting) {
             s += '<th align="right">Error</th>'
         //    s += '<th align="right">Fit</th>'
@@ -294,7 +297,6 @@ Item {
         s += '<b>Data chart:</b> <a href="'+dataChartLibUrl+'"> Bokeh v'+dataChartLibVersion+'</a><br>' + '\n'
         if (isFitting) {
             s += '<b>Minimization:</b> '+ExGlobals.Constants.proxy.statusModelAsObj.minimization+'<br>' + '\n'
-            s += '<b>Goodness-of-fit (reduced \u03c7\u00b2):</b> '+ExGlobals.Constants.proxy.fitResults.redchi2.toFixed(2)+'<br>' + '\n'
         }
         s += '</div>'
         return s
@@ -302,7 +304,12 @@ Item {
 
     property string structureSection: {
         let s = ''
-        s += '<h2>Structure</h2>' + '\n'
+        if (Object.keys(ExGlobals.Constants.proxy.phasesAsObj).length) {
+            s += '<h2>Structure: '+ExGlobals.Constants.proxy.phasesAsObj[0].name+'</h2>' + '\n'
+            s += '<p>' + '\n'
+            s += '<b>Space group:</b> '+ExGlobals.Constants.proxy.phasesAsObj[0].spacegroup._space_group_HM_name.value+'<br>' + '\n'
+            s += '</p>'
+        }
         s += '<div id="structureSection">' + '\n'
         s += '<script>' + '\n'
         s += structureChart + '\n'
@@ -314,6 +321,11 @@ Item {
     property string analysisSection: {
         let s = ''
         s += '<h2>Simulation/Fitting</h2>' + '\n'
+        if (isFitting) {
+            s += '<p>' + '\n'
+            s += '<b>Goodness-of-fit (reduced \u03c7\u00b2):</b> '+ExGlobals.Constants.proxy.fitResults.redchi2.toFixed(2)+'<br>' + '\n'
+            s += '</p>'
+        }
         s += '<div id="analysisSection">' + '\n'
         s += '</div>' + '\n'
         s += '<script>' + '\n'

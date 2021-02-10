@@ -68,6 +68,7 @@ Rectangle {
         text: `Axes colors: <font color=red>a</font>, <font color=#008000>b</font>, <font color=blue>c</font>`
     }
 
+    /*
     // Save chart
 
     property int chartChangedTime: ExGlobals.Constants.proxy.structureChartChangedTime
@@ -89,5 +90,6 @@ Rectangle {
                     Qt.size(imgWidth, imgHeight)
                     )
     }
+    */
 
 }

@@ -213,7 +213,7 @@ class PyQmlProxy(QObject):
         self._1d_plotting_libs = ['matplotlib', 'qtcharts', 'bokeh']
         self._current_1d_plotting_lib = self._1d_plotting_libs[0]
 
-        self._3d_plotting_libs = ['vtk', 'qtdatavisualization']
+        self._3d_plotting_libs = ['vtk', 'qtdatavisualization', 'chemdoodle']
         self._current_3d_plotting_lib = self._3d_plotting_libs[0]
 
         # Report
@@ -346,11 +346,8 @@ class PyQmlProxy(QObject):
 
     def onCurrent3dPlottingLibChanged(self):
         if self.current3dPlottingLib == 'vtk':
-            print("Warning: Select Vtk. Not implemented yet.")
-        elif self.current3dPlottingLib == 'qtdatavisualization':
-            print("Warning: Select Qt Data Visualization. Not implemented yet.")
+            self._onStructureViewChanged()
 
-    #
 
     @Property(bool, notify=showDifferenceChartChanged)
     def showDifferenceChart(self):

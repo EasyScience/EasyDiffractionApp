@@ -184,10 +184,16 @@ Item {
         let s = ''
         s += 'const crystalTransformer = new ChemDoodle.TransformCanvas3D("crystalTransformer", '+structureChartWidth+', '+structureChartHeight+')' + '\n'
         s += 'crystalTransformer.specs.set3DRepresentation("Ball and Stick")' + '\n'
-        s += 'crystalTransformer.specs.atoms_displayLabels_3D = true' + '\n'
         s += 'crystalTransformer.specs.projectionPerspective_3D = true' + '\n'
+        s += 'crystalTransformer.specs.projectionPerspectiveVerticalFieldOfView_3D = 20' + '\n'
+        s += 'crystalTransformer.specs.atoms_displayLabels_3D = true' + '\n'
+        //s += 'crystalTransformer.specs.atoms_font_size_2D = 10' + '\n'
+        //s += 'crystalTransformer.specs.bonds_display = false' + '\n'
         s += 'crystalTransformer.specs.crystals_unitCellLineWidth = 1.5' + '\n'
         s += 'crystalTransformer.specs.compass_display = true' + '\n'
+        s += 'crystalTransformer.specs.compass_type_3D = 0' + '\n' // 0 or 1
+        s += 'crystalTransformer.specs.compass_size_3D = 70' + '\n' // default: 50
+        s += 'crystalTransformer.specs.compass_displayText_3D = true' + '\n'
         s += 'crystalTransformer.specs.backgroundColor = "'+structureChartBackgroundColor+'"' + '\n'
         s += 'crystalTransformer.specs.shapes_color = "'+structureChartForegroundColor+'"' + '\n'
         s += 'const phase = ChemDoodle.readCIF('+JSON.stringify(ExGlobals.Constants.proxy.phasesAsExtendedCif)+', 1, 1, 1)' + '\n' // (1,1,1)-cell

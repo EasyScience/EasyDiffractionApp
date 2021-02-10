@@ -13,7 +13,7 @@ import Gui.Globals 1.0 as ExGlobals
 Rectangle {
     id: container
 
-    property string structureChartLibVersion: '8.0.0'
+    property string structureChartLibVersion: '9.1.0'
     property string structureChartLibUrl: 'https://web.chemdoodle.com'
 
     property string structureChartWidth: container.width.toString()
@@ -72,21 +72,27 @@ Rectangle {
 
     property string structureChart: {
         let s = ''
+        s += 'const cifStr = '+JSON.stringify(ExGlobals.Constants.proxy.phasesAsExtendedCif)+'' + '\n'
+        s += 'const xSuper = 1' + '\n'
+        s += 'const ySuper = 1' + '\n'
+        s += 'const zSuper = 1' + '\n'
+        s += 'const phase = ChemDoodle.readCIF(cifStr, xSuper, ySuper, zSuper)' + '\n'
         s += 'const crystalTransformer = new ChemDoodle.TransformCanvas3D("crystalTransformer", '+structureChartWidth+', '+structureChartHeight+')' + '\n'
-        s += 'crystalTransformer.specs.set3DRepresentation("Ball and Stick")' + '\n'
-        s += 'crystalTransformer.specs.projectionPerspective_3D = true' + '\n'
-        s += 'crystalTransformer.specs.projectionPerspectiveVerticalFieldOfView_3D = 20' + '\n'
-        s += 'crystalTransformer.specs.atoms_displayLabels_3D = true' + '\n'
-        //s += 'crystalTransformer.specs.atoms_font_size_2D = 10' + '\n'
-        //s += 'crystalTransformer.specs.bonds_display = false' + '\n'
-        s += 'crystalTransformer.specs.crystals_unitCellLineWidth = 1.5' + '\n'
-        s += 'crystalTransformer.specs.compass_display = true' + '\n'
-        s += 'crystalTransformer.specs.compass_type_3D = 0' + '\n' // 0 or 1
-        s += 'crystalTransformer.specs.compass_size_3D = 70' + '\n' // default: 50
-        s += 'crystalTransformer.specs.compass_displayText_3D = true' + '\n'
-        s += 'crystalTransformer.specs.backgroundColor = "'+structureChartBackgroundColor+'"' + '\n'
-        s += 'crystalTransformer.specs.shapes_color = "'+structureChartForegroundColor+'"' + '\n'
-        s += 'const phase = ChemDoodle.readCIF('+JSON.stringify(ExGlobals.Constants.proxy.phasesAsExtendedCif)+', 1, 1, 1)' + '\n' // (1,1,1)-cell
+        s += 'crystalTransformer.styles.set3DRepresentation("Ball and Stick")' + '\n'
+        s += 'crystalTransformer.styles.projectionPerspective_3D = true' + '\n'
+        s += 'crystalTransformer.styles.projectionPerspectiveVerticalFieldOfView_3D = 20' + '\n'
+        s += 'crystalTransformer.styles.bonds_display = true' + '\n'
+        s += 'crystalTransformer.styles.bonds_splitColor = true' + '\n'
+        s += 'crystalTransformer.styles.atoms_displayLabels_3D = true' + '\n'
+        s += 'crystalTransformer.styles.compass_display = true' + '\n'
+        s += 'crystalTransformer.styles.compass_type_3D = 0' + '\n'
+        s += 'crystalTransformer.styles.compass_size_3D = 70' + '\n'
+        s += 'crystalTransformer.styles.compass_displayText_3D = true' + '\n'
+        s += 'crystalTransformer.styles.shapes_color = "'+structureChartForegroundColor+'"' + '\n'
+        //s += 'crystalTransformer.styles.shapes_lineWidth = 5' + '\n'
+        s += 'crystalTransformer.styles.text_font_size = 12' + '\n'
+        s += 'crystalTransformer.styles.text_font_families = ["Helvetica", "Arial", "Dialog"]' + '\n'
+        s += 'crystalTransformer.styles.backgroundColor = "'+structureChartBackgroundColor+'"' + '\n'
         s += 'crystalTransformer.loadContent([phase.molecule],[phase.unitCell])'
         return s
     }

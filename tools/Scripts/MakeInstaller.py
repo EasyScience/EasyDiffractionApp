@@ -306,15 +306,23 @@ def createOnlineRepository():
         qtifw_repogen_path = os.path.join(qtifw_bin_dir_path, 'repogen')
         repository_dir_path = os.path.join(CONFIG['ci']['project']['subdirs']['distribution'], localRepositoryDir())
 
+
+        Functions.printNeutralMessage("distribution: {}".format(os.path.join(CONFIG['ci']['project']['subdirs']['distribution'])))
+        Functions.printNeutralMessage("repository_dir_path: {}".format(localRepositoryDir()))
+        Functions.printNeutralMessage("repository_dir_suffix: {}".format(CONFIG['ci']['app']['setup']['repository_dir_suffix']))
+        Functions.printNeutralMessage("repository_dir_path: {}".format(CONFIG.setup_os))
+
         if not os.path.isdir(repository_dir_path):
             a = CONFIG['ci']['project']['subdirs']['distribution']
-            Functions.createDir(a)
-            b = CONFIG['ci']['app']['setup']['repository_dir_suffix']
-            Functions.createDir(b)
+            Functions.createDir(a)  # .ci\distribution
+            repository_dir_suffix = CONFIG['ci']['app']['setup']['repository_dir_suffix']
+            b = f'{CONFIG.app_name}{repository_dir_suffix}'
             c = os.path.join(a, b)
-            Functions.createDir(c)
-            d = os.path.join(c, localRepositoryDir())
-            Functions.createDir(d)
+            Functions.createDir(c) # .ci\distribution\easyDiffractionRepos
+
+            e = os.path.join(c, CONFIG.setup_os)
+            Functions.createDir(e) # .ci\distribution\easyDiffractionRepos\Windows
+
         Functions.printNeutralMessage("repository_dir_path: {}".format(repository_dir_path))
         Functions.printNeutralMessage("repository_dir_path exists: {}".format(os.path.isdir(repository_dir_path)))
         Functions.run(

@@ -325,6 +325,11 @@ def createOnlineRepository():
 
         Functions.printNeutralMessage("repository_dir_path: {}".format(repository_dir_path))
         Functions.printNeutralMessage("repository_dir_path exists: {}".format(os.path.isdir(repository_dir_path)))
+        Functions.printNeutralMessage("*** packagesDirPath: {}".format(packagesDirPath()))
+        Functions.printNeutralMessage("*** packagesDirPath exists: {}".format(os.path.isdir(packagesDirPath())))
+        Functions.printNeutralMessage("*** qtifw_repogen_path: {}".format(qtifw_repogen_path))
+        Functions.printNeutralMessage("*** qtifw_repogen_path exists: {}".format(os.path.isfile(qtifw_repogen_path+'.exe')))
+
         Functions.run(
             qtifw_repogen_path,
             '--update-new-components',

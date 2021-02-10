@@ -329,6 +329,11 @@ def createOnlineRepository():
         Functions.printNeutralMessage("*** packagesDirPath exists: {}".format(os.path.isdir(packagesDirPath())))
         Functions.printNeutralMessage("*** qtifw_repogen_path: {}".format(qtifw_repogen_path))
         Functions.printNeutralMessage("*** qtifw_repogen_path exists: {}".format(os.path.isfile(qtifw_repogen_path+'.exe')))
+        if os.path.isdir(qtifw_bin_dir_path):
+            files = os.listdir(qtifw_bin_dir_path)
+            Functions.printNeutralMessage(str(files))
+        else:
+            Functions.printNeutralMessage("qtifw_bin_dir_path does not exist")
 
         Functions.run(
             qtifw_repogen_path,

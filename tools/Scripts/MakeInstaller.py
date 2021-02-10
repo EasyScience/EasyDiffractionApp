@@ -313,6 +313,8 @@ def createOnlineRepository():
             Functions.createDir(b)
             c = os.path.join(a, b)
             Functions.createDir(c)
+            d = os.path.join(c, localRepositoryDir())
+            Functions.createDir(d)
         Functions.printNeutralMessage("repository_dir_path: {}".format(repository_dir_path))
         Functions.printNeutralMessage("repository_dir_path exists: {}".format(os.path.isdir(repository_dir_path)))
         Functions.run(

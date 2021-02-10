@@ -249,6 +249,15 @@ def installQtInstallerFramework():
     else:
         Functions.printSuccessMessage(message)
 
+        Functions.printSuccessMessage("***** installQtInstallerFramework: ****")
+        if os.path.isdir(qtifwDirPath()):
+            files = os.listdir(qtifwDirPath())
+            Functions.printNeutralMessage(str(files))
+        else:
+            Functions.printNeutralMessage("qtifwDirPath does not exist")
+        Functions.printSuccessMessage("***** installQtInstallerFramework ^^^ ****")
+
+
 def createInstallerSourceDir():
     try:
         message = f'create installer source directory {setupBuildDirPath()}'

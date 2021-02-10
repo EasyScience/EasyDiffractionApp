@@ -1,3 +1,6 @@
+import os
+import datetime
+
 import json
 from typing import Union
 
@@ -378,19 +381,50 @@ class PyQmlProxy(QObject):
         self._project_info = json.loads(json_str)
         self.projectInfoChanged.emit()
 
+    @Property(str, notify=projectInfoChanged)
+    def projectInfoAsCif(self):
+        cif_list = []
+        for key, value in self.projectInfoAsJson.items():
+            if ' ' in value:
+                value = f"'{value}'"
+            cif_list.append(f'_{key} {value}')
+        cif_str = '\n'.join(cif_list)
+        return cif_str
+
     @Slot(str, str)
     def editProjectInfo(self, key, value):
+        if self._project_info[key] == value:
+            return
+
         self._project_info[key] = value
         self.projectInfoChanged.emit()
+
+    @Slot()
+    def createProject(self):
+        projectPath = self.projectInfoAsJson['location']
+        mainCif = os.path.join(projectPath, 'project.cif')
+        samplesPath = os.path.join(projectPath, 'samples')
+        experimentsPath = os.path.join(projectPath, 'experiments')
+        calculationsPath = os.path.join(projectPath, 'calculations')
+        if not os.path.exists(projectPath):
+            os.makedirs(projectPath)
+            os.makedirs(samplesPath)
+            os.makedirs(experimentsPath)
+            os.makedirs(calculationsPath)
+            with open(mainCif, 'w') as file:
+                file.write(self.projectInfoAsCif)
+        else:
+            print(f"ERROR: Directory {projectPath} already exists")
 
     def _defaultProjectInfo(self):
         return dict(
             name="Example Project",
-            keywords="diffraction, cfml, cryspy",
-            samples="samples.cif",
-            experiments="experiments.cif",
-            calculations="calculation.cif",
-            modified="18.09.2020, 09:24"
+            location=os.path.join(os.path.expanduser("~"), "Example Project"),
+            short_description="diffraction, powder, 1D",
+            samples="Not loaded",
+            experiments="Not loaded",
+            calculations="Not created",
+            modified=datetime.datetime.now().strftime("%d.%m.%Y %H:%M")
         )
 
     ####################################################################################################################
@@ -468,8 +502,8 @@ class PyQmlProxy(QObject):
     ####################################################################################################################
 
     @Slot(str)
-    def addSampleFromCif(self, cif_path):
-        cif_path = generalizePath(cif_path)
+    def addSampleFromCif(self, cif_url):
+        cif_path = generalizePath(cif_url)
         self._sample.phases = Phases.from_cif_file(cif_path)
         self.phaseAdded.emit()
 
@@ -1230,9 +1264,8 @@ class PyQmlProxy(QObject):
     @Property(str, notify=statusInfoChanged)
     def statusModelAsXml(self):
         model = [
-            {"label": "Engine", "value": self._interface.current_interface_name},
-            {"label": "Minimizer", "value": self.fitter.current_engine.name},
-            {"label": "Method", "value": self._current_minimizer_method_name}
+            {"label": "Calculation", "value": self._interface.current_interface_name},
+            {"label": "Minimization", "value": f'{self.fitter.current_engine.name} ({self._current_minimizer_method_name})'}
         ]
         xml = dicttoxml(model, attr_type=False)
         xml = xml.decode()

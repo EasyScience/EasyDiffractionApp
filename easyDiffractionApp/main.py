@@ -1,5 +1,6 @@
 import os
 import sys
+import platform
 
 # Logging
 def isTestMode():
@@ -137,6 +138,18 @@ def main():
     vtk_handler.fbo = app._m_vtkFboItem
     vtk_handler.context = root_window
     py_qml_proxy_obj.setVtkHandler(vtk_handler)
+
+    # Customize app window titlebar
+    if platform.system() == "Darwin":
+        import ctypes, objc, Cocoa
+
+        ptr = int(root_window.winId())
+        view = objc.objc_object(c_void_p=ctypes.c_void_p(ptr))
+        window = view._.window
+
+        window.setStyleMask_(window.styleMask() | Cocoa.NSFullSizeContentViewWindowMask)
+        window.setTitlebarAppearsTransparent_(True)
+        window.setTitleVisibility_(Cocoa.NSWindowTitleHidden)
 
     # Event loop
     if not engine.rootObjects():

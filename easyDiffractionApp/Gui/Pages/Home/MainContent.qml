@@ -133,6 +133,7 @@ Item {
 
     EaElements.RemoteController {
         id: rc
+        sayEnabled: false
         audioDir: Qt.resolvedUrl("../../Resources/Audio")
     }
 
@@ -263,21 +264,18 @@ Item {
         rc.posToCenter()
         rc.show()
 
-        //return
-
         // Home Tab
 
         rc.say("To start working with easy diffraction, just click start button.")
         rc.mouseClick(ExGlobals.Variables.startButton)
 
-        //return
-
         // Project Tab
 
-        rc.say("Here, you can create a new project.")
-        rc.mouseClick(ExGlobals.Variables.createProjectButton)
+        //rc.say("Here, you can create a new project.")
+        //rc.mouseClick(ExGlobals.Variables.createProjectButton)
 
-        //return
+        rc.say("Now, you can continue without creating a project.")
+        rc.mouseClick(ExGlobals.Variables.continueWithoutProjectButton)
 
         // Sample Tab
 

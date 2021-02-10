@@ -41,6 +41,7 @@ QtObject {
     // Main content and sidebar buttons
     property var startButton
     property var createProjectButton
+    property var continueWithoutProjectButton
     property var setNewSampleManuallyButton
     property var appendNewAtomButton
     property var continueWithoutExperimentDataButton

@@ -81,8 +81,10 @@ Item {
                 spacing: EaStyle.Sizes.fontPixelSize
 
                 EaElements.Button {
-                    enabled: false
+                    enabled: true
+                    id: aboutButton
                     text: qsTr("About %1".arg(ExGlobals.Constants.appName))
+                    onClicked: EaGlobals.Variables.showAppAboutDialog = true
                 }
                 EaElements.Button {
                     enabled: false

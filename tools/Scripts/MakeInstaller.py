@@ -298,6 +298,7 @@ def createInstallerSourceDir():
     else:
         Functions.printSuccessMessage(message)
 
+
 def createOnlineRepository():
     try:
         message = 'create online repository'
@@ -312,7 +313,8 @@ def createOnlineRepository():
             Functions.createDir(b)
             c = os.path.join(a, b)
             Functions.createDir(c)
-
+        Functions.printNeutralMessage("repository_dir_path: {}".format(repository_dir_path))
+        Functions.printNeutralMessage("repository_dir_path exists: {}".format(os.path.isdir(repository_dir_path)))
         Functions.run(
             qtifw_repogen_path,
             '--update-new-components',

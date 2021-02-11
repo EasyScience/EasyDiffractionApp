@@ -20,7 +20,8 @@ def pythonDylib():
         'ubuntu': 'libpython3.7m.dylib',
         'windows': None
     }[CONFIG.os]
-    return os.path.join(pythonLibLocation(), python_dylib_file)
+    #return os.path.join(pythonLibLocation(), python_dylib_file)
+    return None  # test
 
 def crysfmlPythonDylib():
     d = {

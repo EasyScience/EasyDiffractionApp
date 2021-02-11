@@ -277,8 +277,6 @@ def createInstallerSourceDir():
         Functions.createDir(app_subdir_path)
         Functions.createDir(app_data_subsubdir_path)
         Functions.createDir(app_meta_subsubdir_path)
-        # Functions.createDir(CONFIG.dist_dir)
-        # Functions.createDir(freezed_app_src)
         Functions.createFile(path=app_package_xml_path, content=appPackageXml())
         Functions.copyFile(source=package_install_script_src, destination=app_meta_subsubdir_path)
         Functions.copyFile(source=CONFIG.license_file, destination=app_meta_subsubdir_path)

@@ -9,8 +9,8 @@ import Functions, Config
 CONFIG = Config.Config()
 
 def pythonLibLocation():
-    if len(sys.argv) > 1:
-        return os.path.join(sys.argv[1], 'lib')
+    #if len(sys.argv) > 1:
+    #    return os.path.join(sys.argv[1], 'lib')
     return '@rpath'
 
 def pythonDylib():

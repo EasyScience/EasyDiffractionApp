@@ -18,7 +18,6 @@ EaComponents.SideBarColumn {
         title: qsTr("Parameters")
         last: true
         collapsible: false
-        enabled: ExGlobals.Constants.proxy.isFitFinished
 
         // Filter parameters widget
         Row {
@@ -182,10 +181,12 @@ EaComponents.SideBarColumn {
         EaElements.SideBarButton {
             id: fitButton
             enabled: ExGlobals.Constants.proxy.experimentLoaded
-            fontIcon: "play-circle"
+            fontIcon: ExGlobals.Constants.proxy.isFitFinished ? "play-circle" : "pause-circle"
             text: ExGlobals.Constants.proxy.isFitFinished ? qsTr("Start fitting") : qsTr("Stop fitting")
             wide: true
-            onClicked: fitButtonClicked(this)
+            onClicked: {
+                fitButtonClicked(this);
+                }
         }
     }
 
@@ -198,9 +199,6 @@ EaComponents.SideBarColumn {
     // Logic
 
     function fitButtonClicked(button){
-        button.fontIcon = "pause-circle";
-        button.text = qsTr("Fitting in progress...");
-        button.enabled = false;
         ExGlobals.Constants.proxy.fit()
         // the dialog is no longer synchronous
         refinementResultsDialog.open()

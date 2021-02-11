@@ -16,6 +16,7 @@ EaComponents.SideBarColumn {
     EaElements.GroupBox {
         title: qsTr("Experimental data")
         collapsible: false
+        enabled: ExGlobals.Constants.proxy.isFitFinished
 
         ExComponents.ExperimentDataExplorer {}
 

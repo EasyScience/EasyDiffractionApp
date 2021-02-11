@@ -2,6 +2,7 @@ __author__ = "github.com/AndrewSazonov"
 __version__ = '0.0.1'
 
 import os, sys
+import time
 import requests
 import xml.dom.minidom
 import dephell_licenses
@@ -248,18 +249,9 @@ def installQtInstallerFramework():
         sys.exit()
     else:
         # attempt to wait for the installation to finish
-        import time
         time.sleep(10)
 
         Functions.printSuccessMessage(message)
-
-        Functions.printSuccessMessage("***** installQtInstallerFramework: ****")
-        if os.path.isdir(qtifwDirPath()):
-            files = os.listdir(qtifwDirPath())
-            Functions.printNeutralMessage(str(files))
-        else:
-            Functions.printNeutralMessage("qtifwDirPath does not exist")
-        Functions.printSuccessMessage("***** installQtInstallerFramework ^^^ ****")
 
 
 def createInstallerSourceDir():
@@ -285,8 +277,8 @@ def createInstallerSourceDir():
         Functions.createDir(app_subdir_path)
         Functions.createDir(app_data_subsubdir_path)
         Functions.createDir(app_meta_subsubdir_path)
-        Functions.createDir(CONFIG.dist_dir)
-        Functions.createDir(freezed_app_src)
+        # Functions.createDir(CONFIG.dist_dir)
+        # Functions.createDir(freezed_app_src)
         Functions.createFile(path=app_package_xml_path, content=appPackageXml())
         Functions.copyFile(source=package_install_script_src, destination=app_meta_subsubdir_path)
         Functions.copyFile(source=CONFIG.license_file, destination=app_meta_subsubdir_path)
@@ -318,7 +310,6 @@ def createOnlineRepository():
         qtifw_bin_dir_path = os.path.join(qtifwDirPath(), 'bin')
         qtifw_repogen_path = os.path.join(qtifw_bin_dir_path, 'repogen')
         repository_dir_path = os.path.join(CONFIG['ci']['project']['subdirs']['distribution'], localRepositoryDir())
-
         Functions.run(
             qtifw_repogen_path,
             '--update-new-components',
@@ -330,6 +321,7 @@ def createOnlineRepository():
         sys.exit()
     else:
         Functions.printSuccessMessage(message)
+
 
 def createInstaller():
     try:

@@ -249,7 +249,7 @@ def installQtInstallerFramework():
     else:
         # attempt to wait for the installation to finish
         import time
-        time.sleep(5)
+        time.sleep(10)
 
         Functions.printSuccessMessage(message)
 
@@ -348,6 +348,12 @@ def createOnlineRepository():
             Functions.printNeutralMessage(str(files))
         else:
             Functions.printNeutralMessage("qtifwDirPath does not exist")
+        bin = os.path.join(qtifwDirPath(), "bin")
+        if os.path.isdir(bin):
+            files = os.listdir(bin)
+            Functions.printNeutralMessage(str(files))
+        else:
+            Functions.printNeutralMessage("qtifwDirPath/bin does not exist")
 
         Functions.run(
             qtifw_repogen_path,

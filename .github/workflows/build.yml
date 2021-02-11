@@ -95,8 +95,8 @@ jobs:
       run: poetry run python ${{ env.SCRIPTS_PATH }}/MakeInstaller.py
 
     - name: Sign the installer on platforms which support it
-      if: runner.os == 'windows'
-        poetry run python ${{ env.SCRIPTS_PATH }}/Signatures.py ${{ secrets.BINARY_SIGN_WIN }} ${{ secrets.CERT_ZIP_PASS }}
+      if: runner.os == 'Windows'
+      run: poetry run python ${{ env.SCRIPTS_PATH }}/Signatures.py ${{ secrets.BINARY_SIGN_WIN }} ${{ secrets.CERT_ZIP_PASS }}
 
     - name: Install and run app in test mode to create GUI test videos
       if: runner.os == 'macOS'

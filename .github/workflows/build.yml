@@ -60,14 +60,15 @@ jobs:
         echo "POETRY_VENV_PATH=$(python pyproject.py ci.poetry.venv_path.${{ runner.os }})" >> $GITHUB_ENV
         echo "QTIFW_PATH=$(python pyproject.py ci.qtifw.setup.installation_path.${{ runner.os }})" >> $GITHUB_ENV
 
-    - name: Cache dependencies
-      uses: actions/cache@v2
-      with:
-        path: |
-          ${{ env.POETRY_VENV_PATH }}
-          ${{ env.QTIFW_PATH }}
-          ${{ env.DOWNLOAD_PATH }}
-        key: ${{ matrix.os }}-poetry-${{ hashFiles('pyproject.toml') }}
+    # - commented out since it times out on Windows
+    # - name: Cache dependencies
+    #   uses: actions/cache@v2
+    #   with:
+    #     path: |
+    #       ${{ env.POETRY_VENV_PATH }}
+    #       ${{ env.QTIFW_PATH }}
+    #       ${{ env.DOWNLOAD_PATH }}
+    #     key: ${{ matrix.os }}-poetry-${{ hashFiles('pyproject.toml') }}
 
     - name: Set up python packages manager
       uses: Gr1N/setup-poetry@v4

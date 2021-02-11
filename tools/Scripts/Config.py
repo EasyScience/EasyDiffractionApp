@@ -45,7 +45,7 @@ class Config():
         print(self.__dict__['ci']['scripts']['certificate_name'])
         self.certificate_path = os.path.join(self.__dict__['ci']['project']['subdirs']['certificates_path'],
                                              self.__dict__['ci']['scripts']['certificate_name'] + "_" +
-                                             Functions.osName()[0:3])
+                                             Functions.osName()[0:3] + ".pfx")
         self.certificate_zip_path = os.path.join(self.__dict__['ci']['project']['subdirs']['certificates_path'],
                                                  'codesigning.zip')
         print(self.certificate_path)

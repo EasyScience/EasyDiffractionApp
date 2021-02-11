@@ -15,9 +15,8 @@ certificates_dir_path = CONFIG['ci']['project']['subdirs']['certificates_path'] 
 certificate_file_path = CONFIG.certificate_path
 certificates_zip_path = CONFIG.certificate_zip_path
 
-passwords_dict = ast.literal_eval(sys.argv[1]) if len(sys.argv) > 1 else {'osx':'', 'windows':'', 'zip':''}
-certificate_password = passwords_dict[CONFIG.os].replace('\\', '')
-zip_password = passwords_dict['zip']
+certificate_password = sys.argv[1]
+zip_password = sys.argv[2]
 
 print('* Unzip certificates')
 with zipfile.ZipFile(certificates_zip_path) as zf:
@@ -25,7 +24,6 @@ with zipfile.ZipFile(certificates_zip_path) as zf:
         path = certificates_dir_path,
         pwd = bytes(zip_password, 'utf-8')
         )
-
 
 def sign_linux():
     print('* No code signing needed for linux')
@@ -35,7 +33,9 @@ def sign_linux():
 def sign_windows():
     print('* Code signing for windows')
 
-    signtool_exe_path = os.path.join('C:', os.sep, 'Program Files (x86)', 'Windows Kits', '10', 'bin', 'x86', 'signtool.exe')
+    # using local signtool, since installing the whole SDK is a total overkill
+    # signtool_exe_path = os.path.join('C:', os.sep, 'Program Files (x86)', 'Windows Kits', '10', 'bin', 'x86', 'signtool.exe')
+    signtool_exe_path = os.path.join(certificates_dir_path, 'signtool.exe')
 
     Functions.run(
         'certutil.exe',
@@ -45,16 +45,14 @@ def sign_windows():
 
     print('* Sign code with imported certificate')
     Functions.run(
-        signtool_exe_path, 'sign',              # info - https://msdn.microsoft.com/en-us/data/ff551778(v=vs.71)
+        signtool_exe_path, 'sign',             # info - https://msdn.microsoft.com/en-us/data/ff551778(v=vs.71)
         '/f', certificate_file_path,           # signing certificate in a file
         '/p', certificate_password,            # password to use when opening a PFX file
-        '/sm',                                  # use a machine certificate store instead of a user certificate store
-        '/d', app_name,                         # description of the signed content
-        '/du', app_url,                         # URL for the expanded description of the signed content
-        '/t', 'http://timestamp.digicert.com',  # URL to a timestamp server
-        #'/debug',
-        '/v',                                   # display the verbose version of operation and warning messages
-        '/a',                                   # Select the best signing cert automatically
+        '/d', app_name,                        # description of the signed content
+        '/du', app_url,                        # URL for the expanded description of the signed content
+        '/t', 'http://timestamp.digicert.com', # URL to a timestamp server
+        '/v',                                  # display the verbose version of operation and warning messages
+        '/a',                                  # Select the best signing cert automatically
         installer_exe_path
         )
 

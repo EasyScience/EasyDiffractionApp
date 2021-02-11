@@ -21,12 +21,12 @@ packages = [ { include = 'easyDiffractionApp' } ]
 python = '^3.7, <3.8'
 #python = '^3.8, <3.9' # '^3.8' generates error when installing PySide2 in easyAppGui
 #python = '3.7' # PyInstaller 3.6 doesn't support Python 3.8
-matplotlib = '^3.2, <3.3'
+matplotlib = '^3.2'
 matplotlib_backend_qtquick = { git = 'https://github.com/easyScience/matplotlib_backend_qtquick', rev = 'master' }
 vtk = '^8.1'
 pyobjc = { version = '^7.1', platform = 'darwin' }
 # easyScience
-easyCore = { git = 'https://github.com/easyScience/easyCore.git', rev = 'develop' }
+easyCore = { git = 'https://github.com/easyScience/easyCore.git', rev = 'xarray' }
 easyDiffractionLib = { git = 'https://github.com/easyScience/easyDiffractionLib.git', rev = 'develop' }
 easyAppLogic = { git = 'https://github.com/easyScience/easyAppLogic.git', rev = 'develop' }
 easyAppGui = { git = 'https://github.com/easyScience/easyAppGui.git', rev = 'DAS-293' }

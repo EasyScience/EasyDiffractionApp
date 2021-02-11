@@ -319,42 +319,6 @@ def createOnlineRepository():
         qtifw_repogen_path = os.path.join(qtifw_bin_dir_path, 'repogen')
         repository_dir_path = os.path.join(CONFIG['ci']['project']['subdirs']['distribution'], localRepositoryDir())
 
-
-        Functions.printNeutralMessage("distribution: {}".format(os.path.join(CONFIG['ci']['project']['subdirs']['distribution'])))
-        Functions.printNeutralMessage("repository_dir_path: {}".format(localRepositoryDir()))
-        Functions.printNeutralMessage("repository_dir_suffix: {}".format(CONFIG['ci']['app']['setup']['repository_dir_suffix']))
-        Functions.printNeutralMessage("repository_dir_path: {}".format(CONFIG.setup_os))
-
-        if not os.path.isdir(repository_dir_path):
-            a = CONFIG['ci']['project']['subdirs']['distribution']
-            Functions.createDir(a)  # .ci\distribution
-            repository_dir_suffix = CONFIG['ci']['app']['setup']['repository_dir_suffix']
-            b = f'{CONFIG.app_name}{repository_dir_suffix}'
-            c = os.path.join(a, b)
-            Functions.createDir(c) # .ci\distribution\easyDiffractionRepos
-
-            e = os.path.join(c, CONFIG.setup_os)
-            Functions.createDir(e) # .ci\distribution\easyDiffractionRepos\Windows
-
-        Functions.printNeutralMessage("repository_dir_path: {}".format(repository_dir_path))
-        Functions.printNeutralMessage("repository_dir_path exists: {}".format(os.path.isdir(repository_dir_path)))
-        Functions.printNeutralMessage("*** packagesDirPath: {}".format(packagesDirPath()))
-        Functions.printNeutralMessage("*** packagesDirPath exists: {}".format(os.path.isdir(packagesDirPath())))
-        Functions.printNeutralMessage("*** qtifw_repogen_path: {}".format(qtifw_repogen_path))
-        Functions.printNeutralMessage("*** qtifw_repogen_path exists: {}".format(os.path.isfile(qtifw_repogen_path+'.exe')))
-        Functions.printNeutralMessage("*** qtifwDirPath: {}".format(qtifwDirPath()))
-        if os.path.isdir(qtifwDirPath()):
-            files = os.listdir(qtifwDirPath())
-            Functions.printNeutralMessage(str(files))
-        else:
-            Functions.printNeutralMessage("qtifwDirPath does not exist")
-        bin = os.path.join(qtifwDirPath(), "bin")
-        if os.path.isdir(bin):
-            files = os.listdir(bin)
-            Functions.printNeutralMessage(str(files))
-        else:
-            Functions.printNeutralMessage("qtifwDirPath/bin does not exist")
-
         Functions.run(
             qtifw_repogen_path,
             '--update-new-components',
@@ -363,11 +327,6 @@ def createOnlineRepository():
         )
     except Exception as exception:
         Functions.printFailMessage(message, exception)
-        if os.path.isdir(repository_dir_path):
-            files = os.listdir(repository_dir_path)
-            Functions.printNeutralMessage(str(files))
-        else:
-            Functions.printNeutralMessage("repository_dir_path does not exist")
         sys.exit()
     else:
         Functions.printSuccessMessage(message)

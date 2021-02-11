@@ -56,7 +56,8 @@ def crysfmlSoFile():
         'ubuntu': 'crysfml_api.so',
         'windows': None
     }[CONFIG.os]
-    return os.path.join(so_location, so_file)
+    # return os.path.join(so_location, so_file)
+    return None  # test
 
 def relinkCrysfml():
     if CONFIG.os == 'windows':

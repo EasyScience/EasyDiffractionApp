@@ -247,6 +247,10 @@ def installQtInstallerFramework():
         Functions.printFailMessage(message, exception)
         sys.exit()
     else:
+        # attempt to wait for the installation to finish
+        import time
+        time.sleep(5)
+
         Functions.printSuccessMessage(message)
 
         Functions.printSuccessMessage("***** installQtInstallerFramework: ****")

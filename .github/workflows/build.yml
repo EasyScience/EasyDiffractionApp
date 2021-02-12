@@ -25,7 +25,7 @@ jobs:
     # Build matrix for different platforms
     strategy:
       matrix:
-        os: [macos-10.15, ubuntu-latest, windows-latest]
+        os: [macos-11.0, ubuntu-20.04, windows-2019]
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -33,12 +33,7 @@ jobs:
     - name: Check-out repository
       uses: actions/checkout@v2
 
-    #- name: Set up access to private repos
-    #  uses: webfactory/ssh-agent@v0.4.1
-    #  with:
-    #    ssh-private-key: ${{ secrets.GH_WEBFACTORY_KEY }}
-
-    - name: Set up dependences
+    - name: Set up non-Python dependences
       if: runner.os == 'Linux'
       run: sudo apt-get install libgfortran4
 
@@ -46,6 +41,9 @@ jobs:
       uses: actions/setup-python@v2
       with:
           python-version: 3.7
+
+    - name: Upgrade pip
+      run: python -m pip install --upgrade pip
 
     - name: Set up project config parser & Declare env variables
       shell: bash
@@ -57,10 +55,9 @@ jobs:
         echo "DOWNLOAD_PATH=$(python pyproject.py ci.project.subdirs.download)" >> $GITHUB_ENV
         echo "DISTRIBUTION_PATH=$(python pyproject.py ci.project.subdirs.distribution)" >> $GITHUB_ENV
         echo "APP_NAME=$(python pyproject.py tool.poetry.name)" >> $GITHUB_ENV
-        echo "POETRY_VENV_PATH=$(python pyproject.py ci.poetry.venv_path.${{ runner.os }})" >> $GITHUB_ENV
         echo "QTIFW_PATH=$(python pyproject.py ci.qtifw.setup.installation_path.${{ runner.os }})" >> $GITHUB_ENV
 
-    - name: Set up python dependences
+    - name: Set up Python dependences
       run: |
         pip install requests
         pip install git+https://github.com/easyScience/easyDiffractionApp@DAS-294
@@ -74,24 +71,7 @@ jobs:
     #      ${{ env.DOWNLOAD_PATH }}
     #    key: ${{ matrix.os }}-poetry-${{ hashFiles('pyproject.toml') }}
 
-    #- name: Set up python packages manager
-    #  uses: Gr1N/setup-poetry@v4
-
-    #- name: Create venv and install dependences
-    #  # poetry self update: Update poetry
-    #  # --upgrade pip: To get rid of ERROR: No matching distribution found for opencv-python-headless==4.3.0.36
-    #  # WIN ERROR: Could not install packages due to an EnvironmentError: [WinError 5] Access is denied: 'C:\\Users\\runneradmin\\AppData\\Local\\Temp\\pip-uninstall-w29qfiig\\pip.exe'
-    #  # Consider using the `--user` option or check the permissions.
-    #  # --upgrade setuptools: To get rid of ModuleNotFoundError: No module named 'pkg_resources.py2_warn'
-    #  # poetry env info
-    #  # poetry env use 3.7
-    #  # poetry update: Install dependencies or update them
-    #  run: |
-    #    poetry run python -m pip install --upgrade pip
-    #    poetry update
-
     - name: Relink CrysFML from default Python dylib
-      # run: poetry run python ${{ env.SCRIPTS_PATH }}/RelinkCrysfml.py ${{ env.PYTHON_LOCATION }}
       run: python ${{ env.SCRIPTS_PATH }}/RelinkCrysfml.py
 
     - name: Create freezed python app bundle

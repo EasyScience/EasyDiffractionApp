@@ -22,7 +22,7 @@ def pythonDylib():
         'ubuntu': 'libpython3.7m.dylib',
         'windows': None
     }[CONFIG.os]
-    return os.path.join(pythonLibLocation(), python_dylib_file)
+    return None if python_dylib_file is None else os.path.join(pythonLibLocation(), python_dylib_file)
 
 
 def crysfmlPythonDylib():
@@ -61,7 +61,7 @@ def crysfmlSoFile():
         'ubuntu': 'crysfml_api.so',
         'windows': None
     }[CONFIG.os]
-    return os.path.join(so_location, so_file)
+    return None if so_file is None else os.path.join(so_location, so_file)
 
 
 def relinkCrysfml():

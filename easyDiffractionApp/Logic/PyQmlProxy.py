@@ -1327,12 +1327,6 @@ class PyQmlProxy(QObject):
             # HTML can contain non-ascii, so need to open with right encoding
             with open(filepath, 'w', encoding='utf-8') as f:
                 f.write(self._report)
-        elif extension == '.pdf':
-            document = QTextDocument(parent=None)
-            document.setHtml(self._report)
-            printer = QPdfWriter(filepath)
-            printer.setPageSize(printer.A3)  # A3 to fit A4 page
-            document.print_(printer)
         else:
             raise NotImplementedError
 

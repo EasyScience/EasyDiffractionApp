@@ -58,11 +58,6 @@ jobs:
         echo "APP_NAME=$(python pyproject.py tool.poetry.name)" >> $GITHUB_ENV
         echo "QTIFW_PATH=$(python pyproject.py ci.qtifw.setup.installation_path.${{ runner.os }})" >> $GITHUB_ENV
 
-    - name: Set up Python dependences
-      run: |
-        pip install requests
-        pip install git+https://github.com/easyScience/easyDiffractionApp@DAS-294
-
     - name: Cache dependencies
       uses: actions/cache@v2
       with:
@@ -71,6 +66,11 @@ jobs:
           ${{ env.QTIFW_PATH }}
           ${{ env.DOWNLOAD_PATH }}
         key: ${{ matrix.os }}-${{ hashFiles('pyproject.toml') }}
+
+    - name: Set up Python dependences
+      run: |
+        pip install requests
+        pip install git+https://github.com/easyScience/easyDiffractionApp@DAS-294
 
     - name: Relink CrysFML from default Python dylib
       run: python ${{ env.SCRIPTS_PATH }}/RelinkCrysfml.py

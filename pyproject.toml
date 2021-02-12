@@ -29,7 +29,7 @@ easyDiffractionLib = { git = 'https://github.com/easyScience/easyDiffractionLib.
 easyAppLogic = { git = 'https://github.com/easyScience/easyAppLogic.git', rev = 'develop' }
 easyAppGui = { git = 'https://github.com/easyScience/easyAppGui.git', rev = 'DAS-294' }
 
-#[tool.poetry.dev-dependencies]
+[tool.poetry.dev-dependencies]
 # PyInstaller
 #pyinstaller = '^4.2'
 pyinstaller = { git = 'https://github.com/pyinstaller/pyinstaller.git', rev = 'develop' }

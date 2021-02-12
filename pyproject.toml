@@ -32,8 +32,8 @@ easyAppGui = { git = 'https://github.com/easyScience/easyAppGui.git', rev = 'DAS
 
 [tool.poetry.dev-dependencies]
 # PyInstaller
-pyinstaller = '^4.2'
-#pyinstaller = { git = 'https://github.com/pyinstaller/pyinstaller.git', rev = 'develop' }
+#pyinstaller = '^4.2'
+pyinstaller = { git = 'https://github.com/pyinstaller/pyinstaller.git', rev = 'develop' }
 #macholib = '^1.14'
 pywin32-ctypes = { version = '^0.2', platform = 'win32' }
 pypiwin32 = { version = '^223', platform = 'win32' }

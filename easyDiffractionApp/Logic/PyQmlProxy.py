@@ -103,6 +103,9 @@ class PyQmlProxy(QObject):
 
     # Status info
     statusInfoChanged = Signal()
+    
+    # Misc
+    dummySignal = Signal()
 
     # METHODS
 
@@ -175,8 +178,8 @@ class PyQmlProxy(QObject):
 
         self._background_proxy = BackgroundProxy()
         self._background_proxy.asObjChanged.connect(self._onParametersChanged)
-        self._background_proxy.asObjChanged.connect(self.calculatedDataChanged)
         self._background_proxy.asObjChanged.connect(self._sample.set_background)
+        self._background_proxy.asObjChanged.connect(self.calculatedDataChanged)
 
         # Analysis
         self.calculatedDataChanged.connect(self._onCalculatedDataChanged)
@@ -236,14 +239,14 @@ class PyQmlProxy(QObject):
     def setVtkHandler(self, vtk_handler):
         self._vtk_handler = vtk_handler
 
-    @Property(bool, notify=False)
+    @Property(bool, notify=dummySignal)
     def showBonds(self):
         if self._vtk_handler is None:
             return True
         return self._vtk_handler.show_bonds
 
     @showBonds.setter
-    def showBondsSetter(self, show_bonds: bool):
+    def showBonds(self, show_bonds: bool):
         if self._vtk_handler is None or self._vtk_handler.show_bonds == show_bonds:
             return
         self._vtk_handler.show_bonds = show_bonds
@@ -256,7 +259,7 @@ class PyQmlProxy(QObject):
         return self._vtk_handler.max_distance
 
     @bondsMaxDistance.setter
-    def bondsMaxDistanceSetter(self, max_distance: float):
+    def bondsMaxDistance(self, max_distance: float):
         if self._vtk_handler is None or self._vtk_handler.max_distance == max_distance:
             return
         self._vtk_handler.max_distance = max_distance
@@ -277,7 +280,7 @@ class PyQmlProxy(QObject):
 
     # Matplotlib
 
-    @Property('QVariant', constant=True)
+    @Property('QVariant', notify=dummySignal)
     def matplotlibBridge(self):
         return self._matplotlib_bridge
 
@@ -301,19 +304,19 @@ class PyQmlProxy(QObject):
 
     # QtCharts
 
-    @Property('QVariant', constant=True)
+    @Property('QVariant', notify=dummySignal)
     def qtCharts(self):
         return self._qtcharts_bridge
 
     # Bokeh
 
-    @Property('QVariant', constant=True)
+    @Property('QVariant', notify=dummySignal)
     def bokeh(self):
         return self._bokeh_bridge
 
     # Plotting libs
 
-    @Property('QVariant', constant=True)
+    @Property('QVariant', notify=dummySignal)
     def plotting1dLibs(self):
         return self._1d_plotting_libs
 
@@ -322,7 +325,7 @@ class PyQmlProxy(QObject):
         return self._current_1d_plotting_lib
 
     @current1dPlottingLib.setter
-    def current1dPlottingLibSetter(self, plotting_lib):
+    def current1dPlottingLib(self, plotting_lib):
         self._current_1d_plotting_lib = plotting_lib
         self.current1dPlottingLibChanged.emit()
 
@@ -331,7 +334,7 @@ class PyQmlProxy(QObject):
             self._matplotlib_bridge.updateData(self._experiment_figure_canvas, [self._experiment_data])
             self._updateCalculatedData()
 
-    @Property('QVariant', constant=True)
+    @Property('QVariant', notify=dummySignal)
     def plotting3dLibs(self):
         return self._3d_plotting_libs
 
@@ -340,7 +343,7 @@ class PyQmlProxy(QObject):
         return self._current_3d_plotting_lib
 
     @current3dPlottingLib.setter
-    def current3dPlottingLibSetter(self, plotting_lib):
+    def current3dPlottingLib(self, plotting_lib):
         self._current_3d_plotting_lib = plotting_lib
         self.current3dPlottingLibChanged.emit()
 
@@ -354,7 +357,7 @@ class PyQmlProxy(QObject):
         return self._show_difference_chart
 
     @showDifferenceChart.setter
-    def showDifferenceChartSetter(self, show):
+    def showDifferenceChart(self, show):
         if self._show_difference_chart == show:
             return
         self._show_difference_chart = show
@@ -365,7 +368,7 @@ class PyQmlProxy(QObject):
         return self._show_measured_series
 
     @showMeasuredSeries.setter
-    def showMeasuredSeriesSetter(self, show):
+    def showMeasuredSeries(self, show):
         if self._show_measured_series == show:
             return
         self._show_measured_series = show
@@ -407,7 +410,7 @@ class PyQmlProxy(QObject):
         return self._project_info
 
     @projectInfoAsJson.setter
-    def projectInfoAsJsonSetter(self, json_str):
+    def projectInfoAsJson(self, json_str):
         self._project_info = json.loads(json_str)
         self.projectInfoChanged.emit()
 
@@ -505,7 +508,7 @@ class PyQmlProxy(QObject):
         return self._phases_as_cif + symm_ops_cif_loop
 
     @phasesAsCif.setter
-    def phasesAsCifSetter(self, phases_as_cif):
+    def phasesAsCif(self, phases_as_cif):
         print("+ phasesAsCifSetter")
         if self._phases_as_cif == phases_as_cif:
             return
@@ -602,7 +605,7 @@ class PyQmlProxy(QObject):
         return current_system
 
     @currentCrystalSystem.setter
-    def currentCrystalSystemSetter(self, new_system: str):
+    def currentCrystalSystem(self, new_system: str):
         new_system = new_system.lower()
         space_group_numbers = SpacegroupInfo.get_ints_from_system(new_system)
         top_space_group_number = space_group_numbers[0]
@@ -638,7 +641,7 @@ class PyQmlProxy(QObject):
         return current_idx
 
     @currentSpaceGroup.setter
-    def currentSpaceGroupSetter(self, new_idx: int):
+    def currentSpaceGroup(self, new_idx: int):
         space_group_numbers = self._spaceGroupNumbers()
         space_group_number = space_group_numbers[new_idx]
         space_group_name = SpacegroupInfo.get_symbol_from_int_number(space_group_number)
@@ -677,7 +680,7 @@ class PyQmlProxy(QObject):
         return current_number
 
     @currentSpaceGroupSetting.setter
-    def currentSpaceGroupSettingSetter(self, new_number: int):
+    def currentSpaceGroupSetting(self, new_number: int):
         settings = self._spaceGroupSettingList()
         name = settings[new_number]
         self._setCurrentSpaceGroup(name)
@@ -729,7 +732,7 @@ class PyQmlProxy(QObject):
         return self._current_phase_index
 
     @currentPhaseIndex.setter
-    def currentPhaseIndexSetter(self, new_index: int):
+    def currentPhaseIndex(self, new_index: int):
         if self._current_phase_index == new_index or new_index == -1:
             return
 
@@ -868,7 +871,7 @@ class PyQmlProxy(QObject):
         return self._experiment_loaded
 
     @experimentLoaded.setter
-    def experimentLoadedSetter(self, loaded: bool):
+    def experimentLoaded(self, loaded: bool):
         if self._experiment_loaded == loaded:
             return
 
@@ -880,7 +883,7 @@ class PyQmlProxy(QObject):
         return self._experiment_skipped
 
     @experimentSkipped.setter
-    def experimentSkippedSetter(self, skipped: bool):
+    def experimentSkipped(self, skipped: bool):
         if self._experiment_skipped == skipped:
             return
 
@@ -911,7 +914,7 @@ class PyQmlProxy(QObject):
         return self._simulation_parameters_as_obj
 
     @simulationParametersAsObj.setter
-    def simulationParametersAsObjSetter(self, json_str):
+    def simulationParametersAsObj(self, json_str):
         if self._simulation_parameters_as_obj == json.loads(json_str):
             return
 
@@ -999,7 +1002,7 @@ class PyQmlProxy(QObject):
     # Background
     ####################################################################################################################
 
-    @Property('QVariant', constant=True)
+    @Property('QVariant', notify=dummySignal)
     def backgroundProxy(self):
         return self._background_proxy
 
@@ -1185,7 +1188,7 @@ class PyQmlProxy(QObject):
 
     # Minimizer
 
-    @Property('QVariant', constant=True)
+    @Property('QVariant', notify=dummySignal)
     def minimizerNames(self):
         return self.fitter.available_engines
 
@@ -1232,7 +1235,7 @@ class PyQmlProxy(QObject):
     # Calculator
     ####################################################################################################################
 
-    @Property('QVariant', constant=True)
+    @Property('QVariant', notify=dummySignal)
     def calculatorNames(self):
         return self._interface.available_interfaces
 

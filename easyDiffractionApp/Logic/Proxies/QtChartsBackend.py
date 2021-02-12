@@ -100,7 +100,7 @@ class QtChartsBridge(QObject):
         return self._difference_ymax
 
     @experimentXmin.setter
-    def experimentXminSetter(self, value):
+    def experimentXmin(self, value):
         if self._experiment_xmin == value:
             return
 
@@ -108,7 +108,7 @@ class QtChartsBridge(QObject):
         self.chartsRangesChanged.emit()
 
     @experimentXmax.setter
-    def experimentXmaxSetter(self, value):
+    def experimentXmax(self, value):
         if self._experiment_xmax == value:
             return
 
@@ -116,7 +116,7 @@ class QtChartsBridge(QObject):
         self.chartsRangesChanged.emit()
 
     @experimentYmin.setter
-    def experimentYminSetter(self, value):
+    def experimentYmin(self, value):
         if self._experiment_ymin == value:
             return
 
@@ -124,7 +124,7 @@ class QtChartsBridge(QObject):
         self.chartsRangesChanged.emit()
 
     @experimentYmax.setter
-    def experimentYmaxSetter(self, value):
+    def experimentYmax(self, value):
         if self._experiment_ymax == value:
             return
 
@@ -132,7 +132,7 @@ class QtChartsBridge(QObject):
         self.chartsRangesChanged.emit()
 
     @analysisXmin.setter
-    def analysisXminSetter(self, value):
+    def analysisXmin(self, value):
         if self._analysis_xmin == value:
             return
 
@@ -140,7 +140,7 @@ class QtChartsBridge(QObject):
         self.chartsRangesChanged.emit()
 
     @analysisXmax.setter
-    def analysisXmaxSetter(self, value):
+    def analysisXmax(self, value):
         if self._analysis_xmax == value:
             return
 
@@ -148,7 +148,7 @@ class QtChartsBridge(QObject):
         self.chartsRangesChanged.emit()
 
     @analysisYmin.setter
-    def analysisYminSetter(self, value):
+    def analysisYmin(self, value):
         if self._analysis_ymin == value:
             return
 
@@ -156,7 +156,7 @@ class QtChartsBridge(QObject):
         self.chartsRangesChanged.emit()
 
     @analysisYmax.setter
-    def analysisYmaxSetter(self, value):
+    def analysisYmax(self, value):
         if self._analysis_ymax == value:
             return
 
@@ -164,7 +164,7 @@ class QtChartsBridge(QObject):
         self.chartsRangesChanged.emit()
 
     @differenceYmin.setter
-    def differenceYminSetter(self, value):
+    def differenceYmin(self, value):
         if self._difference_ymin == value:
             return
 
@@ -172,7 +172,7 @@ class QtChartsBridge(QObject):
         self.chartsRangesChanged.emit()
 
     @differenceYmax.setter
-    def differenceYmaxSetter(self, value):
+    def differenceYmax(self, value):
         if self._difference_ymax == value:
             return
 

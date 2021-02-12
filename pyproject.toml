@@ -19,9 +19,9 @@ packages = [ { include = 'easyDiffractionApp' } ]
 
 [tool.poetry.dependencies]
 python = '^3.7, <3.8'
-matplotlib = '^3.3'
-matplotlib_backend_qtquick = { git = 'https://github.com/easyScience/matplotlib_backend_qtquick', rev = 'master' }
-vtk = '^9.0'
+#matplotlib = '^3.3.4'
+matplotlib-backend-qtquick = '^0.0.8'
+vtk = '^8.1.2'
 pyobjc-core = { version = '^7.1', platform = 'darwin' }
 pyobjc-framework-cocoa = { version = '^7.1', platform = 'darwin' }
 # easyScience
@@ -32,16 +32,16 @@ easyAppGui = { git = 'https://github.com/easyScience/easyAppGui.git', rev = 'DAS
 
 [tool.poetry.dev-dependencies]
 # PyInstaller
-pyinstaller = '^4.1'
+pyinstaller = '^4.2'
 #pyinstaller = { git = 'https://github.com/pyinstaller/pyinstaller.git', rev = 'develop' }
-macholib = '^1.14'
+#macholib = '^1.14'
 pywin32-ctypes = { version = '^0.2', platform = 'win32' }
 pypiwin32 = { version = '^223', platform = 'win32' }
 pefile = { version = '^2019.4', platform = 'win32' }
 # Misc
-toml = '^0.10'
-requests = '^2.24'
-dephell_licenses = '^0.1'
+toml = '^0.10.2'
+requests = '^2.25.1'
+dephell_licenses = '^0.1.7'
 ffmpeg-python = '^0.2'
 googletrans = '^3.0'
 gTTS = '^2.2'

@@ -8,20 +8,22 @@ import Functions, Config
 
 CONFIG = Config.Config()
 
+
 def pythonLibLocation():
-    #if len(sys.argv) > 1:
-    #    return os.path.join(sys.argv[1], 'lib')
+    if len(sys.argv) > 1:
+        return os.path.join(sys.argv[1], 'lib')
     return '@rpath'
+
 
 def pythonDylib():
     python_dylib_file = {
-        #'macos': 'Python',
+        # 'macos': 'Python',
         'macos': 'libpython3.7m.dylib',
         'ubuntu': 'libpython3.7m.dylib',
         'windows': None
     }[CONFIG.os]
-    #return os.path.join(pythonLibLocation(), python_dylib_file)
-    return None  # test
+    return os.path.join(pythonLibLocation(), python_dylib_file)
+
 
 def crysfmlPythonDylib():
     d = {
@@ -31,6 +33,7 @@ def crysfmlPythonDylib():
     }
     return d[CONFIG.os]
 
+
 def rpath():
     d = {
         'macos': '@executable_path',
@@ -39,6 +42,7 @@ def rpath():
     }
     return d[CONFIG.os]
 
+
 def crysfmlRpath():
     d = {
         'macos': '/opt/intel//compilers_and_libraries_2020.2.258/mac/compiler/lib',
@@ -46,6 +50,7 @@ def crysfmlRpath():
         'windows': None
     }
     return d[CONFIG.os]
+
 
 def crysfmlSoFile():
     lib = CONFIG['ci']['pyinstaller']['libs'][CONFIG.os]
@@ -56,8 +61,8 @@ def crysfmlSoFile():
         'ubuntu': 'crysfml_api.so',
         'windows': None
     }[CONFIG.os]
-    # return os.path.join(so_location, so_file)
-    return None  # test
+    return os.path.join(so_location, so_file)
+
 
 def relinkCrysfml():
     if CONFIG.os == 'windows':

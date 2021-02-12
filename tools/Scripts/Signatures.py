@@ -59,6 +59,7 @@ def sign_windows():
 def sign_macos():
     keychain_name = 'codesign.keychain'
     keychain_password = 'password'
+    mac_certificate_file_path = certificate_file_path + ".p12"
     identity = 'Developer ID Application: European Spallation Source Eric (W2AG9MPZ43)'
 
     print('* Create keychain')

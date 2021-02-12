@@ -53,13 +53,26 @@ Item {
     property string calculatedLineColor: EaStyle.Colors.chartForegrounds[1]
     property string calculatedLineWidth: '2'
 
+    /*
+    ScrollView {
+        anchors.fill: parent
+        contentHeight: webView.contentsSize.height
+        contentWidth: webView.contentsSize.width
+        focus: true
+        ScrollBar.vertical.policy: ScrollBar.AlwaysOn
+    */
+
     WebEngineView {
         id: webView
+        enabled: false
+
         anchors.fill: parent
         backgroundColor: htmlBackground
 
         Component.onCompleted: ExGlobals.Variables.reportWebView = webView
     }
+
+    //}
 
     onHtmlChanged: {
         //print(html)

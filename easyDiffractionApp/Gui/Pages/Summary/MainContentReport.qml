@@ -8,6 +8,7 @@ import easyAppGui.Elements 1.0 as EaElements
 import easyAppGui.Components 1.0 as EaComponents
 import easyAppGui.Logic 1.0 as EaLogic
 
+import Gui.Logic 1.0 as ExLogic
 import Gui.Globals 1.0 as ExGlobals
 
 Item {
@@ -19,8 +20,8 @@ Item {
 
     // Structure chart
 
-    property string structureChartLibVersion: '9.1.0'
-    property string structureChartLibUrl: 'https://web.chemdoodle.com'
+    property string structureChartLibVersion: EaLogic.Plotting.chemDoodleInfo().version
+    property string structureChartLibUrl: EaLogic.Plotting.chemDoodleInfo().url
 
     property string structureChartWidth: (chartWidth + EaStyle.Sizes.fontPixelSize * 1.5 * 2).toString()
     property string structureChartHeight: structureChartWidth
@@ -31,27 +32,16 @@ Item {
 
     // Data chart
 
-    property string dataChartLibVersion: '2.2.3'
-    property string dataChartLibUrl: 'https://docs.bokeh.org/en/' + dataChartLibVersion
+    property string dataChartLibVersion: EaLogic.Plotting.bokehInfo().version
+    property string dataChartLibUrl: EaLogic.Plotting.bokehInfo().url
 
     property string dataChartWidth: chartWidth.toString()
     property string dataChartHeight: (chartWidth / 5 * 4).toString()
-
-    property var calculatedData: ExGlobals.Constants.proxy.bokeh.calculatedDataObj
-    property var measuredData: ExGlobals.Constants.proxy.bokeh.measuredDataObj
-    property bool hasMeasuredData: Object.keys(measuredData).length
-
-    property string xAxisTitle: qsTr("2theta (deg)")
-    property string yAxisTitle: qsTr("Intensity")
 
     property string dataChartBackgroundColor: EaStyle.Colors.chartPlotAreaBackground
     property string dataChartBorderColor: EaStyle.Colors.appBorder
     property string dataChartPadding: (EaStyle.Sizes.fontPixelSize * 1.5).toString()
 
-    property string experimentLineColor: EaStyle.Colors.chartForegrounds[0]
-    property string experimentLineWidth: '2'
-    property string calculatedLineColor: EaStyle.Colors.chartForegrounds[1]
-    property string calculatedLineWidth: '2'
 
     /*
     ScrollView {
@@ -64,7 +54,6 @@ Item {
 
     WebEngineView {
         id: webView
-        enabled: false
 
         anchors.fill: parent
         backgroundColor: htmlBackground
@@ -75,7 +64,7 @@ Item {
     //}
 
     onHtmlChanged: {
-        //print(html)
+        print(html)
         ExGlobals.Constants.proxy.setReport(html)
         webView.loadHtml(html)
     }
@@ -84,32 +73,12 @@ Item {
     // HTML parts
     /////////////
 
-    property string headMisc: {
-        let s = ''
-        s += '<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>'
-        return s
-    }
-
-    property string dataChartLib: {
-        let s = ''
-        s += '<script type="text/javascript" src="https://cdn.pydata.org/bokeh/release/bokeh-'+dataChartLibVersion+'.min.js"></script>' + '\n'
-        s += '<script type="text/javascript" src="https://cdn.pydata.org/bokeh/release/bokeh-widgets-'+dataChartLibVersion+'.min.js"></script>' + '\n'
-        s += '<script type="text/javascript" src="https://cdn.pydata.org/bokeh/release/bokeh-tables-'+dataChartLibVersion+'.min.js"></script>' + '\n'
-        s += '<script type="text/javascript" src="https://cdn.pydata.org/bokeh/release/bokeh-api-'+dataChartLibVersion+'.min.js"></script>'
-        return s
-    }
-
-    property string structureChartLib: {
-        let s = ''
-        s += '<script type="text/javascript" src="http://easyscience.apptimity.com/easyDiffraction/libs/ChemDoodleWeb-'+structureChartLibVersion+'.js"></script>'
-        return s
-    }
-
     property string headScripts: {
-        let s = ''
-        s += dataChartLib + '\n'
-        s += structureChartLib
-        return s
+        const list = [
+                  EaLogic.Plotting.bokehHeadScripts(),
+                  EaLogic.Plotting.chemDoodleHeadScripts()
+              ]
+        return list.join('\n')
     }
 
     property string dataChartStyle: {
@@ -185,7 +154,7 @@ Item {
     property string head: {
         let s = ''
         s += '\n'
-        s += headMisc + '\n'
+        s += EaLogic.Plotting.headCommon() + '\n'
         s += '\n'
         s += headScripts + '\n'
         s += '\n'
@@ -193,77 +162,28 @@ Item {
         return s
     }
 
-    property string structureChart: {
-        let s = ''
-        s += 'const cifStr = '+JSON.stringify(ExGlobals.Constants.proxy.phasesAsExtendedCif)+'' + '\n'
-        s += 'const xSuper = 1' + '\n'
-        s += 'const ySuper = 1' + '\n'
-        s += 'const zSuper = 1' + '\n'
-        s += 'const phase = ChemDoodle.readCIF(cifStr, xSuper, ySuper, zSuper)' + '\n'
-        s += 'const crystalTransformer = new ChemDoodle.TransformCanvas3D("crystalTransformer", '+structureChartWidth+', '+structureChartHeight+')' + '\n'
-        s += 'crystalTransformer.styles.set3DRepresentation("Ball and Stick")' + '\n'
-        s += 'crystalTransformer.styles.projectionPerspective_3D = true' + '\n'
-        s += 'crystalTransformer.styles.projectionPerspectiveVerticalFieldOfView_3D = 20' + '\n'
-        s += 'crystalTransformer.styles.bonds_display = true' + '\n'
-        s += 'crystalTransformer.styles.bonds_splitColor = true' + '\n'
-        s += 'crystalTransformer.styles.atoms_displayLabels_3D = true' + '\n'
-        s += 'crystalTransformer.styles.compass_display = true' + '\n'
-        s += 'crystalTransformer.styles.compass_type_3D = 0' + '\n'
-        s += 'crystalTransformer.styles.compass_size_3D = 70' + '\n'
-        s += 'crystalTransformer.styles.compass_displayText_3D = true' + '\n'
-        s += 'crystalTransformer.styles.shapes_color = "'+structureChartForegroundColor+'"' + '\n'
-        //s += 'crystalTransformer.styles.shapes_lineWidth = 5' + '\n'
-        s += 'crystalTransformer.styles.text_font_size = 12' + '\n'
-        s += 'crystalTransformer.styles.text_font_families = ["Helvetica", "Arial", "Dialog"]' + '\n'
-        s += 'crystalTransformer.styles.backgroundColor = "'+structureChartBackgroundColor+'"' + '\n'
-        s += 'crystalTransformer.loadContent([phase.molecule],[phase.unitCell])'
-        return s
-    }
+    property string structureChart: EaLogic.Plotting.chemDoodleChart({
+        cifStr: JSON.stringify(ExGlobals.Constants.proxy.phasesAsExtendedCif),
+        chartWidth: structureChartWidth,
+        chartHeight: structureChartHeight,
+        chartForegroundColor: structureChartForegroundColor,
+        chartBackgroundColor: structureChartBackgroundColor
+    })
 
-    property string dataChart: {
-        let s = ''
-        s += 'const plot = Bokeh.Plotting.figure({' + '\n'
-        s += '    tools: "pan,box_zoom,hover,reset",' + '\n'
-        s += '    height: '+dataChartHeight+',' + '\n'
-        s += '    width: '+dataChartWidth+',' + '\n'
-        s += '    x_axis_label: "'+xAxisTitle+'",' + '\n'
-        s += '    y_axis_label: "'+yAxisTitle+'",' + '\n'
-        s += '    background: "'+dataChartBackgroundColor+'",' + '\n'
-        s += '    background_fill_color: "'+dataChartBackgroundColor+'",' + '\n'
-        s += '    border_fill_color: "'+dataChartBackgroundColor+'",' + '\n'
-        s += '})' + '\n'
-        s += 'plot.x_range.range_padding = 0' + '\n'
-        if (hasMeasuredData) {
-            s += 'const experimentSource = new Bokeh.ColumnDataSource({' + '\n'
-            s += '    data: {' + '\n'
-            s += '        x: '+measuredData.x+',' + '\n'
-            s += '        y: '+measuredData.y+'' + '\n'
-            s += '    }' + '\n'
-            s += '})' + '\n'
-            s += 'const experimentLine = new Bokeh.Line({' + '\n'
-            s += '    x: { field: "x" },' + '\n'
-            s += '    y: { field: "y" },' + '\n'
-            s += '    line_color: "'+experimentLineColor+'",' + '\n'
-            s += '    line_width: '+experimentLineWidth+',' + '\n'
-            s += '})' + '\n'
-            s += 'plot.add_glyph(experimentLine, experimentSource)' + '\n'
-        }
-        s += 'const calculatedSource = new Bokeh.ColumnDataSource({' + '\n'
-        s += '    data: {' + '\n'
-        s += '        x: '+calculatedData.x+',' + '\n'
-        s += '        y: '+calculatedData.y+'' + '\n'
-        s += '    }' + '\n'
-        s += '})' + '\n'
-        s += 'const calculatedLine = new Bokeh.Line({' + '\n'
-        s += '    x: { field: "x" },' + '\n'
-        s += '    y: { field: "y" },' + '\n'
-        s += '    line_color: "'+calculatedLineColor+'",' + '\n'
-        s += '    line_width: '+calculatedLineWidth+',' + '\n'
-        s += '})' + '\n'
-        s += 'plot.add_glyph(calculatedLine, calculatedSource)' + '\n'
-        s += 'Bokeh.Plotting.show(plot, "#analysisSection")'
-        return s
-    }
+    property string dataChart: EaLogic.Plotting.bokehChart({
+        measuredData: ExGlobals.Constants.proxy.bokeh.measuredDataObj,
+        calculatedData: ExGlobals.Constants.proxy.bokeh.calculatedDataObj,
+        chartWidth: dataChartWidth,
+        chartHeight: dataChartHeight,
+        chartBackgroundColor: dataChartBackgroundColor,
+        xAxisTitle: qsTr("2theta (deg)"),
+        yAxisTitle: qsTr("Intensity"),
+        experimentLineColor: EaStyle.Colors.chartForegrounds[0],
+        calculatedLineColor: EaStyle.Colors.chartForegrounds[1],
+        experimentLineWidth: '2',
+        calculatedLineWidth: '2',
+        elementId: "#analysisSection"
+    })
 
     property string parametersTable: {
         let s = ''
@@ -371,17 +291,14 @@ Item {
     }
 
     property string article: {
-        let s = ''
-        s += projectSection + '\n'
-        s += '\n'
-        s += softwareSection + '\n'
-        s += '\n'
-        s += structureSection + '\n'
-        s += '\n'
-        s += analysisSection + '\n'
-        s += '\n'
-        s += parametersSection
-        return s
+        const list = [
+                  projectSection + '\n',
+                  softwareSection + '\n',
+                  structureSection + '\n',
+                  analysisSection + '\n',
+                  parametersSection
+              ]
+              return list.join('\n')
     }
 
     property string html: {
@@ -405,7 +322,6 @@ Item {
         s += '</html>'
         return s
     }
-
 }
 
 

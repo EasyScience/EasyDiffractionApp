@@ -60,6 +60,11 @@ jobs:
         echo "POETRY_VENV_PATH=$(python pyproject.py ci.poetry.venv_path.${{ runner.os }})" >> $GITHUB_ENV
         echo "QTIFW_PATH=$(python pyproject.py ci.qtifw.setup.installation_path.${{ runner.os }})" >> $GITHUB_ENV
 
+    - name: Set up python dependences
+      run: |
+        pip install requests
+        pip install git+https://github.com/easyScience/easyDiffractionApp@DAS-294
+
     #- name: Cache dependencies
     #  uses: actions/cache@v2
     #  with:
@@ -69,38 +74,38 @@ jobs:
     #      ${{ env.DOWNLOAD_PATH }}
     #    key: ${{ matrix.os }}-poetry-${{ hashFiles('pyproject.toml') }}
 
-    - name: Set up python packages manager
-      uses: Gr1N/setup-poetry@v4
+    #- name: Set up python packages manager
+    #  uses: Gr1N/setup-poetry@v4
 
-    - name: Create venv and install dependences
-      # poetry self update: Update poetry
-      # --upgrade pip: To get rid of ERROR: No matching distribution found for opencv-python-headless==4.3.0.36
-      # WIN ERROR: Could not install packages due to an EnvironmentError: [WinError 5] Access is denied: 'C:\\Users\\runneradmin\\AppData\\Local\\Temp\\pip-uninstall-w29qfiig\\pip.exe'
-      # Consider using the `--user` option or check the permissions.
-      # --upgrade setuptools: To get rid of ModuleNotFoundError: No module named 'pkg_resources.py2_warn'
-      # poetry env info
-      # poetry env use 3.7
-      # poetry update: Install dependencies or update them
-      run: |
-        poetry run python -m pip install --upgrade pip
-        poetry update
+    #- name: Create venv and install dependences
+    #  # poetry self update: Update poetry
+    #  # --upgrade pip: To get rid of ERROR: No matching distribution found for opencv-python-headless==4.3.0.36
+    #  # WIN ERROR: Could not install packages due to an EnvironmentError: [WinError 5] Access is denied: 'C:\\Users\\runneradmin\\AppData\\Local\\Temp\\pip-uninstall-w29qfiig\\pip.exe'
+    #  # Consider using the `--user` option or check the permissions.
+    #  # --upgrade setuptools: To get rid of ModuleNotFoundError: No module named 'pkg_resources.py2_warn'
+    #  # poetry env info
+    #  # poetry env use 3.7
+    #  # poetry update: Install dependencies or update them
+    #  run: |
+    #    poetry run python -m pip install --upgrade pip
+    #    poetry update
 
     - name: Relink CrysFML from default Python dylib
       # run: poetry run python ${{ env.SCRIPTS_PATH }}/RelinkCrysfml.py ${{ env.PYTHON_LOCATION }}
-      run: poetry run python ${{ env.SCRIPTS_PATH }}/RelinkCrysfml.py
+      run: python ${{ env.SCRIPTS_PATH }}/RelinkCrysfml.py
 
     - name: Create freezed python app bundle
-      run: poetry run python ${{ env.SCRIPTS_PATH }}/FreezeApp.py
+      run: python ${{ env.SCRIPTS_PATH }}/FreezeApp.py
 
     - name: Create app installer from freezed app bundle
-      run: poetry run python ${{ env.SCRIPTS_PATH }}/MakeInstaller.py
+      run: python ${{ env.SCRIPTS_PATH }}/MakeInstaller.py
 
     - name: Install and run app in test mode to create GUI test videos
       if: runner.os == 'macOS'
       run: |
-        poetry run python ${{ env.SCRIPTS_PATH }}/InstallApp.py
-        poetry run python ${{ env.SCRIPTS_PATH }}/RunApp.py test
-        poetry run python ${{ env.SCRIPTS_PATH }}/CreateTestVideos.py
+        python ${{ env.SCRIPTS_PATH }}/InstallApp.py
+        python ${{ env.SCRIPTS_PATH }}/RunApp.py test
+        python ${{ env.SCRIPTS_PATH }}/CreateTestVideos.py
 
     - name: Upload GUI test videos to GitHub repository
       if: runner.os == 'macOS'
@@ -109,7 +114,7 @@ jobs:
         commit_message: Upload GUI test videos
 
     - name: Create zip archive of app installer
-      run: poetry run python ${{ env.SCRIPTS_PATH }}/ZipArtifacts.py ${{ env.SHORT_GITHUB_REF }}
+      run: python ${{ env.SCRIPTS_PATH }}/ZipArtifacts.py ${{ env.SHORT_GITHUB_REF }}
 
     - name: Upload zipped app installer to GitHub releases
       uses: ncipollo/release-action@v1
@@ -124,4 +129,4 @@ jobs:
         artifacts: "${{ env.DISTRIBUTION_PATH }}/${{ env.APP_NAME }}_*.zip"
 
     - name: Deploy app installer repository via FTP
-      run: poetry run python ${{ env.SCRIPTS_PATH }}/DeployFtp.py ${{ env.SHORT_GITHUB_REF }} ${{ secrets.FTP_PASSWORD }}
+      run: python ${{ env.SCRIPTS_PATH }}/DeployFtp.py ${{ env.SHORT_GITHUB_REF }} ${{ secrets.FTP_PASSWORD }}

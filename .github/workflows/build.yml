@@ -63,14 +63,14 @@ jobs:
         pip install requests
         pip install git+https://github.com/easyScience/easyDiffractionApp@DAS-294
 
-    #- name: Cache dependencies
-    #  uses: actions/cache@v2
-    #  with:
-    #    path: |
-    #      ${{ env.POETRY_VENV_PATH }}
-    #      ${{ env.QTIFW_PATH }}
-    #      ${{ env.DOWNLOAD_PATH }}
-    #    key: ${{ matrix.os }}-poetry-${{ hashFiles('pyproject.toml') }}
+    - name: Cache dependencies
+      uses: actions/cache@v2
+      with:
+        path: |
+          ${{ env.PYTHON_SITE_PACKAGES_PATH }}
+          ${{ env.QTIFW_PATH }}
+          ${{ env.DOWNLOAD_PATH }}
+        key: ${{ matrix.os }}-poetry-${{ hashFiles('pyproject.toml') }}
 
     - name: Relink CrysFML from default Python dylib
       run: python ${{ env.SCRIPTS_PATH }}/RelinkCrysfml.py

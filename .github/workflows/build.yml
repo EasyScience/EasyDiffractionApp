@@ -70,7 +70,7 @@ jobs:
           ${{ env.PYTHON_SITE_PACKAGES_PATH }}
           ${{ env.QTIFW_PATH }}
           ${{ env.DOWNLOAD_PATH }}
-        key: ${{ matrix.os }}-poetry-${{ hashFiles('pyproject.toml') }}
+        key: ${{ matrix.os }}-${{ hashFiles('pyproject.toml') }}
 
     - name: Relink CrysFML from default Python dylib
       run: python ${{ env.SCRIPTS_PATH }}/RelinkCrysfml.py

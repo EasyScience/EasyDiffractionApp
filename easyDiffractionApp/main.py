@@ -72,10 +72,12 @@ class App(QApplication):
     def vtkSetup(self, root_window):
         # Get reference to the QVTKFramebufferObjectItem in QML
         self._m_vtkFboItem = root_window.findChild(FboItem, 'vtkFboItem')
+        #self._m_vtkFboItem.devicePixelRatio = self.devicePixelRatio()
 
         # Give the vtkFboItem reference to the CanvasHandler
         if (self._m_vtkFboItem):
             ###qDebug('CanvasHandler::CanvasHandler: setting vtkFboItem to CanvasHandler')
+            self._m_vtkFboItem.devicePixelRatio = self.devicePixelRatio()
             self._m_vtkFboItem.rendererInitialized.connect(self.startApplication)
         else:
             ###qCritical('CanvasHandler::CanvasHandler: Unable to get vtkFboItem instance')

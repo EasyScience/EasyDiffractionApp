@@ -49,6 +49,8 @@ jobs:
       shell: bash
       run: |
         pip install toml
+        pip -V
+        pip show toml
         echo "SHORT_GITHUB_REF=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
         echo "PYTHON_LOCATION=$pythonLocation" >> $GITHUB_ENV
         echo "PYTHON_SITE_PACKAGES_PATH=$(python -m site --user-site)" >> $GITHUB_ENV

@@ -214,10 +214,10 @@ class PyQmlProxy(QObject):
 
         # Plotting
         self._1d_plotting_libs = ['matplotlib', 'qtcharts', 'bokeh']
-        self._current_1d_plotting_lib = self._1d_plotting_libs[0]
+        self._current_1d_plotting_lib = self._1d_plotting_libs[2]
 
         self._3d_plotting_libs = ['vtk', 'qtdatavisualization', 'chemdoodle']
-        self._current_3d_plotting_lib = self._3d_plotting_libs[0]
+        self._current_3d_plotting_lib = self._3d_plotting_libs[2]
 
         # Report
         self._report = ""

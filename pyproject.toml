@@ -155,7 +155,7 @@ base_path = 'official_releases/qt-installer-framework'
 file_name_base = 'QtInstallerFramework-'
 file_name_suffix = { macos = 'mac-x64', ubuntu = 'linux-x64', windows = 'win-x86' }
 file_ext = { macos = '.dmg', ubuntu = '.run', windows = '.exe' }
-installation_path = { macos = '/Users/runner/Qt', ubuntu = '/home/runner/Qt', windows = 'C:\Qt' }
+installation_path = { macOS = '/Users/runner/Qt', Linux = '/home/runner/Qt', Windows = 'C:\Qt' }
 
 [ci.ffmpeg.macos]  # https://evermeet.cx/ffmpeg/ffmpeg-4.3.zip
 version = '4.3.1'

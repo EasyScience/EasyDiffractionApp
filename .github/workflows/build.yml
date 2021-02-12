@@ -53,7 +53,7 @@ jobs:
         pip show toml
         echo "SHORT_GITHUB_REF=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
         echo "PYTHON_LOCATION=$pythonLocation" >> $GITHUB_ENV
-        echo "PYTHON_SITE_PACKAGES_PATH=$(python -m site --user-site)" >> $GITHUB_ENV
+        echo "PYTHON_SITE_PACKAGES_PATH=$(python -c 'import os, pip; print(os.path.dirname(pip.__path__[0]))')" >> $GITHUB_ENV
         echo "SCRIPTS_PATH=$(python pyproject.py ci.project.subdirs.scripts)" >> $GITHUB_ENV
         echo "DOWNLOAD_PATH=$(python pyproject.py ci.project.subdirs.download)" >> $GITHUB_ENV
         echo "DISTRIBUTION_PATH=$(python pyproject.py ci.project.subdirs.distribution)" >> $GITHUB_ENV

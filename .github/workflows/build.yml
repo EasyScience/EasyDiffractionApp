@@ -42,15 +42,10 @@ jobs:
       with:
           python-version: 3.7
 
-    - name: Upgrade pip
-      run: python -m pip install --upgrade pip
-
     - name: Set up project config parser & Declare env variables
       shell: bash
       run: |
         pip install toml
-        pip -V
-        pip show toml
         echo "SHORT_GITHUB_REF=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
         echo "PYTHON_LOCATION=$pythonLocation" >> $GITHUB_ENV
         echo "PYTHON_SITE_PACKAGES_PATH=$(python -c 'import os, pip; print(os.path.dirname(pip.__path__[0]))')" >> $GITHUB_ENV
@@ -68,6 +63,9 @@ jobs:
           ${{ env.QTIFW_PATH }}
           ${{ env.DOWNLOAD_PATH }}
         key: ${{ matrix.os }}-${{ hashFiles('pyproject.toml') }}
+
+    - name: Upgrade pip
+      run: python -m pip install --upgrade pip
 
     - name: Set up Python dependences
       run: |

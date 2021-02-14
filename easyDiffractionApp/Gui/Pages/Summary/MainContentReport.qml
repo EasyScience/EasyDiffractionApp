@@ -64,7 +64,7 @@ Item {
     //}
 
     onHtmlChanged: {
-        print(html)
+        //print(html)
         ExGlobals.Constants.proxy.setReport(html)
         webView.loadHtml(html)
     }

@@ -86,7 +86,7 @@ def sign_macos():
     print('* Import certificate to created keychain')
     Functions.run(
         'security', 'import',
-        certificate_file_path,
+        mac_certificate_file_path,
         '-k', keychain_name,
         '-P', certificate_password,
         '-T', '/usr/bin/codesign')
@@ -115,11 +115,11 @@ def sign_macos():
 
 
 if __name__ == "__main__":
-    if CONFIG.os == 'linux':
+    if CONFIG.os == 'ubuntu':
         sign_linux()
     elif CONFIG.os == 'windows':
         sign_windows()
-    elif CONFIG.os == 'osx':
+    elif CONFIG.os == 'macos':
         sign_macos()
     else:
         raise AttributeError("Incorrect OS")

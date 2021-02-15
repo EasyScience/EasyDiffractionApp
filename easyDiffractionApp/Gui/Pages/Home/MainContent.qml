@@ -81,8 +81,10 @@ Item {
                 spacing: EaStyle.Sizes.fontPixelSize
 
                 EaElements.Button {
-                    enabled: false
+                    enabled: true
+                    id: aboutButton
                     text: qsTr("About %1".arg(ExGlobals.Constants.appName))
+                    onClicked: EaGlobals.Variables.showAppAboutDialog = true
                 }
                 EaElements.Button {
                     enabled: false
@@ -273,7 +275,7 @@ Item {
         //rc.mouseClick(ExGlobals.Variables.createProjectButton)
 
         rc.say("Now, you can continue without creating a project.")
-        rc.mouseClick(ExGlobals.Variables.continnueWithoutProjectButton)
+        rc.mouseClick(ExGlobals.Variables.continueWithoutProjectButton)
 
         // Sample Tab
 

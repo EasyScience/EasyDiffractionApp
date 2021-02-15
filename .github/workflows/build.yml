@@ -88,16 +88,17 @@ jobs:
         python ${{ env.SCRIPTS_PATH }}/RunApp.py test
         python ${{ env.SCRIPTS_PATH }}/CreateTestVideos.py
 
+    - name: Create zip archive of app installer
+      run: python ${{ env.SCRIPTS_PATH }}/ZipArtifacts.py ${{ env.SHORT_GITHUB_REF }}
+
     - name: Upload GUI test videos to GitHub repository
-      if: runner.os == 'macOS'
+      if: github.head_ref == '' && runner.os == 'macOS'
       uses: stefanzweifel/git-auto-commit-action@v4
       with:
         commit_message: Upload GUI test videos
 
-    - name: Create zip archive of app installer
-      run: python ${{ env.SCRIPTS_PATH }}/ZipArtifacts.py ${{ env.SHORT_GITHUB_REF }}
-
     - name: Upload zipped app installer to GitHub releases
+      if: github.head_ref == ''
       uses: ncipollo/release-action@v1
       with:
         draft: true
@@ -109,5 +110,6 @@ jobs:
         tag: ${{ env.SHORT_GITHUB_REF }}
         artifacts: "${{ env.DISTRIBUTION_PATH }}/${{ env.APP_NAME }}_*.zip"
 
-    - name: Deploy app installer repository via FTP
+    - name: Upload app installer repository to FTP
+      if: github.head_ref == ''
       run: python ${{ env.SCRIPTS_PATH }}/DeployFtp.py ${{ env.SHORT_GITHUB_REF }} ${{ secrets.FTP_PASSWORD }}

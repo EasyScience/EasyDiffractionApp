@@ -13,6 +13,6 @@ EaCharts.BokehChartView {
     experimentLineColor: EaStyle.Colors.chartForegrounds[0]
     calculatedLineColor: EaStyle.Colors.chartForegrounds[1]
 
-    color: EaStyle.Colors.chartPlotAreaBackground
+    backgroundColor: EaStyle.Colors.chartPlotAreaBackground
 }
 

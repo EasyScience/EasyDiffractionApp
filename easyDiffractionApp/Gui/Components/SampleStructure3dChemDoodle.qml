@@ -5,6 +5,7 @@ import Gui.Globals 1.0 as ExGlobals
 
 EaCharts.ChemDoodleChartView {
     cifStr: JSON.stringify(ExGlobals.Constants.proxy.phasesAsExtendedCif)
-    chartForegroundColor: EaStyle.Colors.themeForeground
-    color: EaStyle.Colors.chartPlotAreaBackground
+
+    foregroundColor: EaStyle.Colors.themeForeground
+    backgroundColor: EaStyle.Colors.chartPlotAreaBackground
 }

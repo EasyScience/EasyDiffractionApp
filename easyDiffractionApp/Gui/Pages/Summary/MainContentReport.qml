@@ -15,6 +15,7 @@ Item {
     id: container
 
     property bool isFitting: typeof ExGlobals.Constants.proxy.fitResults.redchi2 !== 'undefined'
+    property bool hasPhases: Object.keys(ExGlobals.Constants.proxy.phasesAsObj).length !== 0
     property string htmlBackground: EaStyle.Colors.contentBackground
     property int chartWidth: 520
 
@@ -23,8 +24,8 @@ Item {
     property string structureChartLibVersion: EaLogic.Plotting.chemDoodleInfo().version
     property string structureChartLibUrl: EaLogic.Plotting.chemDoodleInfo().url
 
-    property string structureChartWidth: (chartWidth + EaStyle.Sizes.fontPixelSize * 1.5 * 2).toString()
-    property string structureChartHeight: structureChartWidth
+    property int structureChartWidth: chartWidth + EaStyle.Sizes.fontPixelSize * 1.5 * 2
+    property int structureChartHeight: structureChartWidth
 
     property string structureChartBackgroundColor: EaStyle.Colors.chartPlotAreaBackground
     property string structureChartForegroundColor: EaStyle.Colors.themeForeground
@@ -35,12 +36,12 @@ Item {
     property string dataChartLibVersion: EaLogic.Plotting.bokehInfo().version
     property string dataChartLibUrl: EaLogic.Plotting.bokehInfo().url
 
-    property string dataChartWidth: chartWidth.toString()
-    property string dataChartHeight: (chartWidth / 5 * 4).toString()
+    property int dataChartWidth: chartWidth
+    property int dataChartHeight: chartWidth / 5 * 4
+    property int dataChartPadding: EaStyle.Sizes.fontPixelSize * 1.5
 
     property string dataChartBackgroundColor: EaStyle.Colors.chartPlotAreaBackground
     property string dataChartBorderColor: EaStyle.Colors.appBorder
-    property string dataChartPadding: (EaStyle.Sizes.fontPixelSize * 1.5).toString()
 
 
     /*
@@ -82,121 +83,139 @@ Item {
     }
 
     property string dataChartStyle: {
-        let s = ''
-        s += '.bk-logo {' + '\n'
-        s += '    display: none !important;' + '\n'
-        s += '}' + '\n'
-        s += '#analysisSection {' + '\n'
-        s += '    height: '+dataChartHeight+'px;' + '\n'
-        s += '    width: '+dataChartWidth+'px;' + '\n'
-        s += '    padding: '+dataChartPadding+'px;' + '\n'
-        s += '    background-color: '+dataChartBackgroundColor+';' + '\n'
-        s += '    border: 1px solid '+dataChartBorderColor+';' + '\n'
-        s += '}'
-        return s
+        const list = [
+                  '.bk-logo {',
+                  '    display: none !important;',
+                  '}',
+                  '#analysisSection {',
+                  `    height: ${dataChartHeight}px;`,
+                  `    width: ${dataChartWidth}px;`,
+                  `    padding: ${dataChartPadding}px;`,
+                  `    background-color: ${dataChartBackgroundColor};`,
+                  `    border: 1px solid ${dataChartBorderColor};`,
+                  '}'
+              ]
+        return list.join('\n')
     }
 
     property string structureChartStyle: {
-        let s = ''
-        s += 'canvas.ChemDoodleWebComponent {' + '\n'
-        s += '    border: 1px solid '+structureChartBorderColor+';' + '\n'
-        s += '}'
-        return s
+        const list = [
+                  'canvas.ChemDoodleWebComponent {',
+                  `    border: 1px solid ${structureChartBorderColor};`,
+                  '}'
+              ]
+        return list.join('\n')
     }
 
     property string headMiscStyle: {
-        let s = ''
-        s += 'html {' + '\n'
-        s += '    background-color: '+htmlBackground+';' + '\n'
-        s += '}' + '\n'
-        s += 'body {' + '\n'
-        s += '    padding: '+(EaStyle.Sizes.fontPixelSize).toString()+'px;' + '\n'
-        s += '    color: '+EaStyle.Colors.themeForeground+';' + '\n'
-        s += '}' + '\n'
-        s += 'article {' + '\n'
-        s += '    width: '+structureChartWidth+'px;' + '\n'
-        s += '    margin: 0 auto;' + '\n'
-        s += '}' + '\n'
-        s += 'h2 {' + '\n'
-        s += '    margin-top: '+(EaStyle.Sizes.fontPixelSize * 3).toString()+'px;' + '\n'
-        s += '}' + '\n'
-        s += 'a:link {' + '\n'
-        s += '    color: '+EaStyle.Colors.themeAccent+';' + '\n'
-        s += '}' + '\n'
-        s += 'table {' + '\n'
-        s += '    border-collapse: collapse;' + '\n'
-        s += '}' + '\n'
-        s += 'td, th {' + '\n'
-        s += '    border: 1px solid '+EaStyle.Colors.appBorder+';' + '\n'
-        s += '    padding: 2px;' + '\n'
-        s += '    padding-left: 12px;' + '\n'
-        s += '    padding-right: 12px;' + '\n'
-        s += '}' + '\n'
-        s += 'tr:nth-child(odd) {' + '\n'
-        s += '    background-color:'+EaStyle.Colors.chartPlotAreaBackground+';' + '\n'
-        s += '}'
-        s += 'tr:nth-child(even) {' + '\n'
-        s += '    background-color:'+htmlBackground+';' + '\n'
-        s += '}'
-        return s
+        const list = [
+                  'html {',
+                  `    background-color: ${htmlBackground};`,
+                  '}',
+                  'body {',
+                  `    padding: ${EaStyle.Sizes.fontPixelSize}px;`,
+                  `    color: ${EaStyle.Colors.themeForeground};`,
+                  '}',
+                  'article {',
+                  `    width: ${structureChartWidth}px;`,
+                  '    margin: 0 auto;',
+                  '}',
+                  'h2 {',
+                  `    margin-top: ${EaStyle.Sizes.fontPixelSize * 3}px;`,
+                  '}',
+                  'a:link {',
+                  `    color: ${EaStyle.Colors.themeAccent};`,
+                  '}',
+                  'table {',
+                  '    border-collapse: collapse;',
+                  '}',
+                  'td, th {',
+                  `    border: 1px solid ${EaStyle.Colors.appBorder};`,
+                  '    padding: 2px;',
+                  '    padding-left: 12px;',
+                  '    padding-right: 12px;',
+                  '}',
+                  'tr:nth-child(odd) {',
+                  `    background-color: ${EaStyle.Colors.chartPlotAreaBackground};`,
+                  '}',
+                  'tr:nth-child(even) {',
+                  `    background-color: ${htmlBackground};`,
+                  '}'
+              ]
+        return list.join('\n')
     }
 
     property string headStyle: {
-        let s = ''
-        s += '<style type="text/css">' + '\n'
-        s += dataChartStyle + '\n'
-        s += structureChartStyle +'\n'
-        s += headMiscStyle + '\n'
-        s += '</style>'
-        return s
+        const list = [
+                  '<style type="text/css">',
+                  dataChartStyle,
+                  structureChartStyle,
+                  headMiscStyle,
+                  '</style>'
+              ]
+        return list.join('\n')
     }
 
     property string head: {
-        let s = ''
-        s += '\n'
-        s += EaLogic.Plotting.headCommon() + '\n'
-        s += '\n'
-        s += headScripts + '\n'
-        s += '\n'
-        s += headStyle
-        return s
+        const list = [
+                  EaLogic.Plotting.headCommon(),
+                  headScripts,
+                  headStyle
+              ]
+        return list.join('\n')
     }
 
-    property string structureChart: EaLogic.Plotting.chemDoodleChart({
-        cifStr: JSON.stringify(ExGlobals.Constants.proxy.phasesAsExtendedCif),
-        chartWidth: structureChartWidth,
-        chartHeight: structureChartHeight,
-        chartForegroundColor: structureChartForegroundColor,
-        chartBackgroundColor: structureChartBackgroundColor
-    })
+    property string structureChart:
+        EaLogic.Plotting.chemDoodleChart(
+            // cif
+            JSON.stringify(ExGlobals.Constants.proxy.phasesAsExtendedCif),
+            // specs
+            {
+                chartWidth: structureChartWidth,
+                chartHeight: structureChartHeight,
+                chartForegroundColor: structureChartForegroundColor,
+                chartBackgroundColor: structureChartBackgroundColor
+            }
+            )
 
-    property string dataChart: EaLogic.Plotting.bokehChart({
-        measuredData: ExGlobals.Constants.proxy.bokeh.measuredDataObj,
-        calculatedData: ExGlobals.Constants.proxy.bokeh.calculatedDataObj,
-        chartWidth: dataChartWidth,
-        chartHeight: dataChartHeight,
-        chartBackgroundColor: dataChartBackgroundColor,
-        xAxisTitle: qsTr("2theta (deg)"),
-        yAxisTitle: qsTr("Intensity"),
-        experimentLineColor: EaStyle.Colors.chartForegrounds[0],
-        calculatedLineColor: EaStyle.Colors.chartForegrounds[1],
-        experimentLineWidth: '2',
-        calculatedLineWidth: '2',
-        elementId: "#analysisSection"
-    })
+    property string dataChart:
+        EaLogic.Plotting.bokehChart(
+            // data
+            {
+                measured: ExGlobals.Constants.proxy.bokeh.measuredDataObj,
+                calculated: ExGlobals.Constants.proxy.bokeh.calculatedDataObj
+            },
+            // specs
+            {
+                chartWidth: dataChartWidth,
+                chartHeight: dataChartHeight,
+                chartBackgroundColor: dataChartBackgroundColor,
+                xAxisTitle: qsTr("2theta (deg)"),
+                yAxisTitle: qsTr("Intensity"),
+                experimentLineColor: EaStyle.Colors.chartForegrounds[0],
+                calculatedLineColor: EaStyle.Colors.chartForegrounds[1],
+                experimentLineWidth: 2,
+                calculatedLineWidth: 2,
+                containerId: "analysisSection"
+            }
+            )
 
     property string parametersTable: {
-        let s = ''
-        s += '<tr>'
-        s += '<th align="right">No.</th>'
-        s += '<th align="left">Parameter</th>'
-        s += '<th align="right">Value</th>'
-        s += '<th align="left">Units</th>'
+        let list = []
+        // header
+        const hlist = [
+                        '<tr>',
+                        '<th align="right">No.</th>',
+                        '<th align="left">Parameter</th>',
+                        '<th align="right">Value</th>',
+                        '<th align="left">Units</th>'
+                    ]
         if (isFitting) {
-            s += '<th align="right">Error</th>'
-        //    s += '<th align="right">Fit</th>'
+            hlist.push('<th align="right">Error</th>')
         }
-        s += '</tr>'
+        hlist.push('</tr>')
+        list.push(hlist.join(' '))
+        // data
         const params = ExGlobals.Constants.proxy.parametersAsObj
         for (let i = 0; i < params.length; i++) {
             const number = params[i].number
@@ -204,90 +223,119 @@ Item {
             const value = EaLogic.Utils.toFixed(params[i].value)
             const unit = params[i].unit
             const error = params[i].error === 0. ? "" : EaLogic.Utils.toFixed(params[i].error)
-            const fit = params[i].fit === 0 ? "" : "+"
-            s += '\n'
-            s += '<tr>'
-            s += '<td align="right">' + number + '</td>'
-            s += '<td align="left">' + label + '</td>'
-            s += '<td align="right">' + value + '</td>'
-            s += '<td align="left">' + unit + '</td>'
+            const dlist = [
+                            '<tr>',
+                            '<td align="right">' + number + '</td>',
+                            '<td align="left">' + label + '</td>',
+                            '<td align="right">' + value + '</td>',
+                            '<td align="left">' + unit + '</td>'
+                        ]
             if (isFitting) {
-                s += '<td align="right">' + error + '</td>'
-            //    s += '<td align="right">' + fit + '</td>'
+                dlist.push('<td align="right">' + error + '</td>')
             }
-            s += '</tr>'
+            dlist.push('</tr>')
+            list.push(dlist.join(' '))
         }
-        return s
+        return list.join('\n')
     }
 
     property string projectSection: {
-        let s = ''
-        s += '<h1>'+ExGlobals.Constants.proxy.projectInfoAsJson.name+'</h1>' + '\n'
-        s += '<p>' + '\n'
-        s += '<b>Short description:</b> '+ExGlobals.Constants.proxy.projectInfoAsJson.short_description+'<br>' + '\n'
-        if (Object.keys(ExGlobals.Constants.proxy.phasesAsObj).length)
-            s += '<b>Structural phases:</b> '+ExGlobals.Constants.proxy.phasesAsObj[0].name+'<br>' + '\n'
-        s += '<b>Experimental data:</b> '+'D1A@ILL'+'<br>' + '\n'
-        s += '<b>Modified:</b> '+ExGlobals.Constants.proxy.projectInfoAsJson.modified+'<br>' + '\n'
-        s += '</p>'
-        return s
+        if (!hasPhases)
+            return ''
+        const projectDescription = ExGlobals.Constants.proxy.projectInfoAsJson.short_description
+        const phaseName = ExGlobals.Constants.proxy.phasesAsObj[0].name
+        const datasetName = 'D1A@ILL'
+        const modifiedDate = ExGlobals.Constants.proxy.projectInfoAsJson.modified
+        const list = [
+                `<h1>${ExGlobals.Constants.proxy.projectInfoAsJson.name}</h1>`,
+                '<p>',
+                `<b>Short description:</b> ${projectDescription}<br>`,
+                `<b>Structural phases:</b> ${phaseName}<br>`,
+                `<b>Experimental data:</b> ${datasetName}<br>`,
+                `<b>Modified:</b> ${modifiedDate}<br>`,
+                '</p>'
+              ]
+        return list.join('\n')
+    }
+
+    property string minimizationSoftware: {
+        if (!isFitting)
+            return ''
+        const soft = ExGlobals.Constants.proxy.statusModelAsObj.minimization
+        let list = [
+                `<b>Minimization:</b> ${soft}<br>`
+            ]
+        return list.join('\n')
     }
 
     property string softwareSection: {
-        let s = ''
-        s += '<h2>Software</h2>' + '\n'
-        s += '<div id="softwareSection">' + '\n'
-        s += '<b>Analysis:</b> <a href="'+ExGlobals.Constants.appUrl+'">'+ExGlobals.Constants.appName+' v'+ExGlobals.Constants.appVersion+'</a><br>' + '\n'
-        s += '<b>Structure chart:</b> <a href="'+structureChartLibUrl+'"> ChemDoodle v'+structureChartLibVersion+'</a><br>' + '\n'
-        s += '<b>Data chart:</b> <a href="'+dataChartLibUrl+'"> Bokeh v'+dataChartLibVersion+'</a><br>' + '\n'
-        if (isFitting) {
-            s += '<b>Minimization:</b> '+ExGlobals.Constants.proxy.statusModelAsObj.minimization+'<br>' + '\n'
-        }
-        s += '</div>'
-        return s
+        const list = [
+                  '<h2>Software</h2>',
+                  '<div id="softwareSection">',
+                  `<b>Analysis:</b> <a href="${ExGlobals.Constants.appUrl}">${ExGlobals.Constants.appName} v${ExGlobals.Constants.appVersion}</a><br>`,
+                  `<b>Structure chart:</b> <a href="${structureChartLibUrl}"> ChemDoodle v${structureChartLibVersion}</a><br>`,
+                  `<b>Data chart:</b> <a href="${dataChartLibUrl}"> Bokeh v${dataChartLibVersion}</a><br>`,
+                  minimizationSoftware,
+                  '</div>'
+              ]
+        return list.join('\n')
     }
 
     property string structureSection: {
-        let s = ''
-        if (Object.keys(ExGlobals.Constants.proxy.phasesAsObj).length) {
-            s += '<h2>Structure: '+ExGlobals.Constants.proxy.phasesAsObj[0].name+'</h2>' + '\n'
-            s += '<p>' + '\n'
-            s += '<b>Space group:</b> '+ExGlobals.Constants.proxy.phasesAsObj[0].spacegroup._space_group_HM_name.value+'<br>' + '\n'
-            s += '</p>'
-        }
-        s += '<div id="structureSection">' + '\n'
-        s += '<script>' + '\n'
-        s += structureChart + '\n'
-        s += '</script>' + '\n'
-        s += '</div>'
-        return s
+        if (!hasPhases)
+            return ''
+        const phase = ExGlobals.Constants.proxy.phasesAsObj[0]
+        const phaseName = phase.name
+        const spaceGroup = phase.spacegroup._space_group_HM_name.value
+        const list = [
+                  `<h2>Structure: ${phaseName}</h2>`,
+                  '<p>',
+                  `<b>Space group:</b> ${spaceGroup}<br>`,
+                  '</p>',
+                  '<div id="structureSection">',
+                  '<script>',
+                  structureChart,
+                  '</script>',
+                  '</div>'
+              ]
+        return list.join('\n')
+    }
+
+    property string fittingInfo: {
+        if (!isFitting)
+            return ''
+        const redchi2 = ExGlobals.Constants.proxy.fitResults.redchi2.toFixed(2)
+        let list = [
+                '<p>',
+                `<b>Goodness-of-fit (reduced \u03c7\u00b2):</b> ${redchi2}<br>`,
+                '</p>'
+            ]
+        return list.join('\n')
     }
 
     property string analysisSection: {
-        let s = ''
-        s += '<h2>Simulation/Fitting</h2>' + '\n'
-        if (isFitting) {
-            s += '<p>' + '\n'
-            s += '<b>Goodness-of-fit (reduced \u03c7\u00b2):</b> '+ExGlobals.Constants.proxy.fitResults.redchi2.toFixed(2)+'<br>' + '\n'
-            s += '</p>'
-        }
-        s += '<div id="analysisSection">' + '\n'
-        s += '</div>' + '\n'
-        s += '<script>' + '\n'
-        s += dataChart + '\n'
-        s += '</script>'
-        return s
+        let list = [
+                '<h2>Simulation/Fitting</h2>',
+                fittingInfo,
+                '<div id="analysisSection">',
+                '<script>',
+                dataChart,
+                '</script>',
+                '</div>'
+            ]
+        return list.join('\n')
     }
 
     property string parametersSection: {
-        let s = ''
-        s += '<h2>Parameters</h2>' + '\n'
-        s += '<div id="parametersSection">' + '\n'
-        s += '<table>' + '\n'
-        s += parametersTable + '\n'
-        s += '</table>' + '\n'
-        s += '</div>'
-        return s
+        const list = [
+                  '<h2>Parameters</h2>',
+                  '<div id="parametersSection">',
+                  '<table>',
+                  parametersTable,
+                  '</table>',
+                  '</div>'
+              ]
+        return list.join('\n')
     }
 
     property string article: {
@@ -302,26 +350,22 @@ Item {
     }
 
     property string html: {
-        let s = ''
-        s += '<!DOCTYPE html>' + '\n'
-        s += '<html>' + '\n'
-        s += '\n'
-        s += '<head>' + '\n'
-        s += head + '\n'
-        s += '\n'
-        s += '</head>' + '\n'
-        s += '\n'
-        s += '<body>' + '\n'
-        s += '<article>' + '\n'
-        s += '\n'
-        s += article + '\n'
-        s += '\n'
-        s += '</article>' + '\n'
-        s += '</body>' + '\n'
-        s += '\n'
-        s += '</html>'
-        return s
+        const list = [
+                  '<!DOCTYPE html>',
+                  '<html>\n',
+                  '<head>\n',
+                  head+'\n',
+                  '</head>\n',
+                  '<body>\n',
+                  '<article>\n',
+                  article+'\n',
+                  '</article>\n',
+                  '</body>\n',
+                  '</html>'
+              ]
+        return list.join('\n')
     }
+
 }
 
 

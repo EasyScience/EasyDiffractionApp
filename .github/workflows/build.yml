@@ -25,7 +25,7 @@ jobs:
     # Build matrix for different platforms
     strategy:
       matrix:
-        os: [macos-10.15, ubuntu-20.04, windows-2019] # macos-11.0, macOS-11.0 - doesn't work
+        os: [windows-2019] # [macos-10.15, ubuntu-20.04, windows-2019] # macos-11.0, macOS-11.0 - doesn't work
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -82,7 +82,6 @@ jobs:
       run: python ${{ env.SCRIPTS_PATH }}/MakeInstaller.py
 
     - name: Install and run app in test mode to create GUI test videos
-      if: runner.os == 'macOS'
       run: |
         python ${{ env.SCRIPTS_PATH }}/InstallApp.py
         python ${{ env.SCRIPTS_PATH }}/RunApp.py test

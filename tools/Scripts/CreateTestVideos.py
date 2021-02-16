@@ -1,7 +1,7 @@
 __author__ = "github.com/AndrewSazonov"
 __version__ = '0.0.1'
 
-import os
+import os, sys
 import ffmpeg
 import Functions, Config
 

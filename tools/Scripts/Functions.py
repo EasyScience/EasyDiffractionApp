@@ -299,3 +299,10 @@ def zip(source, destination):
         sys.exit()
     else:
         printSuccessMessage(message)
+
+def artifactsFileSuffix(short_github_ref):
+    if short_github_ref == '2/merge':
+        return '_PR'
+    if short_github_ref != 'master':
+        return f'_{short_github_ref}'
+    return ''

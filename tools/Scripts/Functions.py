@@ -75,8 +75,8 @@ def installSilently(installer, silent_script):
         message = f'run installer {installer}'
         run(
             installer,
+            '--verbose',
             '--script', silent_script,
-            '--no-force-installations'
             )
     except Exception as exception:
         printFailMessage(message, exception)

@@ -7,17 +7,12 @@ import Functions, Config
 
 CONFIG = Config.Config()
 
-def zipFileSuffix():
-    branch_name = sys.argv[1]
-    if branch_name != 'master':
-        return f'_{branch_name}'
-    return ''
-
 def source():
     return CONFIG.setup_exe_path
 
 def destination():
-    setup_zip_name = f'{CONFIG.setup_name}{zipFileSuffix()}.zip'
+    file_suffix = Functions.artifactsFileSuffix(sys.argv[1])
+    setup_zip_name = f'{CONFIG.setup_name}{file_suffix}.zip'
     setup_zip_path = os.path.join(CONFIG.dist_dir, setup_zip_name)
     return setup_zip_path
 

@@ -12,10 +12,12 @@ class Config():
         self.os = Functions.osName()
 
         # Directories
-        self.scripts_dir = self.__dict__['ci']['project']['subdirs']['scripts']
-        self.build_dir = self.__dict__['ci']['project']['subdirs']['build']
-        self.dist_dir = self.__dict__['ci']['project']['subdirs']['distribution']
-        self.download_dir = self.__dict__['ci']['project']['subdirs']['download']
+        self.scripts_dir = os.path.normpath(self.__dict__['ci']['project']['subdirs']['scripts'])
+        self.build_dir = os.path.normpath(self.__dict__['ci']['project']['subdirs']['build'])
+        self.dist_dir = os.path.normpath(self.__dict__['ci']['project']['subdirs']['distribution'])
+        self.download_dir = os.path.normpath(self.__dict__['ci']['project']['subdirs']['download'])
+        self.screenshots_dir = os.path.normpath(self.__dict__['ci']['project']['subdirs']['screenshots'])
+        self.tutorials_dir = os.path.normpath(self.__dict__['ci']['project']['subdirs']['tutorials'])
 
         # Application
         self.app_version = self.__dict__['tool']['poetry']['version']

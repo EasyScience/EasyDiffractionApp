@@ -1,7 +1,7 @@
 __author__ = "github.com/AndrewSazonov"
 __version__ = '0.0.1'
 
-import os
+import os, sys
 import ffmpeg
 import Functions, Config
 
@@ -9,12 +9,11 @@ import Functions, Config
 CONFIG = Config.Config()
 
 def inputPattern():
-    screenshots_dir = CONFIG['ci']['project']['subdirs']['screenshots']
-    return f'{screenshots_dir}/*.png'
+    return f'{CONFIG.screenshots_dir}/*.png'
 
 def outputPath():
-    tutorials_dir = CONFIG['ci']['project']['subdirs']['tutorials']
-    return os.path.join(tutorials_dir, 'tutorial.mp4')
+    file_suffix = Functions.artifactsFileSuffix(sys.argv[1])
+    return os.path.join(CONFIG.dist_dir, f'{CONFIG.setup_name}{file_suffix}.mp4')
 
 def outputOptions():
     # https://trac.ffmpeg.org/wiki/Encode/H.264

@@ -1,7 +1,8 @@
 name: build macOS, Linux, Windows
 
 # Trigger the workflow on push or pull request
-on: [push, pull_request]
+#on: [push, pull_request]
+on: [push]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -94,10 +95,11 @@ jobs:
       run: python ${{ env.SCRIPTS_PATH }}/MakeInstaller.py
 
     - name: Install and run app in test mode to create GUI test videos
+      if: runner.os == 'macOS'
       run: |
         python ${{ env.SCRIPTS_PATH }}/InstallApp.py
         python ${{ env.SCRIPTS_PATH }}/RunApp.py test
-        python ${{ env.SCRIPTS_PATH }}/CreateTestVideos.py
+        python ${{ env.SCRIPTS_PATH }}/CreateTestVideos.py ${{ env.SHORT_GITHUB_REF }}
 
     - name: Create zip archive of app installer
       run: python ${{ env.SCRIPTS_PATH }}/ZipArtifacts.py ${{ env.BRANCH_NAME }}
@@ -111,9 +113,9 @@ jobs:
         allowUpdates: true
         replacesArtifacts: true
         token: ${{ secrets.GITHUB_TOKEN }}
-        commit: ${{ env.BRANCH_NAME }}
+        artifacts: "${{ env.DISTRIBUTION_PATH }}/${{ env.APP_NAME }}_*.zip,${{ env.DISTRIBUTION_PATH }}/${{ env.APP_NAME }}_*.mp4"
         tag: ${{ env.BRANCH_NAME }}
-        artifacts: "${{ env.DISTRIBUTION_PATH }}/${{ env.APP_NAME }}_*.zip"
+        commit: ${{ env.BRANCH_NAME }}
 
     - name: Upload app installer repository to FTP
       if: github.event_name == 'push'

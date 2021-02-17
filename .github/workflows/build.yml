@@ -25,7 +25,7 @@ jobs:
     # Build matrix for different platforms
     strategy:
       matrix:
-        os: [windows-2019] # [macos-10.15, ubuntu-20.04, windows-2019] # macos-11.0, macOS-11.0 - doesn't work
+        os: [macos-10.15] # [macos-10.15, ubuntu-20.04, windows-2019] # macos-11.0, macOS-11.0 - doesn't work
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -45,10 +45,11 @@ jobs:
     - name: Set up project config parser & Declare env variables
       shell: bash
       run: |
-        pip install toml
+        pip install toml, pygit2
         echo "SHORT_GITHUB_REF=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
         echo "PYTHON_LOCATION=$pythonLocation" >> $GITHUB_ENV
         echo "PYTHON_SITE_PACKAGES_PATH=$(python -c 'import os, pip; print(os.path.dirname(pip.__path__[0]))')" >> $GITHUB_ENV
+        echo "GIT_REPO=$python -c 'import pygit2; print(pygit2.Repository(".").head.shorthand)')" >> $GITHUB_ENV
         echo "SCRIPTS_PATH=$(python pyproject.py ci.project.subdirs.scripts)" >> $GITHUB_ENV
         echo "DOWNLOAD_PATH=$(python pyproject.py ci.project.subdirs.download)" >> $GITHUB_ENV
         echo "DISTRIBUTION_PATH=$(python pyproject.py ci.project.subdirs.distribution)" >> $GITHUB_ENV
@@ -70,7 +71,7 @@ jobs:
     - name: Set up Python dependences
       run: |
         pip install requests
-        pip install git+https://github.com/easyScience/easyDiffractionApp@DAS-294
+        pip install git+https://github.com/easyScience/easyDiffractionApp@${{ env.GIT_REPO }}
 
     - name: Relink CrysFML from default Python dylib
       run: python ${{ env.SCRIPTS_PATH }}/RelinkCrysfml.py
@@ -89,12 +90,6 @@ jobs:
 
     - name: Create zip archive of app installer
       run: python ${{ env.SCRIPTS_PATH }}/ZipArtifacts.py ${{ env.SHORT_GITHUB_REF }}
-
-    - name: Upload GUI test videos to GitHub repository
-      if: github.head_ref == '' && runner.os == 'macOS'
-      uses: stefanzweifel/git-auto-commit-action@v4
-      with:
-        commit_message: Upload GUI test videos
 
     - name: Upload zipped app installer to GitHub releases
       if: github.head_ref == ''

@@ -25,7 +25,7 @@ jobs:
     # Build matrix for different platforms
     strategy:
       matrix:
-        os: [macos-10.15] # [macos-10.15, ubuntu-20.04, windows-2019] # macos-11.0, macOS-11.0 - doesn't work
+        os: [macos-10.15, ubuntu-20.04, windows-2019] # macos-11.0, macOS-11.0 - doesn't work
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -55,19 +55,19 @@ jobs:
     - name: Declare env variables on pull_request only
       if: github.event_name == 'pull_request'
       shell: bash
-      run: echo "BRANCH_NAME=$GITHUB_BASE_REF" >> $GITHUB_ENV
+      run: echo "BRANCH_NAME=$GITHUB_HEAD_REF" >> $GITHUB_ENV
 
-    - name: Declare env variables on push and pull_request  # https://docs.github.com/en/actions/reference/environment-variables
+    # https://docs.github.com/en/actions/reference/environment-variables
+    - name: Declare env variables on push and pull_request
       shell: bash
       run: |
-        echo "GITHUB_HEAD_REF_=$GITHUB_HEAD_REF" >> $GITHUB_ENV
         echo "APP_NAME=$(python pyproject.py tool.poetry.name)" >> $GITHUB_ENV
-        echo "GIT_INSTALL_URL=git+$GITHUB_SERVER_URL/$GITHUB_REPOSITORY@${{ env.BRANCH_NAME }}" >> $GITHUB_ENV
         echo "SCRIPTS_PATH=$(python pyproject.py ci.project.subdirs.scripts)" >> $GITHUB_ENV
         echo "DISTRIBUTION_PATH=$(python pyproject.py ci.project.subdirs.distribution)" >> $GITHUB_ENV
         echo "DOWNLOAD_PATH=$(python pyproject.py ci.project.subdirs.download)" >> $GITHUB_ENV
         echo "QTIFW_PATH=$(python pyproject.py ci.qtifw.setup.installation_path.${{ runner.os }})" >> $GITHUB_ENV
         echo "PYTHON_PACKAGES_PATH=$(python -c 'import os, pip; print(os.path.dirname(pip.__path__[0]))')" >> $GITHUB_ENV
+        echo "GIT_INSTALL_URL=git+$GITHUB_SERVER_URL/$GITHUB_REPOSITORY@${{ env.BRANCH_NAME }}" >> $GITHUB_ENV
 
     - name: Cache dependencies
       uses: actions/cache@v2

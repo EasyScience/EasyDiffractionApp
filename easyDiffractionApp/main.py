@@ -1,6 +1,7 @@
 import os
 import sys
 import platform
+import pygit2
 
 # Logging
 def isTestMode():
@@ -120,8 +121,12 @@ def main():
     translator = Translator(app, engine, translations_path, languages)
     vtk_handler = VtkCanvasHandler()
 
+    # Git branch
+    git_branch = pygit2.Repository('.').head.shorthand
+
     # Expose the Python objects to QML
     engine.rootContext().setContextProperty('_pyQmlProxyObj', py_qml_proxy_obj)
+    engine.rootContext().setContextProperty('_gitBranch', git_branch)
     engine.rootContext().setContextProperty('_translator', translator)
     engine.rootContext().setContextProperty('_vtkHandler', vtk_handler)
     engine.rootContext().setContextProperty('_projectConfig', CONFIG)

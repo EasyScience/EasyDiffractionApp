@@ -19,6 +19,7 @@ packages = [ { include = 'easyDiffractionApp' } ]
 
 [tool.poetry.dependencies]
 python = '^3.7, <3.8'
+pygit2 = '^1.5.0'
 matplotlib-backend-qtquick = '^0.0.8'
 vtk = '^8.1.2'
 pyobjc-core = { version = '^7.1', platform = 'darwin' }

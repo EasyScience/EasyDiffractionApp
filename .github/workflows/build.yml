@@ -99,7 +99,7 @@ jobs:
       run: |
         python ${{ env.SCRIPTS_PATH }}/InstallApp.py
         python ${{ env.SCRIPTS_PATH }}/RunApp.py test
-        python ${{ env.SCRIPTS_PATH }}/CreateTestVideos.py ${{ env.SHORT_GITHUB_REF }}
+        python ${{ env.SCRIPTS_PATH }}/CreateTestVideos.py ${{ env.BRANCH_NAME }}
 
     - name: Create zip archive of app installer
       run: python ${{ env.SCRIPTS_PATH }}/ZipArtifacts.py ${{ env.BRANCH_NAME }}

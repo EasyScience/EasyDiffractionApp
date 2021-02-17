@@ -60,8 +60,9 @@ jobs:
     - name: Declare env variables on push and pull_request  # https://docs.github.com/en/actions/reference/environment-variables
       shell: bash
       run: |
+        echo "GITHUB_HEAD_REF_=$GITHUB_HEAD_REF" >> $GITHUB_ENV
         echo "APP_NAME=$(python pyproject.py tool.poetry.name)" >> $GITHUB_ENV
-        echo "GIT_INSTALL_URL=$(git+$GITHUB_SERVER_URL/$GITHUB_REPOSITORY@${{ env.BRANCH_NAME }})" >> $GITHUB_ENV
+        echo "GIT_INSTALL_URL=git+$GITHUB_SERVER_URL/$GITHUB_REPOSITORY@${{ env.BRANCH_NAME }}" >> $GITHUB_ENV
         echo "SCRIPTS_PATH=$(python pyproject.py ci.project.subdirs.scripts)" >> $GITHUB_ENV
         echo "DISTRIBUTION_PATH=$(python pyproject.py ci.project.subdirs.distribution)" >> $GITHUB_ENV
         echo "DOWNLOAD_PATH=$(python pyproject.py ci.project.subdirs.download)" >> $GITHUB_ENV

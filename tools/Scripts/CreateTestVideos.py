@@ -13,7 +13,7 @@ def inputPattern():
 
 def outputPath():
     file_suffix = Functions.artifactsFileSuffix(sys.argv[1])
-    return os.path.join(CONFIG.dist_dir, f'{CONFIG.setup_name}{file_suffix}.mp4')
+    return os.path.join(CONFIG.dist_dir, f'tutorial{CONFIG.setup_name_suffix}{file_suffix}.mp4')
 
 def outputOptions():
     # https://trac.ffmpeg.org/wiki/Encode/H.264

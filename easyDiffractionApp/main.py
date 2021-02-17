@@ -2,6 +2,7 @@ import os
 import sys
 import platform
 import pygit2
+import datetime
 
 # Logging
 def isTestMode():
@@ -124,9 +125,13 @@ def main():
     # Git branch
     git_branch = pygit2.Repository('.').head.shorthand
 
+    # Build date
+    build_date = datetime.datetime.fromtimestamp(os.path.getmtime(sys.argv[0])).strftime("%d %b %Y")
+
     # Expose the Python objects to QML
     engine.rootContext().setContextProperty('_pyQmlProxyObj', py_qml_proxy_obj)
     engine.rootContext().setContextProperty('_gitBranch', git_branch)
+    engine.rootContext().setContextProperty('_buildDate', build_date)
     engine.rootContext().setContextProperty('_translator', translator)
     engine.rootContext().setContextProperty('_vtkHandler', vtk_handler)
     engine.rootContext().setContextProperty('_projectConfig', CONFIG)

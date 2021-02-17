@@ -376,14 +376,6 @@ class PyQmlProxy(QObject):
 
     # Charts for report
 
-    @Property(int, notify=structureViewUpdated)
-    def structureChartChangedTime(self):
-        return int(time.time())
-
-    @Property(int, notify=calculatedDataUpdated)
-    def analysisChartChangedTime(self):
-        return int(time.time())
-
     @Slot('QVariant', result=str)
     def imageToSource(self, image):
         ba = QByteArray()
@@ -393,7 +385,6 @@ class PyQmlProxy(QObject):
         data = ba.toBase64().data().decode('utf-8')
         source = f'data:image/png;base64,{data}'
         return source
-
 
     ####################################################################################################################
     ####################################################################################################################
@@ -501,6 +492,7 @@ class PyQmlProxy(QObject):
     def phasesAsExtendedCif(self):
         if len(self._sample.phases) == 0:
             return
+
         symm_ops = self._sample.phases[0].spacegroup.symmetry_opts
         symm_ops_cif_loop = "loop_\n _symmetry_equiv_pos_as_xyz\n"
         for symm_op in symm_ops:

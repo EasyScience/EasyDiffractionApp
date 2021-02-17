@@ -95,32 +95,24 @@ EaComponents.SideBarColumn {
 
                     anchors.right: parent.right
 
+                    showBackground: false
                     fontIcon: "folder-open"
                     ToolTip.text: qsTr("Choose report parent directory")
 
-                    showBackground: false
-
                     onClicked: reportParentDirDialog.open()
                 }
-
-                //onTextChanged: ExGlobals.Variables.reportFilePath = text
             }
         }
 
         // Export button
         EaElements.SideBarButton {
+            wide: true
             fontIcon: "download"
             text: qsTr("Export")
 
-            wide: true
-
             onClicked: {
-                //ExGlobals.Constants.proxy.saveReport(reportLocationField.text)
                 if (reportFormatField.currentValue === 'html') {
                     ExGlobals.Constants.proxy.saveReport(reportLocationField.text)
-                    //print("WebEngineView.Reload", WebEngineView.Reload)
-                    //print("WebEngineView.SavePage", WebEngineView.SavePage)
-                    //ExGlobals.Variables.reportWebView.triggerWebAction(WebEngineView.Reload)
                 } else if (reportFormatField.currentValue === 'pdf') {
                     ExGlobals.Variables.reportWebView.printToPdf(reportLocationField.text)
                 }

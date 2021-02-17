@@ -11,12 +11,13 @@ QtObject {
                                      new ExLogic.PyQmlProxy.PyQmlProxy()
 
     readonly property string gitBranch: typeof _gitBranch !== 'undefined' ? _gitBranch : 'master'
+    readonly property string buildDate: _buildDate
 
     readonly property string appName: EaGlobals.Variables.projectConfig.tool.poetry.name
     readonly property string appPrefixName: "easy"
     readonly property string appSuffixName: appName.replace(appPrefixName, "")
-    readonly property string appVersion: EaGlobals.Variables.projectConfig.tool.poetry.version
-    readonly property string appDate: new Date().toISOString().slice(0,10) // TODO: Get from phython logic formatted as "9 Apr 2020"
+    readonly property string appVersion: EaGlobals.Variables.projectConfig.tool.poetry.version + (gitBranch !== 'master' ? ` [${gitBranch}]` : '')
+    readonly property string appDate: buildDate
     readonly property string appLogo: Qt.resolvedUrl("../Resources/Logo/App.svg")
     readonly property string appUrl: "https://github.com/easyScience/easyDiffractionApp"
     readonly property string essLogo: Qt.resolvedUrl("../Resources/Logo/ESSlogo.png")

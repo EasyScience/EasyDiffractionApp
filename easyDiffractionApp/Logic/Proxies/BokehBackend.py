@@ -3,7 +3,7 @@ __version__ = '0.0.1'
 
 import numpy as np
 
-from PySide2.QtCore import QObject, Slot, Signal, Property
+from PySide2.QtCore import QObject, Signal, Property
 
 
 class BokehBridge(QObject):

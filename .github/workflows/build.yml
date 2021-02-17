@@ -1,8 +1,7 @@
 name: build macOS, Linux, Windows
 
 # Trigger the workflow on push or pull request
-#on: [push, pull_request]
-on: [push]
+on: [push, pull_request]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -15,7 +14,6 @@ jobs:
 
     # CI skip conditions
     if: "!contains(github.event.head_commit.message, '[ci skip]')"
-    #if: false
 
     # Change default timeout
     timeout-minutes: 20

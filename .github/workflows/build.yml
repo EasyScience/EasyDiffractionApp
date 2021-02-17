@@ -42,37 +42,46 @@ jobs:
       with:
           python-version: 3.7
 
-    - name: Set up project config parser & Declare env variables
-      shell: bash
+    - name: Set up Python dependences (1/2)
       run: |
         pip install toml
-        pip install pygit2
-        echo "SHORT_GITHUB_REF=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
-        echo "PYTHON_LOCATION=$pythonLocation" >> $GITHUB_ENV
-        echo "PYTHON_SITE_PACKAGES_PATH=$(python -c 'import os, pip; print(os.path.dirname(pip.__path__[0]))')" >> $GITHUB_ENV
-        echo "GIT_REPO=$(python -c 'import os, pygit2; print(pygit2.Repository(os.getcwd()).head.shorthand)')" >> $GITHUB_ENV
-        echo "SCRIPTS_PATH=$(python pyproject.py ci.project.subdirs.scripts)" >> $GITHUB_ENV
-        echo "DOWNLOAD_PATH=$(python pyproject.py ci.project.subdirs.download)" >> $GITHUB_ENV
-        echo "DISTRIBUTION_PATH=$(python pyproject.py ci.project.subdirs.distribution)" >> $GITHUB_ENV
+        pip install requests
+
+    - name: Declare env variables on push only
+      if: github.event_name == 'push'
+      shell: bash
+      run: echo "BRANCH_NAME=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+
+    - name: Declare env variables on pull_request only
+      if: github.event_name == 'pull_request'
+      shell: bash
+      run: echo "BRANCH_NAME=$GITHUB_BASE_REF" >> $GITHUB_ENV
+
+    - name: Declare env variables on push and pull_request  # https://docs.github.com/en/actions/reference/environment-variables
+      shell: bash
+      run: |
         echo "APP_NAME=$(python pyproject.py tool.poetry.name)" >> $GITHUB_ENV
+        echo "GIT_INSTALL_URL=$(git+$GITHUB_SERVER_URL/$GITHUB_REPOSITORY@${{ env.BRANCH_NAME }})" >> $GITHUB_ENV
+        echo "SCRIPTS_PATH=$(python pyproject.py ci.project.subdirs.scripts)" >> $GITHUB_ENV
+        echo "DISTRIBUTION_PATH=$(python pyproject.py ci.project.subdirs.distribution)" >> $GITHUB_ENV
+        echo "DOWNLOAD_PATH=$(python pyproject.py ci.project.subdirs.download)" >> $GITHUB_ENV
         echo "QTIFW_PATH=$(python pyproject.py ci.qtifw.setup.installation_path.${{ runner.os }})" >> $GITHUB_ENV
+        echo "PYTHON_PACKAGES_PATH=$(python -c 'import os, pip; print(os.path.dirname(pip.__path__[0]))')" >> $GITHUB_ENV
 
     - name: Cache dependencies
       uses: actions/cache@v2
       with:
         path: |
-          ${{ env.PYTHON_SITE_PACKAGES_PATH }}
-          ${{ env.QTIFW_PATH }}
           ${{ env.DOWNLOAD_PATH }}
+          ${{ env.QTIFW_PATH }}
+          ${{ env.PYTHON_PACKAGES_PATH }}
         key: ${{ matrix.os }}-${{ hashFiles('pyproject.toml') }}
 
     - name: Upgrade pip
       run: python -m pip install --upgrade pip
 
-    - name: Set up Python dependences
-      run: |
-        pip install requests
-        pip install git+https://github.com/easyScience/easyDiffractionApp@${{ env.GIT_REPO }}
+    - name: Set up Python dependences (2/2)
+      run: pip install ${{ env.GIT_INSTALL_URL }}
 
     - name: Relink CrysFML from default Python dylib
       run: python ${{ env.SCRIPTS_PATH }}/RelinkCrysfml.py
@@ -90,10 +99,10 @@ jobs:
         python ${{ env.SCRIPTS_PATH }}/CreateTestVideos.py
 
     - name: Create zip archive of app installer
-      run: python ${{ env.SCRIPTS_PATH }}/ZipArtifacts.py ${{ env.SHORT_GITHUB_REF }}
+      run: python ${{ env.SCRIPTS_PATH }}/ZipArtifacts.py ${{ env.BRANCH_NAME }}
 
     - name: Upload zipped app installer to GitHub releases
-      if: github.head_ref == ''
+      if: github.event_name == 'push'
       uses: ncipollo/release-action@v1
       with:
         draft: true
@@ -101,10 +110,10 @@ jobs:
         allowUpdates: true
         replacesArtifacts: true
         token: ${{ secrets.GITHUB_TOKEN }}
-        commit: ${{ env.SHORT_GITHUB_REF }}
-        tag: ${{ env.SHORT_GITHUB_REF }}
+        commit: ${{ env.BRANCH_NAME }}
+        tag: ${{ env.BRANCH_NAME }}
         artifacts: "${{ env.DISTRIBUTION_PATH }}/${{ env.APP_NAME }}_*.zip"
 
     - name: Upload app installer repository to FTP
-      if: github.head_ref == ''
-      run: python ${{ env.SCRIPTS_PATH }}/DeployFtp.py ${{ env.SHORT_GITHUB_REF }} ${{ secrets.FTP_PASSWORD }}
+      if: github.event_name == 'push'
+      run: python ${{ env.SCRIPTS_PATH }}/DeployFtp.py ${{ env.BRANCH_NAME }} ${{ secrets.FTP_PASSWORD }}

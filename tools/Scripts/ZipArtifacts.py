@@ -8,11 +8,9 @@ import Functions, Config
 CONFIG = Config.Config()
 
 def zipFileSuffix():
-    short_github_ref = sys.argv[1]
-    if short_github_ref == '2/merge':
-        return '_PR'
-    if short_github_ref != 'master':
-        return f'_{short_github_ref}'
+    branch_name = sys.argv[1]
+    if branch_name != 'master':
+        return f'_{branch_name}'
     return ''
 
 def source():

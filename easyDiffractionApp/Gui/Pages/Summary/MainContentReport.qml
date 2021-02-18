@@ -107,12 +107,12 @@ Item {
 
         Row {
             padding: EaStyle.Sizes.fontPixelSize
-            spacing: EaStyle.Sizes.fontPixelSize * 0.5
+            spacing: EaStyle.Sizes.fontPixelSize * 0.75
 
             EaElements.Label {
                 anchors.verticalCenter: parent.verticalCenter
                 font.family: EaStyle.Fonts.iconsFamily
-                font.pixelSize: control.font.pixelSize * 1.25
+                font.pixelSize: EaStyle.Sizes.fontPixelSize * 1.25
                 text: saveConfirmationDialog.success ? 'check-circle' : 'minus-circle'
             }
 

@@ -118,9 +118,16 @@ Item {
 
             EaElements.Label {
                 anchors.verticalCenter: parent.verticalCenter
+
+                textFormat: Text.RichText
+
                 text: saveConfirmationDialog.success
-                      ? qsTr('File "%1" is successfully saved'.arg(saveConfirmationDialog.filePath))
-                      : qsTr('Failed to save file "%1"'.arg(saveConfirmationDialog.filePath))
+                      ? qsTr('File "<a style="color:%2; text-decoration:none" href="%1">%1</a>" is successfully saved'
+                             .arg(saveConfirmationDialog.filePath)
+                             .arg(EaStyle.Colors.linkColor) )
+                      : qsTr('Failed to save file "%1"'
+                             .arg(saveConfirmationDialog.filePath) )
+                onLinkActivated: Qt.openUrlExternally(link)
             }
         }
     }

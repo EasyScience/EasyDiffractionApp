@@ -37,7 +37,7 @@ def getValue(d, element):
 
 def extraDict():
     build_date = datetime.datetime.now().strftime('%d %b %Y')
-    python_packages_path = os.path.dirname(pip.__path__[0])
+    python_packages_path = os.path.dirname(pip.__path__[0]).replace('\\', '/')
     branch_name = os.getenv('BRANCH_NAME', 'undefined')
     github_sha = os.getenv('GITHUB_SHA', 'undefined')
     github_server_url = os.getenv('GITHUB_SERVER_URL', 'undefined')

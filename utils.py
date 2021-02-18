@@ -56,7 +56,7 @@ def updatePyprojectToml():
     with open('pyproject.toml', 'r', encoding='utf-8') as f:
         pyproject_toml = f.read()
     pyproject_toml += '\n' + extraToml()
-    with open('pyproject.toml', 'w') as f:
+    with open('pyproject.toml', 'w', encoding='utf-8') as f:
         f.write(pyproject_toml)
 
 ### Main

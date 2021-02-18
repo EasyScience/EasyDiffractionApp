@@ -41,11 +41,6 @@ jobs:
       with:
           python-version: 3.7
 
-    - name: Set up Python dependences (1/2)
-      run: |
-        pip install toml
-        pip install requests
-
     - name: Declare env variables on push only
       if: github.event_name == 'push'
       shell: bash
@@ -83,7 +78,7 @@ jobs:
     - name: Upgrade pip
       run: python -m pip install --upgrade pip
 
-    - name: Set up Python dependences (2/2)
+    - name: Set up Python dependences
       run: pip install ${{ env.GIT_INSTALL_URL }}
 
     - name: Relink CrysFML from default Python dylib

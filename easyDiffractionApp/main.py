@@ -1,8 +1,7 @@
 import os
 import sys
 import platform
-import pygit2
-import datetime
+
 
 # Logging
 def isTestMode():
@@ -22,7 +21,7 @@ from PySide2.QtWebEngine import QtWebEngine
 from PySide2.QtWebEngineWidgets import QWebEnginePage, QWebEngineView  # to call hook-PySide2.QtWebEngineWidgets.py
 
 # easyScience
-import pyproject
+import utils
 import easyAppGui
 from easyAppLogic.Translate import Translator
 from easyDiffractionApp.Logic.PyQmlProxy import PyQmlProxy
@@ -35,7 +34,7 @@ from easyDiffractionApp.Logic.Proxies.VtkBackend import VtkCanvasHandler
 from easyDiffractionApp.Logic.VTK.QVTKFrameBufferObjectItem import FboItem
 
 # Config
-CONFIG = pyproject.config()
+CONFIG = utils.conf()
 
 
 def defaultVtkFormat(stereo_capable):
@@ -122,16 +121,8 @@ def main():
     translator = Translator(app, engine, translations_path, languages)
     vtk_handler = VtkCanvasHandler()
 
-    # Git branch
-    git_branch = pygit2.Repository('.').head.shorthand
-
-    # Build date
-    build_date = datetime.datetime.fromtimestamp(os.path.getmtime(sys.argv[0])).strftime("%d %b %Y")
-
     # Expose the Python objects to QML
     engine.rootContext().setContextProperty('_pyQmlProxyObj', py_qml_proxy_obj)
-    engine.rootContext().setContextProperty('_gitBranch', git_branch)
-    engine.rootContext().setContextProperty('_buildDate', build_date)
     engine.rootContext().setContextProperty('_translator', translator)
     engine.rootContext().setContextProperty('_vtkHandler', vtk_handler)
     engine.rootContext().setContextProperty('_projectConfig', CONFIG)

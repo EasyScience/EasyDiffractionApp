@@ -46,10 +46,12 @@ jobs:
         pip install toml
         pip install requests
 
-    - name: Declare env variables on push only
+    - name: Declare env variables on push only && update pyproject.toml
       if: github.event_name == 'push'
       shell: bash
-      run: echo "BRANCH_NAME=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+      run: |
+        echo "BRANCH_NAME=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+        python utils.py --update
 
     - name: Declare env variables on pull_request only
       if: github.event_name == 'pull_request'
@@ -60,12 +62,12 @@ jobs:
     - name: Declare env variables on push and pull_request
       shell: bash
       run: |
-        echo "APP_NAME=$(python pyproject.py tool.poetry.name)" >> $GITHUB_ENV
-        echo "SCRIPTS_PATH=$(python pyproject.py ci.project.subdirs.scripts)" >> $GITHUB_ENV
-        echo "DISTRIBUTION_PATH=$(python pyproject.py ci.project.subdirs.distribution)" >> $GITHUB_ENV
-        echo "DOWNLOAD_PATH=$(python pyproject.py ci.project.subdirs.download)" >> $GITHUB_ENV
-        echo "QTIFW_PATH=$(python pyproject.py ci.qtifw.setup.installation_path.${{ runner.os }})" >> $GITHUB_ENV
-        echo "PYTHON_PACKAGES_PATH=$(python -c 'import os, pip; print(os.path.dirname(pip.__path__[0]))')" >> $GITHUB_ENV
+        echo "APP_NAME=$(python utils.py --get tool.poetry.name)" >> $GITHUB_ENV
+        echo "SCRIPTS_PATH=$(python utils.py --get ci.project.subdirs.scripts)" >> $GITHUB_ENV
+        echo "DISTRIBUTION_PATH=$(python utils.py --get ci.project.subdirs.distribution)" >> $GITHUB_ENV
+        echo "DOWNLOAD_PATH=$(python utils.py --get ci.project.subdirs.download)" >> $GITHUB_ENV
+        echo "QTIFW_PATH=$(python utils.py --get ci.qtifw.setup.installation_path.${{ runner.os }})" >> $GITHUB_ENV
+        echo "PYTHON_PACKAGES_PATH=$(python utils.py --get ci.cache.python_packages_path)" >> $GITHUB_ENV
         echo "GIT_INSTALL_URL=git+$GITHUB_SERVER_URL/$GITHUB_REPOSITORY@${{ env.BRANCH_NAME }}" >> $GITHUB_ENV
 
     #- name: Cache dependencies

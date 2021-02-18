@@ -38,10 +38,6 @@ def sign_windows():
     signtool_exe_path = os.path.join(certificates_dir_path, 'signtool.exe')
 
     win_certificate_file_path = certificate_file_path + ".pfx"
-    # Functions.run(
-    #     'certutil.exe',
-    #     '-p', certificate_password,           # the password for the .pfx file
-    #     '-importpfx', certificate_file_path)  # name of the .pfx file
 
     print('* Sign code with imported certificate')
     Functions.run(
@@ -53,7 +49,7 @@ def sign_windows():
         '/t', 'http://timestamp.digicert.com',  # URL to a timestamp server
         '/v',                                   # display the verbose version of operation and warning messages
         '/a',                                   # Select the best signing cert automatically
-        installer_exe_path)
+        file_to_sign)
 
 
 def sign_macos():

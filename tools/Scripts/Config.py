@@ -30,6 +30,8 @@ class Config():
         self.setup_file_ext = self.__dict__['ci']['app']['setup']['file_ext'][self.os]
         self.setup_full_name = f'{self.setup_name}{self.setup_file_ext}'
         self.setup_exe_path = os.path.join(self.dist_dir, self.setup_full_name)
+        self.maintenancetool_file = os.path.join(self.__dict__['ci']['project']['subdirs']['certificates_path'],
+                                                 self.__dict__['ci']['app']['setup']['maintenance_file'])
 
         # Application repository
         self.repository_dir_suffix = self.__dict__['ci']['app']['setup']['repository_dir_suffix']

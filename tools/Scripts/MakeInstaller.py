@@ -251,6 +251,17 @@ def installQtInstallerFramework():
     else:
         Functions.printSuccessMessage(message)
 
+
+def prepareSignedMaintenanceTool():
+    try:
+        message = 'sign MaintenanceTool'
+    except Exception as exception:
+        Functions.printFailMessage(message, exception)
+        sys.exit()
+    else:
+        Functions.printSuccessMessage(message)
+
+
 def createInstallerSourceDir():
     try:
         message = f'create installer source directory {setupBuildDirPath()}'
@@ -279,6 +290,7 @@ def createInstallerSourceDir():
         Functions.copyFile(source=CONFIG.license_file, destination=app_meta_subsubdir_path)
         Functions.moveDir(source=freezed_app_src, destination=app_data_subsubdir_path)
         Functions.copyFile(source=CONFIG.license_file, destination=app_data_subsubdir_path)
+        Functions.copyFile(source=CONFIG.maintenancetool_file, destination=app_data_subsubdir_path)
         # package: docs
         #docs_subdir_path = os.path.join(packagesDirPath(), CONFIG['ci']['app']['setup']['build']['docs_package_subdir'])
         #docs_data_subsubdir_path = os.path.join(docs_subdir_path, CONFIG['ci']['app']['setup']['build']['data_subsubdir'])
@@ -343,6 +355,7 @@ if __name__ == "__main__":
     downloadQtInstallerFramework()
     osDependentPreparation()
     installQtInstallerFramework()
+    prepareSignedMaintenanceTool()
     createInstallerSourceDir()
     createOnlineRepository()
     createInstaller()

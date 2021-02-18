@@ -170,12 +170,21 @@ Item {
         return list.join('\n')
     }
 
+    property string fonts: {
+        const list = [
+                  '<link href="https://fonts.googleapis.com/css?family=PT+Sans" rel="stylesheet" type="text/css">'
+              ]
+        return list.join('\n')
+    }
+
     property string headMiscStyle: {
         const list = [
                   'html {',
                   `    background-color: ${htmlBackground};`,
                   '}',
                   'body {',
+                  '    font-family: "PT Sans", sans-serif;',
+                  `    font-size: ${EaStyle.Sizes.fontPixelSize}px;`,
                   `    padding: ${EaStyle.Sizes.fontPixelSize}px;`,
                   `    color: ${EaStyle.Colors.themeForeground};`,
                   '}',

@@ -8,7 +8,7 @@ try:
     import toml
 except ImportError:
     import pip
-    pip.main(['install', '--user', 'toml'])
+    pip.main(['install', 'toml'])
     import toml
 
 

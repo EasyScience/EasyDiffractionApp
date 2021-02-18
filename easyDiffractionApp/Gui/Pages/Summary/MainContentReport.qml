@@ -59,7 +59,60 @@ Item {
         anchors.fill: parent
         backgroundColor: htmlBackground
 
-        Component.onCompleted: ExGlobals.Variables.reportWebView = webView
+        onPdfPrintingFinished: {
+            saveConfirmationDialog.success = success
+            saveConfirmationDialog.filePath = filePath
+            saveConfirmationDialog.open()
+        }
+
+        signal htmlExportingFinished(bool success, string filePath)
+        onHtmlExportingFinished: {
+            saveConfirmationDialog.success = success
+            saveConfirmationDialog.filePath = filePath
+            saveConfirmationDialog.open()
+        }
+
+        Component.onCompleted: {
+            ExGlobals.Constants.proxy.htmlExportingFinished.connect(webView.htmlExportingFinished)
+            ExGlobals.Variables.reportWebView = webView
+        }
+    }
+
+    EaElements.Dialog {
+        id: saveConfirmationDialog
+
+        property bool success: false
+        property string filePath: 'undefined'
+
+        visible: false
+        title: qsTr("Save confirmation")
+
+        parent: Overlay.overlay
+
+        x: (parent.width - width) * 0.5
+        y: (parent.height - height) * 0.5
+
+        modal: true
+        standardButtons: Dialog.Ok
+
+        Row {
+            padding: EaStyle.Sizes.fontPixelSize
+            spacing: EaStyle.Sizes.fontPixelSize * 0.5
+
+            EaElements.Label {
+                anchors.verticalCenter: parent.verticalCenter
+                font.family: EaStyle.Fonts.iconsFamily
+                font.pixelSize: control.font.pixelSize * 1.25
+                text: saveConfirmationDialog.success ? 'check-circle' : 'minus-circle'
+            }
+
+            EaElements.Label {
+                anchors.verticalCenter: parent.verticalCenter
+                text: saveConfirmationDialog.success
+                      ? qsTr('File "%1" is successfully saved'.arg(saveConfirmationDialog.filePath))
+                      : qsTr('Failed to save file "%1"'.arg(saveConfirmationDialog.filePath))
+            }
+        }
     }
 
     //}

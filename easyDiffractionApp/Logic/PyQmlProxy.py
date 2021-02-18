@@ -101,6 +101,8 @@ class PyQmlProxy(QObject):
     current1dPlottingLibChanged = Signal()
     current3dPlottingLibChanged = Signal()
 
+    htmlExportingFinished = Signal(bool, str)
+
     # Status info
     statusInfoChanged = Signal()
     
@@ -1314,13 +1316,14 @@ class PyQmlProxy(QObject):
         Save the generated report to the specified file
         Currently only html
         """
-        extension = pathlib.Path(filepath).suffix
-        if extension == '.html':
-            # HTML can contain non-ascii, so need to open with right encoding
+        try:
             with open(filepath, 'w', encoding='utf-8') as f:
                 f.write(self._report)
-        else:
-            raise NotImplementedError
+            success = True
+        except IOError:
+            success = False
+        finally:
+            self.htmlExportingFinished.emit(success, filepath)
 
     ####################################################################################################################
     ####################################################################################################################

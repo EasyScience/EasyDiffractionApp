@@ -11,7 +11,6 @@ import Gui.Globals 1.0 as ExGlobals
 Item {
     id: root
 
-
     Column {
         anchors.centerIn: parent
         spacing: EaStyle.Sizes.fontPixelSize * 2.5

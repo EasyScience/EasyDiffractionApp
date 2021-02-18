@@ -53,7 +53,7 @@ def extraToml():
     return toml.dumps(extraDict())
 
 def updatePyprojectToml():
-    with open('pyproject.toml', 'r') as f:
+    with open('pyproject.toml', 'r', encoding='utf-8') as f:
         pyproject_toml = f.read()
     pyproject_toml += '\n' + extraToml()
     with open('pyproject.toml', 'w') as f:

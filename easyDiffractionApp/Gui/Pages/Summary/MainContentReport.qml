@@ -43,7 +43,6 @@ Item {
     property string dataChartBackgroundColor: EaStyle.Colors.chartPlotAreaBackground
     property string dataChartBorderColor: EaStyle.Colors.appBorder
 
-
     /*
     ScrollView {
         anchors.fill: parent
@@ -58,6 +57,17 @@ Item {
 
         anchors.fill: parent
         backgroundColor: htmlBackground
+
+        onContextMenuRequested: {
+            request.accepted = true
+        }
+
+        onNavigationRequested: {
+            if (request.navigationType === WebEngineNavigationRequest.LinkClickedNavigation) {
+                request.action = WebEngineNavigationRequest.IgnoreRequest
+                Qt.openUrlExternally(request.url)
+            }
+        }
 
         onPdfPrintingFinished: {
             saveConfirmationDialog.success = success
@@ -176,8 +186,14 @@ Item {
                   'h2 {',
                   `    margin-top: ${EaStyle.Sizes.fontPixelSize * 3}px;`,
                   '}',
-                  'a:link {',
-                  `    color: ${EaStyle.Colors.themeAccent};`,
+                  'a {',
+                  '    text-decoration: none;',
+                  '}',
+                  'a, a:visited {',
+                  '    color: #008bd0;',
+                  '}',
+                  'a:hover {',
+                  '    color: #009fee;',
                   '}',
                   'table {',
                   '    border-collapse: collapse;',

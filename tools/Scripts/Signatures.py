@@ -49,7 +49,7 @@ def sign_windows():
         '/t', 'http://timestamp.digicert.com',  # URL to a timestamp server
         '/v',                                   # display the verbose version of operation and warning messages
         '/a',                                   # Select the best signing cert automatically
-        file_to_sign)
+        installer_exe_path)
 
 
 def sign_macos():

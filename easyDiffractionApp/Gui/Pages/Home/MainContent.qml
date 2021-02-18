@@ -11,7 +11,6 @@ import Gui.Globals 1.0 as ExGlobals
 Item {
     id: root
 
-
     Column {
         anchors.centerIn: parent
         spacing: EaStyle.Sizes.fontPixelSize * 2.5
@@ -334,6 +333,16 @@ Item {
         rc.mouseClick(ExGlobals.Variables.calculatorSelector)
         rc.mouseClick(ExGlobals.Variables.calculatorSelector)
         rc.mouseClick(ExGlobals.Variables.analysisBasicControlsTabButton)
+
+        // Summary Tab
+
+        rc.say("Now, you can see the interactive report generated on the summary page and export it in different formats.")
+        rc.mouseClick(ExGlobals.Variables.summaryTabButton)
+        rc.wait(1000)
+        rc.pointerMove(ExGlobals.Variables.reportWebView)
+        //rc.mouseMove(ExGlobals.Variables.reportWebView)
+        //rc.mouseWheel(ExGlobals.Variables.reportWebView)
+        rc.wait(1000)
 
         // End
 

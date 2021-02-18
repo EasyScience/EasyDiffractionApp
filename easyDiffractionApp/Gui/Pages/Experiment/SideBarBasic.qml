@@ -41,6 +41,7 @@ EaComponents.SideBarColumn {
 
                 onClicked: {
                     ExGlobals.Variables.analysisPageEnabled = true
+                    ExGlobals.Variables.summaryPageEnabled = true
                     ExGlobals.Constants.proxy.experimentSkipped = true
                 }
 
@@ -134,6 +135,7 @@ EaComponents.SideBarColumn {
 
         onAccepted: {
             ExGlobals.Variables.analysisPageEnabled = true
+            ExGlobals.Variables.summaryPageEnabled = true
             ExGlobals.Constants.proxy.experimentSkipped = false
             ExGlobals.Constants.proxy.experimentLoaded = true
             ExGlobals.Constants.proxy.addExperimentDataFromXye(fileUrl)

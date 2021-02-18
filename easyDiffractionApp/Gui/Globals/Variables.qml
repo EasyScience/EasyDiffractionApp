@@ -19,6 +19,17 @@ QtObject {
     property bool sampleLoaded: false
     property bool experimentSkipped: false
 
+
+    // //////////
+    // HTML parts
+    // //////////
+    property string analysisChartHeadScript: ""
+    property string analysisChartHeadStyle: ""
+    property string analysisChartHtml: ""
+    property string reportHtml: ""
+
+    //property string reportFilePath: ""
+
     // //////////////////////////
     // References to GUI elements
     // //////////////////////////
@@ -74,5 +85,10 @@ QtObject {
 
     // Plotting
     //property var plottingLibrary: 'qtcharts'
+    property var analysisImageSource
+    property var structureImageSource
+
+    // Summary
+    property var reportWebView
 
 }

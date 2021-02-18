@@ -14,6 +14,8 @@ class FboItem(QQuickFramebufferObject):
         super().__init__()
         self.__m_vtkFboRenderer = None
 
+        self.devicePixelRatio = 1
+
         self.__m_lastMouseLeftButton: QMouseEvent = QMouseEvent(QEvent.Type.None_, QPointF(0, 0), Qt.NoButton,
                                                                 Qt.NoButton, Qt.NoModifier)
         self.__m_lastMouseButton: QMouseEvent = QMouseEvent(QEvent.Type.None_, QPointF(0, 0), Qt.NoButton, Qt.NoButton,
@@ -35,6 +37,7 @@ class FboItem(QQuickFramebufferObject):
 
         self.__m_vtkFboRenderer = renderer
         self.__m_vtkFboRenderer.renderer.setVtkFboItem(self)
+        renderer.devicePixelRatio = self.devicePixelRatio
 
         self.rendererInitialized.emit()
 

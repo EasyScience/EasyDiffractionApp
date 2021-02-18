@@ -1,6 +1,7 @@
 import os
 import sys
 import pip
+import pathlib
 import datetime
 import argparse
 
@@ -38,12 +39,17 @@ def getValue(d, element):
 def extraDict():
     build_date = datetime.datetime.now().strftime('%d %b %Y')
     python_packages_path = os.path.dirname(pip.__path__[0]).replace('\\', '/')
+    app_name = getValue(conf(), 'tool.poetry.name')
+    home_path = pathlib.Path.home()
+    settings_path = home_path.joinpath(f'.{app_name}', 'settings.ini')
     branch_name = os.getenv('BRANCH_NAME', 'undefined')
     github_sha = os.getenv('GITHUB_SHA', 'undefined')
     github_server_url = os.getenv('GITHUB_SERVER_URL', 'undefined')
     github_repo = os.getenv('GITHUB_REPOSITORY', 'undefined')
     return { 'ci': { 'cache': { 'python_packages_path': python_packages_path },
+                     'system': { 'home_path': str(home_path) },
                      'app': { 'info': { 'date': build_date,
+                                        'settings_path': str(settings_path),
                                         'branch_name': branch_name,
                                         'commit_sha': github_sha,
                                         'commit_sha_short': github_sha[:6],

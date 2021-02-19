@@ -18,7 +18,6 @@ Item {
         // Application logo, name and version
         Column {
             anchors.horizontalCenter: parent.horizontalCenter
-            spacing: 0
 
             // Application logo
             Image {
@@ -52,8 +51,17 @@ Item {
             // Application version
             EaElements.Label {
                 anchors.horizontalCenter: parent.horizontalCenter
-                font.family: EaStyle.Fonts.secondExpandedFontFamily
-                text: qsTr("Version %1 (%2)".arg(ExGlobals.Constants.appVersion).arg(ExGlobals.Constants.appDate))
+                text: ExGlobals.Constants.branch === 'master'
+                      ? qsTr(`Version ${ExGlobals.Constants.appVersion} (${ExGlobals.Constants.appDate})`)
+                      : qsTr(`Version <a href="${ExGlobals.Constants.commitUrl}">${ExGlobals.Constants.appVersion}-${ExGlobals.Constants.commit}</a> (${ExGlobals.Constants.appDate})`)
+            }
+
+            // Github branch
+            EaElements.Label {
+                visible: ExGlobals.Constants.branch !== 'master'
+                topPadding: EaStyle.Sizes.fontPixelSize * 0.5
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: qsTr(`Branch <a href="${ExGlobals.Constants.branchUrl}">${ExGlobals.Constants.branch}</a>`)
             }
         }
 
@@ -130,11 +138,13 @@ Item {
 
     // Remote controller for tutorials
 
+    /*
     EaElements.RemoteController {
         id: rc
         sayEnabled: false
         audioDir: Qt.resolvedUrl("../../Resources/Audio")
     }
+    */
 
     Timer {
         id: quitTimer

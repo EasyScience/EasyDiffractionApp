@@ -37,23 +37,32 @@ def getValue(d, element):
 ### Update pyproject.toml
 
 def extraDict():
-    build_date = datetime.datetime.now().strftime('%d %b %Y')
     python_packages_path = os.path.dirname(pip.__path__[0]).replace('\\', '/')
+
     app_name = getValue(conf(), 'tool.poetry.name')
     home_path = pathlib.Path.home()
-    settings_path = home_path.joinpath(f'.{app_name}', 'settings.ini')
-    branch_name = os.getenv('BRANCH_NAME', 'undefined')
-    github_sha = os.getenv('GITHUB_SHA', 'undefined')
-    github_server_url = os.getenv('GITHUB_SERVER_URL', 'undefined')
-    github_repo = os.getenv('GITHUB_REPOSITORY', 'undefined')
+    settings_path = str(home_path.joinpath(f'.{app_name}', 'settings.ini'))
+
+    build_date = datetime.datetime.now().strftime('%d %b %Y')
+
+    github_server_url = os.getenv('GITHUB_SERVER_URL', 'https://github.com/')
+    github_repo = os.getenv('GITHUB_REPOSITORY', 'easyScience/easyDiffractionApp')
+    github_repo_url = f'{github_server_url}/{github_repo}'
+
+    branch_name = os.getenv('BRANCH_NAME', 'develop')
+    branch_url = f'{github_repo_url}/tree/{branch_name}'
+
+    commit_sha = os.getenv('GITHUB_SHA', '59af45f0b5c5270b5057e2df7995dd0a4d4368bc')
+    commit_sha_short = commit_sha[:6]
+    commit_url = f'{github_repo_url}/commit/{commit_sha}'
+
     return { 'ci': { 'cache': { 'python_packages_path': python_packages_path },
-                     'system': { 'home_path': str(home_path) },
-                     'app': { 'info': { 'date': build_date,
-                                        'settings_path': str(settings_path),
+                     'app': { 'info': { 'build_date': build_date,
+                                        'settings_path': settings_path,
                                         'branch_name': branch_name,
-                                        'commit_sha': github_sha,
-                                        'commit_sha_short': github_sha[:6],
-                                        'commit_url': f'{github_server_url}/{github_repo}/commit/{github_sha}' } } } }
+                                        'branch_url': branch_url,
+                                        'commit_sha_short': commit_sha_short,
+                                        'commit_url': commit_url } } } }
 
 def extraToml():
     return toml.dumps(extraDict())

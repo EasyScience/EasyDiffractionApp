@@ -1,4 +1,4 @@
-import QtQuick 2.13
+import QtQuick 2.15
 
 import easyAppGui.Globals 1.0 as EaGlobals
 import easyAppGui.Components 1.0 as EaComponents
@@ -10,13 +10,23 @@ EaComponents.AboutDialog {
     onClosed: EaGlobals.Variables.showAppAboutDialog = false
 
     appIconPath: ExGlobals.Constants.appLogo
-    essIconPath: ExGlobals.Constants.essLogo
-    eulaUrl: ExGlobals.Constants.eulaUrl
-    oslUrl: ExGlobals.Constants.oslUrl
     appUrl: ExGlobals.Constants.appUrl
+
     appPrefixName: ExGlobals.Constants.appPrefixName
     appSuffixName: ExGlobals.Constants.appSuffixName
-    description: ExGlobals.Constants.description
     appVersion: ExGlobals.Constants.appVersion
     appDate: ExGlobals.Constants.appDate
+
+    commit: ExGlobals.Constants.commit
+    commitUrl: ExGlobals.Constants.commitUrl
+
+    branch: ExGlobals.Constants.branch
+    branchUrl: ExGlobals.Constants.branchUrl
+
+    eulaUrl: ExGlobals.Constants.eulaUrl
+    oslUrl: ExGlobals.Constants.oslUrl
+
+    description: ExGlobals.Constants.description
+
+    essIconPath: ExGlobals.Constants.essLogo
 }

@@ -177,13 +177,6 @@ Item {
         return list.join('\n')
     }
 
-    property string fonts: {
-        const list = [
-                  '<link href="https://fonts.googleapis.com/css?family=PT+Sans" rel="stylesheet" type="text/css">'
-              ]
-        return list.join('\n')
-    }
-
     property string headMiscStyle: {
         const list = [
                   'html {',

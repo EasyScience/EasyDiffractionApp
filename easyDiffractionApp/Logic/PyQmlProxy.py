@@ -184,6 +184,8 @@ class PyQmlProxy(QObject):
         self._background_proxy.asObjChanged.connect(self.calculatedDataChanged)
 
         # Analysis
+        self._analysis_data = None
+
         self.calculatedDataChanged.connect(self._onCalculatedDataChanged)
 
         self._simulation_parameters_as_obj = self._defaultSimulationParameters()
@@ -216,7 +218,7 @@ class PyQmlProxy(QObject):
 
         # Plotting
         self._1d_plotting_libs = ['matplotlib', 'qtcharts', 'bokeh']
-        self._current_1d_plotting_lib = self._1d_plotting_libs[0]
+        self._current_1d_plotting_lib = self._1d_plotting_libs[2]
 
         self._3d_plotting_libs = ['vtk', 'qtdatavisualization', 'chemdoodle']
         self._current_3d_plotting_lib = self._3d_plotting_libs[0]
@@ -333,8 +335,12 @@ class PyQmlProxy(QObject):
 
     def onCurrent1dPlottingLibChanged(self):
         if self.current1dPlottingLib == 'matplotlib':
-            self._matplotlib_bridge.updateData(self._experiment_figure_canvas, [self._experiment_data])
-            self._updateCalculatedData()
+            if self._experiment_figure_canvas is not None and self._experiment_data is not None:
+                self._matplotlib_bridge.updateData(self._experiment_figure_canvas, [self._experiment_data])
+                self.experimentDataChanged.emit()
+            if self._analysis_figure_canvas is not None and self._analysis_data is not None:
+                self._matplotlib_bridge.updateData(self._analysis_figure_canvas, self._analysis_data)
+                self._updateCalculatedData()
 
     @Property('QVariant', notify=dummySignal)
     def plotting3dLibs(self):
@@ -840,10 +846,10 @@ class PyQmlProxy(QObject):
 
     def _onExperimentDataAdded(self):
         print("***** _onExperimentDataAdded")
-        if self.current1dPlottingLib == 'matplotlib':
-            self._matplotlib_bridge.updateData(self._experiment_figure_canvas, [self._experiment_data])
-        self._qtcharts_bridge.setMeasuredData(self._experiment_data.x, self._experiment_data.y, self._experiment_data.e)
         self._bokeh_bridge.setMeasuredData(self._experiment_data.x, self._experiment_data.y, self._experiment_data.e)
+        self._qtcharts_bridge.setMeasuredData(self._experiment_data.x, self._experiment_data.y, self._experiment_data.e)
+        if self.current1dPlottingLib == 'matplotlib' and self._experiment_figure_canvas is not None and self._experiment_data is not None:
+            self._matplotlib_bridge.updateData(self._experiment_figure_canvas, [self._experiment_data])
 
         self._experiment_parameters = self._experimentDataParameters(self._experiment_data)
         self.simulationParametersAsObj = json.dumps(self._experiment_parameters)
@@ -1016,12 +1022,6 @@ class PyQmlProxy(QObject):
         if not self.experimentLoaded and not self.experimentSkipped:
             return
 
-        if self.current1dPlottingLib == 'matplotlib' and self._analysis_figure_canvas is None:
-            return
-
-        if self.current1dPlottingLib == 'qtchart' and self._calculated_series_ref is None:
-            return
-
         self._sample.output_index = self.currentPhaseIndex
 
         #  THIS IS WHERE WE WOULD LOOK UP CURRENT EXP INDEX
@@ -1043,7 +1043,7 @@ class PyQmlProxy(QObject):
             zeros_diff.y = [exp.y[0] - sim.y[0]]
 
             difference_dataset = [zeros_diff, zeros_diff, diff]
-            analysis_dataset = [exp, sim]
+            self._analysis_data = [exp, sim]
 
             #if self.current1dPlottingLib == 'matplotlib':
             #    self._matplotlib_bridge.updateData(self._difference_figure_canvas, difference_dataset)
@@ -1057,12 +1057,12 @@ class PyQmlProxy(QObject):
             sim.x = np.linspace(x_min, x_max, num_points)
             sim.y = self._interface.fit_func(sim.x)  # CrysPy: 0.5 s, CrysFML: 0.005 s, GSAS-II: 0.25 s
 
-            analysis_dataset = [zeros_sim, sim]
+            self._analysis_data = [zeros_sim, sim]
 
-        if self.current1dPlottingLib == 'matplotlib':
-            self._matplotlib_bridge.updateData(self._analysis_figure_canvas, analysis_dataset)
-        self._qtcharts_bridge.setCalculatedData(sim.x, sim.y)
         self._bokeh_bridge.setCalculatedData(sim.x, sim.y)
+        self._qtcharts_bridge.setCalculatedData(sim.x, sim.y)
+        if self.current1dPlottingLib == 'matplotlib' and self._analysis_figure_canvas is not None:
+            self._matplotlib_bridge.updateData(self._analysis_figure_canvas, self._analysis_data)
 
         print("+ _updateCalculatedData: {0:.3f} s".format(timeit.default_timer() - start_time))
 

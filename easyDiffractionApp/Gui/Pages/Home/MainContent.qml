@@ -51,14 +51,14 @@ Item {
             // Application version
             EaElements.Label {
                 anchors.horizontalCenter: parent.horizontalCenter
-                text: ExGlobals.Constants.branch === 'master'
-                      ? qsTr(`Version ${ExGlobals.Constants.appVersion} (${ExGlobals.Constants.appDate})`)
-                      : qsTr(`Version <a href="${ExGlobals.Constants.commitUrl}">${ExGlobals.Constants.appVersion}-${ExGlobals.Constants.commit}</a> (${ExGlobals.Constants.appDate})`)
+                text: ExGlobals.Constants.branch && ExGlobals.Constants.branch !== 'master'
+                      ? qsTr(`Version <a href="${ExGlobals.Constants.commitUrl}">${ExGlobals.Constants.appVersion}-${ExGlobals.Constants.commit}</a> (${ExGlobals.Constants.appDate})`)
+                      : qsTr(`Version ${ExGlobals.Constants.appVersion} (${ExGlobals.Constants.appDate})`)
             }
 
             // Github branch
             EaElements.Label {
-                visible: ExGlobals.Constants.branch !== 'master'
+                visible: ExGlobals.Constants.branch && ExGlobals.Constants.branch !== 'master'
                 topPadding: EaStyle.Sizes.fontPixelSize * 0.5
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: qsTr(`Branch <a href="${ExGlobals.Constants.branchUrl}">${ExGlobals.Constants.branch}</a>`)

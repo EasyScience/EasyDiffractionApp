@@ -157,14 +157,3 @@ base_url = 'https://evermeet.cx/ffmpeg'
 file_name_base = 'ffmpeg-'
 file_ext = '.zip'
 exe = 'ffmpeg'
-
-[ci.cache]
-python_packages_path = "/usr/local/lib/python3.7/site-packages"
-
-[ci.app.info]
-build_date = "19 Feb 2021"
-settings_path = "/Users/andrewsazonov/.easyDiffraction/settings.ini"
-branch_name = "develop"
-branch_url = "https://github.com//easyScience/easyDiffractionApp/tree/develop"
-commit_sha_short = "59af45"
-commit_url = "https://github.com//easyScience/easyDiffractionApp/commit/59af45f0b5c5270b5057e2df7995dd0a4d4368bc"

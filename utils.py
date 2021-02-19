@@ -45,14 +45,14 @@ def extraDict():
 
     build_date = datetime.datetime.now().strftime('%d %b %Y')
 
-    github_server_url = os.getenv('GITHUB_SERVER_URL', 'https://github.com/')
-    github_repo = os.getenv('GITHUB_REPOSITORY', 'easyScience/easyDiffractionApp')
+    github_server_url = os.getenv('GITHUB_SERVER_URL', '')
+    github_repo = os.getenv('GITHUB_REPOSITORY', '')
     github_repo_url = f'{github_server_url}/{github_repo}'
 
-    branch_name = os.getenv('BRANCH_NAME', 'develop')
+    branch_name = os.getenv('BRANCH_NAME', '')
     branch_url = f'{github_repo_url}/tree/{branch_name}'
 
-    commit_sha = os.getenv('GITHUB_SHA', '59af45f0b5c5270b5057e2df7995dd0a4d4368bc')
+    commit_sha = os.getenv('GITHUB_SHA', '')
     commit_sha_short = commit_sha[:6]
     commit_url = f'{github_repo_url}/commit/{commit_sha}'
 

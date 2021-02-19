@@ -15,14 +15,17 @@ certificates_dir_path = CONFIG['ci']['project']['subdirs']['certificates_path']
 certificate_file_path = CONFIG.certificate_path
 certificates_zip_path = CONFIG.certificate_zip_path
 
-certificate_password = sys.argv[1]
-zip_password = sys.argv[2]
 
-print('* Unzip certificates')
-with zipfile.ZipFile(certificates_zip_path) as zf:
-    zf.extractall(
-        path=certificates_dir_path,
-        pwd=bytes(zip_password, 'utf-8'))
+def unzipCerts(zip_pass=None):
+
+    if zip_pass is None:
+        zip_pass = sys.argv[2]
+
+    print('* Unzip certificates')
+    with zipfile.ZipFile(certificates_zip_path) as zf:
+        zf.extractall(
+            path=certificates_dir_path,
+            pwd=bytes(zip_pass, 'utf-8'))
 
 
 def sign_linux():
@@ -30,9 +33,10 @@ def sign_linux():
     return
 
 
-def sign_windows():
+def sign_windows(file_to_sign=installer_exe_path, cert_pass=None):
     print('* Code signing for windows')
-
+    if cert_pass is None:
+        cert_pass = sys.argv[1]
     # using local signtool, since installing the whole SDK is a total overkill
     # signtool_exe_path = os.path.join('C:', os.sep, 'Program Files (x86)', 'Windows Kits', '10', 'bin', 'x86', 'signtool.exe')
     signtool_exe_path = os.path.join(certificates_dir_path, 'signtool.exe')
@@ -43,13 +47,13 @@ def sign_windows():
     Functions.run(
         signtool_exe_path, 'sign',              # info - https://msdn.microsoft.com/en-us/data/ff551778(v=vs.71)
         '/f', win_certificate_file_path,        # signing certificate in a file
-        '/p', certificate_password,             # password to use when opening a PFX file
+        '/p', cert_pass,                        # password to use when opening a PFX file
         '/d', app_name,                         # description of the signed content
         '/du', app_url,                         # URL for the expanded description of the signed content
         '/t', 'http://timestamp.digicert.com',  # URL to a timestamp server
         '/v',                                   # display the verbose version of operation and warning messages
         '/a',                                   # Select the best signing cert automatically
-        installer_exe_path)
+        file_to_sign)
 
 
 def sign_macos():
@@ -111,6 +115,7 @@ def sign_macos():
 
 
 if __name__ == "__main__":
+    unzipCerts()
     if CONFIG.os == 'ubuntu':
         sign_linux()
     elif CONFIG.os == 'windows':

@@ -93,7 +93,7 @@ jobs:
       run: poetry run python ${{ env.SCRIPTS_PATH }}/FreezeApp.py
 
     - name: Create app installer from freezed app bundle
-      run: poetry run python ${{ env.SCRIPTS_PATH }}/MakeInstaller.py
+      run: poetry run python ${{ env.SCRIPTS_PATH }}/MakeInstaller.py ${{ secrets.BINARY_SIGN_WIN }} ${{ secrets.CERT_ZIP_PASS }}
 
     - name: Sign the installer on platforms which support it
       run: poetry run python ${{ env.SCRIPTS_PATH }}/Signatures.py ${{ secrets.BINARY_SIGN_WIN }} ${{ secrets.CERT_ZIP_PASS }}

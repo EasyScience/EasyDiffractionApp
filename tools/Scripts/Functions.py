@@ -75,8 +75,8 @@ def installSilently(installer, silent_script):
         message = f'run installer {installer}'
         run(
             installer,
+            '--verbose',
             '--script', silent_script,
-            '--no-force-installations'
             )
     except Exception as exception:
         printFailMessage(message, exception)
@@ -299,3 +299,8 @@ def zip(source, destination):
         sys.exit()
     else:
         printSuccessMessage(message)
+
+def artifactsFileSuffix(branch_name):
+    if branch_name != 'master':
+        return f'_{branch_name}'
+    return ''

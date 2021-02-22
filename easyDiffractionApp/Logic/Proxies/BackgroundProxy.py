@@ -14,6 +14,7 @@ class BackgroundProxy(QObject):
 
     asObjChanged = Signal('QVariant')
     asXmlChanged = Signal()
+    dummySignal = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -23,7 +24,7 @@ class BackgroundProxy(QObject):
 
         self.asObjChanged.connect(self.onAsObjChanged)
 
-    @Property('QVariant', constant=True)
+    @Property('QVariant', notify=dummySignal)
     def asObj(self):
         #print("+ backgroundAsObj")
         return self._background_as_obj

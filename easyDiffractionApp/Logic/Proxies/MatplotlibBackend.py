@@ -12,7 +12,7 @@ from easyAppLogic.Utils.Utils import generalizePath
 
 
 @singleton
-class DisplayBridge(QtCore.QObject):
+class MatplotlibBridge(QtCore.QObject):
     """
     A bridge class to interact with the plot in python
     """

@@ -1,3 +1,8 @@
+import os
+import datetime
+import time
+import pathlib
+
 import json
 from typing import Union
 
@@ -6,7 +11,10 @@ from dicttoxml import dicttoxml
 import timeit
 
 from PySide2.QtCore import QObject, Slot, Signal, Property
+from PySide2.QtCore import QByteArray, QBuffer, QIODevice
+from PySide2.QtCore import QPointF
 from PySide2.QtCharts import QtCharts
+from PySide2.QtGui import QPdfWriter, QTextDocument
 
 from easyCore import np
 from easyCore import borg
@@ -26,9 +34,10 @@ from easyAppLogic.Utils.Utils import generalizePath
 
 from easyDiffractionApp.Logic.DataStore import DataSet1D, DataStore
 
-from easyDiffractionApp.Logic.Proxies.MatplotlibBackend import DisplayBridge
 from easyDiffractionApp.Logic.Proxies.BackgroundProxy import BackgroundProxy
+from easyDiffractionApp.Logic.Proxies.MatplotlibBackend import MatplotlibBridge
 from easyDiffractionApp.Logic.Proxies.QtChartsBackend import QtChartsBridge
+from easyDiffractionApp.Logic.Proxies.BokehBackend import BokehBridge
 from easyDiffractionApp.Logic.Fitter import Fitter as ThreadedFitter
 
 
@@ -47,6 +56,7 @@ class PyQmlProxy(QObject):
     # Structure
     structureParametersChanged = Signal()
     structureViewChanged = Signal()
+    structureViewUpdated = Signal()
 
     phaseAdded = Signal()
     phaseRemoved = Signal()
@@ -73,6 +83,7 @@ class PyQmlProxy(QObject):
 
     # Analysis
     calculatedDataChanged = Signal()
+    calculatedDataUpdated = Signal()
 
     simulationParametersChanged = Signal()
 
@@ -90,8 +101,13 @@ class PyQmlProxy(QObject):
     current1dPlottingLibChanged = Signal()
     current3dPlottingLibChanged = Signal()
 
+    htmlExportingFinished = Signal(bool, str)
+
     # Status info
     statusInfoChanged = Signal()
+    
+    # Misc
+    dummySignal = Signal()
 
     # METHODS
 
@@ -105,8 +121,9 @@ class PyQmlProxy(QObject):
         # Charts
         self._vtk_handler = None
 
+        self._matplotlib_bridge = MatplotlibBridge()
         self._qtcharts_bridge = QtChartsBridge()
-        self._matplotlib_bridge = DisplayBridge()
+        self._bokeh_bridge = BokehBridge()
         self._experiment_figure_canvas = None
         self._analysis_figure_canvas = None
         self._difference_figure_canvas = None
@@ -114,7 +131,7 @@ class PyQmlProxy(QObject):
         self._calculated_series_ref = None
 
         self._show_measured_series = True
-        self._show_difference_chart = True
+        self._show_difference_chart = False
 
         self.current1dPlottingLibChanged.connect(self.onCurrent1dPlottingLibChanged)
         self.current3dPlottingLibChanged.connect(self.onCurrent3dPlottingLibChanged)
@@ -163,10 +180,12 @@ class PyQmlProxy(QObject):
 
         self._background_proxy = BackgroundProxy()
         self._background_proxy.asObjChanged.connect(self._onParametersChanged)
-        self._background_proxy.asObjChanged.connect(self.calculatedDataChanged)
         self._background_proxy.asObjChanged.connect(self._sample.set_background)
+        self._background_proxy.asObjChanged.connect(self.calculatedDataChanged)
 
         # Analysis
+        self._analysis_data = None
+
         self.calculatedDataChanged.connect(self._onCalculatedDataChanged)
 
         self._simulation_parameters_as_obj = self._defaultSimulationParameters()
@@ -198,11 +217,14 @@ class PyQmlProxy(QObject):
         self.parametersFilterCriteriaChanged.connect(self._onParametersFilterCriteriaChanged)
 
         # Plotting
-        self._1d_plotting_libs = ['matplotlib', 'qtcharts']
-        self._current_1d_plotting_lib = self._1d_plotting_libs[0]
+        self._1d_plotting_libs = ['matplotlib', 'qtcharts', 'bokeh']
+        self._current_1d_plotting_lib = self._1d_plotting_libs[2]
 
-        self._3d_plotting_libs = ['vtk', 'qtdatavisualization']
+        self._3d_plotting_libs = ['vtk', 'qtdatavisualization', 'chemdoodle']
         self._current_3d_plotting_lib = self._3d_plotting_libs[0]
+
+        # Report
+        self._report = ""
 
         # Status info
         self.statusInfoChanged.connect(self._onStatusInfoChanged)
@@ -225,14 +247,14 @@ class PyQmlProxy(QObject):
     def setVtkHandler(self, vtk_handler):
         self._vtk_handler = vtk_handler
 
-    @Property(bool, notify=False)
+    @Property(bool, notify=dummySignal)
     def showBonds(self):
         if self._vtk_handler is None:
             return True
         return self._vtk_handler.show_bonds
 
     @showBonds.setter
-    def showBondsSetter(self, show_bonds: bool):
+    def showBonds(self, show_bonds: bool):
         if self._vtk_handler is None or self._vtk_handler.show_bonds == show_bonds:
             return
         self._vtk_handler.show_bonds = show_bonds
@@ -245,7 +267,7 @@ class PyQmlProxy(QObject):
         return self._vtk_handler.max_distance
 
     @bondsMaxDistance.setter
-    def bondsMaxDistanceSetter(self, max_distance: float):
+    def bondsMaxDistance(self, max_distance: float):
         if self._vtk_handler is None or self._vtk_handler.max_distance == max_distance:
             return
         self._vtk_handler.max_distance = max_distance
@@ -262,10 +284,11 @@ class PyQmlProxy(QObject):
     def _onStructureViewChanged(self):
         print("***** _onStructureViewChanged")
         self._updateStructureView()
+        self.structureViewUpdated.emit()
 
     # Matplotlib
 
-    @Property('QVariant', constant=True)
+    @Property('QVariant', notify=dummySignal)
     def matplotlibBridge(self):
         return self._matplotlib_bridge
 
@@ -289,18 +312,19 @@ class PyQmlProxy(QObject):
 
     # QtCharts
 
-    @Slot(QtCharts.QXYSeries)
-    def setCalculatedSeriesRef(self, series_ref):
-        self._calculated_series_ref = series_ref
-
-    @Property('QVariant', constant=True)
-    #@Property('QVariant', notify=phasesAsXmlChanged)
+    @Property('QVariant', notify=dummySignal)
     def qtCharts(self):
         return self._qtcharts_bridge
 
+    # Bokeh
+
+    @Property('QVariant', notify=dummySignal)
+    def bokeh(self):
+        return self._bokeh_bridge
+
     # Plotting libs
 
-    @Property('QVariant', constant=True)
+    @Property('QVariant', notify=dummySignal)
     def plotting1dLibs(self):
         return self._1d_plotting_libs
 
@@ -309,17 +333,20 @@ class PyQmlProxy(QObject):
         return self._current_1d_plotting_lib
 
     @current1dPlottingLib.setter
-    def current1dPlottingLibSetter(self, plotting_lib):
+    def current1dPlottingLib(self, plotting_lib):
         self._current_1d_plotting_lib = plotting_lib
         self.current1dPlottingLibChanged.emit()
 
     def onCurrent1dPlottingLibChanged(self):
         if self.current1dPlottingLib == 'matplotlib':
-            self._updateCalculatedData()
-        elif self.current1dPlottingLib == 'qtcharts':
-            self._qtcharts_bridge.updateAllCharts()
+            if self._experiment_figure_canvas is not None and self._experiment_data is not None:
+                self._matplotlib_bridge.updateData(self._experiment_figure_canvas, [self._experiment_data])
+                self.experimentDataChanged.emit()
+            if self._analysis_figure_canvas is not None and self._analysis_data is not None:
+                self._matplotlib_bridge.updateData(self._analysis_figure_canvas, self._analysis_data)
+                self._updateCalculatedData()
 
-    @Property('QVariant', constant=True)
+    @Property('QVariant', notify=dummySignal)
     def plotting3dLibs(self):
         return self._3d_plotting_libs
 
@@ -328,24 +355,21 @@ class PyQmlProxy(QObject):
         return self._current_3d_plotting_lib
 
     @current3dPlottingLib.setter
-    def current3dPlottingLibSetter(self, plotting_lib):
+    def current3dPlottingLib(self, plotting_lib):
         self._current_3d_plotting_lib = plotting_lib
         self.current3dPlottingLibChanged.emit()
 
     def onCurrent3dPlottingLibChanged(self):
         if self.current3dPlottingLib == 'vtk':
-            print("Warning: Select Vtk. Not implemented yet.")
-        elif self.current3dPlottingLib == 'qtdatavisualization':
-            print("Warning: Select Qt Data Visualization. Not implemented yet.")
+            self._onStructureViewChanged()
 
-    #
 
     @Property(bool, notify=showDifferenceChartChanged)
     def showDifferenceChart(self):
         return self._show_difference_chart
 
     @showDifferenceChart.setter
-    def showDifferenceChartSetter(self, show):
+    def showDifferenceChart(self, show):
         if self._show_difference_chart == show:
             return
         self._show_difference_chart = show
@@ -356,11 +380,23 @@ class PyQmlProxy(QObject):
         return self._show_measured_series
 
     @showMeasuredSeries.setter
-    def showMeasuredSeriesSetter(self, show):
+    def showMeasuredSeries(self, show):
         if self._show_measured_series == show:
             return
         self._show_measured_series = show
         self.showMeasuredSeriesChanged.emit()
+
+    # Charts for report
+
+    @Slot('QVariant', result=str)
+    def imageToSource(self, image):
+        ba = QByteArray()
+        buffer = QBuffer(ba)
+        buffer.open(QIODevice.WriteOnly)
+        image.save(buffer, 'png')
+        data = ba.toBase64().data().decode('utf-8')
+        source = f'data:image/png;base64,{data}'
+        return source
 
     ####################################################################################################################
     ####################################################################################################################
@@ -377,23 +413,54 @@ class PyQmlProxy(QObject):
         return self._project_info
 
     @projectInfoAsJson.setter
-    def projectInfoAsJsonSetter(self, json_str):
+    def projectInfoAsJson(self, json_str):
         self._project_info = json.loads(json_str)
         self.projectInfoChanged.emit()
 
+    @Property(str, notify=projectInfoChanged)
+    def projectInfoAsCif(self):
+        cif_list = []
+        for key, value in self.projectInfoAsJson.items():
+            if ' ' in value:
+                value = f"'{value}'"
+            cif_list.append(f'_{key} {value}')
+        cif_str = '\n'.join(cif_list)
+        return cif_str
+
     @Slot(str, str)
     def editProjectInfo(self, key, value):
+        if self._project_info[key] == value:
+            return
+
         self._project_info[key] = value
         self.projectInfoChanged.emit()
+
+    @Slot()
+    def createProject(self):
+        projectPath = self.projectInfoAsJson['location']
+        mainCif = os.path.join(projectPath, 'project.cif')
+        samplesPath = os.path.join(projectPath, 'samples')
+        experimentsPath = os.path.join(projectPath, 'experiments')
+        calculationsPath = os.path.join(projectPath, 'calculations')
+        if not os.path.exists(projectPath):
+            os.makedirs(projectPath)
+            os.makedirs(samplesPath)
+            os.makedirs(experimentsPath)
+            os.makedirs(calculationsPath)
+            with open(mainCif, 'w') as file:
+                file.write(self.projectInfoAsCif)
+        else:
+            print(f"ERROR: Directory {projectPath} already exists")
 
     def _defaultProjectInfo(self):
         return dict(
             name="Example Project",
-            keywords="diffraction, cfml, cryspy",
-            samples="samples.cif",
-            experiments="experiments.cif",
-            calculations="calculation.cif",
-            modified="18.09.2020, 09:24"
+            location=os.path.join(os.path.expanduser("~"), "Example Project"),
+            short_description="diffraction, powder, 1D",
+            samples="Not loaded",
+            experiments="Not loaded",
+            calculations="Not created",
+            modified=datetime.datetime.now().strftime("%d.%m.%Y %H:%M")
         )
 
     ####################################################################################################################
@@ -433,8 +500,19 @@ class PyQmlProxy(QObject):
         #print("+ phasesAsCif")
         return self._phases_as_cif
 
+    @Property(str, notify=phasesAsCifChanged)
+    def phasesAsExtendedCif(self):
+        if len(self._sample.phases) == 0:
+            return
+
+        symm_ops = self._sample.phases[0].spacegroup.symmetry_opts
+        symm_ops_cif_loop = "loop_\n _symmetry_equiv_pos_as_xyz\n"
+        for symm_op in symm_ops:
+            symm_ops_cif_loop += f' {symm_op.as_xyz_string()}\n'
+        return self._phases_as_cif + symm_ops_cif_loop
+
     @phasesAsCif.setter
-    def phasesAsCifSetter(self, phases_as_cif):
+    def phasesAsCif(self, phases_as_cif):
         print("+ phasesAsCifSetter")
         if self._phases_as_cif == phases_as_cif:
             return
@@ -471,8 +549,8 @@ class PyQmlProxy(QObject):
     ####################################################################################################################
 
     @Slot(str)
-    def addSampleFromCif(self, cif_path):
-        cif_path = generalizePath(cif_path)
+    def addSampleFromCif(self, cif_url):
+        cif_path = generalizePath(cif_url)
         self._sample.phases = Phases.from_cif_file(cif_path)
         self.phaseAdded.emit()
 
@@ -531,7 +609,7 @@ class PyQmlProxy(QObject):
         return current_system
 
     @currentCrystalSystem.setter
-    def currentCrystalSystemSetter(self, new_system: str):
+    def currentCrystalSystem(self, new_system: str):
         new_system = new_system.lower()
         space_group_numbers = SpacegroupInfo.get_ints_from_system(new_system)
         top_space_group_number = space_group_numbers[0]
@@ -567,7 +645,7 @@ class PyQmlProxy(QObject):
         return current_idx
 
     @currentSpaceGroup.setter
-    def currentSpaceGroupSetter(self, new_idx: int):
+    def currentSpaceGroup(self, new_idx: int):
         space_group_numbers = self._spaceGroupNumbers()
         space_group_number = space_group_numbers[new_idx]
         space_group_name = SpacegroupInfo.get_symbol_from_int_number(space_group_number)
@@ -606,7 +684,7 @@ class PyQmlProxy(QObject):
         return current_number
 
     @currentSpaceGroupSetting.setter
-    def currentSpaceGroupSettingSetter(self, new_number: int):
+    def currentSpaceGroupSetting(self, new_number: int):
         settings = self._spaceGroupSettingList()
         name = settings[new_number]
         self._setCurrentSpaceGroup(name)
@@ -658,7 +736,7 @@ class PyQmlProxy(QObject):
         return self._current_phase_index
 
     @currentPhaseIndex.setter
-    def currentPhaseIndexSetter(self, new_index: int):
+    def currentPhaseIndex(self, new_index: int):
         if self._current_phase_index == new_index or new_index == -1:
             return
 
@@ -772,10 +850,11 @@ class PyQmlProxy(QObject):
 
     def _onExperimentDataAdded(self):
         print("***** _onExperimentDataAdded")
-        if self.current1dPlottingLib == 'matplotlib':
+        self._bokeh_bridge.setMeasuredData(self._experiment_data.x, self._experiment_data.y, self._experiment_data.e)
+        self._qtcharts_bridge.setMeasuredData(self._experiment_data.x, self._experiment_data.y, self._experiment_data.e)
+        if self.current1dPlottingLib == 'matplotlib' and self._experiment_figure_canvas is not None and self._experiment_data is not None:
             self._matplotlib_bridge.updateData(self._experiment_figure_canvas, [self._experiment_data])
-        elif self.current1dPlottingLib == 'qtcharts':
-            self._qtcharts_bridge.setMeasuredData(self._experiment_data.x, self._experiment_data.y, self._experiment_data.e)
+
         self._experiment_parameters = self._experimentDataParameters(self._experiment_data)
         self.simulationParametersAsObj = json.dumps(self._experiment_parameters)
         self.experiments = [self._defaultExperiment()]
@@ -796,7 +875,7 @@ class PyQmlProxy(QObject):
         return self._experiment_loaded
 
     @experimentLoaded.setter
-    def experimentLoadedSetter(self, loaded: bool):
+    def experimentLoaded(self, loaded: bool):
         if self._experiment_loaded == loaded:
             return
 
@@ -808,7 +887,7 @@ class PyQmlProxy(QObject):
         return self._experiment_skipped
 
     @experimentSkipped.setter
-    def experimentSkippedSetter(self, skipped: bool):
+    def experimentSkipped(self, skipped: bool):
         if self._experiment_skipped == skipped:
             return
 
@@ -839,7 +918,7 @@ class PyQmlProxy(QObject):
         return self._simulation_parameters_as_obj
 
     @simulationParametersAsObj.setter
-    def simulationParametersAsObjSetter(self, json_str):
+    def simulationParametersAsObj(self, json_str):
         if self._simulation_parameters_as_obj == json.loads(json_str):
             return
 
@@ -927,7 +1006,7 @@ class PyQmlProxy(QObject):
     # Background
     ####################################################################################################################
 
-    @Property('QVariant', constant=True)
+    @Property('QVariant', notify=dummySignal)
     def backgroundProxy(self):
         return self._background_proxy
 
@@ -945,12 +1024,6 @@ class PyQmlProxy(QObject):
         start_time = timeit.default_timer()
 
         if not self.experimentLoaded and not self.experimentSkipped:
-            return
-
-        if self.current1dPlottingLib == 'matplotlib' and self._analysis_figure_canvas is None:
-            return
-
-        if self.current1dPlottingLib == 'qtchart' and self._calculated_series_ref is None:
             return
 
         self._sample.output_index = self.currentPhaseIndex
@@ -974,15 +1047,10 @@ class PyQmlProxy(QObject):
             zeros_diff.y = [exp.y[0] - sim.y[0]]
 
             difference_dataset = [zeros_diff, zeros_diff, diff]
-            analysis_dataset = [exp, sim]
+            self._analysis_data = [exp, sim]
 
-            if self.current1dPlottingLib == 'matplotlib':
-                self._matplotlib_bridge.updateData(self._difference_figure_canvas, difference_dataset)
-######            elif self.current1dPlottingLib == 'qtcharts':
-######                self._qtcharts_bridge.replacePoints('analysis.measured.lower', exp.x, exp.y - 100)
-######                self._qtcharts_bridge.replacePoints('analysis.measured.upper', exp.x, exp.y + 100)
-            #    self._qtcharts_bridge.replacePoints('analysis.difference.lower', diff.x, diff.y)
-            #    self._qtcharts_bridge.replacePoints('analysis.difference.upper', diff.x, diff.y)
+            #if self.current1dPlottingLib == 'matplotlib':
+            #    self._matplotlib_bridge.updateData(self._difference_figure_canvas, difference_dataset)
 
         elif self.experimentSkipped:
             x_min = float(self._simulation_parameters_as_obj['x_min'])
@@ -993,18 +1061,27 @@ class PyQmlProxy(QObject):
             sim.x = np.linspace(x_min, x_max, num_points)
             sim.y = self._interface.fit_func(sim.x)  # CrysPy: 0.5 s, CrysFML: 0.005 s, GSAS-II: 0.25 s
 
-            analysis_dataset = [zeros_sim, sim]
+            self._analysis_data = [zeros_sim, sim]
 
-        if self.current1dPlottingLib == 'matplotlib':
-            self._matplotlib_bridge.updateData(self._analysis_figure_canvas, analysis_dataset)
-        elif self.current1dPlottingLib == 'qtcharts':
-            self._qtcharts_bridge.setCalculatedData(sim.x, sim.y)
+        self._bokeh_bridge.setCalculatedData(sim.x, sim.y)
+        self._qtcharts_bridge.setCalculatedData(sim.x, sim.y)
+        if self.current1dPlottingLib == 'matplotlib' and self._analysis_figure_canvas is not None:
+            self._matplotlib_bridge.updateData(self._analysis_figure_canvas, self._analysis_data)
 
         print("+ _updateCalculatedData: {0:.3f} s".format(timeit.default_timer() - start_time))
 
     def _onCalculatedDataChanged(self):
         print("***** _onCalculatedDataChanged")
         self._updateCalculatedData()
+        self.calculatedDataUpdated.emit()
+
+    @Property(str, notify=calculatedDataUpdated)
+    def calculatedDataXStr(self):
+        return self._calculated_data_x_str
+
+    @Property(str, notify=calculatedDataUpdated)
+    def calculatedDataYStr(self):
+        return self._calculated_data_y_str
 
     ####################################################################################################################
     # Fitables (parameters table from analysis tab & ...)
@@ -1041,7 +1118,7 @@ class PyQmlProxy(QObject):
                 "label": par_path,
                 "value": par.raw_value,
                 "unit": '{:~P}'.format(par.unit),
-                "error": par.error,
+                "error": float(par.error),
                 "fit": int(not par.fixed)
             })
 
@@ -1109,7 +1186,7 @@ class PyQmlProxy(QObject):
 
     # Minimizer
 
-    @Property('QVariant', constant=True)
+    @Property('QVariant', notify=dummySignal)
     def minimizerNames(self):
         return self.fitter.available_engines
 
@@ -1156,7 +1233,7 @@ class PyQmlProxy(QObject):
     # Calculator
     ####################################################################################################################
 
-    @Property('QVariant', constant=True)
+    @Property('QVariant', notify=dummySignal)
     def calculatorNames(self):
         return self._interface.available_interfaces
 
@@ -1258,12 +1335,47 @@ class PyQmlProxy(QObject):
     ####################################################################################################################
     ####################################################################################################################
 
+    @Slot(str)
+    def setReport(self, report):
+        """
+        Keep the QML generated HTML report for saving
+        """
+        self._report = report
+
+    @Slot(str)
+    def saveReport(self, filepath):
+        """
+        Save the generated report to the specified file
+        Currently only html
+        """
+        try:
+            with open(filepath, 'w', encoding='utf-8') as f:
+                f.write(self._report)
+            success = True
+        except IOError:
+            success = False
+        finally:
+            self.htmlExportingFinished.emit(success, filepath)
+
+    ####################################################################################################################
+    ####################################################################################################################
+    # STATUS
+    ####################################################################################################################
+    ####################################################################################################################
+
+    @Property('QVariant', notify=statusInfoChanged)
+    def statusModelAsObj(self):
+        obj = {
+            "calculation": self._interface.current_interface_name,
+            "minimization": f'{self.fitter.current_engine.name} ({self._current_minimizer_method_name})'
+        }
+        return obj
+
     @Property(str, notify=statusInfoChanged)
     def statusModelAsXml(self):
         model = [
-            {"label": "Engine", "value": self._interface.current_interface_name},
-            {"label": "Minimizer", "value": self.fitter.current_engine.name},
-            {"label": "Method", "value": self._current_minimizer_method_name}
+            {"label": "Calculation", "value": self._interface.current_interface_name},
+            {"label": "Minimization", "value": f'{self.fitter.current_engine.name} ({self._current_minimizer_method_name})'}
         ]
         xml = dicttoxml(model, attr_type=False)
         xml = xml.decode()
@@ -1271,3 +1383,4 @@ class PyQmlProxy(QObject):
 
     def _onStatusInfoChanged(self):
         print("***** _onStatusInfoChanged")
+

@@ -6,7 +6,7 @@ build-backend = 'poetry.masonry.api'
 
 [tool.poetry]
 name = 'easyDiffraction'
-version = '0.0.4'
+version = '0.0.5'
 description = 'Making diffraction data analysis and modelling easy.'
 license = 'GPL-3.0-only'
 authors = ['Andrew Sazonov', 'Simon Ward']
@@ -19,37 +19,29 @@ packages = [ { include = 'easyDiffractionApp' } ]
 
 [tool.poetry.dependencies]
 python = '^3.7, <3.8'
-#python = '^3.8, <3.9' # '^3.8' generates error when installing PySide2 in easyAppGui
-#python = '3.7' # PyInstaller 3.6 doesn't support Python 3.8
-matplotlib = '^3.2'
-matplotlib_backend_qtquick = { git = 'https://github.com/easyScience/matplotlib_backend_qtquick', rev = 'master' }
-vtk = '^8.1'
+matplotlib-backend-qtquick = '^0.0.8'
+vtk = '^8.1.2'
+pyobjc-core = { version = '^7.1', platform = 'darwin' }
+pyobjc-framework-cocoa = { version = '^7.1', platform = 'darwin' }
 # easyScience
-easyCore = { git = 'https://github.com/easyScience/easyCore.git', rev = 'xarray' }
 easyDiffractionLib = { git = 'https://github.com/easyScience/easyDiffractionLib.git', rev = 'develop' }
 easyAppLogic = { git = 'https://github.com/easyScience/easyAppLogic.git', rev = 'develop' }
 easyAppGui = { git = 'https://github.com/easyScience/easyAppGui.git', rev = 'develop' }
 
-[tool.poetry.dev-dependencies]
+#[tool.poetry.dev-dependencies]
 # PyInstaller
-pyinstaller = '^4.1'
-#pyinstaller = { git = 'https://github.com/pyinstaller/pyinstaller.git', rev = 'develop' }
-macholib = '^1.14'
-pywin32-ctypes = { version = '^0.2', platform = 'win32' }
+#pyinstaller = '^4.2'
+pyinstaller = { git = 'https://github.com/pyinstaller/pyinstaller.git', rev = 'develop' }
+pywin32-ctypes = { version = '^0.2.0', platform = 'win32' }
 pypiwin32 = { version = '^223', platform = 'win32' }
-pefile = { version = '^2019.4', platform = 'win32' }
+pefile = { version = '^2019.4.18', platform = 'win32' }
 # Misc
-toml = '^0.10'
-requests = '^2.24'
-dephell_licenses = '^0.1'
-ffmpeg-python = '^0.2'
-googletrans = '^3.0'
-gTTS = '^2.2'
-# easyScience
-#easyCore = { path = '../easyCore/' }
-#easyDiffractionLib = { path = '../easyDiffractionLib/' }
-#easyAppLogic = { path = '../easyAppLogic/' }
-#easyAppGui = { path = '../easyAppGui/' }
+toml = '^0.10.2'
+requests = '^2.25.1'
+dephell_licenses = '^0.1.7'
+ffmpeg-python = '^0.2.0'
+googletrans = '^3.0.0'
+gTTS = '^2.2.2'
 
 [tool.poetry.scripts]
 easyDiffraction = 'easyDiffractionApp.main:main'
@@ -86,7 +78,7 @@ os = { macos = 'macOS', ubuntu = 'Linux', windows = 'Windows' }  # Should be the
 arch = { macos = 'x86-64', ubuntu = 'x86-64', windows = 'x86-32' }
 file_ext = { macos = '.app', ubuntu = '', windows = '.exe' }
 maintenance_tool_suffix = 'MaintenanceTool'
-installation_dir = { macos = '/Applications', ubuntu = '/opt', windows = 'ProgramFiles(x86)' }
+installation_dir = { macos = '/Applications', ubuntu = '/opt', windows = 'C:/' }  # env: ProgramFiles(x86), qtifw: @RootDir@
 
 [ci.app.setup.ftp]
 host = 'ftp.apptimity.com'
@@ -113,7 +105,7 @@ app_package_subdir = 'app'
 #docs_package_version = '2020.7.11'
 
 [ci.app.tutorials.video]
-fps = 16                # Frames per Second
+fps = 25                # Frames per Second
 crf = 18                # Constant Rate Factor
 preset = 'slower'
 movflags = 'faststart'
@@ -141,12 +133,12 @@ missing_pyside2_files = { macos = ['libshiboken2.abi3.*.dylib'], ubuntu = [], wi
 missing_pyside2_plugins = { macos = [], ubuntu = ['Qt/plugins/xcbglintegrations'], windows = [] } # EGL and GLX plugins
 auto_exclude = { macos = ['_tkinter'], ubuntu = ['_tkinter'], windows = [''], all = [ 'lib2to3', '_bisect',
                 '_codecs_cn', '_codecs_hk', '_codecs_iso2022', '_codecs_jp', '_codecs_kr', '_codecs_tw',
-                '_curses', '_elementtree', '_hashlib', '_heapq', '_lzma', '_multibytecodec', '_multiprocessing',
+                '_curses', '_elementtree', '_hashlib', '_heapq', '_multibytecodec', '_multiprocessing',
                 '_opcode', '_queue', '_opcode', '_uuid', '_win32sysloader', 'grp', 'readline', 'termios' ] }
 manual_exclude = [ 'd3dcompiler*', 'libbispeu*', 'libdqag*', 'libvode*', 'mfc*', 'msvcp*', 'VCRUNTIME*',
                    '*Qt*3D*', '*Qt*Bluetooth*', '*Qt*Bodymovin*', '*Qt*Concurrent*', '*Qt*Gamepad*', '*Qt*Location*',
-                   '*Qt*Nfc*', '*Qt*Positioning*', '*Qt*Purchasing*', '*Qt*QuickParticles*', '*Qt*QuickShapes*',
-                   '*Qt*RemoteObjects*', '*Qt*Scxml*', '*Qt*Sensors*', '*Qt*Sql*', '*Qt*VirtualKeyboard*', '*Qt*Wayland*', '*Qt*Web*' ]
+                   '*Qt*Nfc*', '*Qt*Purchasing*', '*Qt*QuickParticles*', '*Qt*QuickShapes*', '*Qt*RemoteObjects*',
+                   '*Qt*Scxml*', '*Qt*Sensors*', '*Qt*Sql*', '*Qt*VirtualKeyboard*', '*Qt*Wayland*' ]
 
 [ci.qtifw.setup]
 version = '4.0.1'
@@ -155,7 +147,7 @@ base_path = 'official_releases/qt-installer-framework'
 file_name_base = 'QtInstallerFramework-'
 file_name_suffix = { macos = 'mac-x64', ubuntu = 'linux-x64', windows = 'win-x86' }
 file_ext = { macos = '.dmg', ubuntu = '.run', windows = '.exe' }
-installation_path = { macos = '/Users/runner/Qt', ubuntu = '/home/runner/Qt', windows = 'C:\Qt' }
+installation_path = { macOS = '/Users/runner/Qt', Linux = '/home/runner/Qt', Windows = 'C:\Qt' }
 
 [ci.ffmpeg.macos]  # https://evermeet.cx/ffmpeg/ffmpeg-4.3.zip
 version = '4.3.1'

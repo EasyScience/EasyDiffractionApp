@@ -11,6 +11,7 @@ import Gui.Globals 1.0 as ExGlobals
 Item {
     id: root
 
+
     Column {
         anchors.centerIn: parent
         spacing: EaStyle.Sizes.fontPixelSize * 2.5
@@ -18,6 +19,7 @@ Item {
         // Application logo, name and version
         Column {
             anchors.horizontalCenter: parent.horizontalCenter
+            spacing: 0
 
             // Application logo
             Image {
@@ -51,17 +53,8 @@ Item {
             // Application version
             EaElements.Label {
                 anchors.horizontalCenter: parent.horizontalCenter
-                text: ExGlobals.Constants.branch && ExGlobals.Constants.branch !== 'master'
-                      ? qsTr(`Version <a href="${ExGlobals.Constants.commitUrl}">${ExGlobals.Constants.appVersion}-${ExGlobals.Constants.commit}</a> (${ExGlobals.Constants.appDate})`)
-                      : qsTr(`Version ${ExGlobals.Constants.appVersion} (${ExGlobals.Constants.appDate})`)
-            }
-
-            // Github branch
-            EaElements.Label {
-                visible: ExGlobals.Constants.branch && ExGlobals.Constants.branch !== 'master'
-                topPadding: EaStyle.Sizes.fontPixelSize * 0.5
-                anchors.horizontalCenter: parent.horizontalCenter
-                text: qsTr(`Branch <a href="${ExGlobals.Constants.branchUrl}">${ExGlobals.Constants.branch}</a>`)
+                font.family: EaStyle.Fonts.secondExpandedFontFamily
+                text: qsTr("Version %1 (%2)".arg(ExGlobals.Constants.appVersion).arg(ExGlobals.Constants.appDate))
             }
         }
 
@@ -88,10 +81,8 @@ Item {
                 spacing: EaStyle.Sizes.fontPixelSize
 
                 EaElements.Button {
-                    enabled: true
-                    id: aboutButton
+                    enabled: false
                     text: qsTr("About %1".arg(ExGlobals.Constants.appName))
-                    onClicked: EaGlobals.Variables.showAppAboutDialog = true
                 }
                 EaElements.Button {
                     enabled: false
@@ -140,8 +131,6 @@ Item {
 
     EaElements.RemoteController {
         id: rc
-        visible: false
-        sayEnabled: false
         audioDir: Qt.resolvedUrl("../../Resources/Audio")
     }
 
@@ -262,8 +251,6 @@ Item {
     function runTutorial2() {
         print("* run Tutorial 2")
 
-        rc.visible = true
-
         // Start
 
         let x_pos = undefined
@@ -274,18 +261,21 @@ Item {
         rc.posToCenter()
         rc.show()
 
+        //return
+
         // Home Tab
 
         rc.say("To start working with easy diffraction, just click start button.")
         rc.mouseClick(ExGlobals.Variables.startButton)
 
+        //return
+
         // Project Tab
 
-        //rc.say("Here, you can create a new project.")
-        //rc.mouseClick(ExGlobals.Variables.createProjectButton)
+        rc.say("Here, you can create a new project.")
+        rc.mouseClick(ExGlobals.Variables.createProjectButton)
 
-        rc.say("Now, you can continue without creating a project.")
-        rc.mouseClick(ExGlobals.Variables.continueWithoutProjectButton)
+        //return
 
         // Sample Tab
 
@@ -345,30 +335,16 @@ Item {
         rc.mouseClick(ExGlobals.Variables.calculatorSelector)
         rc.mouseClick(ExGlobals.Variables.analysisBasicControlsTabButton)
 
-        // Summary Tab
-
-        rc.say("Now, you can see the interactive report generated on the summary page and export it in different formats.")
-        rc.mouseClick(ExGlobals.Variables.summaryTabButton)
-        rc.wait(1000)
-        rc.pointerMove(ExGlobals.Variables.reportWebView)
-        //rc.mouseMove(ExGlobals.Variables.reportWebView)
-        //rc.mouseWheel(ExGlobals.Variables.reportWebView)
-        rc.wait(1000)
-
         // End
 
         rc.hide()
         rc.say("Thank you for using easy diffraction.")
         rc.wait(1000)
         endSavingScreenshots()
-
-        rc.visible = false
     }
 
     function runTutorial3() {
         print("* run Tutorial 3")
-
-        rc.visible = true
 
         startSavingScreenshots()
         rc.wait(1000)
@@ -396,8 +372,6 @@ Item {
         rc.hide()
         rc.wait(1000)
         endSavingScreenshots()
-
-        rc.visible = false
     }
 
 

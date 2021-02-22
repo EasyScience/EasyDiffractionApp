@@ -14,9 +14,10 @@ jobs:
 
     # CI skip conditions
     if: "!contains(github.event.head_commit.message, '[ci skip]')"
+    #if: false
 
     # Change default timeout
-    timeout-minutes: 20
+    timeout-minutes: 15
 
     # The type of runner that the job will run on
     runs-on: ${{ matrix.os }}
@@ -24,7 +25,7 @@ jobs:
     # Build matrix for different platforms
     strategy:
       matrix:
-        os: [macos-10.15, ubuntu-20.04, windows-2019] # macos-11.0, macOS-11.0 - doesn't work
+        os: [macos-10.15, ubuntu-latest, windows-latest]
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -32,76 +33,84 @@ jobs:
     - name: Check-out repository
       uses: actions/checkout@v2
 
-    - name: Set up non-Python dependences
+    #- name: Set up access to private repos
+    #  uses: webfactory/ssh-agent@v0.4.1
+    #  with:
+    #    ssh-private-key: ${{ secrets.GH_WEBFACTORY_KEY }}
+
+    - name: Set up dependences
       if: runner.os == 'Linux'
       run: sudo apt-get install libgfortran4
 
     - name: Set up Python environment
       uses: actions/setup-python@v2
       with:
-          python-version: 3.7
+          python-version: 3.7 #3.8
 
-    - name: Declare env variables on push only
-      if: github.event_name == 'push'
-      shell: bash
-      run: echo "BRANCH_NAME=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
-
-    - name: Declare env variables on pull_request only
-      if: github.event_name == 'pull_request'
-      shell: bash
-      run: echo "BRANCH_NAME=$GITHUB_HEAD_REF" >> $GITHUB_ENV
-
-    - name: Add extra info to pyproject.toml
-      run: python utils.py --update
-
-    # https://docs.github.com/en/actions/reference/environment-variables
-    - name: Declare env variables on push and pull_request
+    - name: Set up project config parser & Declare env variables
       shell: bash
       run: |
-        echo "APP_NAME=$(python utils.py --get tool.poetry.name)" >> $GITHUB_ENV
-        echo "SCRIPTS_PATH=$(python utils.py --get ci.project.subdirs.scripts)" >> $GITHUB_ENV
-        echo "DISTRIBUTION_PATH=$(python utils.py --get ci.project.subdirs.distribution)" >> $GITHUB_ENV
-        echo "DOWNLOAD_PATH=$(python utils.py --get ci.project.subdirs.download)" >> $GITHUB_ENV
-        echo "QTIFW_PATH=$(python utils.py --get ci.qtifw.setup.installation_path.${{ runner.os }})" >> $GITHUB_ENV
-        echo "PYTHON_PACKAGES_PATH=$(python utils.py --get ci.cache.python_packages_path)" >> $GITHUB_ENV
-        echo "GIT_INSTALL_URL=git+$GITHUB_SERVER_URL/$GITHUB_REPOSITORY@${{ env.BRANCH_NAME }}" >> $GITHUB_ENV
+        pip install toml
+        echo "SHORT_GITHUB_REF=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+        echo "PYTHON_LOCATION=$pythonLocation" >> $GITHUB_ENV
+        echo "SCRIPTS_PATH=$(python pyproject.py ci.project.subdirs.scripts)" >> $GITHUB_ENV
+        echo "DOWNLOAD_PATH=$(python pyproject.py ci.project.subdirs.download)" >> $GITHUB_ENV
+        echo "DISTRIBUTION_PATH=$(python pyproject.py ci.project.subdirs.distribution)" >> $GITHUB_ENV
+        echo "APP_NAME=$(python pyproject.py tool.poetry.name)" >> $GITHUB_ENV
+        echo "POETRY_VENV_PATH=$(python pyproject.py ci.poetry.venv_path.${{ runner.os }})" >> $GITHUB_ENV
+        echo "QTIFW_PATH=$(python pyproject.py ci.qtifw.setup.installation_path.${{ runner.os }})" >> $GITHUB_ENV
 
-    #- name: Cache dependencies
-    #  uses: actions/cache@v2
-    #  with:
-    #    path: |
-    #      ${{ env.DOWNLOAD_PATH }}
-    #      ${{ env.QTIFW_PATH }}
-    #      ${{ env.PYTHON_PACKAGES_PATH }}
-    #    key: ${{ matrix.os }}-${{ hashFiles('pyproject.toml') }}
+    - name: Cache dependencies
+      uses: actions/cache@v2
+      with:
+        path: |
+          ${{ env.POETRY_VENV_PATH }}
+          ${{ env.QTIFW_PATH }}
+          ${{ env.DOWNLOAD_PATH }}
+        key: ${{ matrix.os }}-poetry-${{ hashFiles('pyproject.toml') }}
 
-    - name: Upgrade pip
-      run: python -m pip install --upgrade pip
+    - name: Set up python packages manager
+      uses: Gr1N/setup-poetry@v4
 
-    - name: Set up Python dependences
-      run: pip install ${{ env.GIT_INSTALL_URL }}
+    - name: Create venv and install dependences
+      # poetry self update: Update poetry
+      # --upgrade pip: To get rid of ERROR: No matching distribution found for opencv-python-headless==4.3.0.36
+      # WIN ERROR: Could not install packages due to an EnvironmentError: [WinError 5] Access is denied: 'C:\\Users\\runneradmin\\AppData\\Local\\Temp\\pip-uninstall-w29qfiig\\pip.exe'
+      # Consider using the `--user` option or check the permissions.
+      # --upgrade setuptools: To get rid of ModuleNotFoundError: No module named 'pkg_resources.py2_warn'
+      # poetry update: Install dependencies or update them
+      run: |
+        poetry env info
+        poetry env use 3.7
+        poetry update
 
     - name: Relink CrysFML from default Python dylib
-      run: python ${{ env.SCRIPTS_PATH }}/RelinkCrysfml.py
+      # run: poetry run python ${{ env.SCRIPTS_PATH }}/RelinkCrysfml.py ${{ env.PYTHON_LOCATION }}
+      run: poetry run python ${{ env.SCRIPTS_PATH }}/RelinkCrysfml.py
 
     - name: Create freezed python app bundle
-      run: python ${{ env.SCRIPTS_PATH }}/FreezeApp.py
+      run: poetry run python ${{ env.SCRIPTS_PATH }}/FreezeApp.py
 
     - name: Create app installer from freezed app bundle
-      run: python ${{ env.SCRIPTS_PATH }}/MakeInstaller.py
+      run: poetry run python ${{ env.SCRIPTS_PATH }}/MakeInstaller.py
 
     - name: Install and run app in test mode to create GUI test videos
       if: runner.os == 'macOS'
       run: |
-        python ${{ env.SCRIPTS_PATH }}/InstallApp.py
-        python ${{ env.SCRIPTS_PATH }}/RunApp.py test
-        python ${{ env.SCRIPTS_PATH }}/CreateTestVideos.py ${{ env.BRANCH_NAME }}
+        poetry run python ${{ env.SCRIPTS_PATH }}/InstallApp.py
+        poetry run python ${{ env.SCRIPTS_PATH }}/RunApp.py test
+        poetry run python ${{ env.SCRIPTS_PATH }}/CreateTestVideos.py
+
+    - name: Upload GUI test videos to GitHub repository
+      if: runner.os == 'macOS'
+      uses: stefanzweifel/git-auto-commit-action@v4
+      with:
+        commit_message: Upload GUI test videos
 
     - name: Create zip archive of app installer
-      run: python ${{ env.SCRIPTS_PATH }}/ZipArtifacts.py ${{ env.BRANCH_NAME }}
+      run: poetry run python ${{ env.SCRIPTS_PATH }}/ZipArtifacts.py ${{ env.SHORT_GITHUB_REF }}
 
     - name: Upload zipped app installer to GitHub releases
-      if: github.event_name == 'push'
       uses: ncipollo/release-action@v1
       with:
         draft: true
@@ -109,10 +118,9 @@ jobs:
         allowUpdates: true
         replacesArtifacts: true
         token: ${{ secrets.GITHUB_TOKEN }}
-        artifacts: "${{ env.DISTRIBUTION_PATH }}/${{ env.APP_NAME }}_*.zip,${{ env.DISTRIBUTION_PATH }}/tutorial_*.mp4"
-        tag: ${{ env.BRANCH_NAME }}
-        commit: ${{ env.BRANCH_NAME }}
+        commit: ${{ env.SHORT_GITHUB_REF }}
+        tag: ${{ env.SHORT_GITHUB_REF }}
+        artifacts: "${{ env.DISTRIBUTION_PATH }}/${{ env.APP_NAME }}_*.zip"
 
-    - name: Upload app installer repository to FTP
-      if: github.event_name == 'push'
-      run: python ${{ env.SCRIPTS_PATH }}/DeployFtp.py ${{ env.BRANCH_NAME }} ${{ secrets.FTP_PASSWORD }}
+    - name: Deploy app installer repository via FTP
+      run: poetry run python ${{ env.SCRIPTS_PATH }}/DeployFtp.py ${{ env.SHORT_GITHUB_REF }} ${{ secrets.FTP_PASSWORD }}

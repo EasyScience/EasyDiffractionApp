@@ -14,17 +14,7 @@ class FboRenderer(QQuickFramebufferObject.Renderer):
     def __init__(self):
         super().__init__()
         self.renderer = RendererHelper()
-        self._devicePixelRatio = 1
         self.__fbo = None
-
-    @property
-    def devicePixelRatio(self):
-        return self._devicePixelRatio
-
-    @devicePixelRatio.setter
-    def devicePixelRatio(self, value):
-        self._devicePixelRatio = value
-        self.renderer.devicePixelRatio = value
 
     def render(self):
         self.renderer.render()
@@ -62,7 +52,6 @@ class RendererHelper(QObject):
         self.__m_vtkFboItem = None
         self.gl = QOpenGLFunctions()
 
-        self.devicePixelRatio = 1
         self.__m_mouseLeftButton: QMouseEvent = None
         self.__m_mouseEvent: QMouseEvent = None
         self.__m_moveEvent: QMouseEvent = None
@@ -94,8 +83,8 @@ class RendererHelper(QObject):
     def synchronize(self, item: QQuickFramebufferObject):
         qDebug('SYNC')
         rendererSize = self.renderWindow.GetSize()
-        if self.__m_vtkFboItem.width()*self.devicePixelRatio != rendererSize[0] or self.__m_vtkFboItem.height()*self.devicePixelRatio != rendererSize[1]:
-            self.renderWindow.SetSize(int(self.__m_vtkFboItem.width()*self.devicePixelRatio), int(self.__m_vtkFboItem.height()*self.devicePixelRatio))
+        if self.__m_vtkFboItem.width() != rendererSize[0] or self.__m_vtkFboItem.height() != rendererSize[1]:
+            self.renderWindow.SetSize(int(self.__m_vtkFboItem.width()), int(self.__m_vtkFboItem.height()))
 
         # * Copy mouse events
         qDebug(f'Mouse : {self.__m_vtkFboItem.getLastMouseButton().isAccepted()}')

@@ -9,10 +9,8 @@ import QtVTK 1.0
 import easyAppGui.Style 1.0 as EaStyle
 import easyAppGui.Elements 1.0 as EaElements
 
-import Gui.Globals 1.0 as ExGlobals
-
 Rectangle {
-    id: chartContainer
+    id: screenCanvasUI
 
     VtkFboItem {
         id: vtkFboItem
@@ -67,29 +65,5 @@ Rectangle {
 
         text: `Axes colors: <font color=red>a</font>, <font color=#008000>b</font>, <font color=blue>c</font>`
     }
-
-    /*
-    // Save chart
-
-    property int chartChangedTime: ExGlobals.Constants.proxy.structureChartChangedTime
-    onChartChangedTimeChanged: saveChartTimer.restart()
-
-    Timer {
-        id: saveChartTimer
-        interval: 1000
-        onTriggered: saveChart()
-    }
-
-    function saveChart() {
-        const imgWidth = chartContainer.width
-        const imgHeight = chartContainer.height / chartContainer.width * imgWidth
-        chartContainer.grabToImage(
-                    function(result) {
-                        ExGlobals.Variables.structureImageSource = ExGlobals.Constants.proxy.imageToSource(result.image)
-                    },
-                    Qt.size(imgWidth, imgHeight)
-                    )
-    }
-    */
 
 }

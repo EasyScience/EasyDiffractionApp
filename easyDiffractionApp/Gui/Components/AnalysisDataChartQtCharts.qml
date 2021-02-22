@@ -9,8 +9,6 @@ import easyAppGui.Charts 1.0 as EaCharts
 import Gui.Globals 1.0 as ExGlobals
 
 Rectangle {
-    id: chartContainer
-
     property bool showMeasured: false
     property bool showDifference: false
 
@@ -26,12 +24,12 @@ Rectangle {
         id: topChart
 
         anchors.top: parent.top
-        anchors.bottom: parent.bottom //bottomChart.top
+        anchors.bottom: bottomChart.top
         anchors.left: parent.left
         anchors.right: parent.right
 
         anchors.margins: -12 + EaStyle.Sizes.fontPixelSize * 2
-        //anchors.bottomMargin: bottomChart.visible ? 0 : anchors.topMargin
+        anchors.bottomMargin: bottomChart.visible ? 0 : anchors.topMargin
 
         //antialiasing: true
 
@@ -39,9 +37,9 @@ Rectangle {
             id: topAxisX
 
             title: xAxisTitle
-            //titleVisible: !bottomChart.visible
+            titleVisible: !bottomChart.visible
 
-            //labelsVisible: !bottomChart.visible
+            labelsVisible: !bottomChart.visible
             labelFormat: xLabelFormat()
 
             min: ExGlobals.Constants.proxy.qtCharts.analysisXmin
@@ -59,7 +57,6 @@ Rectangle {
             max: ExGlobals.Constants.proxy.qtCharts.analysisYmax
         }
 
-        /*
         EaCharts.AreaSeries {
             visible: ExGlobals.Constants.proxy.showMeasuredSeries
 
@@ -93,54 +90,22 @@ Rectangle {
             axisX: topAxisX
             axisY: topAxisY
 
-            onPointsReplaced: saveChartTimer.restart()
-
             Component.onCompleted: {
                 setDefaultCalculatedSeries()
                 ExGlobals.Constants.proxy.qtCharts.setAnalysisCalculated(calculated)
             }
         }
-        */
 
-        EaCharts.LineSeries {
-            id: experiment
-
-            color: EaStyle.Colors.chartForegrounds[0]
-
-            axisX: topAxisX
-            axisY: topAxisY
-
-            customPoints: ExGlobals.Constants.proxy.qtCharts.measuredDataPoints
-        }
-
-        EaCharts.LineSeries {
-            id: calculated
-
-            color: EaStyle.Colors.chartForegrounds[1]
-
-            axisX: topAxisX
-            axisY: topAxisY
-
-            customPoints: ExGlobals.Constants.proxy.qtCharts.calculatedDataPoints
-        }
-
-        /*
-        onPlotAreaChanged: {
-            if (bottomChart.visible) {
-                adjustLeftAxesAnchor()
-            }
-        }
-        */
+        onPlotAreaChanged: adjustLeftAxesAnchor()
     }
 
     // Difference (bottom) chart
-
-    /*
 
     EaCharts.ChartView {
         id: bottomChart
 
         visible: ExGlobals.Constants.proxy.showDifferenceChart && ExGlobals.Constants.proxy.experimentLoaded
+
         height: visible ? 0.3 * parent.height : 0
 
         anchors.bottom: parent.bottom
@@ -209,24 +174,22 @@ Rectangle {
             lowerSeries: LineSeries {
                 id: differenceLower
                 Component.onCompleted: {
-                    //setDefaultDifferenceLowerSeries()
-                    //ExGlobals.Constants.proxy.qtCharts.setAnalysisDifferenceLower(differenceLower)
+                    setDefaultDifferenceLowerSeries()
+                    ExGlobals.Constants.proxy.qtCharts.setAnalysisDifferenceLower(differenceLower)
                 }
             }
 
             upperSeries: LineSeries {
                 id: differenceUpper
                 Component.onCompleted: {
-                    //setDefaultDifferenceUpperSeries()
-                    //ExGlobals.Constants.proxy.qtCharts.setAnalysisDifferenceUpper(differenceUpper)
+                    setDefaultDifferenceUpperSeries()
+                    ExGlobals.Constants.proxy.qtCharts.setAnalysisDifferenceUpper(differenceUpper)
                 }
             }
         }
 
         onPlotAreaChanged: adjustLeftAxesAnchor()
     }
-
-    */
 
     // Helpers
 
@@ -235,24 +198,7 @@ Rectangle {
         visible: false
     }
 
-    Timer {
-        id: saveChartTimer
-        interval: 1000
-        onTriggered: saveChart()
-    }
-
     // Logic
-
-    function saveChart() {
-        const imgWidth = chartContainer.width
-        const imgHeight =  chartContainer.height / chartContainer.width * imgWidth
-        chartContainer.grabToImage(
-                    function(result) {
-                        ExGlobals.Variables.analysisImageSource = ExGlobals.Constants.proxy.imageToSource(result.image)
-                    },
-                    Qt.size(imgWidth, imgHeight)
-                    )
-    }
 
     function setDefaultCalculatedSeries() {
         const arrays = ExGlobals.Constants.proxy.qtCharts.arrays
@@ -328,10 +274,9 @@ Rectangle {
     }
 
     function yLabelFormat() {
-        //const topAxisYRange = topAxisY.max - topAxisY.min
-        //const bottomAxisYRange = bottomAxisY.max - bottomAxisY.min
-        //const range = Math.min(topAxisYRange, bottomAxisYRange)
-        const range = topAxisY.max - topAxisY.min
+        const topAxisYRange = topAxisY.max - topAxisY.min
+        const bottomAxisYRange = bottomAxisY.max - bottomAxisY.min
+        const range = Math.min(topAxisYRange, bottomAxisYRange)
         return labelFormat(range)
     }
 
@@ -363,6 +308,7 @@ Rectangle {
             topChart.anchors.leftMargin = defaultLeftMargin - extraMargin
         }
     }
+
 
 }
 

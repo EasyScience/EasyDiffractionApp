@@ -37,12 +37,11 @@ EaComponents.SideBarColumn {
 
                 enabled: !ExGlobals.Constants.proxy.experimentLoaded && !ExGlobals.Constants.proxy.experimentSkipped
 
-                fontIcon: "arrow-circle-right"
+                fontIcon: "chevron-circle-right"
                 text: qsTr("Continue without experiment data")
 
                 onClicked: {
                     ExGlobals.Variables.analysisPageEnabled = true
-                    ExGlobals.Variables.summaryPageEnabled = true
                     ExGlobals.Constants.proxy.experimentSkipped = true
                 }
 
@@ -136,7 +135,6 @@ EaComponents.SideBarColumn {
 
         onAccepted: {
             ExGlobals.Variables.analysisPageEnabled = true
-            ExGlobals.Variables.summaryPageEnabled = true
             ExGlobals.Constants.proxy.experimentSkipped = false
             ExGlobals.Constants.proxy.experimentLoaded = true
             ExGlobals.Constants.proxy.addExperimentDataFromXye(fileUrl)

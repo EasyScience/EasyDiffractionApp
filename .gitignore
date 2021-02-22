@@ -44,6 +44,5 @@ build
 *.zip
 temp.cif
 temp.prm
-settings.ini
 .ci/
 .idea/

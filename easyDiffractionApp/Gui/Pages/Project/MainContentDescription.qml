@@ -35,19 +35,11 @@ Rectangle {
 
             EaElements.Label {
                 font.bold: true
-                text: qsTr("Short description:")
+                text: qsTr("Keywords:")
             }
             EaElements.TextInput {
-                text: ExGlobals.Constants.proxy.projectInfoAsJson.short_description
-                onEditingFinished: ExGlobals.Constants.proxy.editProjectInfo("short_description", text)
-            }
-
-            EaElements.Label {
-                font.bold: true
-                text: qsTr("Location:")
-            }
-            EaElements.Label {
-                text: ExGlobals.Constants.proxy.projectInfoAsJson.location
+                text: ExGlobals.Constants.proxy.projectInfoAsJson.keywords
+                onEditingFinished: ExGlobals.Constants.proxy.editProjectInfo("keywords", text)
             }
 
             EaElements.Label {

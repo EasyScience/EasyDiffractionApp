@@ -35,7 +35,7 @@ def addedData():
             {'from': easyDiffractionLib.__path__[0], 'to': 'easyDiffractionLib'},
             {'from': easyAppLogic.__path__[0], 'to': 'easyAppLogic'},
             {'from': easyAppGui.__path__[0], 'to': 'easyAppGui'},
-            {'from': 'utils.py', 'to': '.'},
+            {'from': 'pyproject.py', 'to': '.'},
             {'from': 'pyproject.toml', 'to': '.'}]
     formatted = []
     for element in data:

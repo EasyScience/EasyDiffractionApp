@@ -10,8 +10,6 @@ import easyAppGui.Elements 1.0 as EaElements
 import Gui.Globals 1.0 as ExGlobals
 
 Rectangle {
-    id: chartContainer
-
     property bool showLegend: ExGlobals.Variables.showLegend
 
     color: EaStyle.Colors.mainContentBackground
@@ -96,7 +94,7 @@ Rectangle {
         id: analysisDataChartContainer
 
         anchors.top: chartControlsContainer.bottom
-        anchors.bottom: parent.bottom //differenceDataChartContainer.top
+        anchors.bottom: differenceDataChartContainer.top
         anchors.left: parent.left
         anchors.right: parent.right
 
@@ -121,12 +119,11 @@ Rectangle {
         }
     }
 
-    /*
     Rectangle {
         id: differenceDataChartContainer
 
-        visible: ExGlobals.Constants.proxy.showDifferenceChart && ExGlobals.Constants.proxy.experimentLoaded
-        height: visible ? parent.height * 0.25 : 0
+        visible: ExGlobals.Constants.proxy.experimentLoaded
+        height: ExGlobals.Constants.proxy.experimentLoaded ? parent.height * 0.25 : 0
 
         anchors.bottom: parent.bottom
         anchors.left: analysisDataChartContainer.anchors.left
@@ -152,36 +149,11 @@ Rectangle {
             Component.onCompleted: ExGlobals.Constants.proxy.setDifferenceFigureCanvas(differenceDataChart)
         }
     }
-    */
 
     /*
     onShowLegendChanged: {
         ExGlobals.Constants.proxy.matplotlibBridge.showLegend(showLegend, analysisDataChart)
         ExGlobals.Constants.proxy.matplotlibBridge.showLegend(showLegend, differenceDataChart)
-    }
-    */
-
-    // Save chart
-
-    /*
-    property int chartChangedTime: ExGlobals.Constants.proxy.analysisChartChangedTime
-    onChartChangedTimeChanged: saveChartTimer.restart()
-
-    Timer {
-        id: saveChartTimer
-        interval: 1000
-        onTriggered: saveChart()
-    }
-
-    function saveChart() {
-        const imgWidth = chartContainer.width
-        const imgHeight = chartContainer.height / chartContainer.width * imgWidth
-        chartContainer.grabToImage(
-                    function(result) {
-                        ExGlobals.Variables.analysisImageSource = ExGlobals.Constants.proxy.imageToSource(result.image)
-                    },
-                    Qt.size(imgWidth, imgHeight)
-                    )
     }
     */
 

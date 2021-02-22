@@ -42,7 +42,7 @@ EaComponents.SideBarColumn {
     EaElements.GroupBox {
         title: qsTr("Minimization")
         enabled: ExGlobals.Constants.proxy.experimentLoaded
-        //collapsed: false
+        collapsed: false
 
         Row {
             spacing: EaStyle.Sizes.fontPixelSize
@@ -100,10 +100,34 @@ EaComponents.SideBarColumn {
 
     }
 
-    /*
+    EaElements.GroupBox {
+        title: qsTr("Plotting")
+        collapsed: false
+
+        Row {
+            spacing: EaStyle.Sizes.fontPixelSize
+
+            // Plotting
+            EaComponents.TableViewLabel{
+                horizontalAlignment: Text.AlignRight
+                width: EaStyle.Sizes.fontPixelSize * 5.0
+                text: qsTr("Library:")
+            }
+            EaElements.ComboBox {
+                width: minimizerSelector.width
+                model: ExGlobals.Constants.proxy.plotting1dLibs
+                onActivated: ExGlobals.Constants.proxy.current1dPlottingLib = currentValue
+
+                Component.onCompleted: {
+                    currentIndex = model.indexOf(ExGlobals.Constants.proxy.current1dPlottingLib)
+                }
+            }
+        }
+    }
+
     EaElements.GroupBox {
         title: qsTr("Plot settings")
-        //collapsed: false
+        collapsed: false
 
         Row {
             spacing: EaStyle.Sizes.fontPixelSize
@@ -127,12 +151,11 @@ EaComponents.SideBarColumn {
             }
         }
     }
-    */
 
     EaElements.GroupBox {
         title: qsTr("Parameters settings")
         last: true
-        //collapsed: false
+        collapsed: false
 
         EaElements.CheckBox {
             topPadding: 0

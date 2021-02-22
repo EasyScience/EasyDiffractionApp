@@ -31,7 +31,6 @@ EaComponents.TableView {
                 ExGlobals.Variables.experimentPageEnabled = false
                 ExGlobals.Variables.sampleLoaded = false
                 ExGlobals.Variables.analysisPageEnabled = false
-                ExGlobals.Variables.summaryPageEnabled = false
             }
         }
     }

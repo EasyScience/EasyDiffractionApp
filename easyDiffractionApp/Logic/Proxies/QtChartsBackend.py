@@ -5,6 +5,7 @@ import numpy as np
 
 from PySide2.QtCore import QObject, Slot, Signal, Property
 from PySide2.QtCore import QPointF
+from PySide2.QtCharts import QtCharts
 
 
 class QtChartsBridge(QObject):
@@ -12,13 +13,19 @@ class QtChartsBridge(QObject):
     A bridge class to interact with the plot
     """
 
-    calculatedDataPointsChanged = Signal()
-    measuredDataPointsChanged = Signal()
-    differenceDataPointsChanged = Signal()
     chartsRangesChanged = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
+
+        self._experiment_measured_lower = None
+        self._experiment_measured_upper = None
+
+        self._analysis_measured_lower = None
+        self._analysis_measured_upper = None
+        self._analysis_calculated = None
+        self._analysis_difference_lower = None
+        self._analysis_difference_upper = None
 
         self._measured_xarray = np.empty(0)
         self._measured_yarray = np.empty(0)
@@ -27,10 +34,6 @@ class QtChartsBridge(QObject):
         self._calculated_yarray = np.empty(0)
         self._difference_xarray = np.empty(0)
         self._difference_yarray = np.empty(0)
-
-        self._measured_data_points = []  #QPointF(0, -1), QPointF(10, 6), QPointF(20, 2)
-        self._calculated_data_points = []
-        self._difference_data_points = []
 
         self._experiment_xmin = 0.
         self._experiment_xmax = 100.
@@ -43,21 +46,33 @@ class QtChartsBridge(QObject):
         self._difference_ymin = 0.
         self._difference_ymax = 100.
 
-    @Slot('QVariant', 'QVariant')
-    def lineSeriesCustomReplace(self, line_series, points):
-        line_series.replace(points.toVariant())
+    @Slot(QtCharts.QXYSeries)
+    def setExperimentMeasuredLower(self, series):
+        self._experiment_measured_lower = series
 
-    @Property('QVariant', notify=measuredDataPointsChanged)
-    def measuredDataPoints(self):
-        return self._measured_data_points
+    @Slot(QtCharts.QXYSeries)
+    def setExperimentMeasuredUpper(self, series):
+        self._experiment_measured_upper = series
 
-    @Property('QVariant', notify=calculatedDataPointsChanged)
-    def calculatedDataPoints(self):
-        return self._calculated_data_points
+    @Slot(QtCharts.QXYSeries)
+    def setAnalysisMeasuredLower(self, series):
+        self._analysis_measured_lower = series
 
-    @Property('QVariant', notify=calculatedDataPointsChanged)
-    def differenceDataPoints(self):
-        return self._difference_data_points
+    @Slot(QtCharts.QXYSeries)
+    def setAnalysisMeasuredUpper(self, series):
+        self._analysis_measured_upper = series
+
+    @Slot(QtCharts.QXYSeries)
+    def setAnalysisCalculated(self, series):
+        self._analysis_calculated = series
+
+    @Slot(QtCharts.QXYSeries)
+    def setAnalysisDifferenceLower(self, series):
+        self._analysis_difference_lower = series
+
+    @Slot(QtCharts.QXYSeries)
+    def setAnalysisDifferenceUpper(self, series):
+        self._analysis_difference_upper = series
 
     @Property(float, notify=chartsRangesChanged)
     def experimentXmin(self):
@@ -100,7 +115,7 @@ class QtChartsBridge(QObject):
         return self._difference_ymax
 
     @experimentXmin.setter
-    def experimentXmin(self, value):
+    def experimentXminSetter(self, value):
         if self._experiment_xmin == value:
             return
 
@@ -108,7 +123,7 @@ class QtChartsBridge(QObject):
         self.chartsRangesChanged.emit()
 
     @experimentXmax.setter
-    def experimentXmax(self, value):
+    def experimentXmaxSetter(self, value):
         if self._experiment_xmax == value:
             return
 
@@ -116,7 +131,7 @@ class QtChartsBridge(QObject):
         self.chartsRangesChanged.emit()
 
     @experimentYmin.setter
-    def experimentYmin(self, value):
+    def experimentYminSetter(self, value):
         if self._experiment_ymin == value:
             return
 
@@ -124,7 +139,7 @@ class QtChartsBridge(QObject):
         self.chartsRangesChanged.emit()
 
     @experimentYmax.setter
-    def experimentYmax(self, value):
+    def experimentYmaxSetter(self, value):
         if self._experiment_ymax == value:
             return
 
@@ -132,7 +147,7 @@ class QtChartsBridge(QObject):
         self.chartsRangesChanged.emit()
 
     @analysisXmin.setter
-    def analysisXmin(self, value):
+    def analysisXminSetter(self, value):
         if self._analysis_xmin == value:
             return
 
@@ -140,7 +155,7 @@ class QtChartsBridge(QObject):
         self.chartsRangesChanged.emit()
 
     @analysisXmax.setter
-    def analysisXmax(self, value):
+    def analysisXmaxSetter(self, value):
         if self._analysis_xmax == value:
             return
 
@@ -148,7 +163,7 @@ class QtChartsBridge(QObject):
         self.chartsRangesChanged.emit()
 
     @analysisYmin.setter
-    def analysisYmin(self, value):
+    def analysisYminSetter(self, value):
         if self._analysis_ymin == value:
             return
 
@@ -156,7 +171,7 @@ class QtChartsBridge(QObject):
         self.chartsRangesChanged.emit()
 
     @analysisYmax.setter
-    def analysisYmax(self, value):
+    def analysisYmaxSetter(self, value):
         if self._analysis_ymax == value:
             return
 
@@ -164,7 +179,7 @@ class QtChartsBridge(QObject):
         self.chartsRangesChanged.emit()
 
     @differenceYmin.setter
-    def differenceYmin(self, value):
+    def differenceYminSetter(self, value):
         if self._difference_ymin == value:
             return
 
@@ -172,7 +187,7 @@ class QtChartsBridge(QObject):
         self.chartsRangesChanged.emit()
 
     @differenceYmax.setter
-    def differenceYmax(self, value):
+    def differenceYmaxSetter(self, value):
         if self._difference_ymax == value:
             return
 
@@ -183,38 +198,39 @@ class QtChartsBridge(QObject):
         self._measured_xarray = xarray
         self._measured_yarray = yarray
         self._measured_syarray = syarray
-        self.replaceMeasuredDataPoints()
+        self.replaceMeasuredDataOnChart()
         self.changeExperimentChartXRange()
         self.changeExperimentChartYRange()
 
     def setCalculatedData(self, xarray, yarray):
         self._calculated_xarray = xarray
         self._calculated_yarray = yarray
-        self.replaceCalculatedDataPoints()
+        self.replaceCalculatedDataOnChart()
         self.changeAnalysisChartXRange()
         self.changeAnalysisChartYRange()
 
         if len(self._measured_yarray):
             self._difference_yarray = self._measured_yarray - self._calculated_yarray
-            self.replaceDifferenceDataPoints()
+            self.replaceDifferenceDataOnChart()
             self.changeDifferenceChartYRange()
 
-    def replaceMeasuredDataPoints(self):
-        # lower_points = [QPointF(x, y) for x, y in zip(self._measured_xarray, self._measured_yarray - self._measured_syarray)]
-        # upper_points = [QPointF(x, y) for x, y in zip(self._measured_xarray, self._measured_yarray + self._measured_syarray)]
-        self._measured_data_points = [QPointF(x, y) for x, y in zip(self._measured_xarray, self._measured_yarray)]
-        self.measuredDataPointsChanged.emit()
+    def replaceMeasuredDataOnChart(self):
+        lower_points = [QPointF(x, y) for x, y in zip(self._measured_xarray, self._measured_yarray - self._measured_syarray)]
+        upper_points = [QPointF(x, y) for x, y in zip(self._measured_xarray, self._measured_yarray + self._measured_syarray)]
+        self._experiment_measured_lower.replace(lower_points)
+        self._experiment_measured_upper.replace(upper_points)
+        self._analysis_measured_lower.replace(lower_points)
+        self._analysis_measured_upper.replace(upper_points)
 
-    def replaceCalculatedDataPoints(self):
-        # points = [QPointF(x, y) for x, y in zip(self._calculated_xarray, self._calculated_yarray)]
-        self._calculated_data_points = [QPointF(x, y) for x, y in zip(self._calculated_xarray, self._calculated_yarray)]
-        self.calculatedDataPointsChanged.emit()
+    def replaceCalculatedDataOnChart(self):
+        points = [QPointF(x, y) for x, y in zip(self._calculated_xarray, self._calculated_yarray)]
+        self._analysis_calculated.replace(points)
 
-    def replaceDifferenceDataPoints(self):
-        # lower_points = [QPointF(x, y) for x, y in zip(self._measured_xarray, self._difference_yarray - self._measured_syarray)]
-        # upper_points = [QPointF(x, y) for x, y in zip(self._measured_xarray, self._difference_yarray + self._measured_syarray)]
-        self._difference_data_points = [QPointF(x, y) for x, y in zip(self._difference_xarray, self._difference_yarray)]
-        self.differenceDataPointsChanged.emit()
+    def replaceDifferenceDataOnChart(self):
+        lower_points = [QPointF(x, y) for x, y in zip(self._measured_xarray, self._difference_yarray - self._measured_syarray)]
+        upper_points = [QPointF(x, y) for x, y in zip(self._measured_xarray, self._difference_yarray + self._measured_syarray)]
+        self._analysis_difference_lower.replace(lower_points)
+        self._analysis_difference_upper.replace(upper_points)
 
     def changeExperimentChartXRange(self):
         min_x = self._measured_xarray.min()
@@ -271,3 +287,7 @@ class QtChartsBridge(QObject):
         self.differenceYmin = float(min_y)
         self.differenceYmax = float(max_y)
 
+    def updateAllCharts(self):
+        self.replaceMeasuredDataOnChart()
+        self.replaceCalculatedDataOnChart()
+        self.replaceDifferenceDataOnChart()

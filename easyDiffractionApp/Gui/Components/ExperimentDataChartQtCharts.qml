@@ -37,16 +37,6 @@ Rectangle {
             max: ExGlobals.Constants.proxy.qtCharts.experimentYmax
         }
 
-        EaCharts.LineSeries {
-            color: EaStyle.Colors.chartForegrounds[0]
-
-            axisX: axisX
-            axisY: axisY
-
-            customPoints: ExGlobals.Constants.proxy.qtCharts.measuredDataPoints
-        }
-
-        /*
         EaCharts.AreaSeries {
             color: EaStyle.Colors.chartForegrounds[0]
 
@@ -63,6 +53,5 @@ Rectangle {
                 Component.onCompleted: ExGlobals.Constants.proxy.qtCharts.setExperimentMeasuredUpper(measuredUpper)
             }
         }
-        */
     }
 }

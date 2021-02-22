@@ -1,7 +1,5 @@
 import os
 import sys
-import platform
-
 
 # Logging
 def isTestMode():
@@ -17,11 +15,9 @@ from PySide2.QtCore import QCoreApplication, QUrl, qDebug, qCritical
 from PySide2.QtWidgets import QApplication
 from PySide2.QtGui import Qt, QSurfaceFormat
 from PySide2.QtQml import QQmlApplicationEngine, qmlRegisterType
-from PySide2.QtWebEngine import QtWebEngine
-from PySide2.QtWebEngineWidgets import QWebEnginePage, QWebEngineView  # to call hook-PySide2.QtWebEngineWidgets.py
 
 # easyScience
-import utils
+import pyproject
 import easyAppGui
 from easyAppLogic.Translate import Translator
 from easyDiffractionApp.Logic.PyQmlProxy import PyQmlProxy
@@ -34,7 +30,7 @@ from easyDiffractionApp.Logic.Proxies.VtkBackend import VtkCanvasHandler
 from easyDiffractionApp.Logic.VTK.QVTKFrameBufferObjectItem import FboItem
 
 # Config
-CONFIG = utils.conf()
+CONFIG = pyproject.config()
 
 
 def defaultVtkFormat(stereo_capable):
@@ -73,12 +69,10 @@ class App(QApplication):
     def vtkSetup(self, root_window):
         # Get reference to the QVTKFramebufferObjectItem in QML
         self._m_vtkFboItem = root_window.findChild(FboItem, 'vtkFboItem')
-        #self._m_vtkFboItem.devicePixelRatio = self.devicePixelRatio()
 
         # Give the vtkFboItem reference to the CanvasHandler
         if (self._m_vtkFboItem):
             ###qDebug('CanvasHandler::CanvasHandler: setting vtkFboItem to CanvasHandler')
-            self._m_vtkFboItem.devicePixelRatio = self.devicePixelRatio()
             self._m_vtkFboItem.rendererInitialized.connect(self.startApplication)
         else:
             ###qCritical('CanvasHandler::CanvasHandler: Unable to get vtkFboItem instance')
@@ -87,7 +81,6 @@ class App(QApplication):
 def main():
     # Settings
     QCoreApplication.setAttribute(Qt.AA_EnableHighDpiScaling)  # DOESN'T WORK, USE SCRIPT INSTEAD
-    QCoreApplication.setAttribute(Qt.AA_UseDesktopOpenGL, True)
 
     # Paths
     current_path = os.path.dirname(sys.argv[0])
@@ -102,9 +95,6 @@ def main():
     languages = CONFIG['ci']['app']['translations']['languages']
     translations_dir = CONFIG['ci']['app']['translations']['dir']
     translations_path = os.path.join(package_path, *translations_dir.split('/'))
-
-    # QtWebEngine
-    QtWebEngine.initialize()
 
     # Application
     app = App(sys.argv)
@@ -147,18 +137,6 @@ def main():
     vtk_handler.fbo = app._m_vtkFboItem
     vtk_handler.context = root_window
     py_qml_proxy_obj.setVtkHandler(vtk_handler)
-
-    # Customize app window titlebar
-    if platform.system() == "Darwin":
-        import ctypes, objc, Cocoa
-
-        ptr = int(root_window.winId())
-        view = objc.objc_object(c_void_p=ctypes.c_void_p(ptr))
-        window = view._.window
-
-        window.setStyleMask_(window.styleMask() | Cocoa.NSFullSizeContentViewWindowMask)
-        window.setTitlebarAppearsTransparent_(True)
-        window.setTitleVisibility_(Cocoa.NSWindowTitleHidden)
 
     # Event loop
     if not engine.rootObjects():

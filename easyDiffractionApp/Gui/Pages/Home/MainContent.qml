@@ -138,13 +138,12 @@ Item {
 
     // Remote controller for tutorials
 
-    /*
     EaElements.RemoteController {
         id: rc
+        visible: false
         sayEnabled: false
         audioDir: Qt.resolvedUrl("../../Resources/Audio")
     }
-    */
 
     Timer {
         id: quitTimer
@@ -263,6 +262,8 @@ Item {
     function runTutorial2() {
         print("* run Tutorial 2")
 
+        rc.visible = true
+
         // Start
 
         let x_pos = undefined
@@ -360,10 +361,14 @@ Item {
         rc.say("Thank you for using easy diffraction.")
         rc.wait(1000)
         endSavingScreenshots()
+
+        rc.visible = false
     }
 
     function runTutorial3() {
         print("* run Tutorial 3")
+
+        rc.visible = true
 
         startSavingScreenshots()
         rc.wait(1000)
@@ -391,6 +396,8 @@ Item {
         rc.hide()
         rc.wait(1000)
         endSavingScreenshots()
+
+        rc.visible = false
     }
 
 

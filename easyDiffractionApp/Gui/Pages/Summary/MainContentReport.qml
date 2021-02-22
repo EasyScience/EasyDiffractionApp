@@ -118,16 +118,9 @@ Item {
 
             EaElements.Label {
                 anchors.verticalCenter: parent.verticalCenter
-
-                textFormat: Text.RichText
-
                 text: saveConfirmationDialog.success
-                      ? qsTr('File "<a style="color:%2; text-decoration:none" href="%1">%1</a>" is successfully saved'
-                             .arg(saveConfirmationDialog.filePath)
-                             .arg(EaStyle.Colors.linkColor) )
-                      : qsTr('Failed to save file "%1"'
-                             .arg(saveConfirmationDialog.filePath) )
-                onLinkActivated: Qt.openUrlExternally(link)
+                      ? qsTr('File "<a href="%1">%1</a>" is successfully saved'.arg(saveConfirmationDialog.filePath))
+                      : qsTr('Failed to save file "%1"'.arg(saveConfirmationDialog.filePath))
             }
         }
     }
@@ -196,13 +189,13 @@ Item {
                   `    margin-top: ${EaStyle.Sizes.fontPixelSize * 3}px;`,
                   '}',
                   'a {',
-                  '    text-decoration: none;',
+                  '    text-decoration: underline;',
                   '}',
                   'a, a:visited {',
-                  '    color: #008bd0;',
+                  `    color: ${EaStyle.Colors.link};`,
                   '}',
                   'a:hover {',
-                  '    color: #009fee;',
+                  `    color: ${EaStyle.Colors.linkHovered};`,
                   '}',
                   'table {',
                   '    border-collapse: collapse;',

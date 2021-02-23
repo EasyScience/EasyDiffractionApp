@@ -17,7 +17,7 @@ jobs:
     #if: false
 
     # Change default timeout
-    timeout-minutes: 15
+    timeout-minutes: 25
 
     # The type of runner that the job will run on
     runs-on: ${{ matrix.os }}

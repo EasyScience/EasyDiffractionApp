@@ -24,8 +24,17 @@ EaElements.Dialog {
     title: qsTr("Refinement Results")
 
     Column {
-        EaElements.Label { text: ExGlobals.Constants.proxy.isFitFinished ? `Success: ${ExGlobals.Constants.proxy.fitResults.success}` : "" }
-        EaElements.Label { text: ExGlobals.Constants.proxy.isFitFinished ? `Num. refined parameters: ${ExGlobals.Constants.proxy.fitResults.nvarys}` : "Fitting in progress..." }
-        EaElements.Label { text: ExGlobals.Constants.proxy.isFitFinished ? `Goodness-of-fit (reduced \u03c7\u00b2): ${ExGlobals.Constants.proxy.fitResults.redchi2.toFixed(2)}` : "" }       
+        EaElements.Label { text: gotResults() && ExGlobals.Constants.proxy.isFitFinished ? `Success: ${ExGlobals.Constants.proxy.fitResults.success}` : "" }
+        EaElements.Label { text: gotResults() && ExGlobals.Constants.proxy.isFitFinished ? `Num. refined parameters: ${ExGlobals.Constants.proxy.fitResults.nvarys}` : "Fitting in progress..." }
+        EaElements.Label { text: gotResults() && ExGlobals.Constants.proxy.isFitFinished ? `Goodness-of-fit (reduced \u03c7\u00b2): ${ExGlobals.Constants.proxy.fitResults.redchi2.toFixed(2)}` : "" }
     }
+
+    function gotResults(){
+        if ((ExGlobals.Constants.proxy.fitResults != null) && (ExGlobals.Constants.proxy.fitResults.success != null)){
+            return true
+        }
+        return false
+    }
+
 }
+

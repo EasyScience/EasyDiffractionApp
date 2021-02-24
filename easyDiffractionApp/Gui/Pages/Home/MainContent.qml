@@ -186,13 +186,14 @@ Item {
 
     function startSavingScreenshots() {
         if (EaGlobals.Variables.isTestMode) {
-            EaGlobals.Variables.saveScreenshotsRunning = true
+            //EaGlobals.Variables.saveScreenshotsRunning = true
+            ExGlobals.Constants.proxy.screenRecorder.startRecording()
         }
     }
 
     function endSavingScreenshots() {
         if (EaGlobals.Variables.isTestMode) {
-            EaGlobals.Variables.saveScreenshotsRunning = false
+            //EaGlobals.Variables.saveScreenshotsRunning = false
             quitTimer.start()
         }
     }

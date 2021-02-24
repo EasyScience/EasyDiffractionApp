@@ -40,6 +40,8 @@ from easyDiffractionApp.Logic.Proxies.MatplotlibBackend import MatplotlibBridge
 from easyDiffractionApp.Logic.Proxies.QtChartsBackend import QtChartsBridge
 from easyDiffractionApp.Logic.Proxies.BokehBackend import BokehBridge
 
+from easyDiffractionApp.Logic.ScreenRecorder import ScreenRecorder
+
 
 class PyQmlProxy(QObject):
     # SIGNALS
@@ -105,7 +107,7 @@ class PyQmlProxy(QObject):
 
     # Status info
     statusInfoChanged = Signal()
-    
+
     # Misc
     dummySignal = Signal()
 
@@ -231,6 +233,9 @@ class PyQmlProxy(QObject):
         self.currentCalculatorChanged.connect(self.statusInfoChanged)
         self.currentMinimizerChanged.connect(self.statusInfoChanged)
         self.currentMinimizerMethodChanged.connect(self.statusInfoChanged)
+
+        # Screen recorder
+        self._screen_recorder = ScreenRecorder()
 
     ####################################################################################################################
     ####################################################################################################################
@@ -1352,3 +1357,12 @@ class PyQmlProxy(QObject):
     def _onStatusInfoChanged(self):
         print("***** _onStatusInfoChanged")
 
+    ####################################################################################################################
+    ####################################################################################################################
+    # Screen recorder
+    ####################################################################################################################
+    ####################################################################################################################
+
+    @Property('QVariant', notify=dummySignal)
+    def screenRecorder(self):
+        return self._screen_recorder

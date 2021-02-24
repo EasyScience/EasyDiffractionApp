@@ -42,6 +42,8 @@ toml = '^0.10.2'
 requests = '^2.25.1'
 dephell_licenses = '^0.1.7'
 ffmpeg-python = '^0.2.0'
+mss = '^6.1.0'
+opencv-python = '^4.5.1'
 googletrans = '^3.0.0'
 gTTS = '^2.2.2'
 

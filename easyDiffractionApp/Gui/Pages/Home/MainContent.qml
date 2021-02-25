@@ -187,7 +187,10 @@ Item {
     function startSavingScreenshots() {
         if (EaGlobals.Variables.isTestMode) {
             //EaGlobals.Variables.saveScreenshotsRunning = true
-            ExGlobals.Constants.proxy.screenRecorder.startRecording()
+            ExGlobals.Constants.proxy.screenRecorder.startRecording(
+                        { left: window.x, top: window.y, width: window.width, height: window.height },
+                        { left: EaStyle.Sizes.fontPixelSize, top: EaStyle.Sizes.fontPixelSize, right: EaStyle.Sizes.fontPixelSize, bottom: EaStyle.Sizes.fontPixelSize }
+                        )
         }
     }
 

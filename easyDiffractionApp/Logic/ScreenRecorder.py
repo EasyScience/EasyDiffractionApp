@@ -14,7 +14,7 @@ class ScreenRecorder(QObject):
         super().__init__(parent)
 
         self.frame_rate = 36
-        self.video_codec_name = 'avc1'
+        self.video_codec_name = 'mp4v'
         self.out_file_name = 'tutorial'
 
         self.device_pixel_ratio = QApplication.primaryScreen().devicePixelRatio()
@@ -29,10 +29,11 @@ class ScreenRecorder(QObject):
         self.recordingFinished.connect(self.onRecordingFinished)
         QApplication.instance().aboutToQuit.connect(self.onAboutToQuit)
 
+    # https://gist.github.com/takuma7/44f9ecb028ff00e2132e
     def codec_to_ext(self, codec_name):
         return {
-            'mp4v': 'mp4',
-            'avc1': 'mp4'
+            'mp4v': 'mp4',  # macOS: +, GitHub macOS: +
+            'avc1': 'mp4'  # macOS: +, GitHub macOS: -
         }[codec_name]
 
     def cv2_video_codec(self):

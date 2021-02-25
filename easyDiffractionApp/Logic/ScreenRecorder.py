@@ -12,10 +12,8 @@ class ScreenRecorder(QObject):
         super().__init__(parent)
 
         self.frame_rate = 24
-        self.out_fname = 'tutorial.mp4'
-        self.codecs = {
-            'mp4': 'mp4v'
-        }
+        self.video_codec_name = 'avc1'
+        self.out_file_name = 'tutorial'
 
         self.is_app_running = True
 
@@ -27,11 +25,23 @@ class ScreenRecorder(QObject):
 
         QApplication.instance().aboutToQuit.connect(self.onAboutToQuit)
 
+    def codec_to_ext(self, codec_name):
+        return {
+            'mp4v': 'mp4',
+            'avc1': 'mp4'
+        }[codec_name]
+
+    def cv2_video_codec(self):
+        return cv2.VideoWriter_fourcc(*self.video_codec_name)
+
     def cv2_frame_size(self):
         return (
             int(self.mss_frame_rect['width'] * self.device_pixel_ratio),
             int(self.mss_frame_rect['height'] * self.device_pixel_ratio)
         )
+
+    def cv2_out_file_name(self):
+        return self.out_file_name + '.' + self.codec_to_ext(self.video_codec_name)
 
     def default_mss_frame_rect(self):
         return {
@@ -65,17 +75,16 @@ class ScreenRecorder(QObject):
         if self.mss_frame_rect['top'] + self.mss_frame_rect['height'] > self.screen_rect.height():
             self.mss_frame_rect['height'] -= self.screen_rect.height() - self.mss_frame_rect['top']
 
-    def video_codec(self):
-        ext = pathlib.Path(self.out_fname).suffix
-        ext = ext.replace('.', '')
-        codec = self.codecs[ext]
-        return cv2.VideoWriter_fourcc(*codec)
-
     def onAboutToQuit(self):
         self.is_app_running = False
 
     def recording(self):
-        out = cv2.VideoWriter(self.out_fname, self.video_codec(), self.frame_rate, self.cv2_frame_size())
+        out = cv2.VideoWriter(
+            self.cv2_out_file_name(),
+            self.cv2_video_codec(),
+            self.frame_rate,
+            self.cv2_frame_size()
+        )
         with mss.mss() as sct:
             while self.is_app_running:
                 screenshot = sct.grab(self.mss_frame_rect)

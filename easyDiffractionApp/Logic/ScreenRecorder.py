@@ -75,9 +75,9 @@ class ScreenRecorder(QObject):
         if self.mss_frame_rect['left'] < 0:
             self.mss_frame_rect['left'] = 0
         if self.mss_frame_rect['left'] + self.mss_frame_rect['width'] > self.screen_rect.width():
-            self.mss_frame_rect['width'] -= self.screen_rect.width() - self.mss_frame_rect['left']
+            self.mss_frame_rect['width'] = self.screen_rect.width() - self.mss_frame_rect['left']
         if self.mss_frame_rect['top'] + self.mss_frame_rect['height'] > self.screen_rect.height():
-            self.mss_frame_rect['height'] -= self.screen_rect.height() - self.mss_frame_rect['top']
+            self.mss_frame_rect['height'] = self.screen_rect.height() - self.mss_frame_rect['top']
 
     def recording(self):
         out = cv2.VideoWriter(

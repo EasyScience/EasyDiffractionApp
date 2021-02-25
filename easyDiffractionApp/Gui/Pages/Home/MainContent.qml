@@ -187,16 +187,26 @@ Item {
     function startSavingScreenshots() {
         if (EaGlobals.Variables.isTestMode) {
             //EaGlobals.Variables.saveScreenshotsRunning = true
-            ExGlobals.Constants.proxy.screenRecorder.startRecording(
-                        { left: window.x, top: window.y, width: window.width, height: window.height },
-                        { left: EaStyle.Sizes.fontPixelSize, top: EaStyle.Sizes.fontPixelSize, right: EaStyle.Sizes.fontPixelSize, bottom: EaStyle.Sizes.fontPixelSize }
-                        )
+            const frame_rect = {
+                left: window.x,
+                top: window.y,
+                width: window.width,
+                height: window.height
+            }
+            const margin_rect = {
+                left: EaStyle.Sizes.fontPixelSize,
+                top: EaStyle.Sizes.fontPixelSize,
+                right: EaStyle.Sizes.fontPixelSize,
+                bottom: EaStyle.Sizes.fontPixelSize
+            }
+            ExGlobals.Constants.proxy.screenRecorder.startRecording(frame_rect, margin_rect)
         }
     }
 
     function endSavingScreenshots() {
         if (EaGlobals.Variables.isTestMode) {
             //EaGlobals.Variables.saveScreenshotsRunning = false
+            ExGlobals.Constants.proxy.screenRecorder.stopRecording()
             quitTimer.start()
         }
     }
@@ -287,6 +297,9 @@ Item {
 
         //rc.say("Here, you can create a new project.")
         //rc.mouseClick(ExGlobals.Variables.createProjectButton)
+
+        endSavingScreenshots()
+        return
 
         rc.say("Now, you can continue without creating a project.")
         rc.mouseClick(ExGlobals.Variables.continueWithoutProjectButton)

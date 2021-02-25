@@ -1,21 +1,21 @@
 import mss
 import cv2
-import pathlib
 import numpy as np
 from threading import Thread
-from PySide2.QtCore import QObject, Slot
+from PySide2.QtCore import QObject, Signal, Slot
 from PySide2.QtWidgets import QApplication
 
 
 class ScreenRecorder(QObject):
+
+    recordingFinished = Signal()
+
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        self.frame_rate = 24
-        self.video_codec_name = 'avc1'
+        self.frame_rate = 48
+        self.video_codec_name = 'mp4v'
         self.out_file_name = 'tutorial'
-
-        self.is_app_running = True
 
         self.device_pixel_ratio = QApplication.primaryScreen().devicePixelRatio()
         self.screen_size = QApplication.primaryScreen().size()
@@ -23,6 +23,10 @@ class ScreenRecorder(QObject):
 
         self.mss_frame_rect = self.default_mss_frame_rect()
 
+        self.is_recording_now = False
+        self.recording_thread = Thread(target=self.recording)
+
+        self.recordingFinished.connect(self.onRecordingFinished)
         QApplication.instance().aboutToQuit.connect(self.onAboutToQuit)
 
     def codec_to_ext(self, codec_name):
@@ -75,9 +79,6 @@ class ScreenRecorder(QObject):
         if self.mss_frame_rect['top'] + self.mss_frame_rect['height'] > self.screen_rect.height():
             self.mss_frame_rect['height'] -= self.screen_rect.height() - self.mss_frame_rect['top']
 
-    def onAboutToQuit(self):
-        self.is_app_running = False
-
     def recording(self):
         out = cv2.VideoWriter(
             self.cv2_out_file_name(),
@@ -86,16 +87,28 @@ class ScreenRecorder(QObject):
             self.cv2_frame_size()
         )
         with mss.mss() as sct:
-            while self.is_app_running:
+            while self.is_recording_now:
                 screenshot = sct.grab(self.mss_frame_rect)
                 frame = np.array(screenshot)
                 frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
                 out.write(frame)
         cv2.destroyAllWindows()
         out.release()
+        self.recordingFinished.emit()
 
     @Slot('QVariant', 'QVariant')
     def startRecording(self, frame_rect=None, margin_rect=None):
         self.set_mss_frame_rect(frame_rect, margin_rect)
-        thread = Thread(target=self.recording)
-        thread.start()
+        self.is_recording_now = True
+        self.recording_thread.start()
+
+    @Slot()
+    def stopRecording(self):
+        self.is_recording_now = False
+
+    def onRecordingFinished(self):
+        if self.recording_thread.is_alive():
+            self.recording_thread.join()
+
+    def onAboutToQuit(self):
+        pass

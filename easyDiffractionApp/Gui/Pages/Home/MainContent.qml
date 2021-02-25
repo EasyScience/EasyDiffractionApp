@@ -298,9 +298,6 @@ Item {
         //rc.say("Here, you can create a new project.")
         //rc.mouseClick(ExGlobals.Variables.createProjectButton)
 
-        endSavingScreenshots()
-        return
-
         rc.say("Now, you can continue without creating a project.")
         rc.mouseClick(ExGlobals.Variables.continueWithoutProjectButton)
 

@@ -13,8 +13,8 @@ class ScreenRecorder(QObject):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        self.frame_rate = 48
-        self.video_codec_name = 'mp4v'
+        self.frame_rate = 36
+        self.video_codec_name = 'avc1'
         self.out_file_name = 'tutorial'
 
         self.device_pixel_ratio = QApplication.primaryScreen().devicePixelRatio()
@@ -90,7 +90,7 @@ class ScreenRecorder(QObject):
             while self.is_recording_now:
                 screenshot = sct.grab(self.mss_frame_rect)
                 frame = np.array(screenshot)
-                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                frame = cv2.cvtColor(frame, cv2.COLOR_BGRA2BGR)
                 out.write(frame)
         cv2.destroyAllWindows()
         out.release()

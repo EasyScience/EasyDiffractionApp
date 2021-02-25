@@ -12,7 +12,7 @@ class ScreenRecorder(QObject):
         super().__init__(parent)
 
         self.frame_rate = 24
-        self.video_codec_name = 'avc1'
+        self.video_codec_name = 'mp4v'
         self.out_file_name = 'tutorial'
 
         self.is_app_running = True

@@ -116,4 +116,7 @@ class PyQmlProxy {
     editPhase() {}
     removePhase() {}
     setReport() {}
+
+    get canUndo() {return false}
+    get canRedo() {return false}
 }

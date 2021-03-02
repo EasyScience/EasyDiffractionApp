@@ -26,7 +26,10 @@ EaComponents.SideBarColumn {
                 text: qsTr("Create a new project")
 
                 onClicked: EaGlobals.Variables.showProjectDescriptionDialog = true
-                Component.onCompleted: ExGlobals.Variables.createProjectButton = createProjectButton
+                Component.onCompleted: {
+                    ExGlobals.Variables.createProjectButton = createProjectButton
+                    ExGlobals.Constants.proxy.resetUndoRedoStack()
+                }
             }
 
             EaElements.SideBarButton {
@@ -36,7 +39,10 @@ EaComponents.SideBarColumn {
                 text: qsTr("Continue without a project")
 
                 onClicked: ExGlobals.Variables.samplePageEnabled = true
-                Component.onCompleted: ExGlobals.Variables.continueWithoutProjectButton = continueWithoutProjectButton
+                Component.onCompleted: {
+                    ExGlobals.Variables.continueWithoutProjectButton = continueWithoutProjectButton
+                    ExGlobals.Variables.resetUndoRedoStack()
+                }
             }
 
             EaElements.SideBarButton {

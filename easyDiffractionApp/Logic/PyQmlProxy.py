@@ -18,12 +18,12 @@ from PySide2.QtGui import QPdfWriter, QTextDocument
 
 from easyCore import np
 from easyCore import borg
-# borg.debug = True
 
 from easyCore.Symmetry.tools import SpacegroupInfo
 from easyCore.Fitting.Fitting import Fitter
 from easyCore.Fitting.Constraints import ObjConstraint, NumericConstraint
 from easyCore.Utils.classTools import generatePath
+from easyCore.Utils.UndoRedo import stack_deco
 
 from easyDiffractionLib.sample import Sample
 from easyDiffractionLib import Phases, Phase, Lattice, Site, Atoms, SpaceGroup
@@ -39,8 +39,6 @@ from easyDiffractionApp.Logic.Proxies.BackgroundProxy import BackgroundProxy
 from easyDiffractionApp.Logic.Proxies.MatplotlibBackend import MatplotlibBridge
 from easyDiffractionApp.Logic.Proxies.QtChartsBackend import QtChartsBridge
 from easyDiffractionApp.Logic.Proxies.BokehBackend import BokehBridge
-
-from easyDiffractionApp.Logic.ScreenRecorder import ScreenRecorder
 
 
 class PyQmlProxy(QObject):
@@ -107,6 +105,9 @@ class PyQmlProxy(QObject):
 
     # Status info
     statusInfoChanged = Signal()
+
+    # Undo Redo
+    undoRedoChanged = Signal()
 
     # Misc
     dummySignal = Signal()
@@ -192,6 +193,7 @@ class PyQmlProxy(QObject):
 
         self._simulation_parameters_as_obj = self._defaultSimulationParameters()
         self.simulationParametersChanged.connect(self._onSimulationParametersChanged)
+        self.simulationParametersChanged.connect(self.undoRedoChanged)
 
         self._fit_results = self._defaultFitResults()
         self.fitter = Fitter(self._sample, self._interface.fit_func)
@@ -214,6 +216,7 @@ class PyQmlProxy(QObject):
         self.parametersChanged.connect(self._onPatternParametersChanged)
         self.parametersChanged.connect(self._onInstrumentParametersChanged)
         self.parametersChanged.connect(self._background_proxy.onAsObjChanged)
+        self.parametersChanged.connect(self.undoRedoChanged)
 
         self._parameters_filter_criteria = ""
         self.parametersFilterCriteriaChanged.connect(self._onParametersFilterCriteriaChanged)
@@ -234,8 +237,21 @@ class PyQmlProxy(QObject):
         self.currentMinimizerChanged.connect(self.statusInfoChanged)
         self.currentMinimizerMethodChanged.connect(self.statusInfoChanged)
 
+
         # Screen recorder
-        self._screen_recorder = ScreenRecorder()
+        recorder = None
+        try:
+            from easyDiffractionApp.Logic.ScreenRecorder import ScreenRecorder
+            recorder = ScreenRecorder()
+        except (ImportError, ModuleNotFoundError):
+            print('Screen recording disabled')
+        self._screen_recorder = recorder
+
+        # !! THIS SHOULD ALWAYS GO AT THE END !!
+        # Start the undo/redo stack
+        borg.stack.enabled = True
+        borg.stack.clear()
+        borg.debug = True
 
     ####################################################################################################################
     ####################################################################################################################
@@ -552,13 +568,27 @@ class PyQmlProxy(QObject):
     @Slot(str)
     def addSampleFromCif(self, cif_url):
         cif_path = generalizePath(cif_url)
+        if borg.stack.enabled:
+            borg.stack.beginMacro(f'Loaded cif: {cif_path}')
         self._sample.phases = Phases.from_cif_file(cif_path)
+        if borg.stack.enabled:
+            borg.stack.endMacro()
+            if len(self._sample.phases) < 2:
+                # We have problems with removing the only phase.....
+                borg.stack.pop()
         self.phaseAdded.emit()
 
     @Slot()
     def addDefaultPhase(self):
         print("+ addDefaultPhase")
+        if borg.stack.enabled:
+            borg.stack.beginMacro('Loaded default phase')
         self._sample.phases = self._defaultPhase()
+        if borg.stack.enabled:
+            borg.stack.endMacro()
+            if len(self._sample.phases) < 2:
+                # We have problems with removing the only phase.....
+                borg.stack.pop()
         self.phaseAdded.emit()
 
     @Slot(str)
@@ -1158,6 +1188,8 @@ class PyQmlProxy(QObject):
     @Slot(str, 'QVariant')
     def editParameter(self, obj_id: str, new_value: Union[bool, float, str]):  # covers both parameter and descriptor
         obj = self._parameterObj(obj_id)
+        if obj is None:
+            return
         print(f"\n\n+ editParameter {obj_id} of {type(new_value)} from {obj.raw_value} to {new_value}")
 
         if isinstance(new_value, bool):
@@ -1166,6 +1198,7 @@ class PyQmlProxy(QObject):
 
             obj.fixed = not new_value
             self._onParametersChanged()
+            self.undoRedoChanged.emit()
 
         else:
             if obj.raw_value == new_value:
@@ -1366,3 +1399,42 @@ class PyQmlProxy(QObject):
     @Property('QVariant', notify=dummySignal)
     def screenRecorder(self):
         return self._screen_recorder
+
+    ####################################################################################################################
+    ####################################################################################################################
+    # Undo/Redo stack operations
+    ####################################################################################################################
+    ####################################################################################################################
+
+    @Property(bool, notify=undoRedoChanged)
+    def canUndo(self) -> bool:
+        return borg.stack.canUndo()
+
+    @Property(bool, notify=undoRedoChanged)
+    def canRedo(self) -> bool:
+        return borg.stack.canRedo()
+
+    @Slot()
+    def undo(self):
+        if self.canUndo:
+            borg.stack.undo()
+            self.parametersChanged.emit()
+
+    @Slot()
+    def redo(self):
+        if self.canRedo:
+            borg.stack.redo()
+            self.parametersChanged.emit()
+
+    @Property(str, notify=undoRedoChanged)
+    def undoText(self):
+        return borg.stack.undoText()
+
+    @Property(str, notify=undoRedoChanged)
+    def redoText(self):
+        return borg.stack.redoText()
+
+    @Slot()
+    def resetUndoRedoStack(self):
+        if borg.stack.enabled:
+            borg.stack.clear()

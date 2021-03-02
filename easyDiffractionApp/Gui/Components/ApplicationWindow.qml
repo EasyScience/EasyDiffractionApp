@@ -33,18 +33,18 @@ EaComponents.ApplicationWindow {
         },
 
         EaElements.ToolButton {
-            enabled: false
-            //enabled: ExGlobals.Constants.proxy.canUndo()
+            //enabled: false
+            enabled: ExGlobals.Constants.proxy.canUndo
             fontIcon: "\uf2ea"
-            ToolTip.text: qsTr("Undo")
+            ToolTip.text: qsTr("Undo: " + ExGlobals.Constants.proxy.undoText)
             onClicked: ExGlobals.Constants.proxy.undo()
         },
 
         EaElements.ToolButton {
-            enabled: false
-            //enabled: ExGlobals.Constants.proxy.canRedo()
+            //enabled: false
+            enabled: ExGlobals.Constants.proxy.canRedo
             fontIcon: "\uf2f9"
-            ToolTip.text: qsTr("Redo")
+            ToolTip.text: qsTr("Redo: " + ExGlobals.Constants.proxy.redoText)
             onClicked: ExGlobals.Constants.proxy.redo()
         }
 

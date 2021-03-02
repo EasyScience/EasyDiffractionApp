@@ -254,19 +254,28 @@ Item {
             // data
             {
                 measured: ExGlobals.Constants.proxy.bokeh.measuredDataObj,
-                calculated: ExGlobals.Constants.proxy.bokeh.calculatedDataObj
+                calculated: ExGlobals.Constants.proxy.bokeh.calculatedDataObj,
+                bragg: ExGlobals.Constants.proxy.bokeh.braggDataObj,
+                difference: ExGlobals.Constants.proxy.bokeh.differenceDataObj
             },
             // specs
             {
+                showMeasured: true,
+                showCalculated: true,
+                showBragg: true,
+                showDifference: true,
+
                 chartWidth: dataChartWidth,
-                chartHeight: dataChartHeight,
-                chartBackgroundColor: dataChartBackgroundColor,
+                mainChartHeight: dataChartHeight - 25 - 150 - 30,
+                braggChartHeight: 25,
+                differenceChartHeight: 150,
+
                 xAxisTitle: qsTr("2theta (deg)"),
-                yAxisTitle: qsTr("Intensity"),
-                experimentLineColor: EaStyle.Colors.chartForegrounds[0],
-                calculatedLineColor: EaStyle.Colors.chartForegrounds[1],
-                experimentLineWidth: 2,
-                calculatedLineWidth: 2,
+                yMainAxisTitle: qsTr("Intensity"),
+                yDifferenceAxisTitle: qsTr("Difference"),
+
+                chartBackgroundColor: dataChartBackgroundColor,
+
                 containerId: "analysisSection"
             }
             )

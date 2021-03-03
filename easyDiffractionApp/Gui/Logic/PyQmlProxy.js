@@ -1,9 +1,3 @@
-class MatplotlibBridge {
-    setContext() {}
-    setFont() {}
-    updateStyle() {}
-}
-
 class QtCharts {
     get experimentXmin() { return 26. }
     get experimentXmax() { return 30. }
@@ -123,12 +117,11 @@ class PyQmlProxy {
     get currentSpaceGroup() { return -1 }
     get currentSpaceGroupSetting() { return -1 }
 
-    get plotting1dLibs() { return ['matplotlib', 'qtcharts', 'bokeh'] }
+    get plotting1dLibs() { return ['qtcharts', 'bokeh'] }
     get plotting3dLibs() { return ['vtk', 'qtdatavisualization', 'chemdoodle'] }
     get current1dPlottingLib() { return 'bokeh' }
     get current3dPlottingLib() { return 'chemdoodle' }
 
-    get matplotlibBridge() { return new MatplotlibBridge() }
     get qtCharts() { return new QtCharts() }
     get bokeh() { return new Bokeh() }
     get backgroundProxy() { return new BackgroundProxy() }

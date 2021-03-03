@@ -18,7 +18,7 @@ EaComponents.SideBarColumn {
             topPadding: 0
             text: qsTr("Show legend")
             checked: ExGlobals.Variables.showLegend
-            onCheckedChanged: ExGlobals.Variables.showLegend = checked //_matplotlibBridge.showLegend(checked, "figure")
+            onCheckedChanged: ExGlobals.Variables.showLegend = checked
         }
     }
 

@@ -26,9 +26,6 @@ import easyAppGui
 from easyAppLogic.Translate import Translator
 from easyDiffractionApp.Logic.PyQmlProxy import PyQmlProxy
 
-# Matplotlib
-from matplotlib_backend_qtquick.backend_qtquickagg import FigureCanvasQtQuickAgg
-
 # VTK
 from easyDiffractionApp.Logic.Proxies.VtkBackend import VtkCanvasHandler
 from easyDiffractionApp.Logic.VTK.QVTKFrameBufferObjectItem import FboItem
@@ -129,7 +126,6 @@ def main():
     engine.rootContext().setContextProperty('_isTestMode', isTestMode())
 
     # Register types to be instantiated in QML
-    qmlRegisterType(FigureCanvasQtQuickAgg, 'MatplotlibBackend', 1, 0, 'FigureCanvas')
     qmlRegisterType(FboItem, 'QtVTK', 1, 0, 'VtkFboItem')
 
     # Add paths to search for installed modules

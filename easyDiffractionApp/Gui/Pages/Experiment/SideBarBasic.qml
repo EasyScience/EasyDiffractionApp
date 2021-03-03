@@ -32,8 +32,6 @@ EaComponents.SideBarColumn {
             }
 
             EaElements.SideBarButton {
-                id: continueWithoutExperimentDataButton
-
                 enabled: !ExGlobals.Constants.proxy.experimentLoaded && !ExGlobals.Constants.proxy.experimentSkipped
 
                 fontIcon: "arrow-circle-right"
@@ -45,7 +43,7 @@ EaComponents.SideBarColumn {
                     ExGlobals.Constants.proxy.experimentSkipped = true
                 }
 
-                Component.onCompleted: ExGlobals.Variables.continueWithoutExperimentDataButton = continueWithoutExperimentDataButton
+                Component.onCompleted: ExGlobals.Variables.continueWithoutExperimentDataButton = this
             }
         }
     }

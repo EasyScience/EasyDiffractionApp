@@ -32,8 +32,6 @@ EaComponents.SideBarColumn {
             }
 
             EaElements.SideBarButton {
-                id: setNewSampleManuallyButton
-
                 enabled: ExGlobals.Constants.proxy.phasesAsObj.length === 0
 
                 fontIcon: "plus-circle"
@@ -45,15 +43,13 @@ EaComponents.SideBarColumn {
                     ExGlobals.Variables.sampleLoaded = true
                 }
 
-                Component.onCompleted: ExGlobals.Variables.setNewSampleManuallyButton = setNewSampleManuallyButton
+                Component.onCompleted: ExGlobals.Variables.setNewSampleManuallyButton = this
             }
         }
 
     }
 
     EaElements.GroupBox {
-        id: symmetryGroup
-
         title: qsTr("Symmetry and cell parameters")
         enabled: ExGlobals.Variables.sampleLoaded
 
@@ -62,7 +58,7 @@ EaComponents.SideBarColumn {
             ExComponents.SampleCell { titleText: "Cell parameters" }
         }
 
-        Component.onCompleted: ExGlobals.Variables.symmetryGroup = symmetryGroup
+        Component.onCompleted: ExGlobals.Variables.symmetryGroup = this
     }
 
     EaElements.GroupBox {
@@ -99,15 +95,13 @@ EaComponents.SideBarColumn {
     }
 
     EaElements.GroupBox {
-        id: adpsGroup
-
         title: qsTr("Atomic displacement parameters")
         last: true
         enabled: ExGlobals.Variables.sampleLoaded
 
         ExComponents.SampleAdps {}
 
-        Component.onCompleted: ExGlobals.Variables.adpsGroup = adpsGroup
+        Component.onCompleted: ExGlobals.Variables.adpsGroup = this
     }
 
     // Open phase CIF file dialog

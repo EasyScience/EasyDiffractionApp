@@ -83,8 +83,8 @@ Item {
         }
 
         Component.onCompleted: {
-            ExGlobals.Constants.proxy.htmlExportingFinished.connect(webView.htmlExportingFinished)
-            ExGlobals.Variables.reportWebView = webView
+            ExGlobals.Variables.reportWebView = this
+            ExGlobals.Constants.proxy.htmlExportingFinished.connect(htmlExportingFinished)
         }
     }
 

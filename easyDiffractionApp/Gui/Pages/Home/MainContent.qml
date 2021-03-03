@@ -67,7 +67,6 @@ Item {
 
         // Start button
         EaElements.SideBarButton {
-            id: startButton
             width: EaStyle.Sizes.fontPixelSize * 15
             anchors.horizontalCenter: parent.horizontalCenter
             fontIcon: "rocket"
@@ -76,7 +75,7 @@ Item {
                 ExGlobals.Variables.projectPageEnabled = true
                 ExGlobals.Variables.projectTabButton.toggle()
             }
-            Component.onCompleted: ExGlobals.Variables.startButton = startButton
+            Component.onCompleted: ExGlobals.Variables.startButton = this
         }
 
         // Links

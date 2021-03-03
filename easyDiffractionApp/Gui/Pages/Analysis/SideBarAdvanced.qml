@@ -24,15 +24,13 @@ EaComponents.SideBarColumn {
                 text: qsTr("Engine:")
             }
             EaElements.ComboBox {
-                id: calculatorSelector
-
                 width: minimizerSelector.width
                 model: ExGlobals.Constants.proxy.calculatorNames
                 onActivated: ExGlobals.Constants.proxy.changeCurrentCalculator(currentIndex)
 
                 //currentIndex: ExGlobals.Constants.proxy.calculatorIndex
                 Component.onCompleted: {
-                    ExGlobals.Variables.calculatorSelector = calculatorSelector
+                    ExGlobals.Variables.calculatorSelector = this
                     currentIndex = ExGlobals.Constants.proxy.currentCalculatorIndex
                 }
             }

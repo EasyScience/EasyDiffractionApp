@@ -16,8 +16,10 @@ from PySide2.QtCore import QPointF
 from PySide2.QtCharts import QtCharts
 from PySide2.QtGui import QPdfWriter, QTextDocument
 
-from easyCore import np
-from easyCore import borg
+from easyCore import np, borg, ureg
+
+from easyCore.Objects.Groups import BaseCollection
+from easyCore.Objects.Base import BaseObj, Parameter
 
 from easyCore.Symmetry.tools import SpacegroupInfo
 from easyCore.Fitting.Fitting import Fitter
@@ -573,10 +575,11 @@ class PyQmlProxy(QObject):
         self._sample.phases = Phases.from_cif_file(cif_path)
         if borg.stack.enabled:
             borg.stack.endMacro()
-            if len(self._sample.phases) < 2:
-                # We have problems with removing the only phase.....
-                borg.stack.pop()
+            # if len(self._sample.phases) < 2:
+            #     # We have problems with removing the only phase.....
+            #     borg.stack.pop()
         self.phaseAdded.emit()
+        self.undoRedoChanged.emit()
 
     @Slot()
     def addDefaultPhase(self):
@@ -586,10 +589,11 @@ class PyQmlProxy(QObject):
         self._sample.phases = self._defaultPhase()
         if borg.stack.enabled:
             borg.stack.endMacro()
-            if len(self._sample.phases) < 2:
-                # We have problems with removing the only phase.....
-                borg.stack.pop()
+            # if len(self._sample.phases) < 2:
+            #     # We have problems with removing the only phase.....
+            #     borg.stack.pop()
         self.phaseAdded.emit()
+        self.undoRedoChanged.emit()
 
     @Slot(str)
     def removePhase(self, phase_name: str):
@@ -1417,14 +1421,70 @@ class PyQmlProxy(QObject):
     @Slot()
     def undo(self):
         if self.canUndo:
+            callback = [self.parametersChanged]
+            if isinstance(borg.stack.history[0], dict):
+                callback = [self.phaseAdded, self.parametersChanged]
+            else:
+                old = borg.stack.history[0]._parent
+                # if isinstance(old, Parameter):
+                #     parent = borg.map.get_item_by_key(borg.map.reverse_route(old)[-1])
+                #     if isinstance(parent, Pattern1D):
+                #         # A pattern parameter has changed
+                #         callback = self.patternParametersChanged
+                #     elif isinstance(parent, Pars1D):
+                #         # callback = self.simulationParametersChanged
+                #         callback = self.instrumentParametersChanged
+                #     elif isinstance(parent, (BaseObj, BaseCollection)):
+                #         callback = self.parametersChanged
+                #     else:
+                #         print(f'Unknown parent: {parent}')
+                # elif isinstance(old, (BaseObj, BaseCollection)):
+                if isinstance(old, (BaseObj, BaseCollection)):
+                    if isinstance(old, (Phase, Phases)):
+                        callback = [self.phaseAdded, self.parametersChanged]
+                    else:
+                        callback = [self.parametersChanged]
+                elif isinstance(old, str):
+                    # This can be a minimizer, minimizer method, name or something boring.
+                    callback = [self.currentMinimizerChanged, self.undoRedoChanged]
+                else:
+                    print(f'Unknown undo thing: {old}')
             borg.stack.undo()
-            self.parametersChanged.emit()
+            _ = [call.emit() for call in callback]
 
     @Slot()
     def redo(self):
         if self.canRedo:
+            callback = [self.parametersChanged]
+            if isinstance(borg.stack.future[0], dict):
+                callback = [self.phaseAdded, self.parametersChanged]
+            else:
+                new = borg.stack.future[0]._parent
+                # if isinstance(old, Parameter):
+                #     parent = borg.map.get_item_by_key(borg.map.reverse_route(old)[-1])
+                #     if isinstance(parent, Pattern1D):
+                #         # A pattern parameter has changed
+                #         callback = self.patternParametersChanged
+                #     elif isinstance(parent, Pars1D):
+                #         # callback = self.simulationParametersChanged
+                #         callback = self.instrumentParametersChanged
+                #     elif isinstance(parent, (BaseObj, BaseCollection)):
+                #         callback = self.parametersChanged
+                #     else:
+                #         print(f'Unknown parent: {parent}')
+                # elif isinstance(old, (BaseObj, BaseCollection)):
+                if isinstance(new, (BaseObj, BaseCollection)):
+                    if isinstance(new, (Phase, Phases)):
+                        callback = [self.phaseAdded, self.parametersChanged]
+                    else:
+                        callback = [self.parametersChanged]
+                elif isinstance(new, str):
+                    # This can be a minimizer, minimizer method, name or something boring.
+                    callback = [self.currentMinimizerChanged, self.undoRedoChanged]
+                else:
+                    print(f'Unknown redo thing: {new}')
             borg.stack.redo()
-            self.parametersChanged.emit()
+            _ = [call.emit() for call in callback]
 
     @Property(str, notify=undoRedoChanged)
     def undoText(self):

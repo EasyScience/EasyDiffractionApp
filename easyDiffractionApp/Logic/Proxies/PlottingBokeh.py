@@ -31,6 +31,7 @@ class BokehProxy(BaseProxy):
 
     def _setDifferenceDataObj(self):
         self._difference_data_obj = {
+            'x': BaseProxy.aroundY(self._measured_xarray),
             'y': BaseProxy.aroundY(self._difference_yarray),
             'y_upper': BaseProxy.aroundY(self._difference_yarray_upper),
             'y_lower': BaseProxy.aroundY(self._difference_yarray_lower),

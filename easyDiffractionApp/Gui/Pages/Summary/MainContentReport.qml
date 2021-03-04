@@ -266,9 +266,9 @@ Item {
                 showDifference: true,
 
                 chartWidth: dataChartWidth,
-                mainChartHeight: dataChartHeight - 25 - 150 - 30,
+                mainChartHeight: dataChartHeight - 25 - 100 - 30,
                 braggChartHeight: 25,
-                differenceChartHeight: 150,
+                differenceChartHeight: 100,
 
                 xAxisTitle: qsTr("2theta (deg)"),
                 yMainAxisTitle: qsTr("Intensity"),

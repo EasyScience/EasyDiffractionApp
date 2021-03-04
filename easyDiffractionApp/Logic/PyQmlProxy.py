@@ -124,8 +124,8 @@ class PyQmlProxy(QObject):
         self._bokeh_proxy = BokehProxy()
 
         self._1d_plotting_libs = ['qtcharts', 'bokeh']
-        self._current_1d_plotting_lib = self._1d_plotting_libs[0]
-        self._current_1d_plotting_lib_proxy = self._qtcharts_proxy
+        self._current_1d_plotting_lib = self._1d_plotting_libs[1]
+        self._current_1d_plotting_lib_proxy = self._bokeh_proxy
 
         self._show_measured_series = True
         self._show_difference_chart = False

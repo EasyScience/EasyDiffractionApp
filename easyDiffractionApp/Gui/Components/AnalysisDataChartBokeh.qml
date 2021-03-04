@@ -14,6 +14,8 @@ EaCharts.BokehChartView {
     braggData: ExGlobals.Constants.proxy.bokeh.braggDataObj
     differenceData: ExGlobals.Constants.proxy.bokeh.differenceDataObj
 
+    plotRanges: ExGlobals.Constants.proxy.bokeh.analysisPlotRangesObj
+
     xAxisTitle: qsTr("2theta (deg)")
     yMainAxisTitle: qsTr("Intensity")
     yDifferenceAxisTitle: qsTr("Difference")

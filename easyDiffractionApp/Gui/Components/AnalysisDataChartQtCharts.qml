@@ -44,8 +44,8 @@ Rectangle {
             //labelsVisible: !bottomChart.visible
             labelFormat: xLabelFormat()
 
-            min: ExGlobals.Constants.proxy.qtCharts.analysisXmin
-            max: ExGlobals.Constants.proxy.qtCharts.analysisXmax
+            min: ExGlobals.Constants.proxy.qtCharts.analysisPlotRangesObj.min_x
+            max: ExGlobals.Constants.proxy.qtCharts.analysisPlotRangesObj.max_x
         }
 
         EaCharts.ValueAxis {
@@ -55,8 +55,8 @@ Rectangle {
 
             labelFormat: yLabelFormat()
 
-            min: ExGlobals.Constants.proxy.qtCharts.analysisYmin
-            max: ExGlobals.Constants.proxy.qtCharts.analysisYmax
+            min: ExGlobals.Constants.proxy.qtCharts.analysisPlotRangesObj.min_y
+            max: ExGlobals.Constants.proxy.qtCharts.analysisPlotRangesObj.max_y
         }
 
         /*
@@ -102,15 +102,21 @@ Rectangle {
         }
         */
 
-        EaCharts.LineSeries {
-            id: experiment
+        EaCharts.AreaSeries {
+            id: measured
 
             color: EaStyle.Colors.chartForegrounds[0]
 
             axisX: topAxisX
             axisY: topAxisY
 
-            customPoints: ExGlobals.Constants.proxy.qtCharts.measuredDataPoints
+            lowerSeries: EaCharts.LineSeries {
+                customPoints: ExGlobals.Constants.proxy.qtCharts.measuredDataObj.xy_lower
+            }
+
+            upperSeries: EaCharts.LineSeries {
+                customPoints: ExGlobals.Constants.proxy.qtCharts.measuredDataObj.xy_upper
+            }
         }
 
         EaCharts.LineSeries {
@@ -121,7 +127,7 @@ Rectangle {
             axisX: topAxisX
             axisY: topAxisY
 
-            customPoints: ExGlobals.Constants.proxy.qtCharts.calculatedDataPoints
+            customPoints: ExGlobals.Constants.proxy.qtCharts.calculatedDataObj.xy
         }
 
         /*

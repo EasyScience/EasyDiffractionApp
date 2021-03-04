@@ -24,8 +24,8 @@ Rectangle {
 
             title: xAxisTitle
 
-            min: ExGlobals.Constants.proxy.qtCharts.experimentXmin
-            max: ExGlobals.Constants.proxy.qtCharts.experimentXmax
+            min: ExGlobals.Constants.proxy.qtCharts.experimentPlotRangesObj.min_x
+            max: ExGlobals.Constants.proxy.qtCharts.experimentPlotRangesObj.max_x
         }
 
         EaCharts.ValueAxis {
@@ -33,36 +33,23 @@ Rectangle {
 
             title: yAxisTitle
 
-            min: ExGlobals.Constants.proxy.qtCharts.experimentYmin
-            max: ExGlobals.Constants.proxy.qtCharts.experimentYmax
+            min: ExGlobals.Constants.proxy.qtCharts.experimentPlotRangesObj.min_y
+            max: ExGlobals.Constants.proxy.qtCharts.experimentPlotRangesObj.max_y
         }
 
-        EaCharts.LineSeries {
-            color: EaStyle.Colors.chartForegrounds[0]
-
-            axisX: axisX
-            axisY: axisY
-
-            customPoints: ExGlobals.Constants.proxy.qtCharts.measuredDataPoints
-        }
-
-        /*
         EaCharts.AreaSeries {
             color: EaStyle.Colors.chartForegrounds[0]
 
             axisX: axisX
             axisY: axisY
 
-            lowerSeries: LineSeries {
-                id: measuredLower
-                Component.onCompleted: ExGlobals.Constants.proxy.qtCharts.setExperimentMeasuredLower(measuredLower)
+            lowerSeries: EaCharts.LineSeries {
+                customPoints: ExGlobals.Constants.proxy.qtCharts.measuredDataObj.xy_lower
             }
 
-            upperSeries: LineSeries {
-                id: measuredUpper
-                Component.onCompleted: ExGlobals.Constants.proxy.qtCharts.setExperimentMeasuredUpper(measuredUpper)
+            upperSeries: EaCharts.LineSeries {
+                customPoints: ExGlobals.Constants.proxy.qtCharts.measuredDataObj.xy_upper
             }
         }
-        */
     }
 }

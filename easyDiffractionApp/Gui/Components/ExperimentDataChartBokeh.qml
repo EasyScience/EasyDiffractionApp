@@ -8,6 +8,8 @@ EaCharts.BokehChartView {
 
     measuredData: ExGlobals.Constants.proxy.bokeh.measuredDataObj
 
+    plotRanges: ExGlobals.Constants.proxy.bokeh.experimentPlotRangesObj
+
     xAxisTitle: qsTr("2theta (deg)")
     yMainAxisTitle: qsTr("Intensity")
 }

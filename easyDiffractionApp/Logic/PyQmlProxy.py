@@ -36,8 +36,8 @@ from easyAppLogic.Utils.Utils import generalizePath
 from easyDiffractionApp.Logic.DataStore import DataSet1D, DataStore
 
 from easyDiffractionApp.Logic.Proxies.BackgroundProxy import BackgroundProxy
-from easyDiffractionApp.Logic.Proxies.QtChartsBackend import QtChartsBridge
-from easyDiffractionApp.Logic.Proxies.BokehBackend import BokehBridge
+from easyDiffractionApp.Logic.Proxies.PlottingQtCharts import QtChartsProxy
+from easyDiffractionApp.Logic.Proxies.PlottingBokeh import BokehProxy
 
 from easyDiffractionApp.Logic.ScreenRecorder import ScreenRecorder
 
@@ -119,21 +119,25 @@ class PyQmlProxy(QObject):
         self._interface = InterfaceFactory()
         self._sample = self._defaultSample()
 
-        # Charts
-        self._vtk_handler = None
+        # Charts 1D
+        self._qtcharts_proxy = QtChartsProxy()
+        self._bokeh_proxy = BokehProxy()
 
-        self._qtcharts_bridge = QtChartsBridge()
-        self._bokeh_bridge = BokehBridge()
-        self._experiment_figure_canvas = None
-        self._analysis_figure_canvas = None
-        self._difference_figure_canvas = None
-
-        self._calculated_series_ref = None
+        self._1d_plotting_libs = ['qtcharts', 'bokeh']
+        self._current_1d_plotting_lib = self._1d_plotting_libs[0]
+        self._current_1d_plotting_lib_proxy = self._qtcharts_proxy
 
         self._show_measured_series = True
         self._show_difference_chart = False
 
         self.current1dPlottingLibChanged.connect(self.onCurrent1dPlottingLibChanged)
+
+        # Charts 3D
+        self._vtk_handler = None
+
+        self._3d_plotting_libs = ['vtk', 'qtdatavisualization', 'chemdoodle']
+        self._current_3d_plotting_lib = self._3d_plotting_libs[0]
+
         self.current3dPlottingLibChanged.connect(self.onCurrent3dPlottingLibChanged)
 
         # Project
@@ -214,13 +218,6 @@ class PyQmlProxy(QObject):
         self._parameters_filter_criteria = ""
         self.parametersFilterCriteriaChanged.connect(self._onParametersFilterCriteriaChanged)
 
-        # Plotting
-        self._1d_plotting_libs = ['qtcharts', 'bokeh']
-        self._current_1d_plotting_lib = self._1d_plotting_libs[1]
-
-        self._3d_plotting_libs = ['vtk', 'qtdatavisualization', 'chemdoodle']
-        self._current_3d_plotting_lib = self._3d_plotting_libs[0]
-
         # Report
         self._report = ""
 
@@ -287,13 +284,13 @@ class PyQmlProxy(QObject):
 
     @Property('QVariant', notify=dummySignal)
     def qtCharts(self):
-        return self._qtcharts_bridge
+        return self._qtcharts_proxy
 
     # Bokeh
 
     @Property('QVariant', notify=dummySignal)
     def bokeh(self):
-        return self._bokeh_bridge
+        return self._bokeh_proxy
 
     # Plotting libs
 
@@ -311,7 +308,21 @@ class PyQmlProxy(QObject):
         self.current1dPlottingLibChanged.emit()
 
     def onCurrent1dPlottingLibChanged(self):
-        pass
+        measured_xarray = self._current_1d_plotting_lib_proxy._measured_xarray
+        measured_yarray = self._current_1d_plotting_lib_proxy._measured_yarray
+        measured_syarray = self._current_1d_plotting_lib_proxy._measured_syarray
+        calculated_xarray = self._current_1d_plotting_lib_proxy._calculated_xarray
+        calculated_yarray = self._current_1d_plotting_lib_proxy._calculated_yarray
+        bragg_xarray = self._current_1d_plotting_lib_proxy._bragg_xarray
+        if self._current_1d_plotting_lib == 'qtcharts':
+            self._current_1d_plotting_lib_proxy = self._qtcharts_proxy
+        elif self._current_1d_plotting_lib == 'bokeh':
+            self._current_1d_plotting_lib_proxy = self._bokeh_proxy
+        else:
+            raise NotImplementedError(f'Only the following plotting libs are available: {self._1d_plotting_libs}.')
+        self._current_1d_plotting_lib_proxy.setMeasuredData(measured_xarray, measured_yarray, measured_syarray)
+        self._current_1d_plotting_lib_proxy.setCalculatedData(calculated_xarray, calculated_yarray)
+        self._current_1d_plotting_lib_proxy.setBraggData(bragg_xarray)
 
     @Property('QVariant', notify=dummySignal)
     def plotting3dLibs(self):
@@ -816,8 +827,7 @@ class PyQmlProxy(QObject):
 
     def _onExperimentDataAdded(self):
         print("***** _onExperimentDataAdded")
-        self._bokeh_bridge.setMeasuredData(self._experiment_data.x, self._experiment_data.y, self._experiment_data.e)
-        self._qtcharts_bridge.setMeasuredData(self._experiment_data.x, self._experiment_data.y, self._experiment_data.e)
+        self._current_1d_plotting_lib_proxy.setMeasuredData(self._experiment_data.x, self._experiment_data.y, self._experiment_data.e)
         self._experiment_parameters = self._experimentDataParameters(self._experiment_data)
         self.simulationParametersAsObj = json.dumps(self._experiment_parameters)
         self.experiments = [self._defaultExperiment()]
@@ -1006,8 +1016,8 @@ class PyQmlProxy(QObject):
 
         sim.y = self._interface.fit_func(sim.x)  # CrysPy: 0.5 s, CrysFML: 0.005 s, GSAS-II: 0.25 s
 
-        self._bokeh_bridge.setCalculatedData(sim.x, sim.y)
-        self._qtcharts_bridge.setCalculatedData(sim.x, sim.y)
+        self._current_1d_plotting_lib_proxy.setCalculatedData(sim.x, sim.y)
+        self._current_1d_plotting_lib_proxy.setBraggData(np.array([20., 35., 100.]))
 
         print("+ _updateCalculatedData: {0:.3f} s".format(timeit.default_timer() - start_time))
 

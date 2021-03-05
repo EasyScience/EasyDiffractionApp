@@ -260,11 +260,6 @@ Item {
             },
             // specs
             {
-                showMeasured: true,
-                showCalculated: true,
-                showBragg: true,
-                showDifference: true,
-
                 chartWidth: dataChartWidth,
                 mainChartHeight: dataChartHeight - 25 - 100 - 30,
                 braggChartHeight: 25,

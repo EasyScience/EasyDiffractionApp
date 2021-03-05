@@ -4,11 +4,6 @@ import easyAppGui.Charts 1.0 as EaCharts
 import Gui.Globals 1.0 as ExGlobals
 
 EaCharts.BokehChartView {
-    showMeasured: true
-    showCalculated: true
-    showBragg: true
-    showDifference: true
-
     measuredData: ExGlobals.Constants.proxy.bokeh.measuredDataObj
     calculatedData: ExGlobals.Constants.proxy.bokeh.calculatedDataObj
     braggData: ExGlobals.Constants.proxy.bokeh.braggDataObj

@@ -11,9 +11,6 @@ import Gui.Globals 1.0 as ExGlobals
 Rectangle {
     id: chartContainer
 
-    property bool showMeasured: false
-    property bool showDifference: false
-
     property string xAxisTitle: qsTr("2theta (deg)")
     property string mainYAxisTitle: qsTr("Intensity")
     property string differenceYAxisTitle: qsTr("Difference")

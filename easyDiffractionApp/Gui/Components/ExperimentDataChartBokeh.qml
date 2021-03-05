@@ -4,8 +4,6 @@ import easyAppGui.Charts 1.0 as EaCharts
 import Gui.Globals 1.0 as ExGlobals
 
 EaCharts.BokehChartView {
-    showMeasured: true
-
     measuredData: ExGlobals.Constants.proxy.bokeh.measuredDataObj
 
     plotRanges: ExGlobals.Constants.proxy.bokeh.experimentPlotRangesObj

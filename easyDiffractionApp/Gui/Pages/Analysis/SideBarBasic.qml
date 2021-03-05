@@ -185,24 +185,32 @@ EaComponents.SideBarColumn {
             text: ExGlobals.Constants.proxy.isFitFinished ? qsTr("Start fitting") : qsTr("Stop fitting")
             wide: true
             onClicked: {
-                fitButtonClicked(this);
+                ExGlobals.Constants.proxy.fit()
                 }
+            Component.onCompleted: {
+                if (gotResults() && ExGlobals.Constants.proxy.isFitFinished) {
+                    refinementResultsDialog.open()
+                }
+            }
         }
     }
 
     ExComponents.ResultsDialog {
         id: refinementResultsDialog
+        enabled: gotResults() && ExGlobals.Constants.proxy.isFitFinished
+        visible: gotResults() && ExGlobals.Constants.proxy.isFitFinished
         x: (parent.width - width) * 0.5
         y: (parent.height - height) * 0.5
     }
 
     // Logic
-
-    function fitButtonClicked(button){
-        ExGlobals.Constants.proxy.fit()
-        // the dialog is no longer synchronous
-        refinementResultsDialog.open()
+    function gotResults(){
+        if ((ExGlobals.Constants.proxy.fitResults != null) && (ExGlobals.Constants.proxy.fitResults.success != null)){
+            return true
+        }
+        return false
     }
+
     function formatFilterText(group_icon, icon, text) {
         if (icon === "")
             return `<font face="${EaStyle.Fonts.iconsFamily}">${group_icon}</font>&nbsp;&nbsp;${text}</font>`

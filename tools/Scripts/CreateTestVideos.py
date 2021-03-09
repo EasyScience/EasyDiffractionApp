@@ -76,7 +76,8 @@ def addDownloadDestToPath():
     Functions.setEnvironmentVariable('PATH', f'{download_dest}:{path}')
 
 if __name__ == "__main__":
-    downloadFfmpeg()
-    unzipFfmpeg()
-    addDownloadDestToPath()
-    writeVideo()
+    #downloadFfmpeg()
+    #unzipFfmpeg()
+    #addDownloadDestToPath()
+    #writeVideo()
+    Functions.copyFile('tutorial.mp4', outputPath())

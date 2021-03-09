@@ -39,17 +39,14 @@ pywin32-ctypes = { version = '^0.2', platform = 'win32' }
 pypiwin32 = { version = '^223', platform = 'win32' }
 pefile = { version = '^2019.4', platform = 'win32' }
 # Misc
-toml = '^0.10'
-requests = '^2.24'
-dephell_licenses = '^0.1'
-ffmpeg-python = '^0.2'
-googletrans = '^3.0'
-gTTS = '^2.2'
-# easyScience
-#easyCore = { path = '../easyCore/' }
-#easyDiffractionLib = { path = '../easyDiffractionLib/' }
-#easyAppLogic = { path = '../easyAppLogic/' }
-#easyAppGui = { path = '../easyAppGui/' }
+toml = '^0.10.2'
+requests = '^2.25.1'
+dephell_licenses = '^0.1.7'
+ffmpeg-python = '^0.2.0'
+mss = '^6.1.0'
+opencv-python = '^4.5.1'
+googletrans = '^3.0.0'
+gTTS = '^2.2.2'
 
 [tool.poetry.scripts]
 easyDiffraction = 'easyDiffractionApp.main:main'
@@ -144,9 +141,9 @@ auto_exclude = { macos = ['_tkinter'], ubuntu = ['_tkinter'], windows = [''], al
                 '_curses', '_elementtree', '_hashlib', '_heapq', '_lzma', '_multibytecodec', '_multiprocessing',
                 '_opcode', '_queue', '_opcode', '_uuid', '_win32sysloader', 'grp', 'readline', 'termios' ] }
 manual_exclude = [ 'd3dcompiler*', 'libbispeu*', 'libdqag*', 'libvode*', 'mfc*', 'msvcp*', 'VCRUNTIME*',
-                   '*Qt*3D*', '*Qt*Bluetooth*', '*Qt*Bodymovin*', '*Qt*Concurrent*', '*Qt*Gamepad*', '*Qt*Location*',
-                   '*Qt*Nfc*', '*Qt*Positioning*', '*Qt*Purchasing*', '*Qt*QuickParticles*', '*Qt*QuickShapes*',
-                   '*Qt*RemoteObjects*', '*Qt*Scxml*', '*Qt*Sensors*', '*Qt*Sql*', '*Qt*VirtualKeyboard*', '*Qt*Wayland*', '*Qt*Web*' ]
+                   '*Qt*3D*', '*Qt*Bluetooth*', '*Qt*Bodymovin*', '*Qt*Gamepad*', '*Qt*Location*',
+                   '*Qt*Nfc*', '*Qt*Purchasing*', '*Qt*QuickParticles*', '*Qt*QuickShapes*', '*Qt*RemoteObjects*',
+                   '*Qt*Scxml*', '*Qt*Sensors*', '*Qt*Sql*', '*Qt*VirtualKeyboard*', '*Qt*Wayland*' ]
 
 [ci.qtifw.setup]
 version = '4.0.1'

@@ -175,13 +175,27 @@ Item {
 
     function startSavingScreenshots() {
         if (EaGlobals.Variables.isTestMode) {
-            EaGlobals.Variables.saveScreenshotsRunning = true
+            //EaGlobals.Variables.saveScreenshotsRunning = true
+            const frame_rect = {
+                left: window.x,
+                top: window.y,
+                width: window.width,
+                height: window.height
+            }
+            const margin_rect = {
+                left: EaStyle.Sizes.fontPixelSize,
+                top: EaStyle.Sizes.fontPixelSize,
+                right: EaStyle.Sizes.fontPixelSize,
+                bottom: EaStyle.Sizes.fontPixelSize
+            }
+            ExGlobals.Constants.proxy.screenRecorder.startRecording(frame_rect, margin_rect)
         }
     }
 
     function endSavingScreenshots() {
         if (EaGlobals.Variables.isTestMode) {
-            EaGlobals.Variables.saveScreenshotsRunning = false
+            //EaGlobals.Variables.saveScreenshotsRunning = false
+            ExGlobals.Constants.proxy.screenRecorder.stopRecording()
             quitTimer.start()
         }
     }

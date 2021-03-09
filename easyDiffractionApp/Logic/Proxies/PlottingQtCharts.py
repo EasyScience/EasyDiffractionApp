@@ -1,8 +1,11 @@
 __author__ = 'github.com/andrewsazonov'
 __version__ = '0.0.1'
 
+import math
+
 from PySide2.QtCore import Slot
-from PySide2.QtCore import QPointF
+from PySide2.QtCore import QPointF, Qt
+from PySide2.QtGui import QPainterPath, QImage, QBrush, QPainter, qRgb, qRgba, QPen, QColor
 
 from easyDiffractionApp.Logic.Proxies.PlottingBase import BaseProxy
 
@@ -14,6 +17,21 @@ class QtChartsProxy(BaseProxy):
 
     def __init__(self, parent=None):
         super().__init__(parent)
+
+    @Slot(int, str, result='QBrush')
+    def brush(self, size, color):
+        textureImage = QImage(size, size, QImage.Format_ARGB32)
+        # Transparent background
+        for row in range(size):
+            for column in range(size):
+                textureImage.setPixelColor(column, row, Qt.transparent)
+        # Vertical line
+        for row in range(size):
+            column = int(size/2)
+            textureImage.setPixelColor(column, row, color)
+        brush = QBrush()
+        brush.setTextureImage(textureImage)
+        return brush
 
     @Slot('QVariant', 'QVariant')
     def lineSeriesCustomReplace(self, line_series, points):
@@ -39,17 +57,13 @@ class QtChartsProxy(BaseProxy):
         self._difference_data_obj = {
             'xy': QtChartsProxy.arraysToPoints(self._measured_xarray, self._difference_yarray),
             'xy_upper': QtChartsProxy.arraysToPoints(self._measured_xarray, self._difference_yarray_upper),
-            'xy_lower': QtChartsProxy.arraysToPoints(self._measured_xarray, self._difference_yarray_lower),
-            'min_y': BaseProxy.aroundY(self._difference_min_y),
-            'max_y': BaseProxy.aroundY(self._difference_max_y),
-            'median_y': BaseProxy.aroundY(self._difference_median_y)
+            'xy_lower': QtChartsProxy.arraysToPoints(self._measured_xarray, self._difference_yarray_lower)
         }
         self.differenceDataObjChanged.emit()
 
     def _setBraggDataObj(self):
         self._bragg_data_obj = {
-            'x': BaseProxy.aroundX(self._bragg_xarray),
-            'y': BaseProxy.aroundY(self._bragg_yarray),
+            'xy': QtChartsProxy.arraysToPoints(self._bragg_xarray, self._bragg_yarray)
         }
         self.braggDataObjChanged.emit()
 

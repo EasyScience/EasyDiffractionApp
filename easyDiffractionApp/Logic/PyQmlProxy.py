@@ -22,11 +22,10 @@ from easyCore import borg
 
 from easyCore.Symmetry.tools import SpacegroupInfo
 from easyCore.Fitting.Fitting import Fitter
-from easyCore.Fitting.Constraints import ObjConstraint, NumericConstraint
 from easyCore.Utils.classTools import generatePath
 
 from easyDiffractionLib.sample import Sample
-from easyDiffractionLib import Phases, Phase, Lattice, Site, Atoms, SpaceGroup
+from easyDiffractionLib import Phases, Phase, Lattice, Site, SpaceGroup
 from easyDiffractionLib.interface import InterfaceFactory
 from easyDiffractionLib.Elements.Experiments.Experiment import Pars1D
 from easyDiffractionLib.Elements.Experiments.Pattern import Pattern1D
@@ -39,6 +38,7 @@ from easyDiffractionApp.Logic.Proxies.BackgroundProxy import BackgroundProxy
 from easyDiffractionApp.Logic.Proxies.MatplotlibBackend import MatplotlibBridge
 from easyDiffractionApp.Logic.Proxies.QtChartsBackend import QtChartsBridge
 from easyDiffractionApp.Logic.Proxies.BokehBackend import BokehBridge
+from easyDiffractionApp.Logic.Fitter import Fitter as ThreadedFitter
 
 from easyDiffractionApp.Logic.ScreenRecorder import ScreenRecorder
 
@@ -107,7 +107,7 @@ class PyQmlProxy(QObject):
 
     # Status info
     statusInfoChanged = Signal()
-
+    
     # Misc
     dummySignal = Signal()
 
@@ -233,6 +233,10 @@ class PyQmlProxy(QObject):
         self.currentCalculatorChanged.connect(self.statusInfoChanged)
         self.currentMinimizerChanged.connect(self.statusInfoChanged)
         self.currentMinimizerMethodChanged.connect(self.statusInfoChanged)
+
+        # Multithreading
+        self._fitter_thread = None
+        self._fit_finished = True
 
         # Screen recorder
         self._screen_recorder = ScreenRecorder()
@@ -1265,6 +1269,7 @@ class PyQmlProxy(QObject):
 
     @Slot()
     def fit(self):
+        self.isFitFinished = False
         exp_data = self._data.experiments[0]
 
         x = exp_data.x
@@ -1272,14 +1277,32 @@ class PyQmlProxy(QObject):
         weights = 1 / exp_data.e
         method = self._current_minimizer_method_name
 
-        res = self.fitter.fit(x, y, weights=weights, method=method)
+        args = (x, y)
+        kwargs = {"weights": weights, "method": method}
+        self._fitter_thread = ThreadedFitter(self.fitter, 'fit', *args, **kwargs)
+        self._fitter_thread.finished.connect(self._setFitResults)
+        self._fitter_thread.failed.connect(self._setFitResultsFailed)
+        self._fitter_thread.start()
 
-        self._setFitResults(res)
-        self.fitFinished.emit()
+        # self._setFitResults(res)
+        # self.fitFinished.emit()
 
     @Property('QVariant', notify=fitResultsChanged)
     def fitResults(self):
         return self._fit_results
+
+    @Property(bool, notify=fitFinished)
+    def isFitFinished(self):
+        print('+ isfitFinished called')
+        return self._fit_finished
+
+    @isFitFinished.setter
+    def isFitFinished(self, fit_finished: bool):
+        print('+ isFitFinished.setter called', fit_finished)
+        if self._fit_finished == fit_finished:
+            return
+        self._fit_finished = fit_finished
+        self.fitFinished.emit()
 
     def _defaultFitResults(self):
         return {
@@ -1297,6 +1320,14 @@ class PyQmlProxy(QObject):
             "redchi2": float(res.reduced_chi)
         }
         self.fitResultsChanged.emit()
+        self.isFitFinished = True
+        self.fitFinished.emit()
+
+    def _setFitResultsFailed(self, res):
+        print("FIT FAILED")
+        print(str(res))
+        self.isFitFinished = True
+        self.fitFinished.emit()
 
     def _onFitFinished(self):
         print("***** _onFitFinished")

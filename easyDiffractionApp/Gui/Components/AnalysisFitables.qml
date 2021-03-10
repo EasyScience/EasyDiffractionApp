@@ -12,9 +12,10 @@ import Gui.Globals 1.0 as ExGlobals
 EaComponents.TableView {
     id: table
 
+    enabled: ExGlobals.Constants.proxy.isFitFinished
+
     maxRowCountShow: 8
     defaultInfoText: qsTr("No Parameters Found")
-    enabled: ExGlobals.Constants.proxy.isFitFinished
 
     // Table model
 

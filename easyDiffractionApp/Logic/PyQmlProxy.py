@@ -1292,14 +1292,13 @@ class PyQmlProxy(QObject):
         return self._fit_results
 
     @Property(bool, notify=fitFinished)
-    # @Property(bool, constant=True)
     def isFitFinished(self):
-        print('\n\n isfitFinished called')
+        print('+ isfitFinished called')
         return self._fit_finished
 
     @isFitFinished.setter
     def isFitFinished(self, fit_finished: bool):
-        print('\n\n isFitFinishedSetter called')
+        print('+ isFitFinished.setter called', fit_finished)
         if self._fit_finished == fit_finished:
             return
         self._fit_finished = fit_finished

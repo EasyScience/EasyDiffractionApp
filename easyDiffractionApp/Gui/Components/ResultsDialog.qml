@@ -1,40 +1,44 @@
-import QtQuick 2.14
-import QtQuick.Controls 2.14
-import QtQuick.XmlListModel 2.14
+import QtQuick 2.13
+import QtQuick.Controls 2.13
 
 import easyAppGui.Globals 1.0 as EaGlobals
 import easyAppGui.Style 1.0 as EaStyle
 import easyAppGui.Elements 1.0 as EaElements
-import easyAppGui.Components 1.0 as EaComponents
 
 import Gui.Globals 1.0 as ExGlobals
-import Gui.Components 1.0 as ExComponents
 
-// Info dialog (after refinement)
 EaElements.Dialog {
-    id: refinementResultsDialog   
+    property bool gotResults: typeof ExGlobals.Constants.proxy.fitResults.success !== 'undefined' &&
+                              ExGlobals.Constants.proxy.isFitFinished
+
+    title: qsTr("Refinement Results")
+
     parent: Overlay.overlay
 
     x: (parent.width - width) * 0.5
     y: (parent.height - height) * 0.5
 
-    // modal: true
+    modal: true
     standardButtons: Dialog.Ok
 
-    title: qsTr("Refinement Results")
-
     Column {
-        EaElements.Label { text: gotResults() && ExGlobals.Constants.proxy.isFitFinished ? `Success: ${ExGlobals.Constants.proxy.fitResults.success}` : "" }
-        EaElements.Label { text: gotResults() && ExGlobals.Constants.proxy.isFitFinished ? `Num. refined parameters: ${ExGlobals.Constants.proxy.fitResults.nvarys}` : "Fitting in progress..." }
-        EaElements.Label { text: gotResults() && ExGlobals.Constants.proxy.isFitFinished ? `Goodness-of-fit (reduced \u03c7\u00b2): ${ExGlobals.Constants.proxy.fitResults.redchi2.toFixed(2)}` : "" }
-    }
-
-    function gotResults(){
-        if ((ExGlobals.Constants.proxy.fitResults != null) && (ExGlobals.Constants.proxy.fitResults.success != null)){
-            return true
+        EaElements.Label {
+            text: gotResults
+                  ? `Success: ${ExGlobals.Constants.proxy.fitResults.success}`
+                  : ""
         }
-        return false
-    }
 
+        EaElements.Label {
+            text: gotResults
+                  ? `Num. refined parameters: ${ExGlobals.Constants.proxy.fitResults.nvarys}`
+                  : ""
+        }
+
+        EaElements.Label {
+            text: gotResults
+                  ? `Goodness-of-fit (reduced \u03c7\u00b2): ${ExGlobals.Constants.proxy.fitResults.redchi2.toFixed(2)}`
+                  : ""
+        }
+    }
 }
 

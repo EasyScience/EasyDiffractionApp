@@ -173,43 +173,27 @@ EaComponents.SideBarColumn {
                 validator: sliderFromLabel.validator
                 maximumLength: sliderFromLabel.maximumLength
                 text: slider.to.toFixed(4)
-                onEditingFinished: {}
             }
         }
 
         // Start fitting button
         EaElements.SideBarButton {
             id: fitButton
+            wide: true
             enabled: ExGlobals.Constants.proxy.experimentLoaded
             fontIcon: ExGlobals.Constants.proxy.isFitFinished ? "play-circle" : "pause-circle"
             text: ExGlobals.Constants.proxy.isFitFinished ? qsTr("Start fitting") : qsTr("Stop fitting")
-            wide: true
-            onClicked: {
-                ExGlobals.Constants.proxy.fit()
-                }
-            Component.onCompleted: {
-                if (gotResults() && ExGlobals.Constants.proxy.isFitFinished) {
-                    refinementResultsDialog.open()
-                }
-            }
+            onClicked: ExGlobals.Constants.proxy.fit()
         }
     }
 
+    // Init results dialog
     ExComponents.ResultsDialog {
-        id: refinementResultsDialog
-        enabled: gotResults() && ExGlobals.Constants.proxy.isFitFinished
-        visible: gotResults() && ExGlobals.Constants.proxy.isFitFinished
-        x: (parent.width - width) * 0.5
-        y: (parent.height - height) * 0.5
+        visible: typeof ExGlobals.Constants.proxy.fitResults.success !== 'undefined' &&
+                 ExGlobals.Constants.proxy.isFitFinished
     }
 
     // Logic
-    function gotResults(){
-        if ((ExGlobals.Constants.proxy.fitResults != null) && (ExGlobals.Constants.proxy.fitResults.success != null)){
-            return true
-        }
-        return false
-    }
 
     function formatFilterText(group_icon, icon, text) {
         if (icon === "")

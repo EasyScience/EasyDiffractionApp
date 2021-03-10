@@ -179,43 +179,37 @@ EaComponents.SideBarColumn {
 
         // Start fitting button
         EaElements.SideBarButton {
+            id: fitButton
             enabled: ExGlobals.Constants.proxy.experimentLoaded
-            fontIcon: "play-circle"
-            text: qsTr("Start fitting")
-
+            fontIcon: ExGlobals.Constants.proxy.isFitFinished ? "play-circle" : "pause-circle"
+            text: ExGlobals.Constants.proxy.isFitFinished ? qsTr("Start fitting") : qsTr("Stop fitting")
             wide: true
-
             onClicked: {
-                //print("Start fitting button clicked")
                 ExGlobals.Constants.proxy.fit()
-                refinementResultsDialog.open()
+                }
+            Component.onCompleted: {
+                if (gotResults() && ExGlobals.Constants.proxy.isFitFinished) {
+                    refinementResultsDialog.open()
+                }
             }
         }
     }
 
-    // Info dialog (after refinement)
-
-    EaElements.Dialog {
+    ExComponents.ResultsDialog {
         id: refinementResultsDialog
-
-        parent: Overlay.overlay
-
+        enabled: gotResults() && ExGlobals.Constants.proxy.isFitFinished
+        visible: gotResults() && ExGlobals.Constants.proxy.isFitFinished
         x: (parent.width - width) * 0.5
         y: (parent.height - height) * 0.5
-
-        modal: true
-        standardButtons: Dialog.Ok
-
-        title: qsTr("Refinement Results")
-
-        Column {
-            EaElements.Label { text: typeof ExGlobals.Constants.proxy.fitResults !== 'undefined' ? `Success: ${ExGlobals.Constants.proxy.fitResults.success}` : "" }
-            EaElements.Label { text: typeof ExGlobals.Constants.proxy.fitResults !== 'undefined' ? `Num. refined parameters: ${ExGlobals.Constants.proxy.fitResults.nvarys}` : "" }
-            EaElements.Label { text: typeof ExGlobals.Constants.proxy.fitResults !== 'undefined' && typeof ExGlobals.Constants.proxy.fitResults.redchi2 !== 'undefined' ? `Goodness-of-fit (reduced \u03c7\u00b2): ${ExGlobals.Constants.proxy.fitResults.redchi2.toFixed(2)}` : "" }
-        }
     }
 
     // Logic
+    function gotResults(){
+        if ((ExGlobals.Constants.proxy.fitResults != null) && (ExGlobals.Constants.proxy.fitResults.success != null)){
+            return true
+        }
+        return false
+    }
 
     function formatFilterText(group_icon, icon, text) {
         if (icon === "")

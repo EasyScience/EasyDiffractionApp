@@ -14,6 +14,7 @@ EaComponents.TableView {
 
     maxRowCountShow: 8
     defaultInfoText: qsTr("No Parameters Found")
+    enabled: ExGlobals.Constants.proxy.isFitFinished
 
     // Table model
 

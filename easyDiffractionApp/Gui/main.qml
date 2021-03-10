@@ -9,8 +9,6 @@ import easyAppGui.Style 1.0 as EaStyle
 ExComponents.ApplicationWindow {
     id: window
 
-    title: `${ExGlobals.Constants.appName} ${ExGlobals.Constants.appVersion}`
-
     // Matplotlib
 
     Component.onCompleted: {

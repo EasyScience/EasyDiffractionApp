@@ -17,6 +17,8 @@ import Gui.Pages.Summary 1.0 as ExSummaryPage
 
 EaComponents.ApplicationWindow {
 
+    title: ' ' //`${ExGlobals.Constants.appName} ${ExGlobals.Constants.appVersion}`
+
     ///////////////////
     // APPLICATION BAR
     ///////////////////
@@ -130,7 +132,7 @@ EaComponents.ApplicationWindow {
         // Summary tab
         EaElements.AppBarTabButton {
             id: summaryTabButton
-            enabled: false // ExGlobals.Variables.summaryPageEnabled
+            enabled: ExGlobals.Variables.summaryPageEnabled
             fontIcon: "clipboard-list"
             text: qsTr("Summary")
             ToolTip.text: qsTr("Summary of the work done")
@@ -156,7 +158,7 @@ EaComponents.ApplicationWindow {
             mainContent: EaComponents.MainContent {
                 tabs: [
                     EaElements.TabButton { text: qsTr("Description") },
-                    EaElements.TabButton { text: "project.json" }
+                    EaElements.TabButton { text: "project.cif" }
                 ]
 
                 items: [
@@ -185,7 +187,11 @@ EaComponents.ApplicationWindow {
             mainContent: EaComponents.MainContent {
                 tabs: [
                     EaElements.TabButton { text: qsTr("Structure view") },
-                    EaElements.TabButton { text: ExGlobals.Constants.proxy.projectInfoAsJson.samples }
+                    EaElements.TabButton {
+                        text: typeof ExGlobals.Constants.proxy.phasesAsObj[ExGlobals.Constants.proxy.currentPhaseIndex] !== 'undefined' && ExGlobals.Constants.proxy.phasesAsObj.length > 0
+                              ? ExGlobals.Constants.proxy.phasesAsObj[ExGlobals.Constants.proxy.currentPhaseIndex].name + '.cif'
+                              : 'Unknown'
+                    }
                 ]
 
                 items: [
@@ -215,7 +221,7 @@ EaComponents.ApplicationWindow {
                 tabs: [
                     EaElements.TabButton { text: qsTr("Plot view") },
                     EaElements.TabButton { enabled: false; text: qsTr("Table view") },
-                    EaElements.TabButton { enabled: false; text: ExGlobals.Constants.proxy.projectInfoAsJson.experiments }
+                    EaElements.TabButton { enabled: false; text: 'D1A@ILL.cif' }
                 ]
 
                 items: [
@@ -248,7 +254,7 @@ EaComponents.ApplicationWindow {
                     EaElements.TabButton {
                         visible: ExGlobals.Constants.proxy.experimentLoaded
                         enabled: false
-                        text: ExGlobals.Constants.proxy.projectInfoAsJson.calculations
+                        text: 'calculations.cif' //ExGlobals.Constants.proxy.projectInfoAsJson.calculations
                     }
                 ]
 
@@ -310,6 +316,7 @@ EaComponents.ApplicationWindow {
     /////////////
 
     statusBar: EaElements.StatusBar {
+        visible: EaGlobals.Variables.appBarCurrentIndex !== 0
 
         model: XmlListModel {
             xml: ExGlobals.Constants.proxy.statusModelAsXml
@@ -317,6 +324,18 @@ EaComponents.ApplicationWindow {
 
             XmlRole { name: "label"; query: "label/string()" }
             XmlRole { name: "value"; query: "value/string()" }
+        }
+    }
+
+    ///////////////
+    // Init dialogs
+    ///////////////
+
+    // Application dialogs (invisible at the beginning)
+    ExProjectPage.ProjectDescriptionDialog {
+        onAccepted: {
+            ExGlobals.Variables.samplePageEnabled = true
+            ExGlobals.Variables.projectCreated = true
         }
     }
 

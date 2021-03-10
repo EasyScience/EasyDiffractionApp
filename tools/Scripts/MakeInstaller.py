@@ -17,7 +17,7 @@ def qtifwSetupFileName():
     return f'{file_name_base}{file_name_suffix}{file_ext}'
 
 def qtifwSetupDownloadDest():
-    return os.path.join(CONFIG['ci']['project']['subdirs']['download'], f'{qtifwSetupFileName()}')
+    return os.path.join(CONFIG.download_dir, f'{qtifwSetupFileName()}')
 
 def urlOk(url):
     try:
@@ -73,9 +73,8 @@ def qtifwDirPath():
     return d[CONFIG.os]
 
 def setupBuildDirPath():
-    build_dir = CONFIG['ci']['project']['subdirs']['build']
     setup_build_dir_suffix = CONFIG['ci']['app']['setup']['build_dir_suffix']
-    return os.path.join(build_dir, f'{CONFIG.app_name}{setup_build_dir_suffix}')
+    return os.path.join(CONFIG.build_dir, f'{CONFIG.app_name}{setup_build_dir_suffix}')
 
 def configDirPath():
     return os.path.join(setupBuildDirPath(), CONFIG['ci']['app']['setup']['build']['config_dir'])
@@ -215,7 +214,7 @@ def appPackageXml():
 #        return pretty_xml
 
 def downloadQtInstallerFramework():
-    Functions.createDir(CONFIG['ci']['project']['subdirs']['download'])
+    Functions.createDir(CONFIG.download_dir)
     Functions.downloadFile(
         url=qtifwSetupDownloadUrl(),
         destination=qtifwSetupDownloadDest()
@@ -301,9 +300,10 @@ def createOnlineRepository():
         message = 'create online repository'
         qtifw_bin_dir_path = os.path.join(qtifwDirPath(), 'bin')
         qtifw_repogen_path = os.path.join(qtifw_bin_dir_path, 'repogen')
-        repository_dir_path = os.path.join(CONFIG['ci']['project']['subdirs']['distribution'], localRepositoryDir())
+        repository_dir_path = os.path.join(CONFIG.dist_dir, localRepositoryDir())
         Functions.run(
             qtifw_repogen_path,
+            '--verbose',
             '--update-new-components',
             '-p', packagesDirPath(),
             repository_dir_path

@@ -125,7 +125,7 @@ class PyQmlProxy(QObject):
 
         self._1d_plotting_libs = ['qtcharts', 'bokeh']
         self._current_1d_plotting_lib = 'qtcharts'
-        self._current_1d_plotting_lib_proxy = self._qtcharts_proxy
+        self._current_1d_plotting_lib_proxy = self.initCurrent1dPlottingProxy()
 
         self._show_measured_series = True
         self._show_difference_chart = False
@@ -293,6 +293,14 @@ class PyQmlProxy(QObject):
         return self._bokeh_proxy
 
     # Plotting libs
+
+    def initCurrent1dPlottingProxy(self):
+        if self._current_1d_plotting_lib == 'bokeh':
+            return self._bokeh_proxy
+        elif self._current_1d_plotting_lib == 'qtcharts':
+            return self._qtcharts_proxy
+        else:
+            raise NotImplementedError(f'Supported plotting libraries are: qtcharts and bokeh.')
 
     @Property('QVariant', notify=dummySignal)
     def plotting1dLibs(self):

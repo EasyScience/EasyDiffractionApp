@@ -19,15 +19,17 @@ class QtChartsProxy(BaseProxy):
         super().__init__(parent)
 
     @Slot(int, str, result='QBrush')
-    def brush(self, size, color):
-        textureImage = QImage(size, size, QImage.Format_ARGB32)
+    def verticalLine(self, size, color):
+        width = size
+        height = size
+        textureImage = QImage(width, height, QImage.Format_ARGB32)
         # Transparent background
-        for row in range(size):
-            for column in range(size):
+        for row in range(height):
+            for column in range(width):
                 textureImage.setPixelColor(column, row, Qt.transparent)
         # Vertical line
-        for row in range(size):
-            column = int(size/2)
+        for row in range(height):
+            column = int(width/2)
             textureImage.setPixelColor(column, row, color)
         brush = QBrush()
         brush.setTextureImage(textureImage)

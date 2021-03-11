@@ -1,3 +1,5 @@
+import QtQuick 2.13
+
 import easyAppGui.Charts 1.0 as EaCharts
 
 import Gui.Globals 1.0 as ExGlobals
@@ -13,4 +15,6 @@ EaCharts.BaseQtCharts {
     xAxisTitle: qsTr("2theta (deg)")
     yMainAxisTitle: qsTr("Intensity")
     yDifferenceAxisTitle: qsTr("Difference")
+
+    Component.onCompleted: ExGlobals.Variables.analysisChart = this
 }

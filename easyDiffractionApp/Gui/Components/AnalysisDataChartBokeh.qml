@@ -1,3 +1,5 @@
+import QtQuick 2.13
+
 import easyAppGui.Style 1.0 as EaStyle
 import easyAppGui.Charts 1.0 as EaCharts
 
@@ -14,5 +16,7 @@ EaCharts.BaseBokeh {
     xAxisTitle: qsTr("2theta (deg)")
     yMainAxisTitle: qsTr("Intensity")
     yDifferenceAxisTitle: qsTr("Difference")
+
+    Component.onCompleted: ExGlobals.Variables.analysisChart = this
 }
 

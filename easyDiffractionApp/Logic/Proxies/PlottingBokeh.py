@@ -35,9 +35,6 @@ class BokehProxy(BaseProxy):
             'y': BaseProxy.aroundY(self._difference_yarray),
             'y_upper': BaseProxy.aroundY(self._difference_yarray_upper),
             'y_lower': BaseProxy.aroundY(self._difference_yarray_lower),
-            'max_y': BaseProxy.aroundY(self._difference_max_y),
-            'min_y': BaseProxy.aroundY(self._difference_min_y),
-            'median_y': BaseProxy.aroundY(self._difference_median_y)
         }
         self.differenceDataObjChanged.emit()
 

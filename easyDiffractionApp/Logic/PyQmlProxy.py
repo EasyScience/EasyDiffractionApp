@@ -243,7 +243,7 @@ class PyQmlProxy(QObject):
 
     @Property(bool, notify=structureViewChanged)
     def showBonds(self):
-        self._show_bonds
+        return self._show_bonds
 
     @showBonds.setter
     def showBonds(self, show_bonds: bool):

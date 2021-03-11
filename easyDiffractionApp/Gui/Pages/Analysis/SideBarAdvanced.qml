@@ -128,7 +128,7 @@ EaComponents.SideBarColumn {
     */
 
     EaElements.GroupBox {
-        title: qsTr("Parameters settings")
+        title: qsTr("Parameters")
         last: true
         //collapsed: false
 

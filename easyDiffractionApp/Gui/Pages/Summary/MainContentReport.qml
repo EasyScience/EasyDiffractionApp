@@ -248,6 +248,8 @@ Item {
             JSON.stringify(ExGlobals.Constants.proxy.phasesAsExtendedCif),
             // specs
             {
+                showBonds: true,
+
                 chartWidth: structureChartWidth,
                 chartHeight: structureChartHeight,
                 chartForegroundColor: structureChartForegroundColor,

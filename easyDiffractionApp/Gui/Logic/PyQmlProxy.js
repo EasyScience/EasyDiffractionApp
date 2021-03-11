@@ -142,7 +142,7 @@ class PyQmlProxy {
     get currentSpaceGroupSetting() { return -1 }
 
     get plotting1dLibs() { return ['qtcharts', 'bokeh'] }
-    get plotting3dLibs() { return ['vtk', 'qtdatavisualization', 'chemdoodle'] }
+    get plotting3dLibs() { return ['qtdatavisualization', 'chemdoodle'] }
     get current1dPlottingLib() { return 'bokeh' }
     get current3dPlottingLib() { return 'chemdoodle' }
 

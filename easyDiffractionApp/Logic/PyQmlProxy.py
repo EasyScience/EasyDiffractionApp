@@ -57,7 +57,6 @@ class PyQmlProxy(QObject):
     # Structure
     structureParametersChanged = Signal()
     structureViewChanged = Signal()
-    structureViewUpdated = Signal()
 
     phaseAdded = Signal()
     phaseRemoved = Signal()
@@ -133,10 +132,11 @@ class PyQmlProxy(QObject):
         self.current1dPlottingLibChanged.connect(self.onCurrent1dPlottingLibChanged)
 
         # Charts 3D
-        self._vtk_handler = None
-
-        self._3d_plotting_libs = ['vtk', 'chemdoodle', 'qtdatavisualization']
+        self._3d_plotting_libs = ['chemdoodle', 'qtdatavisualization']
         self._current_3d_plotting_lib = self._3d_plotting_libs[0]
+
+        self._show_bonds = True
+        self._bonds_max_distance = 2.0
 
         self.current3dPlottingLibChanged.connect(self.onCurrent3dPlottingLibChanged)
 
@@ -236,49 +236,32 @@ class PyQmlProxy(QObject):
     ####################################################################################################################
     ####################################################################################################################
 
-    # Vtk
-
-    def setVtkHandler(self, vtk_handler):
-        self._vtk_handler = vtk_handler
-
-    @Property(bool, notify=dummySignal)
-    def showBonds(self):
-        if self._vtk_handler is None:
-            return True
-        return self._vtk_handler.show_bonds
-
-    @showBonds.setter
-    def showBonds(self, show_bonds: bool):
-        if self._vtk_handler is None or self._vtk_handler.show_bonds == show_bonds:
-            return
-        self._vtk_handler.show_bonds = show_bonds
-        self.structureViewChanged.emit()
-
-    @Property(float, notify=False)
-    def bondsMaxDistance(self):
-        if self._vtk_handler is None:
-            return 2.0
-        return self._vtk_handler.max_distance
-
-    @bondsMaxDistance.setter
-    def bondsMaxDistance(self, max_distance: float):
-        if self._vtk_handler is None or self._vtk_handler.max_distance == max_distance:
-            return
-        self._vtk_handler.max_distance = max_distance
-        self.structureViewChanged.emit()
-
-    def _updateStructureView(self):
-        start_time = timeit.default_timer()
-        if self._vtk_handler is None or not self._sample.phases:
-            return
-        self._vtk_handler.clearScene()
-        self._vtk_handler.plot_system2(self._sample.phases[0])
-        print("+ _updateStructureView: {0:.3f} s".format(timeit.default_timer() - start_time))
+    # Structure view
 
     def _onStructureViewChanged(self):
         print("***** _onStructureViewChanged")
-        self._updateStructureView()
-        self.structureViewUpdated.emit()
+
+    @Property(bool, notify=structureViewChanged)
+    def showBonds(self):
+        self._show_bonds
+
+    @showBonds.setter
+    def showBonds(self, show_bonds: bool):
+        if self._show_bonds == show_bonds:
+            return
+        self._show_bonds = show_bonds
+        self.structureViewChanged.emit()
+
+    @Property(float, notify=structureViewChanged)
+    def bondsMaxDistance(self):
+        return self._bonds_max_distance
+
+    @bondsMaxDistance.setter
+    def bondsMaxDistance(self, max_distance: float):
+        if self._bonds_max_distance == max_distance:
+            return
+        self._bonds_max_distance = max_distance
+        self.structureViewChanged.emit()
 
     # QtCharts
 
@@ -348,8 +331,7 @@ class PyQmlProxy(QObject):
         self.current3dPlottingLibChanged.emit()
 
     def onCurrent3dPlottingLibChanged(self):
-        if self.current3dPlottingLib == 'vtk':
-            self._onStructureViewChanged()
+        pass
 
     @Property(bool, notify=showDifferenceChartChanged)
     def showDifferenceChart(self):

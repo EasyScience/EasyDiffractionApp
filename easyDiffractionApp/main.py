@@ -2,7 +2,6 @@ import os
 import sys
 import platform
 
-
 # Logging
 def isTestMode():
     if len(sys.argv) > 1:
@@ -26,60 +25,13 @@ import easyAppGui
 from easyAppLogic.Translate import Translator
 from easyDiffractionApp.Logic.PyQmlProxy import PyQmlProxy
 
-# VTK
-from easyDiffractionApp.Logic.Proxies.VtkBackend import VtkCanvasHandler
-from easyDiffractionApp.Logic.VTK.QVTKFrameBufferObjectItem import FboItem
-
 # Config
 CONFIG = utils.conf()
 
-
-def defaultVtkFormat(stereo_capable):
-    """ Po prostu skopiowałem to z https://github.com/Kitware/VTK/blob/master/GUISupport/Qt/QVTKRenderWindowAdapter.cxx
-     i działa poprawnie bufor głębokości
-    """
-    fmt = QSurfaceFormat()
-    fmt.setRenderableType(QSurfaceFormat.OpenGL)
-    fmt.setVersion(3, 2)
-    fmt.setProfile(QSurfaceFormat.CoreProfile)
-    fmt.setSwapBehavior(QSurfaceFormat.DoubleBuffer)
-    fmt.setRedBufferSize(8)
-    fmt.setGreenBufferSize(8)
-    fmt.setBlueBufferSize(8)
-    fmt.setDepthBufferSize(8)
-    fmt.setAlphaBufferSize(8)
-    fmt.setStencilBufferSize(0)
-    fmt.setStereo(stereo_capable)
-    fmt.setSamples(0)
-    return fmt
-
-
 class App(QApplication):
-
     def __init__(self, sys_argv):
-        # sys_argv += ['-style', 'material']  #! MUST HAVE
-        self._m_vtkFboItem = None
         QApplication.setAttribute(Qt.AA_UseDesktopOpenGL)
-        QSurfaceFormat.setDefaultFormat(defaultVtkFormat(False))  # from vtk 8.2.0
         super(App, self).__init__(sys_argv)
-
-    def startApplication(self):
-        ###qDebug('CanvasHandler::startApplication()')
-        self._m_vtkFboItem.rendererInitialized.disconnect(self.startApplication)
-
-    def vtkSetup(self, root_window):
-        # Get reference to the QVTKFramebufferObjectItem in QML
-        self._m_vtkFboItem = root_window.findChild(FboItem, 'vtkFboItem')
-        #self._m_vtkFboItem.devicePixelRatio = self.devicePixelRatio()
-
-        # Give the vtkFboItem reference to the CanvasHandler
-        if (self._m_vtkFboItem):
-            ###qDebug('CanvasHandler::CanvasHandler: setting vtkFboItem to CanvasHandler')
-            self._m_vtkFboItem.devicePixelRatio = self.devicePixelRatio()
-            self._m_vtkFboItem.rendererInitialized.connect(self.startApplication)
-        else:
-            ###qCritical('CanvasHandler::CanvasHandler: Unable to get vtkFboItem instance')
-            return
 
 def main():
     # Settings
@@ -116,17 +68,12 @@ def main():
     # Python objects to be exposed to QML
     py_qml_proxy_obj = PyQmlProxy()
     translator = Translator(app, engine, translations_path, languages)
-    vtk_handler = VtkCanvasHandler()
 
     # Expose the Python objects to QML
     engine.rootContext().setContextProperty('_pyQmlProxyObj', py_qml_proxy_obj)
     engine.rootContext().setContextProperty('_translator', translator)
-    engine.rootContext().setContextProperty('_vtkHandler', vtk_handler)
     engine.rootContext().setContextProperty('_projectConfig', CONFIG)
     engine.rootContext().setContextProperty('_isTestMode', isTestMode())
-
-    # Register types to be instantiated in QML
-    qmlRegisterType(FboItem, 'QtVTK', 1, 0, 'VtkFboItem')
 
     # Add paths to search for installed modules
     engine.addImportPath(easyAppGui_path)
@@ -137,12 +84,6 @@ def main():
 
     # Root application window
     root_window = engine.rootObjects()[0]
-
-    # VTK setup
-    app.vtkSetup(root_window)
-    vtk_handler.fbo = app._m_vtkFboItem
-    vtk_handler.context = root_window
-    py_qml_proxy_obj.setVtkHandler(vtk_handler)
 
     # Customize app window titlebar
     if platform.system() == "Darwin":

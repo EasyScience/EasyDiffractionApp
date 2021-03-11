@@ -4,7 +4,6 @@ ApplicationWindow 1.0 ApplicationWindow.qml
 
 # Main content components
 
-SampleStructure3dVtk 1.0 SampleStructure3dVtk.qml
 SampleStructure3dQtDataVisualization 1.0 SampleStructure3dQtDataVisualization.qml
 SampleStructure3dChemDoodle 1.0 SampleStructure3dChemDoodle.qml
 

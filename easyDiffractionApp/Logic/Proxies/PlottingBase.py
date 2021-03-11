@@ -218,7 +218,7 @@ class BaseProxy(QObject):
 
     @staticmethod
     def aroundY(a):
-        return BaseProxy.around(a, decimals=1)
+        return BaseProxy.around(a, decimals=2)
 
     @staticmethod
     def arrayMin(array):

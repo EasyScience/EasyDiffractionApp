@@ -123,7 +123,7 @@ class PyQmlProxy(QObject):
         self._qtcharts_proxy = QtChartsProxy()
         self._bokeh_proxy = BokehProxy()
 
-        self._1d_plotting_libs = ['qtcharts', 'bokeh']
+        self._1d_plotting_libs = ['bokeh', 'qtcharts']
         self._current_1d_plotting_lib = 'bokeh'
         #self._current_1d_plotting_lib_proxy = self.initCurrent1dPlottingProxy()
 
@@ -135,7 +135,7 @@ class PyQmlProxy(QObject):
         # Charts 3D
         self._vtk_handler = None
 
-        self._3d_plotting_libs = ['vtk', 'qtdatavisualization', 'chemdoodle']
+        self._3d_plotting_libs = ['vtk', 'chemdoodle', 'qtdatavisualization']
         self._current_3d_plotting_lib = self._3d_plotting_libs[0]
 
         self.current3dPlottingLibChanged.connect(self.onCurrent3dPlottingLibChanged)

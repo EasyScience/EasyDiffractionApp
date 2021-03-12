@@ -261,10 +261,10 @@ Item {
         EaLogic.Plotting.bokehChart(
             // data
             {
-                measured: ExGlobals.Constants.proxy.bokeh.measuredDataObj,
-                calculated: ExGlobals.Constants.proxy.bokeh.calculatedDataObj,
-                bragg: ExGlobals.Constants.proxy.bokeh.braggDataObj,
-                difference: ExGlobals.Constants.proxy.bokeh.differenceDataObj,
+                measured: ExGlobals.Constants.proxy.plotting1d.bokehMeasuredDataObj,
+                calculated: ExGlobals.Constants.proxy.plotting1d.bokehCalculatedDataObj,
+                bragg: ExGlobals.Constants.proxy.plotting1d.bokehBraggDataObj,
+                difference: ExGlobals.Constants.proxy.plotting1d.bokehDifferenceDataObj,
                 ranges: ExGlobals.Variables.analysisChart.plotRanges,
 
                 hasMeasured: ExGlobals.Variables.analysisChart.hasMeasuredData,

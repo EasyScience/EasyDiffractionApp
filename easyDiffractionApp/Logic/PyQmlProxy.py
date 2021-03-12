@@ -1,25 +1,15 @@
 import os
 import datetime
-import time
-import pathlib
-
+import timeit
 import json
 from typing import Union
-
 from dicttoxml import dicttoxml
-
-import timeit
 
 from PySide2.QtCore import QObject, Slot, Signal, Property
 from PySide2.QtCore import QByteArray, QBuffer, QIODevice
-from PySide2.QtCore import QPointF
-from PySide2.QtCharts import QtCharts
-from PySide2.QtGui import QPdfWriter, QTextDocument
 
 from easyCore import np
 from easyCore import borg
-# borg.debug = True
-
 from easyCore.Symmetry.tools import SpacegroupInfo
 from easyCore.Fitting.Fitting import Fitter
 from easyCore.Fitting.Constraints import ObjConstraint, NumericConstraint
@@ -34,11 +24,8 @@ from easyDiffractionLib.Elements.Experiments.Pattern import Pattern1D
 from easyAppLogic.Utils.Utils import generalizePath
 
 from easyDiffractionApp.Logic.DataStore import DataSet1D, DataStore
-
-from easyDiffractionApp.Logic.Proxies.BackgroundProxy import BackgroundProxy
-from easyDiffractionApp.Logic.Proxies.PlottingQtCharts import QtChartsProxy
-from easyDiffractionApp.Logic.Proxies.PlottingBokeh import BokehProxy
-
+from easyDiffractionApp.Logic.Proxies.Background import BackgroundProxy
+from easyDiffractionApp.Logic.Proxies.Plotting1d import Plotting1dProxy
 from easyDiffractionApp.Logic.ScreenRecorder import ScreenRecorder
 
 
@@ -118,20 +105,10 @@ class PyQmlProxy(QObject):
         self._interface = InterfaceFactory()
         self._sample = self._defaultSample()
 
-        # Charts 1D
-        self._qtcharts_proxy = QtChartsProxy()
-        self._bokeh_proxy = BokehProxy()
+        # Plotting 1D
+        self._plotting_1d_proxy = Plotting1dProxy()
 
-        self._1d_plotting_libs = ['bokeh', 'qtcharts']
-        self._current_1d_plotting_lib = 'bokeh'
-        #self._current_1d_plotting_lib_proxy = self.initCurrent1dPlottingProxy()
-
-        self._show_measured_series = True
-        self._show_difference_chart = False
-
-        self.current1dPlottingLibChanged.connect(self.onCurrent1dPlottingLibChanged)
-
-        # Charts 3D
+        # Plotting 3D
         self._3d_plotting_libs = ['chemdoodle', 'qtdatavisualization']
         self._current_3d_plotting_lib = self._3d_plotting_libs[0]
 
@@ -236,6 +213,30 @@ class PyQmlProxy(QObject):
     ####################################################################################################################
     ####################################################################################################################
 
+    # 1d plotting
+
+    @Property('QVariant', notify=dummySignal)
+    def plotting1d(self):
+        return self._plotting_1d_proxy
+
+    # 3d plotting
+
+    @Property('QVariant', notify=dummySignal)
+    def plotting3dLibs(self):
+        return self._3d_plotting_libs
+
+    @Property('QVariant', notify=current3dPlottingLibChanged)
+    def current3dPlottingLib(self):
+        return self._current_3d_plotting_lib
+
+    @current3dPlottingLib.setter
+    def current3dPlottingLib(self, plotting_lib):
+        self._current_3d_plotting_lib = plotting_lib
+        self.current3dPlottingLibChanged.emit()
+
+    def onCurrent3dPlottingLibChanged(self):
+        pass
+
     # Structure view
 
     def _onStructureViewChanged(self):
@@ -262,98 +263,6 @@ class PyQmlProxy(QObject):
             return
         self._bonds_max_distance = max_distance
         self.structureViewChanged.emit()
-
-    # QtCharts
-
-    @Property('QVariant', notify=dummySignal)
-    def qtCharts(self):
-        return self._qtcharts_proxy
-
-    # Bokeh
-
-    @Property('QVariant', notify=dummySignal)
-    def bokeh(self):
-        return self._bokeh_proxy
-
-    # Plotting libs
-
-    def initCurrent1dPlottingProxy(self):
-        pass
-        #if self._current_1d_plotting_lib == 'bokeh':
-        #    return self._bokeh_proxy
-        #elif self._current_1d_plotting_lib == 'qtcharts':
-        #    return self._qtcharts_proxy
-        #else:
-        #    raise NotImplementedError(f'Supported plotting libraries are: qtcharts and bokeh.')
-
-    @Property('QVariant', notify=dummySignal)
-    def plotting1dLibs(self):
-        return self._1d_plotting_libs
-
-    @Property(str, notify=current1dPlottingLibChanged)
-    def current1dPlottingLib(self):
-        return self._current_1d_plotting_lib
-
-    @current1dPlottingLib.setter
-    def current1dPlottingLib(self, plotting_lib):
-        self._current_1d_plotting_lib = plotting_lib
-        self.current1dPlottingLibChanged.emit()
-
-    def onCurrent1dPlottingLibChanged(self):
-        pass
-        #measured_xarray = self._current_1d_plotting_lib_proxy._measured_xarray
-        #measured_yarray = self._current_1d_plotting_lib_proxy._measured_yarray
-        #measured_syarray = self._current_1d_plotting_lib_proxy._measured_syarray
-        #calculated_xarray = self._current_1d_plotting_lib_proxy._calculated_xarray
-        #calculated_yarray = self._current_1d_plotting_lib_proxy._calculated_yarray
-        #bragg_xarray = self._current_1d_plotting_lib_proxy._bragg_xarray
-        #if self._current_1d_plotting_lib == 'qtcharts':
-        #    self._current_1d_plotting_lib_proxy = self._qtcharts_proxy
-        #elif self._current_1d_plotting_lib == 'bokeh':
-        #    self._current_1d_plotting_lib_proxy = self._bokeh_proxy
-        #else:
-        #    raise NotImplementedError(f'Only the following plotting libs are available: {self._1d_plotting_libs}.')
-        #self._current_1d_plotting_lib_proxy.setMeasuredData(measured_xarray, measured_yarray, measured_syarray)
-        #self._current_1d_plotting_lib_proxy.setCalculatedData(calculated_xarray, calculated_yarray)
-        #self._current_1d_plotting_lib_proxy.setBraggData(bragg_xarray)
-
-    @Property('QVariant', notify=dummySignal)
-    def plotting3dLibs(self):
-        return self._3d_plotting_libs
-
-    @Property('QVariant', notify=current3dPlottingLibChanged)
-    def current3dPlottingLib(self):
-        return self._current_3d_plotting_lib
-
-    @current3dPlottingLib.setter
-    def current3dPlottingLib(self, plotting_lib):
-        self._current_3d_plotting_lib = plotting_lib
-        self.current3dPlottingLibChanged.emit()
-
-    def onCurrent3dPlottingLibChanged(self):
-        pass
-
-    @Property(bool, notify=showDifferenceChartChanged)
-    def showDifferenceChart(self):
-        return self._show_difference_chart
-
-    @showDifferenceChart.setter
-    def showDifferenceChart(self, show):
-        if self._show_difference_chart == show:
-            return
-        self._show_difference_chart = show
-        self.showDifferenceChartChanged.emit()
-
-    @Property(bool, notify=showMeasuredSeriesChanged)
-    def showMeasuredSeries(self):
-        return self._show_measured_series
-
-    @showMeasuredSeries.setter
-    def showMeasuredSeries(self, show):
-        if self._show_measured_series == show:
-            return
-        self._show_measured_series = show
-        self.showMeasuredSeriesChanged.emit()
 
     # Charts for report
 
@@ -819,9 +728,7 @@ class PyQmlProxy(QObject):
 
     def _onExperimentDataAdded(self):
         print("***** _onExperimentDataAdded")
-        #self._current_1d_plotting_lib_proxy.setMeasuredData(self._experiment_data.x, self._experiment_data.y, self._experiment_data.e)
-        self._bokeh_proxy.setMeasuredData(self._experiment_data.x, self._experiment_data.y, self._experiment_data.e)
-        self._qtcharts_proxy.setMeasuredData(self._experiment_data.x, self._experiment_data.y, self._experiment_data.e)
+        self._plotting_1d_proxy.setMeasuredData(self._experiment_data.x, self._experiment_data.y, self._experiment_data.e)
         self._experiment_parameters = self._experimentDataParameters(self._experiment_data)
         self.simulationParametersAsObj = json.dumps(self._experiment_parameters)
         self.experiments = [self._defaultExperiment()]
@@ -1010,12 +917,8 @@ class PyQmlProxy(QObject):
 
         sim.y = self._interface.fit_func(sim.x)  # CrysPy: 0.5 s, CrysFML: 0.005 s, GSAS-II: 0.25 s
 
-        #self._current_1d_plotting_lib_proxy.setCalculatedData(sim.x, sim.y)
-        #self._current_1d_plotting_lib_proxy.setBraggData(np.array([12.950,15.796,20.409,20.479,24.246,25.913,26.069,29.070,30.627,31.903,33.333,34.563,37.087,38.171,39.547,40.471,41.505,41.651,42.834,43.659,44.673,44.902,46.710,46.809,47.890,48.691,49.672,50.604,51.681,52.454,53.285,53.321,53.626,55.082,55.117,56.056,56.134,56.269,57.975,58.668,60.258,60.291,60.494,61.169,63.769,64.214,64.456,65.822,65.858,66.594,66.687,67.445,67.715,68.173,68.265,68.351,68.381,68.645,70.004,70.533,70.550,70.950,72.089,72.105,72.291,72.460,72.812,72.901,73.504,74.716,75.018,75.335,76.630,77.696,78.106,78.995,79.024,79.502,79.625,80.309,80.395,81.355,81.683,83.153,83.509,84.026,84.542,85.160,85.683,86.004,86.798,86.845,87.328,87.541,88.256,88.392,88.610,88.762,89.882,90.254,90.379,90.396,90.556,90.641,90.926,91.712,91.854,92.179,92.207,92.419,92.629,93.824,93.878,94.242,94.834,96.095,96.238,97.065,97.439,97.689,98.276,98.946,99.598,99.744,99.965,100.424,101.226,101.259,101.586,101.800,102.749,103.112,103.494,103.640,103.805,103.892,104.257,104.804,104.906,105.207,105.723,105.730,106.501,107.277,107.630,108.002,108.170,108.530,108.560,110.141,110.292,110.554,110.604,111.073,111.701,112.607,112.643,113.411,113.463,114.292,114.448,114.982,115.097,116.491,116.601,116.689,117.394,117.471,118.726,119.420,119.827]))
-        self._bokeh_proxy.setCalculatedData(sim.x, sim.y)
-        self._bokeh_proxy.setBraggData(np.array([12.950,15.796,20.409,20.479,24.246,25.913,26.069,29.070,30.627,31.903,33.333,34.563,37.087,38.171,39.547,40.471,41.505,41.651,42.834,43.659,44.673,44.902,46.710,46.809,47.890,48.691,49.672,50.604,51.681,52.454,53.285,53.321,53.626,55.082,55.117,56.056,56.134,56.269,57.975,58.668,60.258,60.291,60.494,61.169,63.769,64.214,64.456,65.822,65.858,66.594,66.687,67.445,67.715,68.173,68.265,68.351,68.381,68.645,70.004,70.533,70.550,70.950,72.089,72.105,72.291,72.460,72.812,72.901,73.504,74.716,75.018,75.335,76.630,77.696,78.106,78.995,79.024,79.502,79.625,80.309,80.395,81.355,81.683,83.153,83.509,84.026,84.542,85.160,85.683,86.004,86.798,86.845,87.328,87.541,88.256,88.392,88.610,88.762,89.882,90.254,90.379,90.396,90.556,90.641,90.926,91.712,91.854,92.179,92.207,92.419,92.629,93.824,93.878,94.242,94.834,96.095,96.238,97.065,97.439,97.689,98.276,98.946,99.598,99.744,99.965,100.424,101.226,101.259,101.586,101.800,102.749,103.112,103.494,103.640,103.805,103.892,104.257,104.804,104.906,105.207,105.723,105.730,106.501,107.277,107.630,108.002,108.170,108.530,108.560,110.141,110.292,110.554,110.604,111.073,111.701,112.607,112.643,113.411,113.463,114.292,114.448,114.982,115.097,116.491,116.601,116.689,117.394,117.471,118.726,119.420,119.827]))
-        self._qtcharts_proxy.setCalculatedData(sim.x, sim.y)
-        self._qtcharts_proxy.setBraggData(np.array([12.950,15.796,20.409,20.479,24.246,25.913,26.069,29.070,30.627,31.903,33.333,34.563,37.087,38.171,39.547,40.471,41.505,41.651,42.834,43.659,44.673,44.902,46.710,46.809,47.890,48.691,49.672,50.604,51.681,52.454,53.285,53.321,53.626,55.082,55.117,56.056,56.134,56.269,57.975,58.668,60.258,60.291,60.494,61.169,63.769,64.214,64.456,65.822,65.858,66.594,66.687,67.445,67.715,68.173,68.265,68.351,68.381,68.645,70.004,70.533,70.550,70.950,72.089,72.105,72.291,72.460,72.812,72.901,73.504,74.716,75.018,75.335,76.630,77.696,78.106,78.995,79.024,79.502,79.625,80.309,80.395,81.355,81.683,83.153,83.509,84.026,84.542,85.160,85.683,86.004,86.798,86.845,87.328,87.541,88.256,88.392,88.610,88.762,89.882,90.254,90.379,90.396,90.556,90.641,90.926,91.712,91.854,92.179,92.207,92.419,92.629,93.824,93.878,94.242,94.834,96.095,96.238,97.065,97.439,97.689,98.276,98.946,99.598,99.744,99.965,100.424,101.226,101.259,101.586,101.800,102.749,103.112,103.494,103.640,103.805,103.892,104.257,104.804,104.906,105.207,105.723,105.730,106.501,107.277,107.630,108.002,108.170,108.530,108.560,110.141,110.292,110.554,110.604,111.073,111.701,112.607,112.643,113.411,113.463,114.292,114.448,114.982,115.097,116.491,116.601,116.689,117.394,117.471,118.726,119.420,119.827]))
+        self._plotting_1d_proxy.setCalculatedData(sim.x, sim.y)
+        self._plotting_1d_proxy.setBraggData(np.array([12.950,15.796,20.409,20.479,24.246,25.913,26.069,29.070,30.627,31.903,33.333,34.563,37.087,38.171,39.547,40.471,41.505,41.651,42.834,43.659,44.673,44.902,46.710,46.809,47.890,48.691,49.672,50.604,51.681,52.454,53.285,53.321,53.626,55.082,55.117,56.056,56.134,56.269,57.975,58.668,60.258,60.291,60.494,61.169,63.769,64.214,64.456,65.822,65.858,66.594,66.687,67.445,67.715,68.173,68.265,68.351,68.381,68.645,70.004,70.533,70.550,70.950,72.089,72.105,72.291,72.460,72.812,72.901,73.504,74.716,75.018,75.335,76.630,77.696,78.106,78.995,79.024,79.502,79.625,80.309,80.395,81.355,81.683,83.153,83.509,84.026,84.542,85.160,85.683,86.004,86.798,86.845,87.328,87.541,88.256,88.392,88.610,88.762,89.882,90.254,90.379,90.396,90.556,90.641,90.926,91.712,91.854,92.179,92.207,92.419,92.629,93.824,93.878,94.242,94.834,96.095,96.238,97.065,97.439,97.689,98.276,98.946,99.598,99.744,99.965,100.424,101.226,101.259,101.586,101.800,102.749,103.112,103.494,103.640,103.805,103.892,104.257,104.804,104.906,105.207,105.723,105.730,106.501,107.277,107.630,108.002,108.170,108.530,108.560,110.141,110.292,110.554,110.604,111.073,111.701,112.607,112.643,113.411,113.463,114.292,114.448,114.982,115.097,116.491,116.601,116.689,117.394,117.471,118.726,119.420,119.827]))
 
         print("+ _updateCalculatedData: {0:.3f} s".format(timeit.default_timer() - start_time))
 

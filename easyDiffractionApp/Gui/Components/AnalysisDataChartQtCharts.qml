@@ -5,12 +5,12 @@ import easyAppGui.Charts 1.0 as EaCharts
 import Gui.Globals 1.0 as ExGlobals
 
 EaCharts.BaseQtCharts {
-    measuredData: ExGlobals.Constants.proxy.qtCharts.measuredDataObj
-    calculatedData: ExGlobals.Constants.proxy.qtCharts.calculatedDataObj
-    braggData: ExGlobals.Constants.proxy.qtCharts.braggDataObj
-    differenceData: ExGlobals.Constants.proxy.qtCharts.differenceDataObj
+    measuredData: ExGlobals.Constants.proxy.plotting1d.qtchartsMeasuredDataObj
+    calculatedData: ExGlobals.Constants.proxy.plotting1d.qtchartsCalculatedDataObj
+    braggData: ExGlobals.Constants.proxy.plotting1d.qtchartsBraggDataObj
+    differenceData: ExGlobals.Constants.proxy.plotting1d.qtchartsDifferenceDataObj
 
-    plotRanges: ExGlobals.Constants.proxy.qtCharts.analysisPlotRangesObj
+    plotRanges: ExGlobals.Constants.proxy.plotting1d.analysisPlotRangesObj
 
     xAxisTitle: qsTr("2theta (deg)")
     yMainAxisTitle: qsTr("Intensity")

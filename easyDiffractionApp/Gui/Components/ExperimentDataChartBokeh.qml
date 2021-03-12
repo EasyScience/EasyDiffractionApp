@@ -1,11 +1,13 @@
+import QtQuick 2.13
+
 import easyAppGui.Charts 1.0 as EaCharts
 
 import Gui.Globals 1.0 as ExGlobals
 
 EaCharts.BaseBokeh {
-    measuredData: ExGlobals.Constants.proxy.bokeh.measuredDataObj
+    measuredData: ExGlobals.Constants.proxy.plotting1d.bokehMeasuredDataObj
 
-    plotRanges: ExGlobals.Constants.proxy.bokeh.experimentPlotRangesObj
+    plotRanges: ExGlobals.Constants.proxy.plotting1d.experimentPlotRangesObj
 
     xAxisTitle: qsTr("2theta (deg)")
     yMainAxisTitle: qsTr("Intensity")

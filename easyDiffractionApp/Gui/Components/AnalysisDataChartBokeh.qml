@@ -6,12 +6,12 @@ import easyAppGui.Charts 1.0 as EaCharts
 import Gui.Globals 1.0 as ExGlobals
 
 EaCharts.BaseBokeh {
-    measuredData: ExGlobals.Constants.proxy.bokeh.measuredDataObj
-    calculatedData: ExGlobals.Constants.proxy.bokeh.calculatedDataObj
-    braggData: ExGlobals.Constants.proxy.bokeh.braggDataObj
-    differenceData: ExGlobals.Constants.proxy.bokeh.differenceDataObj
+    measuredData: ExGlobals.Constants.proxy.plotting1d.bokehMeasuredDataObj
+    calculatedData: ExGlobals.Constants.proxy.plotting1d.bokehCalculatedDataObj
+    braggData: ExGlobals.Constants.proxy.plotting1d.bokehBraggDataObj
+    differenceData: ExGlobals.Constants.proxy.plotting1d.bokehDifferenceDataObj
 
-    plotRanges: ExGlobals.Constants.proxy.bokeh.analysisPlotRangesObj
+    plotRanges: ExGlobals.Constants.proxy.plotting1d.analysisPlotRangesObj
 
     xAxisTitle: qsTr("2theta (deg)")
     yMainAxisTitle: qsTr("Intensity")

@@ -263,14 +263,16 @@ Item {
             {
                 measured: ExGlobals.Constants.proxy.plotting1d.bokehMeasuredDataObj,
                 calculated: ExGlobals.Constants.proxy.plotting1d.bokehCalculatedDataObj,
-                bragg: ExGlobals.Constants.proxy.plotting1d.bokehBraggDataObj,
                 difference: ExGlobals.Constants.proxy.plotting1d.bokehDifferenceDataObj,
+                bragg: ExGlobals.Constants.proxy.plotting1d.bokehBraggDataObj,
+                background: ExGlobals.Constants.proxy.plotting1d.bokehBackgroundDataObj,
                 ranges: ExGlobals.Variables.analysisChart.plotRanges,
 
                 hasMeasured: ExGlobals.Variables.analysisChart.hasMeasuredData,
                 hasCalculated: ExGlobals.Variables.analysisChart.hasCalculatedData,
-                hasBragg: ExGlobals.Variables.analysisChart.hasBraggData,
                 hasDifference: ExGlobals.Variables.analysisChart.hasDifferenceData,
+                hasBragg: ExGlobals.Variables.analysisChart.hasBraggData,
+                hasBackground: ExGlobals.Variables.analysisChart.hasBackgroundData,
                 hasPlotRanges: ExGlobals.Variables.analysisChart.hasPlotRangesData
             },
             // specs
@@ -294,12 +296,14 @@ Item {
                 measuredAreaColor: ExGlobals.Variables.analysisChart.measuredAreaColor,
                 calculatedLineColor: ExGlobals.Variables.analysisChart.calculatedLineColor,
                 braggTicksColor: ExGlobals.Variables.analysisChart.braggTicksColor,
+                backgroundLineColor: ExGlobals.Variables.analysisChart.backgroundLineColor,
                 differenceLineColor: ExGlobals.Variables.analysisChart.differenceLineColor,
                 differenceAreaColor: ExGlobals.Variables.analysisChart.differenceAreaColor,
 
                 measuredLineWidth: ExGlobals.Variables.analysisChart.measuredLineWidth,
                 calculatedLineWidth: ExGlobals.Variables.analysisChart.calculatedLineWidth,
                 differenceLineWidth: ExGlobals.Variables.analysisChart.differenceLineWidth,
+                backgroundLineWidth: ExGlobals.Variables.analysisChart.backgroundLineWidth,
 
                 fontPixelSize: ExGlobals.Variables.analysisChart.fontPixelSize,
 

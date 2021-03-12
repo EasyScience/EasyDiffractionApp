@@ -176,7 +176,7 @@ Item {
 
     Component.onCompleted: {
         if (EaGlobals.Variables.isTestMode) {
-            print('DEBUG MODE')
+            print('TEST MODE')
             runTutorialTimer.start()
         }
     }

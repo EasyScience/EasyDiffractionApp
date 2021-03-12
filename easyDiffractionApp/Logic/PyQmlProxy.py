@@ -163,6 +163,7 @@ class PyQmlProxy(QObject):
         self._background_proxy.asObjChanged.connect(self._onParametersChanged)
         self._background_proxy.asObjChanged.connect(self._sample.set_background)
         self._background_proxy.asObjChanged.connect(self.calculatedDataChanged)
+        self._background_proxy.asXmlChanged.connect(self.updateChartBackground)
 
         # Analysis
         self.calculatedDataChanged.connect(self._onCalculatedDataChanged)
@@ -883,6 +884,10 @@ class PyQmlProxy(QObject):
     def backgroundProxy(self):
         return self._background_proxy
 
+    def updateChartBackground(self):
+        self._plotting_1d_proxy.setBackgroundData(self._background_proxy.asObj.x_sorted_points,
+                                                  self._background_proxy.asObj.y_sorted_points)
+
     ####################################################################################################################
     ####################################################################################################################
     # ANALYSIS
@@ -1009,7 +1014,11 @@ class PyQmlProxy(QObject):
 
     @Slot(str, 'QVariant')
     def editParameter(self, obj_id: str, new_value: Union[bool, float, str]):  # covers both parameter and descriptor
+        if not obj_id:
+            return
+
         obj = self._parameterObj(obj_id)
+
         print(f"\n\n+ editParameter {obj_id} of {type(new_value)} from {obj.raw_value} to {new_value}")
 
         if isinstance(new_value, bool):

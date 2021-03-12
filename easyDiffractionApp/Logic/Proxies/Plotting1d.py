@@ -3,10 +3,10 @@ __version__ = '0.0.1'
 
 import numpy as np
 
-from PySide2.QtCore import QObject, Signal, Slot, Property
-from PySide2.QtCore import QPointF, Qt
+from PySide2.QtCore import QObject, Qt, QPointF, Signal, Slot, Property
 from PySide2.QtGui import QImage, QBrush
-from PySide2.QtCharts import QtCharts  # to use lineSeriesCustomReplace
+from PySide2.QtQml import QJSValue
+from PySide2.QtCharts import QtCharts
 
 class Plotting1dProxy(QObject):
     """
@@ -14,6 +14,8 @@ class Plotting1dProxy(QObject):
     """
 
     dummySignal = Signal()
+
+    # Lib
     currentLibChanged = Signal()
 
     # Ranges
@@ -25,28 +27,32 @@ class Plotting1dProxy(QObject):
     bokehCalculatedDataObjChanged = Signal()
     bokehDifferenceDataObjChanged = Signal()
     bokehBraggDataObjChanged = Signal()
+    bokehBackgroundDataObjChanged = Signal()
 
     qtchartsMeasuredDataObjChanged = Signal()
     qtchartsCalculatedDataObjChanged = Signal()
     qtchartsDifferenceDataObjChanged = Signal()
     qtchartsBraggDataObjChanged = Signal()
+    qtchartsBackgroundDataObjChanged = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
 
+        # Lib
         self._libs = ['bokeh', 'qtcharts']
         self._current_lib = 'bokeh'
+        self.currentLibChanged.connect(self.onCurrentLibChanged)
 
         # Ranges
-        self._measured_min_x = np.Inf
-        self._measured_max_x = -np.Inf
-        self._measured_min_y = np.Inf
-        self._measured_max_y = -np.Inf
+        self._measured_min_x = 999999
+        self._measured_max_x = -999999
+        self._measured_min_y = 999999
+        self._measured_max_y = -999999
 
-        self._calculated_min_x = np.Inf
-        self._calculated_max_x = -np.Inf
-        self._calculated_min_y = np.Inf
-        self._calculated_max_y = -np.Inf
+        self._calculated_min_x = 999999
+        self._calculated_max_x = -999999
+        self._calculated_min_y = 999999
+        self._calculated_max_y = -999999
 
         self._difference_min_y = 0
         self._difference_max_y = 1
@@ -74,6 +80,9 @@ class Plotting1dProxy(QObject):
         self._bragg_karray = np.empty(0)
         self._bragg_larray = np.empty(0)
 
+        self._background_xarray = np.empty(0)
+        self._background_yarray = np.empty(0)
+
         # Ranges for GUI
         self._experiment_plot_ranges_obj = {}
         self._analysis_plot_ranges_obj = {}
@@ -83,41 +92,17 @@ class Plotting1dProxy(QObject):
         self._bokeh_calculated_data_obj = {}
         self._bokeh_difference_data_obj = {}
         self._bokeh_bragg_data_obj = {}
+        self._bokeh_background_data_obj = {}
 
         self._qtcharts_measured_data_obj = {}
         self._qtcharts_calculated_data_obj = {}
         self._qtcharts_difference_data_obj = {}
         self._qtcharts_bragg_data_obj = {}
-
-        self.currentLibChanged.connect(self.onCurrentLibChanged)
+        self._qtcharts_background_data_obj = {}
 
     # Public: QML frontend
 
-    # QtCharts
-    @Slot('QVariant', 'QVariant')
-    def lineSeriesCustomReplace(self, line_series, points):
-        if points is None or not points.toVariant():
-            return
-        line_series.replace(points.toVariant())
-
-    @Slot(int, str, result='QBrush')
-    def verticalLine(self, size, color):
-        width = size
-        height = size
-        textureImage = QImage(width, height, QImage.Format_ARGB32)
-        # Transparent background
-        for row in range(height):
-            for column in range(width):
-                textureImage.setPixelColor(column, row, Qt.transparent)
-        # Vertical line
-        for row in range(height):
-            column = int(width/2)
-            textureImage.setPixelColor(column, row, color)
-        brush = QBrush()
-        brush.setTextureImage(textureImage)
-        return brush
-
-    # Libs
+    # Libs for GUI
     @Property('QVariant', notify=dummySignal)
     def libs(self):
         return self._libs
@@ -159,6 +144,10 @@ class Plotting1dProxy(QObject):
     def bokehBraggDataObj(self):
         return self._bokeh_bragg_data_obj
 
+    @Property('QVariant', notify=bokehBackgroundDataObjChanged)
+    def bokehBackgroundDataObj(self):
+        return self._bokeh_background_data_obj
+
     @Property('QVariant', notify=qtchartsMeasuredDataObjChanged)
     def qtchartsMeasuredDataObj(self):
         return self._qtcharts_measured_data_obj
@@ -174,6 +163,40 @@ class Plotting1dProxy(QObject):
     @Property('QVariant', notify=qtchartsBraggDataObjChanged)
     def qtchartsBraggDataObj(self):
         return self._qtcharts_bragg_data_obj
+
+    @Property('QVariant', notify=qtchartsBackgroundDataObjChanged)
+    def qtchartsBackgroundDataObj(self):
+        print("!!! qtchartsBackgroundDataObj", self._qtcharts_background_data_obj)
+        return self._qtcharts_background_data_obj
+
+    # QtCharts for GUI
+    @Slot('QVariant', 'QVariant')
+    def lineSeriesCustomReplace(self, line_series, points):
+        if not isinstance(line_series, (QtCharts.QLineSeries, QtCharts.QScatterSeries)):
+            return
+        if points is None:
+            return
+        if isinstance(points, QJSValue):
+            points = points.toVariant()
+        if isinstance(points, list):
+            line_series.replace(points)
+
+    @Slot(int, str, result='QBrush')
+    def verticalLine(self, size, color):
+        width = size
+        height = size
+        textureImage = QImage(width, height, QImage.Format_ARGB32)
+        # Transparent background
+        for row in range(height):
+            for column in range(width):
+                textureImage.setPixelColor(column, row, Qt.transparent)
+        # Vertical line
+        for row in range(height):
+            column = int(width/2)
+            textureImage.setPixelColor(column, row, color)
+        brush = QBrush()
+        brush.setTextureImage(textureImage)
+        return brush
 
     # Public: Python backend
 
@@ -206,10 +229,19 @@ class Plotting1dProxy(QObject):
         if self.currentLib == 'qtcharts':
             self._setQtChartsBraggDataObj()
 
+    def setBackgroundData(self, xarray, yarray):
+        self._setBackgroundDataArrays(xarray, yarray)
+        if self._background_xarray.size:
+            self._setBokehBackgroundDataObj()
+            if self.currentLib == 'qtcharts':
+                print("AAAAAAAAA")
+                self._setQtChartsBackgroundDataObj()
+
     def onCurrentLibChanged(self):
         if self.currentLib == 'qtcharts':
             self._setQtChartsCalculatedDataObj()
             self._setQtChartsBraggDataObj()
+            self._setQtChartsBackgroundDataObj()
             if self._measured_xarray.size:
                 self._setQtChartsMeasuredDataObj()
                 self._setQtChartsDifferenceDataObj()
@@ -241,6 +273,10 @@ class Plotting1dProxy(QObject):
         self._bragg_harray = harray
         self._bragg_karray = karray
         self._bragg_larray = larray
+
+    def _setBackgroundDataArrays(self, xarray, yarray):
+        self._background_xarray = xarray
+        self._background_yarray = yarray
 
     def _setBokehMeasuredDataObj(self):
         self._bokeh_measured_data_obj = {
@@ -278,6 +314,13 @@ class Plotting1dProxy(QObject):
         }
         self.bokehBraggDataObjChanged.emit()
 
+    def _setBokehBackgroundDataObj(self):
+        self._bokeh_background_data_obj = {
+            'x': Plotting1dProxy.aroundX(self._background_xarray),
+            'y': Plotting1dProxy.aroundY(self._background_yarray)
+        }
+        self.bokehBackgroundDataObjChanged.emit()
+
     def _setQtChartsMeasuredDataObj(self):
         self._qtcharts_measured_data_obj = {
             'xy': Plotting1dProxy.arraysToPoints(self._measured_xarray, self._measured_yarray),
@@ -308,6 +351,13 @@ class Plotting1dProxy(QObject):
             'l': Plotting1dProxy.aroundHkl(self._bragg_larray)
         }
         self.qtchartsBraggDataObjChanged.emit()
+
+    def _setQtChartsBackgroundDataObj(self):
+        print("BBBBBBBBBBB")
+        self._qtcharts_background_data_obj = {
+            'xy': Plotting1dProxy.arraysToPoints(self._background_xarray, self._background_yarray)
+        }
+        self.qtchartsBackgroundDataObjChanged.emit()
 
     # Private: range setters
 

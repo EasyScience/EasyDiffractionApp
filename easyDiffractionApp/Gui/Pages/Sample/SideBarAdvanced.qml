@@ -11,7 +11,7 @@ EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
         title: qsTr("Bonds")
-        enabled: ExGlobals.Variables.sampleLoaded
+        enabled: ExGlobals.Constants.proxy.samplesPresent
         collapsed: false
 
         Row {

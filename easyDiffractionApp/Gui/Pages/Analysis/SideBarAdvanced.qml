@@ -28,12 +28,13 @@ EaComponents.SideBarColumn {
 
                 width: minimizerSelector.width
                 model: ExGlobals.Constants.proxy.calculatorNames
-                onActivated: ExGlobals.Constants.proxy.changeCurrentCalculator(currentIndex)
-
+                currentIndex: ExGlobals.Constants.proxy.currentCalculatorIndex
+//                onActivated: ExGlobals.Constants.proxy.currentCalculatorIndex = currentIndex
+                onCurrentIndexChanged: ExGlobals.Constants.proxy.currentCalculatorIndex = currentIndex
                 //currentIndex: ExGlobals.Constants.proxy.calculatorIndex
                 Component.onCompleted: {
                     ExGlobals.Variables.calculatorSelector = calculatorSelector
-                    currentIndex = ExGlobals.Constants.proxy.currentCalculatorIndex
+//                    currentIndex = ExGlobals.Constants.proxy.currentCalculatorIndex
                 }
             }
         }
@@ -61,22 +62,12 @@ EaComponents.SideBarColumn {
                 width: (EaStyle.Sizes.sideBarContentWidth - minimizerLabel.width * 2 - EaStyle.Sizes.fontPixelSize * 4) / 2
 
                 model: ExGlobals.Constants.proxy.minimizerNames
+                currentIndex: ExGlobals.Constants.proxy.currentMinimizerIndex
 
-                onCurrentValueChanged: {
-                    ExGlobals.Constants.proxy.changeCurrentMinimizer(currentIndex)
-
-                    let idx = 0
-                    if (currentValue === 'lmfit') {
-                        idx = methodSelector.model.indexOf('leastsq')
-                    } else if (currentValue === 'bumps') {
-                        idx = methodSelector.model.indexOf('lm')
-                    }
-                    if (idx > -1) {
-                        methodSelector.currentIndex = idx
-                    }
+                //onCurrentValueChanged: {
+                onCurrentIndexChanged: {
+                    ExGlobals.Constants.proxy.currentMinimizerIndex = currentIndex
                 }
-
-                Component.onCompleted: currentIndex = ExGlobals.Constants.proxy.currentMinimizerIndex
             }
 
             // Spacer
@@ -93,8 +84,10 @@ EaComponents.SideBarColumn {
 
                 width: minimizerSelector.width
                 model: ExGlobals.Constants.proxy.minimizerMethodNames
-                onCurrentValueChanged: ExGlobals.Constants.proxy.changeCurrentMinimizerMethod(currentIndex)
-                Component.onCompleted: currentIndex = ExGlobals.Constants.proxy.currentMinimizerMethodIndex
+                currentIndex: ExGlobals.Constants.proxy.currentMinimizerMethodIndex
+                onCurrentIndexChanged: {
+                    ExGlobals.Constants.proxy.currentMinimizerMethodIndex = currentIndex
+                }
             }
         }
 

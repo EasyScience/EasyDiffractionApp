@@ -10,7 +10,7 @@ QtObject {
     property bool homePageEnabled: isDebugMode ? true : true
     property bool projectPageEnabled: isDebugMode ? true : false
     property bool samplePageEnabled: isDebugMode ? true : false
-    property bool experimentPageEnabled: isDebugMode ? true : false
+//    property bool experimentPageEnabled: isDebugMode ? true : false
     property bool analysisPageEnabled: isDebugMode ? true : false
     property bool summaryPageEnabled: isDebugMode ? true : false
 

@@ -25,7 +25,7 @@ from easyCore.Symmetry.tools import SpacegroupInfo
 from easyCore.Fitting.Fitting import Fitter
 from easyCore.Fitting.Constraints import ObjConstraint, NumericConstraint
 from easyCore.Utils.classTools import generatePath
-from easyCore.Utils.UndoRedo import stack_deco
+from easyCore.Utils.UndoRedo import property_stack_deco, FunctionStack
 
 from easyDiffractionLib.sample import Sample
 from easyDiffractionLib import Phases, Phase, Lattice, Site, Atoms, SpaceGroup
@@ -66,6 +66,7 @@ class PyQmlProxy(QObject):
     phasesAsXmlChanged = Signal()
     phasesAsCifChanged = Signal()
     currentPhaseChanged = Signal()
+    phasesEnabled = Signal()
 
     # Experiment
     patternParametersChanged = Signal()
@@ -154,7 +155,11 @@ class PyQmlProxy(QObject):
         self._phases_as_xml = ""
         self._phases_as_cif = ""
         self.phaseAdded.connect(self._onPhaseAdded)
+        self.phaseAdded.connect(self.phasesEnabled)
+        self.phaseAdded.connect(self.undoRedoChanged)
         self.phaseRemoved.connect(self._onPhaseRemoved)
+        self.phaseRemoved.connect(self.phasesEnabled)
+        self.phaseRemoved.connect(self.undoRedoChanged)
 
         self._current_phase_index = 0
         self.currentPhaseChanged.connect(self._onCurrentPhaseChanged)
@@ -236,9 +241,11 @@ class PyQmlProxy(QObject):
         # Status info
         self.statusInfoChanged.connect(self._onStatusInfoChanged)
         self.currentCalculatorChanged.connect(self.statusInfoChanged)
+        self.currentCalculatorChanged.connect(self.undoRedoChanged)
         self.currentMinimizerChanged.connect(self.statusInfoChanged)
+        self.currentMinimizerChanged.connect(self.undoRedoChanged)
         self.currentMinimizerMethodChanged.connect(self.statusInfoChanged)
-
+        self.currentMinimizerMethodChanged.connect(self.undoRedoChanged)
 
         # Screen recorder
         recorder = None
@@ -253,7 +260,7 @@ class PyQmlProxy(QObject):
         # Start the undo/redo stack
         borg.stack.enabled = True
         borg.stack.clear()
-        borg.debug = True
+        # borg.debug = True
 
     ####################################################################################################################
     ####################################################################################################################
@@ -273,6 +280,7 @@ class PyQmlProxy(QObject):
         return self._vtk_handler.show_bonds
 
     @showBonds.setter
+    @property_stack_deco('Changing bonds visible from {old_value} to {new_value}')
     def showBonds(self, show_bonds: bool):
         if self._vtk_handler is None or self._vtk_handler.show_bonds == show_bonds:
             return
@@ -286,6 +294,7 @@ class PyQmlProxy(QObject):
         return self._vtk_handler.max_distance
 
     @bondsMaxDistance.setter
+    @property_stack_deco('Bond distance changed from {old_value} to {new_value}')
     def bondsMaxDistance(self, max_distance: float):
         if self._vtk_handler is None or self._vtk_handler.max_distance == max_distance:
             return
@@ -352,6 +361,7 @@ class PyQmlProxy(QObject):
         return self._current_1d_plotting_lib
 
     @current1dPlottingLib.setter
+    @property_stack_deco('Changing plotting library from {old_value} to {new_value}')
     def current1dPlottingLib(self, plotting_lib):
         self._current_1d_plotting_lib = plotting_lib
         self.current1dPlottingLibChanged.emit()
@@ -374,6 +384,7 @@ class PyQmlProxy(QObject):
         return self._current_3d_plotting_lib
 
     @current3dPlottingLib.setter
+    @property_stack_deco('Changing 3D library from {old_value} to {new_value}')
     def current3dPlottingLib(self, plotting_lib):
         self._current_3d_plotting_lib = plotting_lib
         self.current3dPlottingLibChanged.emit()
@@ -382,12 +393,12 @@ class PyQmlProxy(QObject):
         if self.current3dPlottingLib == 'vtk':
             self._onStructureViewChanged()
 
-
     @Property(bool, notify=showDifferenceChartChanged)
     def showDifferenceChart(self):
         return self._show_difference_chart
 
     @showDifferenceChart.setter
+    @property_stack_deco('Changing show difference chart from {old_value} to {new_value}')
     def showDifferenceChart(self, show):
         if self._show_difference_chart == show:
             return
@@ -399,6 +410,7 @@ class PyQmlProxy(QObject):
         return self._show_measured_series
 
     @showMeasuredSeries.setter
+    @property_stack_deco('Changing show measured series from {old_value} to {new_value}')
     def showMeasuredSeries(self, show):
         if self._show_measured_series == show:
             return
@@ -506,17 +518,17 @@ class PyQmlProxy(QObject):
 
     @Property('QVariant', notify=phasesAsObjChanged)
     def phasesAsObj(self):
-        #print("+ phasesAsObj")
+        # print("+ phasesAsObj")
         return self._phases_as_obj
 
     @Property(str, notify=phasesAsXmlChanged)
     def phasesAsXml(self):
-        #print("+ phasesAsXml")
+        # print("+ phasesAsXml")
         return self._phases_as_xml
 
     @Property(str, notify=phasesAsCifChanged)
     def phasesAsCif(self):
-        #print("+ phasesAsCif")
+        # print("+ phasesAsCif")
         return self._phases_as_cif
 
     @Property(str, notify=phasesAsCifChanged)
@@ -579,7 +591,7 @@ class PyQmlProxy(QObject):
             #     # We have problems with removing the only phase.....
             #     borg.stack.pop()
         self.phaseAdded.emit()
-        self.undoRedoChanged.emit()
+        # self.undoRedoChanged.emit()
 
     @Slot()
     def addDefaultPhase(self):
@@ -593,7 +605,8 @@ class PyQmlProxy(QObject):
             #     # We have problems with removing the only phase.....
             #     borg.stack.pop()
         self.phaseAdded.emit()
-        self.undoRedoChanged.emit()
+        # self.undoRedoChanged.emit()
+        # self.phasesEnabled.emit()
 
     @Slot(str)
     def removePhase(self, phase_name: str):
@@ -621,6 +634,10 @@ class PyQmlProxy(QObject):
     def _onPhaseRemoved(self):
         print("***** _onPhaseRemoved")
         self.structureParametersChanged.emit()
+
+    @Property(bool, notify=phasesEnabled)
+    def samplesPresent(self) -> bool:
+        return len(self._sample.phases) > 0
 
     ####################################################################################################################
     # Phase: Symmetry
@@ -704,7 +721,7 @@ class PyQmlProxy(QObject):
             return f"<font color='#999'>{num}</font> {name}"
 
         raw_list = self._spaceGroupSettingList()
-        formatted_list = [format_display(i+1, name) for i, name in enumerate(raw_list)]
+        formatted_list = [format_display(i + 1, name) for i, name in enumerate(raw_list)]
         return formatted_list
 
     @Property(int, notify=structureParametersChanged)
@@ -850,14 +867,53 @@ class PyQmlProxy(QObject):
     @Slot(str)
     def addExperimentDataFromXye(self, file_url):
         print(f"+ addExperimentDataFromXye: {file_url}")
-        self._experiment_data = self._loadExperimentData(file_url)
-        self.experimentDataAdded.emit()
+
+        def outer1(obj):
+            def inner():
+                obj._experiment_data = self._loadExperimentData(file_url)
+                obj.experimentDataAdded.emit()
+                obj.experimentLoaded = True
+                obj.experimentSkipped = False
+                obj.undoRedoChanged.emit()
+            return inner
+
+        def outer2(obj):
+            def inner():
+                obj.experiments.clear()
+                obj.experimentDataRemoved.emit()
+                obj.experimentLoaded = False
+                obj.experimentSkipped = True
+                obj.undoRedoChanged.emit()
+            return inner
+
+        borg.stack.push(FunctionStack(self, outer1(self), outer2(self)))
+
 
     @Slot()
     def removeExperiment(self):
         print("+ removeExperiment")
-        self.experiments.clear()
-        self.experimentDataRemoved.emit()
+
+        def outer1(obj):
+            def inner():
+                obj.experiments.clear()
+                obj.experimentDataRemoved.emit()
+                obj.experimentLoaded = False
+                obj.experimentSkipped = False
+                obj.undoRedoChanged.emit()
+            return inner
+
+        def outer2(obj):
+            data = self._experiment_data
+
+            def inner():
+                obj._experiment_data = data
+                obj.experimentDataAdded.emit()
+                obj.experimentLoaded = True
+                obj.experimentSkipped = False
+                obj.undoRedoChanged.emit()
+            return inner
+
+        borg.stack.push(FunctionStack(self, outer1(self), outer2(self)))
 
     def _defaultExperiment(self):
         return {
@@ -877,8 +933,8 @@ class PyQmlProxy(QObject):
         x_max = data.x[-1]
         x_step = (x_max - x_min) / (len(data.x) - 1)
         parameters = {
-            "x_min": x_min,
-            "x_max": x_max,
+            "x_min":  x_min,
+            "x_max":  x_max,
             "x_step": x_step
         }
         return parameters
@@ -962,8 +1018,8 @@ class PyQmlProxy(QObject):
 
     def _defaultSimulationParameters(self):
         return {
-            "x_min": 10.0,
-            "x_max": 150.0,
+            "x_min":  10.0,
+            "x_max":  150.0,
             "x_step": 0.1
         }
 
@@ -981,7 +1037,7 @@ class PyQmlProxy(QObject):
 
     def _defaultPatternParameters(self):
         return {
-            "scale": 1.0,
+            "scale":      1.0,
             "zero_shift": 0.0
         }
 
@@ -1010,7 +1066,7 @@ class PyQmlProxy(QObject):
 
     def _defaultInstrumentParameters(self):
         return {
-            "wavelength": 1.0,
+            "wavelength":   1.0,
             "resolution_u": 0.01,
             "resolution_v": -0.01,
             "resolution_w": 0.01,
@@ -1084,7 +1140,7 @@ class PyQmlProxy(QObject):
             difference_dataset = [zeros_diff, zeros_diff, diff]
             self._analysis_data = [exp, sim]
 
-            #if self.current1dPlottingLib == 'matplotlib':
+            # if self.current1dPlottingLib == 'matplotlib':
             #    self._matplotlib_bridge.updateData(self._difference_figure_canvas, difference_dataset)
 
         elif self.experimentSkipped:
@@ -1124,12 +1180,12 @@ class PyQmlProxy(QObject):
 
     @Property('QVariant', notify=parametersAsObjChanged)
     def parametersAsObj(self):
-        #print("+ parametersAsObj")
+        # print("+ parametersAsObj")
         return self._parameters_as_obj
 
     @Property(str, notify=parametersAsXmlChanged)
     def parametersAsXml(self):
-        #print("+ parametersAsXml")
+        # print("+ parametersAsXml")
         return self._parameters_as_xml
 
     def _setParametersAsObj(self):
@@ -1148,13 +1204,13 @@ class PyQmlProxy(QObject):
                 continue
 
             self._parameters_as_obj.append({
-                "id": str(par_id),
+                "id":     str(par_id),
                 "number": par_index + 1,
-                "label": par_path,
-                "value": par.raw_value,
-                "unit": '{:~P}'.format(par.unit),
-                "error": float(par.error),
-                "fit": int(not par.fixed)
+                "label":  par_path,
+                "value":  par.raw_value,
+                "unit":   '{:~P}'.format(par.unit),
+                "error":  float(par.error),
+                "fit":    int(not par.fixed)
             })
 
         print("+ _setParametersAsObj: {0:.3f} s".format(timeit.default_timer() - start_time))
@@ -1233,17 +1289,37 @@ class PyQmlProxy(QObject):
         current_name = self.fitter.current_engine.name
         return self.minimizerNames.index(current_name)
 
-    @Slot(int)
-    def changeCurrentMinimizer(self, new_index: int):
+    @currentMinimizerIndex.setter
+    @property_stack_deco('Minimizer change')
+    def currentMinimizerIndex(self, new_index: int):
         if self.currentMinimizerIndex == new_index:
             return
-
         new_name = self.minimizerNames[new_index]
         self.fitter.switch_engine(new_name)
         self.currentMinimizerChanged.emit()
 
+    # @Slot(int)
+    # def changeCurrentMinimizer(self, new_index: int):
+    #     if self.currentMinimizerIndex == new_index:
+    #         return
+    #
+    #     new_name = self.minimizerNames[new_index]
+    #     self.fitter.switch_engine(new_name)
+    #     self.currentMinimizerChanged.emit()
+
     def _onCurrentMinimizerChanged(self):
         print("***** _onCurrentMinimizerChanged")
+        idx = 0
+        minimizer_name = self.fitter.current_engine.name
+        if minimizer_name == 'lmfit':
+            idx = self.minimizerMethodNames.index('leastsq')
+        elif minimizer_name == 'bumps':
+            idx = self.minimizerMethodNames.index('lm')
+        if -1 < idx != self._current_minimizer_method_index:
+            # Bypass the property as it would be added to the stack.
+            self._current_minimizer_method_index = idx
+            self._current_minimizer_method_name = self.minimizerMethodNames[idx]
+            self.currentMinimizerMethodChanged.emit()
 
     # Minimizer method
 
@@ -1255,8 +1331,9 @@ class PyQmlProxy(QObject):
     def currentMinimizerMethodIndex(self):
         return self._current_minimizer_method_index
 
-    @Slot(int)
-    def changeCurrentMinimizerMethod(self, new_index: int):
+    @currentMinimizerMethodIndex.setter
+    @property_stack_deco('Minimizer method change')
+    def currentMinimizerMethodIndex(self, new_index: int):
         if self._current_minimizer_method_index == new_index:
             return
 
@@ -1279,8 +1356,9 @@ class PyQmlProxy(QObject):
     def currentCalculatorIndex(self):
         return self.calculatorNames.index(self._interface.current_interface_name)
 
-    @Slot(int)
-    def changeCurrentCalculator(self, new_index: int):
+    @currentCalculatorIndex.setter
+    @property_stack_deco('Calculation engine change')
+    def currentCalculatorIndex(self, new_index: int):
         if self.currentCalculatorIndex == new_index:
             return
 
@@ -1321,16 +1399,16 @@ class PyQmlProxy(QObject):
     def _defaultFitResults(self):
         return {
             "success": None,
-            "nvarys": None,
-            "GOF": None,
+            "nvarys":  None,
+            "GOF":     None,
             "redchi2": None
         }
 
     def _setFitResults(self, res):
         self._fit_results = {
             "success": res.success,
-            "nvarys": res.n_pars,
-            "GOF": float(res.goodness_of_fit),
+            "nvarys":  res.n_pars,
+            "GOF":     float(res.goodness_of_fit),
             "redchi2": float(res.reduced_chi)
         }
         self.fitResultsChanged.emit()
@@ -1376,7 +1454,7 @@ class PyQmlProxy(QObject):
     @Property('QVariant', notify=statusInfoChanged)
     def statusModelAsObj(self):
         obj = {
-            "calculation": self._interface.current_interface_name,
+            "calculation":  self._interface.current_interface_name,
             "minimization": f'{self.fitter.current_engine.name} ({self._current_minimizer_method_name})'
         }
         return obj
@@ -1385,7 +1463,8 @@ class PyQmlProxy(QObject):
     def statusModelAsXml(self):
         model = [
             {"label": "Calculation", "value": self._interface.current_interface_name},
-            {"label": "Minimization", "value": f'{self.fitter.current_engine.name} ({self._current_minimizer_method_name})'}
+            {"label": "Minimization",
+             "value": f'{self.fitter.current_engine.name} ({self._current_minimizer_method_name})'}
         ]
         xml = dicttoxml(model, attr_type=False)
         xml = xml.decode()
@@ -1422,31 +1501,19 @@ class PyQmlProxy(QObject):
     def undo(self):
         if self.canUndo:
             callback = [self.parametersChanged]
-            if isinstance(borg.stack.history[0], dict):
+            if len(borg.stack.history[0]) > 1:
                 callback = [self.phaseAdded, self.parametersChanged]
             else:
-                old = borg.stack.history[0]._parent
-                # if isinstance(old, Parameter):
-                #     parent = borg.map.get_item_by_key(borg.map.reverse_route(old)[-1])
-                #     if isinstance(parent, Pattern1D):
-                #         # A pattern parameter has changed
-                #         callback = self.patternParametersChanged
-                #     elif isinstance(parent, Pars1D):
-                #         # callback = self.simulationParametersChanged
-                #         callback = self.instrumentParametersChanged
-                #     elif isinstance(parent, (BaseObj, BaseCollection)):
-                #         callback = self.parametersChanged
-                #     else:
-                #         print(f'Unknown parent: {parent}')
-                # elif isinstance(old, (BaseObj, BaseCollection)):
+                old = borg.stack.history[0].current._parent
                 if isinstance(old, (BaseObj, BaseCollection)):
                     if isinstance(old, (Phase, Phases)):
                         callback = [self.phaseAdded, self.parametersChanged]
                     else:
                         callback = [self.parametersChanged]
-                elif isinstance(old, str):
-                    # This can be a minimizer, minimizer method, name or something boring.
-                    callback = [self.currentMinimizerChanged, self.undoRedoChanged]
+                elif old is self:
+                    # This is a property of the proxy. I.e. minimizer, minimizer method, name or something boring.
+                    # Signals should be sent by triggering the set method.
+                    callback = []
                 else:
                     print(f'Unknown undo thing: {old}')
             borg.stack.undo()
@@ -1456,31 +1523,19 @@ class PyQmlProxy(QObject):
     def redo(self):
         if self.canRedo:
             callback = [self.parametersChanged]
-            if isinstance(borg.stack.future[0], dict):
+            if len(borg.stack.future[0]) > 1:
                 callback = [self.phaseAdded, self.parametersChanged]
             else:
-                new = borg.stack.future[0]._parent
-                # if isinstance(old, Parameter):
-                #     parent = borg.map.get_item_by_key(borg.map.reverse_route(old)[-1])
-                #     if isinstance(parent, Pattern1D):
-                #         # A pattern parameter has changed
-                #         callback = self.patternParametersChanged
-                #     elif isinstance(parent, Pars1D):
-                #         # callback = self.simulationParametersChanged
-                #         callback = self.instrumentParametersChanged
-                #     elif isinstance(parent, (BaseObj, BaseCollection)):
-                #         callback = self.parametersChanged
-                #     else:
-                #         print(f'Unknown parent: {parent}')
-                # elif isinstance(old, (BaseObj, BaseCollection)):
+                new = borg.stack.future[0].current._parent
                 if isinstance(new, (BaseObj, BaseCollection)):
                     if isinstance(new, (Phase, Phases)):
                         callback = [self.phaseAdded, self.parametersChanged]
                     else:
-                        callback = [self.parametersChanged]
-                elif isinstance(new, str):
-                    # This can be a minimizer, minimizer method, name or something boring.
-                    callback = [self.currentMinimizerChanged, self.undoRedoChanged]
+                        callback = [self.parametersChanged, self.undoRedoChanged]
+                elif new is self:
+                    # This is a property of the proxy. I.e. minimizer, minimizer method, name or something boring.
+                    # Signals should be sent by triggering the set method.
+                    callback = []
                 else:
                     print(f'Unknown redo thing: {new}')
             borg.stack.redo()

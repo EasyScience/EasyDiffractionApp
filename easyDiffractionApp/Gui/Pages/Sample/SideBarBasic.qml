@@ -41,7 +41,7 @@ EaComponents.SideBarColumn {
 
                 onClicked: {
                     ExGlobals.Constants.proxy.addDefaultPhase()
-                    ExGlobals.Variables.experimentPageEnabled = true
+//                    ExGlobals.Variables.experimentPageEnabled = true
                     ExGlobals.Variables.sampleLoaded = true
                 }
 
@@ -55,7 +55,7 @@ EaComponents.SideBarColumn {
         id: symmetryGroup
 
         title: qsTr("Symmetry and cell parameters")
-        enabled: ExGlobals.Variables.sampleLoaded
+        enabled: ExGlobals.Constants.proxy.samplesPresent
 
         Column {
             ExComponents.SampleSymmetry {}
@@ -69,7 +69,7 @@ EaComponents.SideBarColumn {
         id: atomsGroup
 
         title: qsTr("Atoms, atomic coordinates and occupations")
-        enabled: ExGlobals.Variables.sampleLoaded
+        enabled: ExGlobals.Constants.proxy.samplesPresent
 
         ExComponents.SampleAtoms {}
 
@@ -103,7 +103,7 @@ EaComponents.SideBarColumn {
 
         title: qsTr("Atomic displacement parameters")
         last: true
-        enabled: ExGlobals.Variables.sampleLoaded
+        enabled: ExGlobals.Constants.proxy.samplesPresent
 
         ExComponents.SampleAdps {}
 
@@ -119,7 +119,7 @@ EaComponents.SideBarColumn {
         onAccepted: {
             //settings.setValue("lastOpenedProjectFolder", folder)
             ExGlobals.Constants.proxy.addSampleFromCif(fileUrl)
-            ExGlobals.Variables.experimentPageEnabled = true
+//            ExGlobals.Variables.experimentPageEnabled = true
             ExGlobals.Variables.sampleLoaded = true
         }
     }

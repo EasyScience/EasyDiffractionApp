@@ -6,6 +6,7 @@ import numpy as np
 from PySide2.QtCore import QObject, Signal, Slot, Property
 from PySide2.QtCore import QPointF, Qt
 from PySide2.QtGui import QImage, QBrush
+from PySide2.QtCharts import QtCharts  # to use lineSeriesCustomReplace
 
 class Plotting1dProxy(QObject):
     """
@@ -92,6 +93,31 @@ class Plotting1dProxy(QObject):
 
     # Public: QML frontend
 
+    # QtCharts
+    @Slot('QVariant', 'QVariant')
+    def lineSeriesCustomReplace(self, line_series, points):
+        if points is None or not points.toVariant():
+            return
+        line_series.replace(points.toVariant())
+
+    @Slot(int, str, result='QBrush')
+    def verticalLine(self, size, color):
+        width = size
+        height = size
+        textureImage = QImage(width, height, QImage.Format_ARGB32)
+        # Transparent background
+        for row in range(height):
+            for column in range(width):
+                textureImage.setPixelColor(column, row, Qt.transparent)
+        # Vertical line
+        for row in range(height):
+            column = int(width/2)
+            textureImage.setPixelColor(column, row, color)
+        brush = QBrush()
+        brush.setTextureImage(textureImage)
+        return brush
+
+    # Libs
     @Property('QVariant', notify=dummySignal)
     def libs(self):
         return self._libs
@@ -148,30 +174,6 @@ class Plotting1dProxy(QObject):
     @Property('QVariant', notify=qtchartsBraggDataObjChanged)
     def qtchartsBraggDataObj(self):
         return self._qtcharts_bragg_data_obj
-
-    # QtCharts
-    @Slot(int, str, result='QBrush')
-    def verticalLine(self, size, color):
-        width = size
-        height = size
-        textureImage = QImage(width, height, QImage.Format_ARGB32)
-        # Transparent background
-        for row in range(height):
-            for column in range(width):
-                textureImage.setPixelColor(column, row, Qt.transparent)
-        # Vertical line
-        for row in range(height):
-            column = int(width/2)
-            textureImage.setPixelColor(column, row, color)
-        brush = QBrush()
-        brush.setTextureImage(textureImage)
-        return brush
-
-    @Slot('QVariant', 'QVariant')
-    def lineSeriesCustomReplace(self, line_series, points):
-        if points is None:
-            return
-        line_series.replace(points.toVariant())
 
     # Public: Python backend
 

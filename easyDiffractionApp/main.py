@@ -19,7 +19,6 @@ from easyDiffractionApp.Logic.PyQmlProxy import PyQmlProxy
 
 # Global vars
 CONFIG = utils.conf()
-IS_TEST_MODE = False
 
 
 class App(QApplication):
@@ -38,8 +37,6 @@ def main():
     args = parser.parse_args()
     if args.logtofile:
         import easyAppLogic.Logging
-    if args.testmode:
-        TEST_MODE = True
 
     # Paths
     current_path = os.path.dirname(sys.argv[0])
@@ -76,7 +73,7 @@ def main():
     engine.rootContext().setContextProperty('_pyQmlProxyObj', py_qml_proxy_obj)
     engine.rootContext().setContextProperty('_translator', translator)
     engine.rootContext().setContextProperty('_projectConfig', CONFIG)
-    engine.rootContext().setContextProperty('_isTestMode', IS_TEST_MODE)
+    engine.rootContext().setContextProperty('_isTestMode', args.testmode)
 
     # Add paths to search for installed modules
     engine.addImportPath(easyAppGui_path)

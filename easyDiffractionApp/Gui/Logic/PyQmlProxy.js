@@ -39,7 +39,10 @@ class Plotting1d {
     get bokehBraggDataObj() {
         return {
             x: [41.,42.7,44.12],
-            y: [0.,0.,0.]
+            y: [0.,0.,0.],
+            h: [1,5,-1],
+            k: [2.3,0,0],
+            l: [4,4,4]
         }
     }
     get bokehDifferenceDataObj() {

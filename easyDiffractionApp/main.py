@@ -19,13 +19,12 @@ from easyDiffractionApp.Logic.PyQmlProxy import PyQmlProxy
 
 # Global vars
 CONFIG = utils.conf()
-TEST_MODE = False
+IS_TEST_MODE = False
 
 
 class App(QApplication):
     def __init__(self, sys_argv):
-        #QCoreApplication.setAttribute(Qt.AA_EnableHighDpiScaling)  # DOESN'T WORK, USE SCRIPT INSTEAD
-        #QCoreApplication.setAttribute(Qt.AA_UseDesktopOpenGL, True)
+        QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)  # DOESN'T WORK?!, USE SCRIPT INSTEAD
         QApplication.setAttribute(Qt.AA_UseDesktopOpenGL)
         super(App, self).__init__(sys_argv)
 
@@ -77,7 +76,7 @@ def main():
     engine.rootContext().setContextProperty('_pyQmlProxyObj', py_qml_proxy_obj)
     engine.rootContext().setContextProperty('_translator', translator)
     engine.rootContext().setContextProperty('_projectConfig', CONFIG)
-    engine.rootContext().setContextProperty('_isTestMode', TEST_MODE)
+    engine.rootContext().setContextProperty('_isTestMode', IS_TEST_MODE)
 
     # Add paths to search for installed modules
     engine.addImportPath(easyAppGui_path)

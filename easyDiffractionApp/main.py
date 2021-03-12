@@ -1,15 +1,7 @@
 import os
 import sys
 import platform
-
-# Logging
-def isTestMode():
-    if len(sys.argv) > 1:
-        if 'test' in sys.argv[1:]:
-            return True
-    return False
-if not isTestMode():
-    import easyAppLogic.Logging
+import argparse
 
 # PySide
 from PySide2.QtCore import QCoreApplication, QUrl, qDebug, qCritical
@@ -25,18 +17,30 @@ import easyAppGui
 from easyAppLogic.Translate import Translator
 from easyDiffractionApp.Logic.PyQmlProxy import PyQmlProxy
 
-# Config
+# Global vars
 CONFIG = utils.conf()
+TEST_MODE = False
+
 
 class App(QApplication):
     def __init__(self, sys_argv):
+        #QCoreApplication.setAttribute(Qt.AA_EnableHighDpiScaling)  # DOESN'T WORK, USE SCRIPT INSTEAD
+        #QCoreApplication.setAttribute(Qt.AA_UseDesktopOpenGL, True)
         QApplication.setAttribute(Qt.AA_UseDesktopOpenGL)
         super(App, self).__init__(sys_argv)
 
 def main():
-    # Settings
-    QCoreApplication.setAttribute(Qt.AA_EnableHighDpiScaling)  # DOESN'T WORK, USE SCRIPT INSTEAD
-    QCoreApplication.setAttribute(Qt.AA_UseDesktopOpenGL, True)
+    # Arguments
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-l', '--logtofile', action='store_true',
+                        help='enable logging in the file easyDiffraction.log in the system directory tmp instead of the terminal')
+    parser.add_argument('-t', '--testmode', action='store_true',
+                    help='run the application in test mode: run the tutorial, record a video and exit the application')
+    args = parser.parse_args()
+    if args.logtofile:
+        import easyAppLogic.Logging
+    if args.testmode:
+        TEST_MODE = True
 
     # Paths
     current_path = os.path.dirname(sys.argv[0])
@@ -73,7 +77,7 @@ def main():
     engine.rootContext().setContextProperty('_pyQmlProxyObj', py_qml_proxy_obj)
     engine.rootContext().setContextProperty('_translator', translator)
     engine.rootContext().setContextProperty('_projectConfig', CONFIG)
-    engine.rootContext().setContextProperty('_isTestMode', isTestMode())
+    engine.rootContext().setContextProperty('_isTestMode', TEST_MODE)
 
     # Add paths to search for installed modules
     engine.addImportPath(easyAppGui_path)

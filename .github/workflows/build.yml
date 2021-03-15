@@ -89,7 +89,8 @@ jobs:
 
       - name: Set up screen recording dependencies (macOS)
         if: runner.os == 'macOS'
-        run: "/Library/Application Support/VMware Tools/vmware-resolutionSet" 1440 1080
+        run: |
+          "/Library/Application Support/VMware Tools/vmware-resolutionSet" 1440 1080
 
       - name: Set up screen recording dependencies (Linux)
         if: runner.os == 'Linux'

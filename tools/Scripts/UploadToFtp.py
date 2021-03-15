@@ -103,7 +103,10 @@ def removeDir(ftp, path):
                 ftp.delete(f'{path}/{name}')
             elif properties['type'] == 'dir':
                 removeDir(ftp, f'{path}/{name}')
-        ftp.rmd(path)
+        if ftp.nlst(path):
+            ftp.rmd(path)
+        else:
+            Functions.printNeutralMessage(f"Skip next step: Remove directory {path}. It doesn't exist")
     except Exception as exception:
         Functions.printFailMessage(message, exception)
         sys.exit()

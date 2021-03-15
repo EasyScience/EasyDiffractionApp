@@ -352,7 +352,6 @@ class Plotting1dProxy(QObject):
         self.qtchartsBraggDataObjChanged.emit()
 
     def _setQtChartsBackgroundDataObj(self):
-        print("BBBBBBBBBBB")
         self._qtcharts_background_data_obj = {
             'xy': Plotting1dProxy.arraysToPoints(self._background_xarray, self._background_yarray)
         }

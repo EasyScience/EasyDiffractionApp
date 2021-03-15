@@ -89,8 +89,7 @@ jobs:
 
       - name: Set up screen recording dependencies (macOS)
         if: runner.os == 'macOS'
-        run: |
-          "/Library/Application Support/VMware Tools/vmware-resolutionSet" 1440 1080
+        run: "/Library/Application Support/VMware Tools/vmware-resolutionSet" 1440 1080
 
       - name: Set up screen recording dependencies (Linux)
         if: runner.os == 'Linux'
@@ -98,6 +97,10 @@ jobs:
           sudo apt-get install libxkbcommon-x11-0
           Xvfb :0 -screen 0 1440x1080x24 -ac &
           echo "DISPLAY=:0" >> $GITHUB_ENV
+
+      - name: Set up screen recording dependencies (Windows)
+        if: runner.os == 'Windows'
+        run: Set-DisplayResolution -Width 1440 -Height 1080 -Force
 
       - name: Install app
         run: python ${{ env.SCRIPTS_PATH }}/InstallApp.py

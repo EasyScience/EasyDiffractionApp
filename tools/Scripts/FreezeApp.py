@@ -37,6 +37,11 @@ def addedData():
             {'from': easyAppGui.__path__[0], 'to': 'easyAppGui'},
             {'from': 'utils.py', 'to': '.'},
             {'from': 'pyproject.toml', 'to': '.'}]
+    extras = CONFIG['ci']['pyinstaller']['missing_other_libraries'][CONFIG.os]
+    if extras:
+        for extra_file in extras:
+            data.append({'from': extra_file, 'to': '.'})
+
     formatted = []
     for element in data:
         formatted.append(f'--add-data={element["from"]}{separator}{element["to"]}')

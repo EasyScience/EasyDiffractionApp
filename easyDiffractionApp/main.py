@@ -1,5 +1,6 @@
 import os
 import sys
+import pathlib
 import platform
 import argparse
 
@@ -39,14 +40,18 @@ def main():
         import easyAppLogic.Logging
 
     # Paths
+    app_name = CONFIG['tool']['poetry']['name']
     current_path = os.path.dirname(sys.argv[0])
-    package_path = os.path.join(current_path, 'easyDiffractionApp')
+    package_path = os.path.join(current_path, f'{app_name}App')
     if not os.path.exists(package_path):
         package_path = current_path
 
     main_qml_path = QUrl.fromLocalFile(os.path.join(package_path, 'Gui', 'main.qml'))
     gui_path = str(QUrl.fromLocalFile(package_path).toString())
     easyAppGui_path = os.path.join(easyAppGui.__path__[0], '..')
+
+    home_path = pathlib.Path.home()
+    settings_path = str(home_path.joinpath(f'.{app_name}', 'settings.ini'))
 
     languages = CONFIG['ci']['app']['translations']['languages']
     translations_dir = CONFIG['ci']['app']['translations']['dir']
@@ -71,6 +76,7 @@ def main():
 
     # Expose the Python objects to QML
     engine.rootContext().setContextProperty('_pyQmlProxyObj', py_qml_proxy_obj)
+    engine.rootContext().setContextProperty('_settingsPath', settings_path)
     engine.rootContext().setContextProperty('_translator', translator)
     engine.rootContext().setContextProperty('_projectConfig', CONFIG)
     engine.rootContext().setContextProperty('_isTestMode', args.testmode)

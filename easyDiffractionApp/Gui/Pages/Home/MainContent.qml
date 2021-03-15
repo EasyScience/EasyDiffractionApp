@@ -193,10 +193,10 @@ Item {
                 height: window.height
             }
             const margin_rect = {
-                left: EaStyle.Sizes.fontPixelSize,
-                top: EaStyle.Sizes.fontPixelSize,
-                right: EaStyle.Sizes.fontPixelSize,
-                bottom: EaStyle.Sizes.fontPixelSize
+                left: 3 * EaStyle.Sizes.fontPixelSize,
+                top: 3 * EaStyle.Sizes.fontPixelSize,
+                right: 3 * EaStyle.Sizes.fontPixelSize,
+                bottom: 3 * EaStyle.Sizes.fontPixelSize
             }
             ExGlobals.Constants.proxy.screenRecorder.startRecording(frame_rect, margin_rect)
         }

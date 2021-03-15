@@ -71,7 +71,10 @@ class Plotting1d {
     }
     get qtchartsBraggDataObj() {
         return {
-            xy: [Qt.point(41., 0), Qt.point(42.7, 0), Qt.point(44.12, 0)]
+            xy: [Qt.point(41., 0), Qt.point(42.7, 0), Qt.point(44.12, 0)],
+            h: [1,5,-1],
+            k: [2.3,0,0],
+            l: [4,4,4]
         }
     }
     get qtchartsBackgroundDataObj() {

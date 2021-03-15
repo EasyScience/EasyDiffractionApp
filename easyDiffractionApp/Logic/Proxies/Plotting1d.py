@@ -166,7 +166,6 @@ class Plotting1dProxy(QObject):
 
     @Property('QVariant', notify=qtchartsBackgroundDataObjChanged)
     def qtchartsBackgroundDataObj(self):
-        print("!!! qtchartsBackgroundDataObj", self._qtcharts_background_data_obj)
         return self._qtcharts_background_data_obj
 
     # QtCharts for GUI

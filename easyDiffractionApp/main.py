@@ -23,8 +23,8 @@ CONFIG = utils.conf()
 
 class App(QApplication):
     def __init__(self, sys_argv):
-        #QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)  # DOESN'T WORK?!, USE SCRIPT INSTEAD
-        #QApplication.setAttribute(Qt.AA_UseDesktopOpenGL)
+        QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)  # DOESN'T WORK?!, USE SCRIPT INSTEAD
+        QApplication.setAttribute(Qt.AA_UseDesktopOpenGL)
         super(App, self).__init__(sys_argv)
 
 def main():

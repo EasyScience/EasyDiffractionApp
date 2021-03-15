@@ -12,7 +12,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [windows-2019] #[macos-10.15, ubuntu-20.04, windows-2019]
+        os: [macos-10.15, ubuntu-20.04, windows-2019]
 
     steps:
       - name: Check-out repository
@@ -91,6 +91,7 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           "/Library/Application Support/VMware Tools/vmware-resolutionSet" 1440 1080
+          system_profiler SPDisplaysDataType | grep Resolution
 
       - name: Set up screen recording dependencies (Linux)
         if: runner.os == 'Linux'
@@ -99,9 +100,12 @@ jobs:
           Xvfb :0 -screen 0 1440x1080x24 -ac &
           echo "DISPLAY=:0" >> $GITHUB_ENV
 
+      # SET DISPLAY RESOLUTION DOESN'T WORK ON GITHUB WINDOWS RUNNER...
       - name: Set up screen recording dependencies (Windows)
         if: runner.os == 'Windows'
-        run: Set-DisplayResolution -Width 1440 -Height 1080 -Force
+        run: |
+          Set-DisplayResolution -Width 1440 -Height 1080 -Force
+          Get-DisplayResolution
 
       - name: Install app
         run: python ${{ env.SCRIPTS_PATH }}/InstallApp.py

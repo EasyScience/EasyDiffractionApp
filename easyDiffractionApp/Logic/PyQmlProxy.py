@@ -543,6 +543,7 @@ class PyQmlProxy(QObject):
         return self._phases_as_cif + symm_ops_cif_loop
 
     @phasesAsCif.setter
+    @property_stack_deco
     def phasesAsCif(self, phases_as_cif):
         print("+ phasesAsCifSetter")
         if self._phases_as_cif == phases_as_cif:

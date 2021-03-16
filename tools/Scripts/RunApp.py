@@ -2,29 +2,13 @@ __author__ = "github.com/AndrewSazonov"
 __version__ = '0.0.1'
 
 import os, sys
-import pathlib
 import Functions, Config
 
 
 CONFIG = Config.Config()
 
-def installationDir():
-    if CONFIG.installation_dir_shortcut == '@HomeDir@':
-        return str(pathlib.Path.home())
-    elif CONFIG.installation_dir_shortcut == '@ApplicationsDirX86@' and CONFIG.os == 'windows':
-        return Functions.environmentVariable('ProgramFiles(x86)')
-    elif CONFIG.installation_dir_shortcut == '@ApplicationsDir@' and CONFIG.os == 'windows':
-        return Functions.environmentVariable('ProgramFiles')
-    elif CONFIG.installation_dir_shortcut == '@ApplicationsDir@' and CONFIG.os == 'ubuntu':
-        return '/opt'
-    elif CONFIG.installation_dir_shortcut == '@ApplicationsDir@' and CONFIG.os == 'macos':
-        return '/Applications'
-    elif CONFIG.installation_dir_shortcut == '@ApplicationsDirUser@' and CONFIG.os == 'macos':
-        return str(pathlib.Path.home().joinpath('Applications'))
-    return var  # Functions.environmentVariable(var, var)
-
 def appExePath():
-    prefix = os.path.join(installationDir(), CONFIG.app_name)
+    prefix = os.path.join(CONFIG.installation_dir, CONFIG.app_name)
     d = {
         'macos': os.path.join(prefix, CONFIG.app_full_name, 'Contents', 'MacOS', CONFIG.app_name),
         'ubuntu': os.path.join(prefix, CONFIG.app_name, CONFIG.app_full_name),

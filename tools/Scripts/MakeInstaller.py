@@ -97,7 +97,7 @@ def installerConfigXml():
     try:
         message = f"create {CONFIG['ci']['app']['setup']['build']['config_xml']} content"
         app_url = CONFIG['tool']['poetry']['homepage']
-        target_dir = f"{CONFIG.installation_dir_shortcut}/{CONFIG.app_name}"
+        target_dir = f"{CONFIG.installation_dir}/{CONFIG.app_name}"
         maintenance_tool_suffix = CONFIG['ci']['app']['setup']['maintenance_tool_suffix']
         maintenance_tool_name = maintenance_tool_suffix #f'{CONFIG.app_name}{maintenance_tool_suffix}'
         config_control_script = CONFIG['ci']['scripts']['config_control']

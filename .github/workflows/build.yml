@@ -61,6 +61,7 @@ jobs:
           echo "GIT_INSTALL_URL=git+$GITHUB_SERVER_URL/$GITHUB_REPOSITORY@${{ env.BRANCH_NAME }}" >> $GITHUB_ENV
 
       - name: Cache dependencies
+        if: False  # disable caching
         uses: actions/cache@v2
         id: cache
         with:
@@ -71,7 +72,7 @@ jobs:
           key: ${{ matrix.os }}-${{ hashFiles('pyproject.toml') }}
 
       - name: Set up Python dependences
-        if: steps.cache.outputs.cache-hit != 'true'
+        #if: steps.cache.outputs.cache-hit != 'true'
         run: pip install ${{ env.GIT_INSTALL_URL }}
 
       - name: Relink CrysFML from default Python dylib
@@ -96,7 +97,6 @@ jobs:
           Xvfb :0 -screen 0 1920x1080x24 -ac &
           echo "DISPLAY=:0" >> $GITHUB_ENV
 
-      # SET DISPLAY RESOLUTION DOESN'T WORK ON GITHUB WINDOWS RUNNER...
       - name: Set up screen recording dependencies (Windows)
         if: runner.os == 'Windows'
         run: |

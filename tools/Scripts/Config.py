@@ -18,6 +18,7 @@ class Config():
         self.download_dir = os.path.normpath(self.__dict__['ci']['project']['subdirs']['download'])
         self.screenshots_dir = os.path.normpath(self.__dict__['ci']['project']['subdirs']['screenshots'])
         self.tutorials_dir = os.path.normpath(self.__dict__['ci']['project']['subdirs']['tutorials'])
+        self.installation_dir_shortcut = self.__dict__['ci']['app']['setup']['installation_dir_shortcut'][self.os]
 
         # Application
         self.app_version = self.__dict__['tool']['poetry']['version']
@@ -37,13 +38,9 @@ class Config():
         # Application repository
         self.repository_dir_suffix = self.__dict__['ci']['app']['setup']['repository_dir_suffix']
 
-
         # Project
         self.package_name = f'{self.app_name}App'
         self.license_file = self.__dict__['ci']['project']['license_file']
-
-
-
 
     def __getitem__(self, key):
         return self.__dict__[key]

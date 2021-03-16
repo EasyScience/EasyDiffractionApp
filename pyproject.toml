@@ -79,7 +79,9 @@ os = { macos = 'macOS', ubuntu = 'Linux', windows = 'Windows' }  # Should be the
 arch = { macos = 'x86-64', ubuntu = 'x86-64', windows = 'x86-32' }
 file_ext = { macos = '.app', ubuntu = '', windows = '.exe' }
 maintenance_tool_suffix = 'MaintenanceTool'
-installation_dir = { macos = '/Applications', ubuntu = '/opt', windows = 'C:/' }  # env: ProgramFiles(x86), qtifw: @RootDir@
+installation_dir_shortcut = { macos = '@ApplicationsDir@', ubuntu = '@HomeDir@', windows = '@RootDir@' }
+# env: ProgramFiles(x86), qtifw: @RootDir@, ubuntu: /opt
+# macos = '/Applications', ubuntu = '/opt', windows = 'ProgramFiles(x86)'
 
 [ci.app.setup.ftp]
 host = 'ftp.apptimity.com'

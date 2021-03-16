@@ -8,11 +8,10 @@ import Functions, Config
 CONFIG = Config.Config()
 
 def appExePath():
-    prefix = os.path.join(CONFIG.installation_dir, CONFIG.app_name)
     d = {
-        'macos': os.path.join(prefix, CONFIG.app_full_name, 'Contents', 'MacOS', CONFIG.app_name),
-        'ubuntu': os.path.join(prefix, CONFIG.app_name, CONFIG.app_full_name),
-        'windows': os.path.join(prefix, CONFIG.app_name, CONFIG.app_full_name)
+        'macos': os.path.join(CONFIG.installation_dir, CONFIG.app_full_name, 'Contents', 'MacOS', CONFIG.app_name),
+        'ubuntu': os.path.join(CONFIG.installation_dir, CONFIG.app_name, CONFIG.app_full_name),
+        'windows': os.path.join(CONFIG.installation_dir, CONFIG.app_name, CONFIG.app_full_name)
     }
     return d[CONFIG.os]
 

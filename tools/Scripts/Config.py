@@ -46,8 +46,9 @@ class Config():
     def __getitem__(self, key):
         return self.__dict__[key]
 
+    # https://doc.qt.io/qtinstallerframework/scripting.html
     def installationDir(self):
-        d = {
+        dirs = {
             'macos': {
                 '@HomeDir@': str(pathlib.Path.home()),
                 '@ApplicationsDir@': '/Applications',
@@ -59,11 +60,10 @@ class Config():
             },
             'windows': {
                 '@HomeDir@': str(pathlib.Path.home()),
-                '@ApplicationsDir@': Functions.environmentVariable('ProgramFiles'),
-                '@ApplicationsDirX86@': Functions.environmentVariable('ProgramFiles(x86)')
+                '@ApplicationsDir@': os.getenv('ProgramFiles'),
+                '@ApplicationsDirX86@': os.getenv('ProgramFiles(x86)')
             }
         }
         dir_shortcut = self.__dict__['ci']['app']['setup']['installation_dir_shortcut'][self.os]
-        dir = d[self.os][dir_shortcut]
-        dir = os.path.join(dir, self.app_name)
+        dir = os.path.join(dirs[self.os][dir_shortcut], self.app_name)
         return dir

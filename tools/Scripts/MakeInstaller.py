@@ -97,7 +97,6 @@ def installerConfigXml():
     try:
         message = f"create {CONFIG['ci']['app']['setup']['build']['config_xml']} content"
         app_url = CONFIG['tool']['poetry']['homepage']
-        target_dir = f"{CONFIG.installation_dir}/{CONFIG.app_name}"
         maintenance_tool_suffix = CONFIG['ci']['app']['setup']['maintenance_tool_suffix']
         maintenance_tool_name = maintenance_tool_suffix #f'{CONFIG.app_name}{maintenance_tool_suffix}'
         config_control_script = CONFIG['ci']['scripts']['config_control']
@@ -119,7 +118,7 @@ def installerConfigXml():
                 'WizardDefaultHeight': 600,
                 'StyleSheet': config_style,
                 'StartMenuDir': CONFIG.app_name,
-                'TargetDir': target_dir,
+                'TargetDir': CONFIG.installation_dir,
                 #'CreateLocalRepository': 'true',
                 #'SaveDefaultRepositories': 'false',
                 #'RepositorySettingsPageVisible': 'false',

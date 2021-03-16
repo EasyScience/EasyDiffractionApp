@@ -1,5 +1,6 @@
 import mss
 import cv2
+import time
 import numpy as np
 from threading import Thread
 from PySide2.QtCore import QObject, Signal, Slot
@@ -101,10 +102,9 @@ class ScreenRecorder(QObject):
                 # calculate time to wait before next frame
                 desired_time = 1 / self.frame_rate
                 real_time = end_time - start_time
-                delay = (desired_time - real_time) * 1000
-                delay = round(delay)
+                delay = desired_time - real_time
                 if delay > 0:
-                    cv2.waitKey(delay)
+                    time.sleep(delay)
         cv2.destroyAllWindows()
         out.release()
         self.recordingFinished.emit()

@@ -89,10 +89,22 @@ class ScreenRecorder(QObject):
         )
         with mss.mss() as sct:
             while self.is_recording_now:
+                # collect start time
+                start_time = time.time()
+                # grab and save screenshot
                 screenshot = sct.grab(self.mss_frame_rect)
                 frame = np.array(screenshot)
                 frame = cv2.cvtColor(frame, cv2.COLOR_BGRA2BGR)
                 out.write(frame)
+                # collect end time
+                end_time = time.time()
+                # calculate time to wait before next frame
+                desired_time = 1 / self.frame_rate
+                real_time = end_time - start_time
+                delay = (desired_time - real_time) * 1000
+                delay = round(delay)
+                if delay > 0:
+                    cv2.waitKey(delay)
         cv2.destroyAllWindows()
         out.release()
         self.recordingFinished.emit()

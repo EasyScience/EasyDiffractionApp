@@ -7,7 +7,7 @@ import Functions, Config
 
 CONFIG = Config.Config()
 
-def installationDir(self):
+def installationDir():
     if CONFIG.installation_dir_shortcut == '@HomeDir@':
         return str(pathlib.Path.home())
     elif CONFIG.installation_dir_shortcut == '@ApplicationsDirX86@' and CONFIG.os == 'windows':
@@ -23,7 +23,7 @@ def installationDir(self):
     return var  # Functions.environmentVariable(var, var)
 
 def appExePath():
-    prefix = os.path.join(self.installationDir(), CONFIG.app_name)
+    prefix = os.path.join(installationDir(), CONFIG.app_name)
     d = {
         'macos': os.path.join(prefix, CONFIG.app_full_name, 'Contents', 'MacOS', CONFIG.app_name),
         'ubuntu': os.path.join(prefix, CONFIG.app_name, CONFIG.app_full_name),

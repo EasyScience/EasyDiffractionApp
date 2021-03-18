@@ -17,7 +17,7 @@ Item {
             font.family: EaStyle.Fonts.monoFontFamily
             text: ExGlobals.Constants.proxy.phasesAsCif
             //text: ExGlobals.Constants.proxy.phasesAsExtendedCif
-            //onEditingFinished: ExGlobals.Constants.proxy.phasesAsCif = text
+            onEditingFinished: ExGlobals.Constants.proxy.phasesAsCif = text
         }
     }
 

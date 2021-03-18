@@ -384,8 +384,8 @@ Item {
                   '<h2>Software</h2>',
                   '<div id="softwareSection">',
                   `<b>Analysis:</b> <a href="${ExGlobals.Constants.appUrl}">${ExGlobals.Constants.appName} v${ExGlobals.Constants.appVersion}</a><br>`,
-                  `<b>Structure chart:</b> <a href="${structureChartLibUrl}"> ChemDoodle v${structureChartLibVersion}</a><br>`,
-                  `<b>Data chart:</b> <a href="${dataChartLibUrl}"> Bokeh v${dataChartLibVersion}</a><br>`,
+                  `<b>Structure chart:</b> <a href="${structureChartLibUrl}"> ChemDoodle Web Components v${structureChartLibVersion}</a><br>`,
+                  `<b>Data chart:</b> <a href="${dataChartLibUrl}"> BokehJS v${dataChartLibVersion}</a><br>`,
                   minimizationSoftware,
                   '</div>'
               ]

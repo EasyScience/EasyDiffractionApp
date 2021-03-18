@@ -594,7 +594,11 @@ class PyQmlProxy(QObject):
     @Slot()
     def addDefaultAtom(self):
         try:
-            atom = Site.default('Label2', 'H')
+            atom = Site.from_pars(label='Label2',
+                                  specie='O',
+                                  fract_x=0.05,
+                                  fract_y=0.05,
+                                  fract_z=0.05)
             atom.add_adp('Uiso', Uiso=0.0)
             self._sample.phases[self.currentPhaseIndex].add_atom(atom)
             self.structureParametersChanged.emit()

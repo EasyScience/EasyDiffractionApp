@@ -33,3 +33,7 @@ ExperimentBackground 1.0 ExperimentBackground.qml
 
 AnalysisFitables 1.0 AnalysisFitables.qml
 AnalysisConstraints 1.0 AnalysisConstraints.qml
+
+# Separate components
+
+ResultsDialog 1.0 ResultsDialog.qml

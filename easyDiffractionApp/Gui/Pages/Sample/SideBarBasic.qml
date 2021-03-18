@@ -16,6 +16,7 @@ EaComponents.SideBarColumn {
     EaElements.GroupBox {
         title: qsTr("Structural phases")
         collapsible: false
+        enabled: ExGlobals.Constants.proxy.isFitFinished
 
         ExComponents.SamplePhasesExplorer {}
 

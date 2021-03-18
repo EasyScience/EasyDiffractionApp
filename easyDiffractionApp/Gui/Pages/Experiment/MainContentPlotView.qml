@@ -5,11 +5,9 @@ import Gui.Globals 1.0 as ExGlobals
 
 Loader {
     source: {
-        if (ExGlobals.Constants.proxy.current1dPlottingLib === 'qtcharts') {
+        if (ExGlobals.Constants.proxy.plotting1d.currentLib === 'qtcharts') {
             return ExLogic.Paths.component('ExperimentDataChartQtCharts.qml')
-        } else if (ExGlobals.Constants.proxy.current1dPlottingLib === 'matplotlib') {
-            return ExLogic.Paths.component('ExperimentDataChartMatplotlib.qml')
-        } else if (ExGlobals.Constants.proxy.current1dPlottingLib === 'bokeh') {
+        } else if (ExGlobals.Constants.proxy.plotting1d.currentLib === 'bokeh') {
             return ExLogic.Paths.component('ExperimentDataChartBokeh.qml')
         }
     }

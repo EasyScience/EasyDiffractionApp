@@ -20,8 +20,6 @@ EaComponents.SideBarColumn {
             spacing: EaStyle.Sizes.fontPixelSize
 
             EaElements.SideBarButton {
-                id: createProjectButton
-
                 fontIcon: "plus-circle"
                 text: qsTr("Create a new project")
 
@@ -33,8 +31,6 @@ EaComponents.SideBarColumn {
             }
 
             EaElements.SideBarButton {
-                id: continueWithoutProjectButton
-
                 fontIcon: "arrow-circle-right"
                 text: qsTr("Continue without a project")
 

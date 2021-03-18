@@ -53,7 +53,7 @@ EaComponents.TableView {
             text: EaLogic.Utils.toFixed(model.a)
             onEditingFinished: editParameterValue(model.aId, text)
             enabled: model.a_enabled === 'True'
-            Component.onCompleted: ExGlobals.Variables.cellLengthALabel = cellLengthALabel
+            Component.onCompleted: ExGlobals.Variables.cellLengthALabel = this
         }
 
         EaComponents.TableViewTextInput {

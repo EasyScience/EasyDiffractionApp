@@ -54,11 +54,10 @@ EaComponents.ApplicationWindow {
     appBarRightButtons: [
 
         EaElements.ToolButton {
-            id: preferencesButton
             fontIcon: "\uf013"
             ToolTip.text: qsTr("Application preferences")
             onClicked: EaGlobals.Variables.showAppPreferencesDialog = true
-            Component.onCompleted: ExGlobals.Variables.preferencesButton = preferencesButton
+            Component.onCompleted: ExGlobals.Variables.preferencesButton = this
         },
 
         EaElements.ToolButton {
@@ -81,32 +80,29 @@ EaComponents.ApplicationWindow {
 
         // Home tab
         EaElements.AppBarTabButton {
-            id: homeTabButton
             enabled: ExGlobals.Variables.homePageEnabled
             fontIcon: "home"
             text: qsTr("Home")
             ToolTip.text: qsTr("Home page")
-            Component.onCompleted: ExGlobals.Variables.homeTabButton = homeTabButton
+            Component.onCompleted: ExGlobals.Variables.homeTabButton = this
         },
 
         // Project tab
         EaElements.AppBarTabButton {
-            id: projectTabButton
             enabled: ExGlobals.Variables.projectPageEnabled
             fontIcon: "archive"
             text: qsTr("Project")
             ToolTip.text: qsTr("Project description page")
-            Component.onCompleted: ExGlobals.Variables.projectTabButton = projectTabButton
+            Component.onCompleted: ExGlobals.Variables.projectTabButton = this
         },
 
         // Sample tab
         EaElements.AppBarTabButton {
-            id: sampleTabButton
             enabled: ExGlobals.Variables.samplePageEnabled
             fontIcon: "gem"
             text: qsTr("Sample")
             ToolTip.text: qsTr("Sample model description page")
-            Component.onCompleted: ExGlobals.Variables.sampleTabButton = sampleTabButton
+            Component.onCompleted: ExGlobals.Variables.sampleTabButton = this
         },
 
         // Experiment tab
@@ -116,7 +112,7 @@ EaComponents.ApplicationWindow {
             fontIcon: "microscope"
             text: qsTr("Experiment")
             ToolTip.text: qsTr("Experimental settings and data page")
-            Component.onCompleted: ExGlobals.Variables.experimentTabButton = experimentTabButton
+            Component.onCompleted: ExGlobals.Variables.experimentTabButton = this
         },
 
         // Analysis tab
@@ -203,7 +199,7 @@ EaComponents.ApplicationWindow {
             sideBar: EaComponents.SideBar {
                 tabs: [
                     EaElements.TabButton { text: qsTr("Basic controls") },
-                    EaElements.TabButton { text: qsTr("Advanced controls") }
+                    EaElements.TabButton { text: qsTr("Advanced controls"); enabled: false }
                 ]
 
                 items: [
@@ -267,14 +263,12 @@ EaComponents.ApplicationWindow {
             sideBar: EaComponents.SideBar {
                 tabs: [
                     EaElements.TabButton {
-                        id: analysisBasicControlsTabButton
                         text: qsTr("Basic controls")
-                        Component.onCompleted: ExGlobals.Variables.analysisBasicControlsTabButton = analysisBasicControlsTabButton
+                        Component.onCompleted: ExGlobals.Variables.analysisBasicControlsTabButton = this
                     },
                     EaElements.TabButton {
-                        id: analysisAdvancedControlsTabButton
                         text: qsTr("Advanced controls")
-                        Component.onCompleted: ExGlobals.Variables.analysisAdvancedControlsTabButton = analysisAdvancedControlsTabButton
+                        Component.onCompleted: ExGlobals.Variables.analysisAdvancedControlsTabButton = this
                     }
                 ]
 

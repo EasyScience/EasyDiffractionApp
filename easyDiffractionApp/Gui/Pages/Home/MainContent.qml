@@ -67,7 +67,6 @@ Item {
 
         // Start button
         EaElements.SideBarButton {
-            id: startButton
             width: EaStyle.Sizes.fontPixelSize * 15
             anchors.horizontalCenter: parent.horizontalCenter
             fontIcon: "rocket"
@@ -77,7 +76,7 @@ Item {
                 ExGlobals.Variables.projectTabButton.toggle()
                 ExGlobals.Constants.proxy.resetUndoRedoStack()
             }
-            Component.onCompleted: ExGlobals.Variables.startButton = startButton
+            Component.onCompleted: ExGlobals.Variables.startButton = this
         }
 
         // Links
@@ -178,7 +177,7 @@ Item {
 
     Component.onCompleted: {
         if (EaGlobals.Variables.isTestMode) {
-            print('DEBUG MODE')
+            print('TEST MODE')
             runTutorialTimer.start()
         }
     }
@@ -195,10 +194,10 @@ Item {
                 height: window.height
             }
             const margin_rect = {
-                left: EaStyle.Sizes.fontPixelSize,
-                top: EaStyle.Sizes.fontPixelSize,
-                right: EaStyle.Sizes.fontPixelSize,
-                bottom: EaStyle.Sizes.fontPixelSize
+                left: 3 * EaStyle.Sizes.fontPixelSize,
+                top: 3 * EaStyle.Sizes.fontPixelSize,
+                right: 3 * EaStyle.Sizes.fontPixelSize,
+                bottom: 3 * EaStyle.Sizes.fontPixelSize
             }
             ExGlobals.Constants.proxy.screenRecorder.startRecording(frame_rect, margin_rect)
         }

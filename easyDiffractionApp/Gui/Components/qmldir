@@ -4,15 +4,12 @@ ApplicationWindow 1.0 ApplicationWindow.qml
 
 # Main content components
 
-SampleStructure3dVtk 1.0 SampleStructure3dVtk.qml
 SampleStructure3dQtDataVisualization 1.0 SampleStructure3dQtDataVisualization.qml
 SampleStructure3dChemDoodle 1.0 SampleStructure3dChemDoodle.qml
 
 ExperimentDataChartBokeh 1.0 ExperimentDataChartBokeh.qml
-ExperimentDataChartMatplotlib 1.0 ExperimentDataChartMatplotlib.qml
 ExperimentDataChartQtCharts 1.0 ExperimentDataChartQtCharts.qml
 
-AnalysisDataChartMatplotlib 1.0 AnalysisDataChartMatplotlib.qml
 AnalysisDataChartQtCharts 1.0 AnalysisDataChartQtCharts.qml
 AnalysisDataChartBokeh 1.0 AnalysisDataChartBokeh.qml
 

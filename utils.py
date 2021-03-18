@@ -39,10 +39,6 @@ def getValue(d, element):
 def extraDict():
     python_packages_path = os.path.dirname(pip.__path__[0]).replace('\\', '/')
 
-    app_name = getValue(conf(), 'tool.poetry.name')
-    home_path = pathlib.Path.home()
-    settings_path = str(home_path.joinpath(f'.{app_name}', 'settings.ini'))
-
     build_date = datetime.datetime.now().strftime('%d %b %Y')
 
     github_server_url = os.getenv('GITHUB_SERVER_URL', '')
@@ -58,7 +54,6 @@ def extraDict():
 
     return { 'ci': { 'cache': { 'python_packages_path': python_packages_path },
                      'app': { 'info': { 'build_date': build_date,
-                                        'settings_path': settings_path,
                                         'branch_name': branch_name,
                                         'branch_url': branch_url,
                                         'commit_sha_short': commit_sha_short,

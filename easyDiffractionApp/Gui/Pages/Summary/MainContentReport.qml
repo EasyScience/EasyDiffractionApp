@@ -37,8 +37,8 @@ Item {
     property string dataChartLibUrl: EaLogic.Plotting.bokehInfo().url
 
     property int dataChartWidth: chartWidth
-    property int dataChartHeight: chartWidth / 5 * 4
-    property int dataChartPadding: EaStyle.Sizes.fontPixelSize * 1.5
+    property int dataChartHeight: chartWidth
+    property int dataChartPadding: EaStyle.Sizes.fontPixelSize
 
     property string dataChartBackgroundColor: EaStyle.Colors.chartPlotAreaBackground
     property string dataChartBorderColor: EaStyle.Colors.appBorder
@@ -83,8 +83,8 @@ Item {
         }
 
         Component.onCompleted: {
-            ExGlobals.Constants.proxy.htmlExportingFinished.connect(webView.htmlExportingFinished)
-            ExGlobals.Variables.reportWebView = webView
+            ExGlobals.Variables.reportWebView = this
+            ExGlobals.Constants.proxy.htmlExportingFinished.connect(htmlExportingFinished)
         }
     }
 
@@ -150,6 +150,12 @@ Item {
                   '.bk-logo {',
                   '    display: none !important;',
                   '}',
+                  '.bk-toolbar.bk-above  {',
+                  `    position: absolute;`,
+                  `    z-index: 1;`,
+                  `    top: ${0.5 * EaStyle.Sizes.fontPixelSize}px;`,
+                  `    right: ${1.5 * EaStyle.Sizes.fontPixelSize}px;`,
+                  '}',
                   '#analysisSection {',
                   `    height: ${dataChartHeight}px;`,
                   `    width: ${dataChartWidth}px;`,
@@ -197,19 +203,19 @@ Item {
                   'a:hover {',
                   `    color: ${EaStyle.Colors.linkHovered};`,
                   '}',
-                  'table {',
+                  '#parametersSection table {',
                   '    border-collapse: collapse;',
                   '}',
-                  'td, th {',
+                  '#parametersSection td, th {',
                   `    border: 1px solid ${EaStyle.Colors.appBorder};`,
                   '    padding: 2px;',
                   '    padding-left: 12px;',
                   '    padding-right: 12px;',
                   '}',
-                  'tr:nth-child(odd) {',
+                  '#parametersSection tr:nth-child(odd) {',
                   `    background-color: ${EaStyle.Colors.chartPlotAreaBackground};`,
                   '}',
-                  'tr:nth-child(even) {',
+                  '#parametersSection tr:nth-child(even) {',
                   `    background-color: ${htmlBackground};`,
                   '}'
               ]
@@ -242,6 +248,8 @@ Item {
             JSON.stringify(ExGlobals.Constants.proxy.phasesAsExtendedCif),
             // specs
             {
+                showBonds: true,
+
                 chartWidth: structureChartWidth,
                 chartHeight: structureChartHeight,
                 chartForegroundColor: structureChartForegroundColor,
@@ -253,20 +261,52 @@ Item {
         EaLogic.Plotting.bokehChart(
             // data
             {
-                measured: ExGlobals.Constants.proxy.bokeh.measuredDataObj,
-                calculated: ExGlobals.Constants.proxy.bokeh.calculatedDataObj
+                measured: ExGlobals.Constants.proxy.plotting1d.bokehMeasuredDataObj,
+                calculated: ExGlobals.Constants.proxy.plotting1d.bokehCalculatedDataObj,
+                difference: ExGlobals.Constants.proxy.plotting1d.bokehDifferenceDataObj,
+                bragg: ExGlobals.Constants.proxy.plotting1d.bokehBraggDataObj,
+                background: ExGlobals.Constants.proxy.plotting1d.bokehBackgroundDataObj,
+                ranges: ExGlobals.Variables.analysisChart.plotRanges,
+
+                hasMeasured: ExGlobals.Variables.analysisChart.hasMeasuredData,
+                hasCalculated: ExGlobals.Variables.analysisChart.hasCalculatedData,
+                hasDifference: ExGlobals.Variables.analysisChart.hasDifferenceData,
+                hasBragg: ExGlobals.Variables.analysisChart.hasBraggData,
+                hasBackground: ExGlobals.Variables.analysisChart.hasBackgroundData,
+                hasPlotRanges: ExGlobals.Variables.analysisChart.hasPlotRangesData
             },
             // specs
             {
-                chartWidth: dataChartWidth,
-                chartHeight: dataChartHeight,
-                chartBackgroundColor: dataChartBackgroundColor,
-                xAxisTitle: qsTr("2theta (deg)"),
-                yAxisTitle: qsTr("Intensity"),
-                experimentLineColor: EaStyle.Colors.chartForegrounds[0],
-                calculatedLineColor: EaStyle.Colors.chartForegrounds[1],
-                experimentLineWidth: 2,
-                calculatedLineWidth: 2,
+                chartWidth: dataChartWidth, //dataChartWidth,
+                mainChartHeight: ExGlobals.Variables.analysisChart.mainChartHeight * 0.84,
+                braggChartHeight: ExGlobals.Variables.analysisChart.braggChartHeight,
+                differenceChartHeight: ExGlobals.Variables.analysisChart.differenceChartHeight * 0.84,
+                xAxisChartHeight: ExGlobals.Variables.analysisChart.xAxisChartHeight,
+
+                xAxisTitle: ExGlobals.Variables.analysisChart.xAxisTitle,
+                yMainAxisTitle: ExGlobals.Variables.analysisChart.yMainAxisTitle,
+                yDifferenceAxisTitle: ExGlobals.Variables.analysisChart.yDifferenceAxisTitle,
+
+                chartBackgroundColor: ExGlobals.Variables.analysisChart.chartBackgroundColor,
+                chartForegroundColor: ExGlobals.Variables.analysisChart.chartForegroundColor,
+                chartGridLineColor: ExGlobals.Variables.analysisChart.chartGridLineColor,
+                chartMinorGridLineColor: ExGlobals.Variables.analysisChart.chartMinorGridLineColor,
+
+                measuredLineColor: ExGlobals.Variables.analysisChart.measuredLineColor,
+                measuredAreaColor: ExGlobals.Variables.analysisChart.measuredAreaColor,
+                calculatedLineColor: ExGlobals.Variables.analysisChart.calculatedLineColor,
+                braggTicksColor: ExGlobals.Variables.analysisChart.braggTicksColor,
+                backgroundLineColor: ExGlobals.Variables.analysisChart.backgroundLineColor,
+                differenceLineColor: ExGlobals.Variables.analysisChart.differenceLineColor,
+                differenceAreaColor: ExGlobals.Variables.analysisChart.differenceAreaColor,
+
+                measuredLineWidth: ExGlobals.Variables.analysisChart.measuredLineWidth,
+                calculatedLineWidth: ExGlobals.Variables.analysisChart.calculatedLineWidth,
+                differenceLineWidth: ExGlobals.Variables.analysisChart.differenceLineWidth,
+                backgroundLineWidth: ExGlobals.Variables.analysisChart.backgroundLineWidth,
+
+                fontPixelSize: ExGlobals.Variables.analysisChart.fontPixelSize,
+
                 containerId: "analysisSection"
             }
             )
@@ -344,8 +384,8 @@ Item {
                   '<h2>Software</h2>',
                   '<div id="softwareSection">',
                   `<b>Analysis:</b> <a href="${ExGlobals.Constants.appUrl}">${ExGlobals.Constants.appName} v${ExGlobals.Constants.appVersion}</a><br>`,
-                  `<b>Structure chart:</b> <a href="${structureChartLibUrl}"> ChemDoodle v${structureChartLibVersion}</a><br>`,
-                  `<b>Data chart:</b> <a href="${dataChartLibUrl}"> Bokeh v${dataChartLibVersion}</a><br>`,
+                  `<b>Structure chart:</b> <a href="${structureChartLibUrl}"> ChemDoodle Web Components v${structureChartLibVersion}</a><br>`,
+                  `<b>Data chart:</b> <a href="${dataChartLibUrl}"> BokehJS v${dataChartLibVersion}</a><br>`,
                   minimizationSoftware,
                   '</div>'
               ]

@@ -24,8 +24,6 @@ EaComponents.SideBarColumn {
                 text: qsTr("Engine:")
             }
             EaElements.ComboBox {
-                id: calculatorSelector
-
                 width: minimizerSelector.width
                 model: ExGlobals.Constants.proxy.calculatorNames
                 currentIndex: ExGlobals.Constants.proxy.currentCalculatorIndex
@@ -104,7 +102,7 @@ EaComponents.SideBarColumn {
             EaElements.CheckBox {
                 text: qsTr("Show legend")
                 checked: ExGlobals.Variables.showLegend
-                onCheckedChanged: ExGlobals.Variables.showLegend = checked //_matplotlibBridge.showLegend(checked, "figure")
+                onCheckedChanged: ExGlobals.Variables.showLegend = checked
             }
 
             EaElements.CheckBox {
@@ -123,7 +121,7 @@ EaComponents.SideBarColumn {
     */
 
     EaElements.GroupBox {
-        title: qsTr("Parameters settings")
+        title: qsTr("Parameters")
         last: true
         //collapsed: false
 

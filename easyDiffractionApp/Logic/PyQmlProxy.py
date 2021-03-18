@@ -1,20 +1,12 @@
 import os
 import datetime
-import time
-import pathlib
-
+import timeit
 import json
 from typing import Union
-
 from dicttoxml import dicttoxml
-
-import timeit
 
 from PySide2.QtCore import QObject, Slot, Signal, Property
 from PySide2.QtCore import QByteArray, QBuffer, QIODevice
-from PySide2.QtCore import QPointF
-from PySide2.QtCharts import QtCharts
-from PySide2.QtGui import QPdfWriter, QTextDocument
 
 from easyCore import np, borg, ureg
 
@@ -35,11 +27,8 @@ from easyDiffractionLib.Elements.Experiments.Pattern import Pattern1D
 from easyAppLogic.Utils.Utils import generalizePath
 
 from easyDiffractionApp.Logic.DataStore import DataSet1D, DataStore
-
-from easyDiffractionApp.Logic.Proxies.BackgroundProxy import BackgroundProxy
-from easyDiffractionApp.Logic.Proxies.MatplotlibBackend import MatplotlibBridge
-from easyDiffractionApp.Logic.Proxies.QtChartsBackend import QtChartsBridge
-from easyDiffractionApp.Logic.Proxies.BokehBackend import BokehBridge
+from easyDiffractionApp.Logic.Proxies.Background import BackgroundProxy
+from easyDiffractionApp.Logic.Proxies.Plotting1d import Plotting1dProxy
 from easyDiffractionApp.Logic.Fitter import Fitter as ThreadedFitter
 
 
@@ -58,7 +47,6 @@ class PyQmlProxy(QObject):
     # Structure
     structureParametersChanged = Signal()
     structureViewChanged = Signal()
-    structureViewUpdated = Signal()
 
     phaseAdded = Signal()
     phaseRemoved = Signal()
@@ -124,22 +112,16 @@ class PyQmlProxy(QObject):
         self._interface = InterfaceFactory()
         self._sample = self._defaultSample()
 
-        # Charts
-        self._vtk_handler = None
+        # Plotting 1D
+        self._plotting_1d_proxy = Plotting1dProxy()
 
-        self._matplotlib_bridge = MatplotlibBridge()
-        self._qtcharts_bridge = QtChartsBridge()
-        self._bokeh_bridge = BokehBridge()
-        self._experiment_figure_canvas = None
-        self._analysis_figure_canvas = None
-        self._difference_figure_canvas = None
+        # Plotting 3D
+        self._3d_plotting_libs = ['chemdoodle', 'qtdatavisualization']
+        self._current_3d_plotting_lib = self._3d_plotting_libs[0]
 
-        self._calculated_series_ref = None
+        self._show_bonds = True
+        self._bonds_max_distance = 2.0
 
-        self._show_measured_series = True
-        self._show_difference_chart = False
-
-        self.current1dPlottingLibChanged.connect(self.onCurrent1dPlottingLibChanged)
         self.current3dPlottingLibChanged.connect(self.onCurrent3dPlottingLibChanged)
 
         # Project
@@ -192,10 +174,9 @@ class PyQmlProxy(QObject):
         self._background_proxy.asObjChanged.connect(self._onParametersChanged)
         self._background_proxy.asObjChanged.connect(self._sample.set_background)
         self._background_proxy.asObjChanged.connect(self.calculatedDataChanged)
+        self._background_proxy.asXmlChanged.connect(self.updateChartBackground)
 
         # Analysis
-        self._analysis_data = None
-
         self.calculatedDataChanged.connect(self._onCalculatedDataChanged)
 
         self._simulation_parameters_as_obj = self._defaultSimulationParameters()
@@ -227,13 +208,6 @@ class PyQmlProxy(QObject):
 
         self._parameters_filter_criteria = ""
         self.parametersFilterCriteriaChanged.connect(self._onParametersFilterCriteriaChanged)
-
-        # Plotting
-        self._1d_plotting_libs = ['matplotlib', 'qtcharts', 'bokeh']
-        self._current_1d_plotting_lib = self._1d_plotting_libs[2]
-
-        self._3d_plotting_libs = ['vtk', 'qtdatavisualization', 'chemdoodle']
-        self._current_3d_plotting_lib = self._3d_plotting_libs[0]
 
         # Report
         self._report = ""
@@ -272,112 +246,13 @@ class PyQmlProxy(QObject):
     ####################################################################################################################
     ####################################################################################################################
 
-    # Vtk
-
-    def setVtkHandler(self, vtk_handler):
-        self._vtk_handler = vtk_handler
-
-    @Property(bool, notify=dummySignal)
-    def showBonds(self):
-        if self._vtk_handler is None:
-            return True
-        return self._vtk_handler.show_bonds
-
-    @showBonds.setter
-    @property_stack_deco('Changing bonds visible from {old_value} to {new_value}')
-    def showBonds(self, show_bonds: bool):
-        if self._vtk_handler is None or self._vtk_handler.show_bonds == show_bonds:
-            return
-        self._vtk_handler.show_bonds = show_bonds
-        self.structureViewChanged.emit()
-
-    @Property(float, notify=False)
-    def bondsMaxDistance(self):
-        if self._vtk_handler is None:
-            return 2.0
-        return self._vtk_handler.max_distance
-
-    @bondsMaxDistance.setter
-    @property_stack_deco('Bond distance changed from {old_value} to {new_value}')
-    def bondsMaxDistance(self, max_distance: float):
-        if self._vtk_handler is None or self._vtk_handler.max_distance == max_distance:
-            return
-        self._vtk_handler.max_distance = max_distance
-        self.structureViewChanged.emit()
-
-    def _updateStructureView(self):
-        start_time = timeit.default_timer()
-        if self._vtk_handler is None or not self._sample.phases:
-            return
-        self._vtk_handler.clearScene()
-        self._vtk_handler.plot_system2(self._sample.phases[0])
-        print("+ _updateStructureView: {0:.3f} s".format(timeit.default_timer() - start_time))
-
-    def _onStructureViewChanged(self):
-        print("***** _onStructureViewChanged")
-        self._updateStructureView()
-        self.structureViewUpdated.emit()
-
-    # Matplotlib
+    # 1d plotting
 
     @Property('QVariant', notify=dummySignal)
-    def matplotlibBridge(self):
-        return self._matplotlib_bridge
+    def plotting1d(self):
+        return self._plotting_1d_proxy
 
-    @Slot('QVariant')
-    def setExperimentFigureCanvas(self, canvas):
-        if self._experiment_figure_canvas == canvas:
-            return
-        self._experiment_figure_canvas = canvas
-
-    @Slot('QVariant')
-    def setAnalysisFigureCanvas(self, canvas):
-        if self._analysis_figure_canvas == canvas:
-            return
-        self._analysis_figure_canvas = canvas
-
-    @Slot('QVariant')
-    def setDifferenceFigureCanvas(self, canvas):
-        if self._difference_figure_canvas == canvas:
-            return
-        self._difference_figure_canvas = canvas
-
-    # QtCharts
-
-    @Property('QVariant', notify=dummySignal)
-    def qtCharts(self):
-        return self._qtcharts_bridge
-
-    # Bokeh
-
-    @Property('QVariant', notify=dummySignal)
-    def bokeh(self):
-        return self._bokeh_bridge
-
-    # Plotting libs
-
-    @Property('QVariant', notify=dummySignal)
-    def plotting1dLibs(self):
-        return self._1d_plotting_libs
-
-    @Property('QVariant', notify=current1dPlottingLibChanged)
-    def current1dPlottingLib(self):
-        return self._current_1d_plotting_lib
-
-    @current1dPlottingLib.setter
-    @property_stack_deco('Changing plotting library from {old_value} to {new_value}')
-    def current1dPlottingLib(self, plotting_lib):
-        self._current_1d_plotting_lib = plotting_lib
-        self.current1dPlottingLibChanged.emit()
-
-    def onCurrent1dPlottingLibChanged(self):
-        if self.current1dPlottingLib == 'matplotlib':
-            if self._experiment_figure_canvas is not None and self._experiment_data is not None:
-                self._matplotlib_bridge.updateData(self._experiment_figure_canvas, [self._experiment_data])
-                self.experimentDataChanged.emit()
-            if self._analysis_figure_canvas is not None and self._analysis_data is not None:
-                self._matplotlib_bridge.updateData(self._analysis_figure_canvas, self._analysis_data)
-                self._updateCalculatedData()
+    # 3d plotting
 
     @Property('QVariant', notify=dummySignal)
     def plotting3dLibs(self):
@@ -394,32 +269,34 @@ class PyQmlProxy(QObject):
         self.current3dPlottingLibChanged.emit()
 
     def onCurrent3dPlottingLibChanged(self):
-        if self.current3dPlottingLib == 'vtk':
-            self._onStructureViewChanged()
+        pass
 
-    @Property(bool, notify=showDifferenceChartChanged)
-    def showDifferenceChart(self):
-        return self._show_difference_chart
+    # Structure view
 
-    @showDifferenceChart.setter
-    @property_stack_deco('Changing show difference chart from {old_value} to {new_value}')
-    def showDifferenceChart(self, show):
-        if self._show_difference_chart == show:
+    def _onStructureViewChanged(self):
+        print("***** _onStructureViewChanged")
+
+    @Property(bool, notify=structureViewChanged)
+    def showBonds(self):
+        return self._show_bonds
+
+    @showBonds.setter
+    def showBonds(self, show_bonds: bool):
+        if self._show_bonds == show_bonds:
             return
-        self._show_difference_chart = show
-        self.showDifferenceChartChanged.emit()
+        self._show_bonds = show_bonds
+        self.structureViewChanged.emit()
 
-    @Property(bool, notify=showMeasuredSeriesChanged)
-    def showMeasuredSeries(self):
-        return self._show_measured_series
+    @Property(float, notify=structureViewChanged)
+    def bondsMaxDistance(self):
+        return self._bonds_max_distance
 
-    @showMeasuredSeries.setter
-    @property_stack_deco('Changing show measured series from {old_value} to {new_value}')
-    def showMeasuredSeries(self, show):
-        if self._show_measured_series == show:
+    @bondsMaxDistance.setter
+    def bondsMaxDistance(self, max_distance: float):
+        if self._bonds_max_distance == max_distance:
             return
-        self._show_measured_series = show
-        self.showMeasuredSeriesChanged.emit()
+        self._bonds_max_distance = max_distance
+        self.structureViewChanged.emit()
 
     # Charts for report
 
@@ -772,7 +649,11 @@ class PyQmlProxy(QObject):
     @Slot()
     def addDefaultAtom(self):
         try:
-            atom = Site.default('Label2', 'H')
+            atom = Site.from_pars(label='Label2',
+                                  specie='O',
+                                  fract_x=0.05,
+                                  fract_y=0.05,
+                                  fract_z=0.05)
             atom.add_adp('Uiso', Uiso=0.0)
             self._sample.phases[self.currentPhaseIndex].add_atom(atom)
             self.structureParametersChanged.emit()
@@ -946,11 +827,7 @@ class PyQmlProxy(QObject):
 
     def _onExperimentDataAdded(self):
         print("***** _onExperimentDataAdded")
-        self._bokeh_bridge.setMeasuredData(self._experiment_data.x, self._experiment_data.y, self._experiment_data.e)
-        self._qtcharts_bridge.setMeasuredData(self._experiment_data.x, self._experiment_data.y, self._experiment_data.e)
-        if self.current1dPlottingLib == 'matplotlib' and self._experiment_figure_canvas is not None and self._experiment_data is not None:
-            self._matplotlib_bridge.updateData(self._experiment_figure_canvas, [self._experiment_data])
-
+        self._plotting_1d_proxy.setMeasuredData(self._experiment_data.x, self._experiment_data.y, self._experiment_data.e)
         self._experiment_parameters = self._experimentDataParameters(self._experiment_data)
         self.simulationParametersAsObj = json.dumps(self._experiment_parameters)
         self.experiments = [self._defaultExperiment()]
@@ -959,7 +836,6 @@ class PyQmlProxy(QObject):
 
     def _onExperimentDataRemoved(self):
         print("***** _onExperimentDataRemoved")
-        self._matplotlib_bridge.clearDispalyAdapters()
         self.experimentDataChanged.emit()
 
     ####################################################################################################################
@@ -1023,8 +899,8 @@ class PyQmlProxy(QObject):
 
     def _defaultSimulationParameters(self):
         return {
-            "x_min":  10.0,
-            "x_max":  150.0,
+            "x_min": 10.0,
+            "x_max": 120.0,
             "x_step": 0.1
         }
 
@@ -1106,6 +982,10 @@ class PyQmlProxy(QObject):
     def backgroundProxy(self):
         return self._background_proxy
 
+    def updateChartBackground(self):
+        self._plotting_1d_proxy.setBackgroundData(self._background_proxy.asObj.x_sorted_points,
+                                                  self._background_proxy.asObj.y_sorted_points)
+
     ####################################################################################################################
     ####################################################################################################################
     # ANALYSIS
@@ -1127,42 +1007,22 @@ class PyQmlProxy(QObject):
         #  THIS IS WHERE WE WOULD LOOK UP CURRENT EXP INDEX
         sim = self._data.simulations[0]
 
-        zeros_sim = DataSet1D(name='', x=[sim.x[0]], y=[sim.y[0]])  # Temp solution to have proper color for sim curve
-        zeros_diff = DataSet1D(name='', x=[sim.x[0]])  # Temp solution to have proper color for sim curve
-
         if self.experimentLoaded:
             exp = self._data.experiments[0]
-
             sim.x = exp.x
-            sim.y = self._interface.fit_func(sim.x)
-
-            diff = self._data.simulations[1]
-            diff.x = exp.x
-            diff.y = exp.y - sim.y
-
-            zeros_diff.y = [exp.y[0] - sim.y[0]]
-
-            difference_dataset = [zeros_diff, zeros_diff, diff]
-            self._analysis_data = [exp, sim]
-
-            # if self.current1dPlottingLib == 'matplotlib':
-            #    self._matplotlib_bridge.updateData(self._difference_figure_canvas, difference_dataset)
 
         elif self.experimentSkipped:
             x_min = float(self._simulation_parameters_as_obj['x_min'])
             x_max = float(self._simulation_parameters_as_obj['x_max'])
             x_step = float(self._simulation_parameters_as_obj['x_step'])
             num_points = int((x_max - x_min) / x_step + 1)
-
             sim.x = np.linspace(x_min, x_max, num_points)
-            sim.y = self._interface.fit_func(sim.x)  # CrysPy: 0.5 s, CrysFML: 0.005 s, GSAS-II: 0.25 s
 
-            self._analysis_data = [zeros_sim, sim]
+        sim.y = self._interface.fit_func(sim.x)  # CrysPy: 0.5 s, CrysFML: 0.005 s, GSAS-II: 0.25 s
+        hkl = self._interface.get_hkl()
 
-        self._bokeh_bridge.setCalculatedData(sim.x, sim.y)
-        self._qtcharts_bridge.setCalculatedData(sim.x, sim.y)
-        if self.current1dPlottingLib == 'matplotlib' and self._analysis_figure_canvas is not None:
-            self._matplotlib_bridge.updateData(self._analysis_figure_canvas, self._analysis_data)
+        self._plotting_1d_proxy.setCalculatedData(sim.x, sim.y)
+        self._plotting_1d_proxy.setBraggData(hkl['ttheta'], hkl['h'], hkl['k'], hkl['l'])
 
         print("+ _updateCalculatedData: {0:.3f} s".format(timeit.default_timer() - start_time))
 
@@ -1252,6 +1112,9 @@ class PyQmlProxy(QObject):
 
     @Slot(str, 'QVariant')
     def editParameter(self, obj_id: str, new_value: Union[bool, float, str]):  # covers both parameter and descriptor
+        if not obj_id:
+            return
+
         obj = self._parameterObj(obj_id)
         if obj is None:
             return

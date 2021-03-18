@@ -24,6 +24,7 @@ EaComponents.SideBarColumn {
                 Component.onCompleted: checked = ExGlobals.Constants.proxy.showBonds
             }
 
+            /*
             // Spacer
             EaElements.Label {
                 width: EaStyle.Sizes.fontPixelSize * 2.5
@@ -57,6 +58,7 @@ EaComponents.SideBarColumn {
                 onEditingFinished: ExGlobals.Constants.proxy.bondsMaxDistance = text
                 Component.onCompleted: text = ExGlobals.Constants.proxy.bondsMaxDistance
             }
+            */
 
         }
 

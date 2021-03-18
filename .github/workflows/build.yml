@@ -129,4 +129,4 @@ jobs:
 
       - name: Upload app installer repository to FTP
         if: github.event_name == 'push'
-        run: python ${{ env.SCRIPTS_PATH }}/DeployFtp.py ${{ env.BRANCH_NAME }} ${{ secrets.FTP_PASSWORD }}
+        run: python ${{ env.SCRIPTS_PATH }}/DeployFtp.py ${{ env.BRANCH_NAME }} ${{ secrets.APP_REPO_FTP_PASSWORD }}

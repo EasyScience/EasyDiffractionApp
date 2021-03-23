@@ -305,7 +305,7 @@ Item {
         rc.say("Use application toolbar to switch to the sample description page.")
         rc.mouseClick(ExGlobals.Variables.sampleTabButton)
 
-        rc.say("Use can set new phase from file or manually.")
+        rc.say("You can set new phase from file or manually.")
         rc.mouseClick(ExGlobals.Variables.setNewSampleManuallyButton)
 
         rc.say("Now, you can change the symmetry and cell parameters.")
@@ -323,6 +323,18 @@ Item {
         rc.say("Append or remove new atoms.")
         rc.mouseClick(ExGlobals.Variables.atomsGroup, 15)
         rc.mouseClick(ExGlobals.Variables.appendNewAtomButton)
+
+        rc.say("To change the structure view parameters use the toolbar buttons.")
+        rc.mouseClick(ExGlobals.Variables.xProjectionButton)
+        rc.mouseClick(ExGlobals.Variables.showBondsButton)
+        rc.mouseClick(ExGlobals.Variables.showBondsButton)
+        rc.mouseClick(ExGlobals.Variables.showLabelsButton)
+        rc.mouseClick(ExGlobals.Variables.showLabelsButton)
+        rc.mouseClick(ExGlobals.Variables.projectionTypeButton)
+        rc.mouseClick(ExGlobals.Variables.projectionTypeButton)
+        rc.mouseClick(ExGlobals.Variables.yProjectionButton)
+        rc.mouseClick(ExGlobals.Variables.zProjectionButton)
+        rc.mouseClick(ExGlobals.Variables.defaultViewButton)
 
         rc.wait(1000)
 

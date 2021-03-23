@@ -178,6 +178,24 @@ Item {
 
     property string headMiscStyle: {
         const list = [
+                  `:root {`,
+                  `  --tooltipWidth:120;`,
+                  `  --chartWidth:${structureChartWidth};`,
+                  `  --chartHeight:${structureChartHeight};`,
+                  `  --fontPixelSize:${EaStyle.Sizes.fontPixelSize};`,
+                  `  --toolButtonHeight:${EaStyle.Sizes.toolButtonHeight};`,
+                  `  --backgroundColor:${EaStyle.Colors.chartPlotAreaBackground};`,
+                  `  --foregroundColor:${EaStyle.Colors.chartForeground};`,
+                  `  --buttonBackgroundColor:${EaStyle.Colors.contentBackground};`,
+                  `  --buttonBackgroundHoveredColor:${EaStyle.Colors.themeBackgroundHovered1};`,
+                  `  --buttonForegroundColor:${EaStyle.Colors.themeForeground};`,
+                  `  --buttonForegroundHoveredColor:${EaStyle.Colors.themeForegroundHovered};`,
+                  `  --buttonBorderColor:${EaStyle.Colors.chartAxis};`,
+                  `  --tooltipBackgroundColor:${EaStyle.Colors.dialogBackground};`,
+                  `  --tooltipForegroundColor:${EaStyle.Colors.themeForeground};`,
+                  `  --tooltipBorderColor:${EaStyle.Colors.themePrimary};`,
+                  `}`,
+
                   'html {',
                   `    background-color: ${htmlBackground};`,
                   '}',
@@ -203,6 +221,7 @@ Item {
                   'a:hover {',
                   `    color: ${EaStyle.Colors.linkHovered};`,
                   '}',
+
                   '#parametersSection table {',
                   '    border-collapse: collapse;',
                   '}',
@@ -217,6 +236,91 @@ Item {
                   '}',
                   '#parametersSection tr:nth-child(even) {',
                   `    background-color: ${htmlBackground};`,
+                  '}',
+
+                  '#container {',
+                  '    position:relative;',
+                  '    display: flex;',
+                  '    justify-content: center;',
+                  '    align-items: center;',
+                  '    width: 100%;',
+                  '    height: 100%;',
+                  '}',
+
+                  '#toolbar {',
+                  '    position: absolute;',
+                  '    top: 0;',
+                  '    right: 0;',
+                  '    margin-top: calc(var(--fontPixelSize) * 1px);',
+                  '    margin-right: calc(var(--fontPixelSize) * 1px);',
+                  '}',
+                  '#toolbar .toolbar-separator {',
+                  '    width: calc(0.25 * var(--fontPixelSize) * 1px);',
+                  '    margin-left: calc(0.25 * var(--fontPixelSize) * 1px);',
+                  '    display: inline-block;',
+                  '}',
+                  '#toolbar button {',
+                  '    width: calc(var(--toolButtonHeight) * 1px);',
+                  '    height: calc(var(--toolButtonHeight) * 1px);',
+                  '    margin-left: calc(0.25 * var(--fontPixelSize) * 1px);',
+                  '    font-size: calc(1.25 * var(--fontPixelSize) * 1px);',
+                  '    color: var(--buttonForegroundColor);',
+                  '    background: var(--buttonBackgroundColor);',
+                  '    border: 1px solid var(--buttonBorderColor);',
+                  '}',
+                  '#toolbar button:hover {',
+                  '    color: var(--buttonForegroundHoveredColor);',
+                  '    background: var(--buttonBackgroundHoveredColor);',
+                  '}',
+                  '#toolbar button:focus {',
+                  '    outline: 0;',
+                  '}',
+
+                  '[data-tooltip] {',
+                  '    position: relative;',
+                  '}',
+                  '[data-tooltip]::before {',
+                  '    content: "";',
+                  '    position: absolute;',
+                  '    bottom: 100%;',
+                  '    left: 50%;',
+                  '    transform: translate(-50%, calc(0.5 * var(--fontPixelSize) * 1px));',
+                  '    display: block;',
+                  '    border-top: calc(0.5 * var(--fontPixelSize) * 1px) solid var(--tooltipBackgroundColor);',
+                  '    border-right: calc(0.5 * var(--fontPixelSize) * 1px) solid transparent;',
+                  '    border-bottom: 0 solid transparent;',
+                  '    border-left: calc(0.5 * var(--fontPixelSize) * 1px) solid transparent;',
+                  '    margin-bottom: calc(0.5 * var(--fontPixelSize) * 1px);',
+                  '    pointer-events: none;',
+                  '    transition: .3s;',
+                  '    opacity: 0;',
+                  '}',
+                  '[data-tooltip]::after {',
+                  '    content: attr(data-tooltip);',
+                  '    position: absolute;',
+                  '    bottom: 100%;',
+                  '    left: 50%;',
+                  '    transform: translate(-50%, calc(0.5 * var(--fontPixelSize) * 1px));',
+                  '    display: inline-block;',
+                  '    background-color: var(--tooltipBackgroundColor);',
+                  '    color: var(--tooltipForegroundColor);',
+                  '    padding: calc(0.75 * var(--fontPixelSize) * 1px) calc(var(--fontPixelSize) * 1px);',
+                  '    white-space: nowrap;',
+                  '    margin-bottom: calc(1.0 * var(--fontPixelSize) * 1px);',
+                  '    border-radius: calc(0.25 * var(--fontPixelSize) * 1px);',
+                  '    pointer-events: none;',
+                  '    transition: .3s;',
+                  '    opacity: 0;',
+                  '    font-family: "PT Sans", sans-serif;',
+                  '    font-size: calc(var(--fontPixelSize) * 1px);',
+                  '}',
+                  '[data-tooltip]:hover::before {',
+                  '    opacity: 1;',
+                  '    transform: translateX(-50%);',
+                  '}',
+                  '[data-tooltip]:hover::after {',
+                  '    opacity: 1;',
+                  '    transform: translateX(-50%);',
                   '}'
               ]
         return list.join('\n')
@@ -242,20 +346,17 @@ Item {
         return list.join('\n')
     }
 
-    property string structureChart:
-        EaLogic.Plotting.chemDoodleChart(
-            // cif
-            JSON.stringify(ExGlobals.Constants.proxy.phasesAsExtendedCif),
-            // specs
-            {
-                showBonds: true,
+    property string structureChart: ''
 
-                chartWidth: structureChartWidth,
-                chartHeight: structureChartHeight,
-                chartForegroundColor: structureChartForegroundColor,
-                chartBackgroundColor: structureChartBackgroundColor
-            }
-            )
+    property string cifStr: ExGlobals.Constants.proxy.phasesAsExtendedCif
+    onCifStrChanged: ExGlobals.Variables.bokehStructureChart.runJavaScript(
+                         'document.body.outerHTML',
+                         function(result) {
+                             result = result.replace(/\<div id="toolbar".*?\/div\>/g, '<div id="toolbar"></div>')
+                             result = result.replace(/\<canvas class="ChemDoodleWebComponent".*?\/canvas\>/g, '')
+                             structureChart = result
+                         }
+                         )
 
     property string dataChart:
         EaLogic.Plotting.bokehChart(
@@ -404,9 +505,9 @@ Item {
                   `<b>Space group:</b> ${spaceGroup}<br>`,
                   '</p>',
                   '<div id="structureSection">',
-                  '<script>',
+                  //'<script>',
                   structureChart,
-                  '</script>',
+                  //'</script>',
                   '</div>'
               ]
         return list.join('\n')

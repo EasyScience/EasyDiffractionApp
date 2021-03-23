@@ -110,7 +110,6 @@ class BackgroundProxy {
 
 
 class PyQmlProxy {
-    get showBonds() { return true }
     get bondsMaxDistance() { return 2. }
 
     get experimentLoaded() { return true }

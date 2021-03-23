@@ -84,6 +84,7 @@ QtObject {
     property bool iconifiedNames: true
 
     // Plotting
+    property var bokehStructureChart
     property var analysisChart
     property var analysisImageSource
     property var structureImageSource

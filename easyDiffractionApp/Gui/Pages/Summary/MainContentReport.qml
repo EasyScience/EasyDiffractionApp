@@ -21,9 +21,6 @@ Item {
 
     // Structure chart
 
-    property string structureChartLibVersion: EaLogic.Plotting.chemDoodleInfo().version
-    property string structureChartLibUrl: EaLogic.Plotting.chemDoodleInfo().url
-
     property int structureChartWidth: chartWidth + EaStyle.Sizes.fontPixelSize * 1.5 * 2
     property int structureChartHeight: structureChartWidth
 
@@ -140,7 +137,7 @@ Item {
     property string headScripts: {
         const list = [
                   EaLogic.Plotting.bokehHeadScripts(),
-                  EaLogic.Plotting.chemDoodleHeadScripts()
+                  ExGlobals.Variables.bokehStructureChart.headScript
               ]
         return list.join('\n')
     }
@@ -485,7 +482,7 @@ Item {
                   '<h2>Software</h2>',
                   '<div id="softwareSection">',
                   `<b>Analysis:</b> <a href="${ExGlobals.Constants.appUrl}">${ExGlobals.Constants.appName} v${ExGlobals.Constants.appVersion}</a><br>`,
-                  `<b>Structure chart:</b> <a href="${structureChartLibUrl}"> ChemDoodle Web Components v${structureChartLibVersion}</a><br>`,
+                  `<b>Structure chart:</b> <a href="${ExGlobals.Variables.bokehStructureChart.info.url}"> ChemDoodle Web Components v${ExGlobals.Variables.bokehStructureChart.info.version}</a><br>`,
                   `<b>Data chart:</b> <a href="${dataChartLibUrl}"> BokehJS v${dataChartLibVersion}</a><br>`,
                   minimizationSoftware,
                   '</div>'

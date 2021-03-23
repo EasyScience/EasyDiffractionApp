@@ -88,6 +88,13 @@ QtObject {
     property var analysisChart
     property var analysisImageSource
     property var structureImageSource
+    property var showBondsButton
+    property var showLabelsButton
+    property var projectionTypeButton
+    property var xProjectionButton
+    property var yProjectionButton
+    property var zProjectionButton
+    property var defaultViewButton
 
     // Summary
     property var reportWebView

@@ -1,5 +1,6 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
+import QtQuick.Dialogs 1.3 as Dialogs1
 import QtQuick.XmlListModel 2.13
 
 import easyAppGui.Style 1.0 as EaStyle
@@ -27,9 +28,16 @@ EaComponents.ApplicationWindow {
     appBarLeftButtons: [
 
         EaElements.ToolButton {
-            enabled: false
+            enabled: ExGlobals.Constants.proxy.stateHasChanged
             fontIcon: "\uf0c7"
             ToolTip.text: qsTr("Save current state of the project")
+            onClicked: {
+                if (ExGlobals.Constants.proxy.projectFilePath != "") {
+                    ExGlobals.Constants.proxy.saveProject()
+                } else {
+                    ExGlobals.Variables.showSaveDialog = true
+                }
+            }
         },
 
         EaElements.ToolButton {
@@ -336,6 +344,18 @@ EaComponents.ApplicationWindow {
         onAccepted: {
             ExGlobals.Variables.samplePageEnabled = true
             ExGlobals.Variables.projectCreated = true
+        }
+    }
+
+    // Save project dialog
+    Dialogs1.FileDialog{
+        id: fileDialogSaveProject
+        visible: ExGlobals.Variables.showSaveDialog && ExGlobals.Variables.needsSave
+        selectExisting: false
+        nameFilters: ["Project files (*.xml)"]
+        onAccepted: {
+            ExGlobals.Constants.proxy.saveProjectAs(fileUrl)
+            ExGlobals.Variables.showSaveDialog = false
         }
     }
 

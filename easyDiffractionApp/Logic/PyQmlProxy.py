@@ -757,19 +757,19 @@ class PyQmlProxy(QObject):
         def outer1(obj):
             def inner():
                 obj._experiment_data = self._loadExperimentData(file_url)
-                obj.experimentDataAdded.emit()
                 obj.experimentLoaded = True
                 obj.experimentSkipped = False
                 obj.undoRedoChanged.emit()
+                obj.experimentDataAdded.emit()
             return inner
 
         def outer2(obj):
             def inner():
                 obj.experiments.clear()
-                obj.experimentDataRemoved.emit()
                 obj.experimentLoaded = False
                 obj.experimentSkipped = True
                 obj.undoRedoChanged.emit()
+                obj.experimentDataRemoved.emit()
             return inner
 
         borg.stack.push(FunctionStack(self, outer1(self), outer2(self)))
@@ -836,6 +836,7 @@ class PyQmlProxy(QObject):
 
     def _onExperimentDataRemoved(self):
         print("***** _onExperimentDataRemoved")
+        self._plotting_1d_proxy.clearFrontendState()
         self.experimentDataChanged.emit()
 
     ####################################################################################################################
@@ -1028,8 +1029,10 @@ class PyQmlProxy(QObject):
 
     def _onCalculatedDataChanged(self):
         print("***** _onCalculatedDataChanged")
-        self._updateCalculatedData()
-        self.calculatedDataUpdated.emit()
+        try:
+            self._updateCalculatedData()
+        finally:
+            self.calculatedDataUpdated.emit()
 
     @Property(str, notify=calculatedDataUpdated)
     def calculatedDataXStr(self):

@@ -100,6 +100,42 @@ class Plotting1dProxy(QObject):
         self._qtcharts_bragg_data_obj = {}
         self._qtcharts_background_data_obj = {}
 
+    def clearFrontendState(self):
+
+        # Ranges for GUI
+        self._experiment_plot_ranges_obj = {}
+        self._analysis_plot_ranges_obj = {}
+
+        # Data containers for GUI
+        self._bokeh_measured_data_obj = {}
+        self._bokeh_calculated_data_obj = {}
+        self._bokeh_difference_data_obj = {}
+        self._bokeh_bragg_data_obj = {}
+        self._bokeh_background_data_obj = {}
+
+        self._qtcharts_measured_data_obj = {}
+        self._qtcharts_calculated_data_obj = {}
+        self._qtcharts_difference_data_obj = {}
+        self._qtcharts_bragg_data_obj = {}
+        self._qtcharts_background_data_obj = {}
+
+        # Ranges
+        self.experimentPlotRangesObjChanged.emit()
+        self.analysisPlotRangesObjChanged.emit()
+
+        # Data containers
+        self.bokehMeasuredDataObjChanged.emit()
+        self.bokehCalculatedDataObjChanged.emit()
+        self.bokehDifferenceDataObjChanged.emit()
+        self.bokehBraggDataObjChanged.emit()
+        self.bokehBackgroundDataObjChanged.emit()
+
+        self.qtchartsMeasuredDataObjChanged.emit()
+        self.qtchartsCalculatedDataObjChanged.emit()
+        self.qtchartsDifferenceDataObjChanged.emit()
+        self.qtchartsBraggDataObjChanged.emit()
+        self.qtchartsBackgroundDataObjChanged.emit()
+
     # Public: QML frontend
 
     # Libs for GUI

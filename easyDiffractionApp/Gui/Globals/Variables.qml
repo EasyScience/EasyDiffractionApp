@@ -65,6 +65,9 @@ QtObject {
     // Sidebar text inputs
     property var cellLengthALabel
 
+    // Checkboxes
+    property var enableToolTipsCheckBox
+
     // Comboboxes
     property var themeSelector
     property var calculatorSelector

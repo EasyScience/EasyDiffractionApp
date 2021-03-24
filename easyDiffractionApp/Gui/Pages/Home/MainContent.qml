@@ -287,6 +287,14 @@ Item {
         rc.posToCenter()
         rc.show()
 
+        // App preferences
+
+        rc.say("Application preferences can be accessed quickly from the application toolbar.")
+        rc.mouseClick(ExGlobals.Variables.preferencesButton)
+        rc.mouseClick(ExGlobals.Variables.enableToolTipsCheckBox)
+        rc.wait(500)
+        rc.keyClick(Qt.Key_Escape)
+
         // Home Tab
 
         rc.say("To start working with easy diffraction, just click start button.")

@@ -6,6 +6,7 @@ import numpy as np
 from dicttoxml import dicttoxml
 import xmltodict
 from xml.dom.minidom import parseString
+import json
 
 from easyAppLogic.Utils.Utils import generalizePath
 from easyDiffractionApp.Logic.DataStore import DataSet1D, DataStore
@@ -14,7 +15,8 @@ from easyDiffractionApp.Logic.DataStore import DataSet1D, DataStore
 class State(object):
     """
     """
-    def __init__(self, interface_name=""):
+    def __init__(self, parent=None, interface_name=""):
+        self.parent = parent
         self.interface_name = interface_name
         self.project_save_filepath = ""
         self.project_load_filepath = ""
@@ -23,6 +25,7 @@ class State(object):
         self.experiments = self._defaultExperiments()
         self._parameters = None
         self._instrument_parameters = None
+        self._status_model = None
 
         self.phases = None
         self._data = self._defaultData()
@@ -49,8 +52,10 @@ class State(object):
         reparsed = parseString(dicttoxml(descr))
         content = reparsed.toprettyxml(indent=' '*4)
 
+        content_json = json.dumps(descr, indent=4)
+
         path = generalizePath(self.project_save_filepath)
-        createFile(path, content)
+        createFile(path, content_json)
 
     def loadProjectAs(self, filepath):
         """
@@ -63,12 +68,19 @@ class State(object):
         """
         TODO
         """
-        if not os.path.isfile(self.project_load_filepath):
-            sys.exit("Failed to find project: '{0}'".format(self.project_load_filepath))
-        with open(self.project_load_filepath, 'r') as xml_file:
-            file_content = xmltodict.parse(xml_file.read())
+        path = generalizePath(self.project_load_filepath)
+        if not os.path.isfile(path):
+            sys.exit("Failed to find project: '{0}'".format(path))
+        with open(path, 'r') as xml_file:
+            #file_content = xmltodict.parse(xml_file.read())
+            descr = json.load(xml_file)
             #print("project: {}".format(file_content))
             #return file_content
+        self.phases = descr['phases']
+        # send signal to tell the proxy we changed phases
+        self.parent._sample.phases = descr['phases']
+        self.parent.phaseAdded.emit()
+        self.parent.phasesAsObjChanged.emit()
 
     def projectFilePath(self):
         return self.project_save_filepath
@@ -102,6 +114,8 @@ class State(object):
         self._experiment_data = data
 
     def experimentDataAsXml(self):
+        if self._experiment_data is None:
+            return ""
         return dicttoxml(self._experiment_data, attr_type=True).decode()
 
     def loadExperimentData(self, filepath=None):

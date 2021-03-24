@@ -7,6 +7,7 @@ import json
 from typing import Union
 
 from dicttoxml import dicttoxml
+from xml.dom.minidom import parseString
 
 import timeit
 
@@ -22,11 +23,10 @@ from easyCore import borg
 
 from easyCore.Symmetry.tools import SpacegroupInfo
 from easyCore.Fitting.Fitting import Fitter
-from easyCore.Fitting.Constraints import ObjConstraint, NumericConstraint
 from easyCore.Utils.classTools import generatePath
 
 from easyDiffractionLib.sample import Sample
-from easyDiffractionLib import Phases, Phase, Lattice, Site, Atoms, SpaceGroup
+from easyDiffractionLib import Phases, Phase, Lattice, Site, SpaceGroup
 from easyDiffractionLib.interface import InterfaceFactory
 from easyDiffractionLib.Elements.Experiments.Experiment import Pars1D
 from easyDiffractionLib.Elements.Experiments.Pattern import Pattern1D
@@ -39,8 +39,8 @@ from easyDiffractionApp.Logic.Proxies.BackgroundProxy import BackgroundProxy
 from easyDiffractionApp.Logic.Proxies.MatplotlibBackend import MatplotlibBridge
 from easyDiffractionApp.Logic.Proxies.QtChartsBackend import QtChartsBridge
 from easyDiffractionApp.Logic.Proxies.BokehBackend import BokehBridge
+from easyDiffractionApp.Logic.Fitter import Fitter as ThreadedFitter
 
-from easyDiffractionApp.Logic.State import State as AppState
 from easyDiffractionApp.Logic.ScreenRecorder import ScreenRecorder
 
 
@@ -142,6 +142,8 @@ class PyQmlProxy(QObject):
 
         # Project
         self._project_info = self._defaultProjectInfo()
+        self.project_save_filepath = ""
+        self._status_model = None
         self._state_changed = False
         self.stateChanged.connect(self._onStateChanged)
 
@@ -152,6 +154,7 @@ class PyQmlProxy(QObject):
         self.structureViewChanged.connect(self._onStructureViewChanged)
 
         self._phases_as_obj = []
+        self._phases_as_xml = ""
         self._phases_as_cif = ""
         self.phaseAdded.connect(self._onPhaseAdded)
         self.phaseRemoved.connect(self._onPhaseRemoved)
@@ -159,8 +162,8 @@ class PyQmlProxy(QObject):
         self._current_phase_index = 0
         self.currentPhaseChanged.connect(self._onCurrentPhaseChanged)
 
-        # state for the given interface
-        self.state = AppState(self._interface.current_interface_name)
+        # Experiment and calculated data
+        self._data = self._defaultData()
 
         # Experiment
         self._pattern_parameters_as_obj = self._defaultPatternParameters()
@@ -170,6 +173,10 @@ class PyQmlProxy(QObject):
         self._instrument_parameters_as_xml = ""
         self.instrumentParametersChanged.connect(self._onInstrumentParametersChanged)
 
+        self._experiment_parameters = None
+        self._experiment_data = None
+        self._experiment_data_as_xml = ""
+        self.experiments = self._defaultExperiments()
         self.experimentDataChanged.connect(self._onExperimentDataChanged)
         self.experimentDataAdded.connect(self._onExperimentDataAdded)
         self.experimentDataRemoved.connect(self._onExperimentDataRemoved)
@@ -232,6 +239,10 @@ class PyQmlProxy(QObject):
         self.currentCalculatorChanged.connect(self.statusInfoChanged)
         self.currentMinimizerChanged.connect(self.statusInfoChanged)
         self.currentMinimizerMethodChanged.connect(self.statusInfoChanged)
+
+        # Multithreading
+        self._fitter_thread = None
+        self._fit_finished = True
 
         # Screen recorder
         self._screen_recorder = ScreenRecorder()
@@ -339,8 +350,8 @@ class PyQmlProxy(QObject):
 
     def onCurrent1dPlottingLibChanged(self):
         if self.current1dPlottingLib == 'matplotlib':
-            if self._experiment_figure_canvas is not None and self.state.experiment_data is not None:
-                self._matplotlib_bridge.updateData(self._experiment_figure_canvas, [self.state.experiment_data])
+            if self._experiment_figure_canvas is not None and self._experiment_data is not None:
+                self._matplotlib_bridge.updateData(self._experiment_figure_canvas, [self._experiment_data])
                 self.experimentDataChanged.emit()
             if self._analysis_figure_canvas is not None and self._analysis_data is not None:
                 self._matplotlib_bridge.updateData(self._analysis_figure_canvas, self._analysis_data)
@@ -504,12 +515,12 @@ class PyQmlProxy(QObject):
     @Property('QVariant', notify=phasesAsObjChanged)
     def phasesAsObj(self):
         #print("+ phasesAsObj")
-        return self.state.phasesData
         return self._phases_as_obj
 
     @Property(str, notify=phasesAsXmlChanged)
     def phasesAsXml(self):
-        return dicttoxml(self._phases_as_obj, attr_type=True).decode()
+        #print("+ phasesAsXml")
+        return self._phases_as_xml
 
     @Property(str, notify=phasesAsCifChanged)
     def phasesAsCif(self):
@@ -538,13 +549,14 @@ class PyQmlProxy(QObject):
 
     def _setPhasesAsObj(self):
         start_time = timeit.default_timer()
-        #self._phases_as_obj = self._sample.phases.as_dict()['data']
-        self.state.phasesData = self._sample.phases.as_dict()['data']
+        self._phases_as_obj = self._sample.phases.as_dict()['data']
         print("+ _setPhasesAsObj: {0:.3f} s".format(timeit.default_timer() - start_time))
         self.phasesAsObjChanged.emit()
 
     def _setPhasesAsXml(self):
-        # start_time = timeit.default_timer()
+        start_time = timeit.default_timer()
+        self._phases_as_xml = dicttoxml(self._phases_as_obj, attr_type=True).decode()
+        print("+ _setPhasesAsXml: {0:.3f} s".format(timeit.default_timer() - start_time))
         self.phasesAsXmlChanged.emit()
 
     def _setPhasesAsCif(self):
@@ -764,17 +776,65 @@ class PyQmlProxy(QObject):
         self.structureViewChanged.emit()
 
     ####################################################################################################################
+    ####################################################################################################################
+    # EXPERIMENT
+    ####################################################################################################################
+    ####################################################################################################################
+
+    def _defaultExperiments(self):
+        return []
+
+    def _defaultData(self):
+        x_min = self._defaultSimulationParameters()['x_min']
+        x_max = self._defaultSimulationParameters()['x_max']
+        x_step = self._defaultSimulationParameters()['x_step']
+        num_points = int((x_max - x_min) / x_step + 1)
+        x_data = np.linspace(x_min, x_max, num_points)
+
+        data = DataStore()
+
+        data.append(
+            DataSet1D(
+                name='D1A@ILL data',
+                x=x_data, y=np.zeros_like(x_data),
+                x_label='2theta (deg)', y_label='Intensity',
+                data_type='experiment'
+            )
+        )
+        data.append(
+            DataSet1D(
+                name='{:s} engine'.format(self._interface.current_interface_name),
+                x=x_data, y=np.zeros_like(x_data),
+                x_label='2theta (deg)', y_label='Intensity',
+                data_type='simulation'
+            )
+        )
+        data.append(
+            DataSet1D(
+                name='Difference',
+                x=x_data, y=np.zeros_like(x_data),
+                x_label='2theta (deg)', y_label='Difference',
+                data_type='simulation'
+            )
+        )
+        return data
+
+    ####################################################################################################################
     # Experiment models (list, xml, cif)
     ####################################################################################################################
 
     @Property(str, notify=experimentDataAsXmlChanged)
     def experimentDataAsXml(self):
-        return self.state.experimentDataAsXml()
+        return self._experiment_data_as_xml
+
+    def _setExperimentDataAsXml(self):
+        print("+ _setExperimentDataAsXml")
+        self._experiment_data_as_xml = dicttoxml(self.experiments, attr_type=True).decode()
+        self.experimentDataAsXmlChanged.emit()
 
     def _onExperimentDataChanged(self):
-
-        self.state.setExperimentData()
-        self.experimentDataAsXmlChanged.emit()
+        print("***** _onExperimentDataChanged")
+        self._setExperimentDataAsXml()  # ? s
         self.stateChanged.emit(True)
 
     ####################################################################################################################
@@ -784,33 +844,49 @@ class PyQmlProxy(QObject):
     @Slot(str)
     def addExperimentDataFromXye(self, file_url):
         print(f"+ addExperimentDataFromXye: {file_url}")
-
-        self.state.loadExperimentData(file_url)
+        self._experiment_data = self._loadExperimentData(file_url)
         self.experimentDataAdded.emit()
 
     @Slot()
     def removeExperiment(self):
-        self.state.clearExperiments()
+        print("+ removeExperiment")
+        self.experiments.clear()
         self.experimentDataRemoved.emit()
 
+    def _defaultExperiment(self):
+        return {
+            "label": "D1A@ILL",
+            "color": "#00a3e3"
+        }
+
+    def _loadExperimentData(self, file_url):
+        print("+ _loadExperimentData")
+        file_path = generalizePath(file_url)
+        data = self._data.experiments[0]
+        data.x, data.y, data.e = np.loadtxt(file_path, unpack=True)
+        return data
+
+    def _experimentDataParameters(self, data):
+        x_min = data.x[0]
+        x_max = data.x[-1]
+        x_step = (x_max - x_min) / (len(data.x) - 1)
+        parameters = {
+            "x_min": x_min,
+            "x_max": x_max,
+            "x_step": x_step
+        }
+        return parameters
 
     def _onExperimentDataAdded(self):
         print("***** _onExperimentDataAdded")
+        self._bokeh_bridge.setMeasuredData(self._experiment_data.x, self._experiment_data.y, self._experiment_data.e)
+        self._qtcharts_bridge.setMeasuredData(self._experiment_data.x, self._experiment_data.y, self._experiment_data.e)
+        if self.current1dPlottingLib == 'matplotlib' and self._experiment_figure_canvas is not None and self._experiment_data is not None:
+            self._matplotlib_bridge.updateData(self._experiment_figure_canvas, [self._experiment_data])
 
-        x, y, e = self.state.dataAsTuple()
-        self._bokeh_bridge.setMeasuredData(x, y, e)
-        self._qtcharts_bridge.setMeasuredData(x, y, e)
-
-        if self.current1dPlottingLib == 'matplotlib' and \
-           self._experiment_figure_canvas is not None and \
-           self.state.experimentData is not None:
-            self._matplotlib_bridge.updateData(self._experiment_figure_canvas, [self.state.experimentData])
-
-        experiment_parameters = self.state._experimentDataParameters(self.state.experimentData)
-        self.simulationParametersAsObj = json.dumps(experiment_parameters)
-
-        self.state.setDefaultExperiments()
-
+        self._experiment_parameters = self._experimentDataParameters(self._experiment_data)
+        self.simulationParametersAsObj = json.dumps(self._experiment_parameters)
+        self.experiments = [self._defaultExperiment()]
         self._background_proxy.setDefaultPoints()
         self.experimentDataChanged.emit()
 
@@ -940,15 +1016,14 @@ class PyQmlProxy(QObject):
         start_time = timeit.default_timer()
         parameters = self._sample.parameters.as_dict()
         self._instrument_parameters_as_obj = parameters
+        print("+ _setInstrumentParametersAsObj: {0:.3f} s".format(timeit.default_timer() - start_time))
         self.instrumentParametersAsObjChanged.emit()
 
     def _setInstrumentParametersAsXml(self):
         start_time = timeit.default_timer()
         parameters = [self._instrument_parameters_as_obj]
         self._instrument_parameters_as_xml = dicttoxml(parameters, attr_type=True).decode()
-
-        # update the state
-        self.state._instrument_parameters = self._instrument_parameters_as_obj
+        print("+ _setInstrumentParametersAsXml: {0:.3f} s".format(timeit.default_timer() - start_time))
         self.instrumentParametersAsXmlChanged.emit()
 
     def _onInstrumentParametersChanged(self):
@@ -983,18 +1058,18 @@ class PyQmlProxy(QObject):
         self._sample.output_index = self.currentPhaseIndex
 
         #  THIS IS WHERE WE WOULD LOOK UP CURRENT EXP INDEX
-        sim = self.state._data.simulations[0]
+        sim = self._data.simulations[0]
 
         zeros_sim = DataSet1D(name='', x=[sim.x[0]], y=[sim.y[0]])  # Temp solution to have proper color for sim curve
         zeros_diff = DataSet1D(name='', x=[sim.x[0]])  # Temp solution to have proper color for sim curve
 
         if self.experimentLoaded:
-            exp = self.state._data.experiments[0]
+            exp = self._data.experiments[0]
 
             sim.x = exp.x
             sim.y = self._interface.fit_func(sim.x)
 
-            diff = self.state._data.simulations[1]
+            diff = self._data.simulations[1]
             diff.x = exp.x
             diff.y = exp.y - sim.y
 
@@ -1044,10 +1119,12 @@ class PyQmlProxy(QObject):
 
     @Property('QVariant', notify=parametersAsObjChanged)
     def parametersAsObj(self):
+        #print("+ parametersAsObj")
         return self._parameters_as_obj
 
     @Property(str, notify=parametersAsXmlChanged)
     def parametersAsXml(self):
+        #print("+ parametersAsXml")
         return self._parameters_as_xml
 
     def _setParametersAsObj(self):
@@ -1082,9 +1159,6 @@ class PyQmlProxy(QObject):
         start_time = timeit.default_timer()
         # print(f" _setParametersAsObj self._parameters_as_obj id C {id(self._parameters_as_obj)}")
         self._parameters_as_xml = dicttoxml(self._parameters_as_obj, attr_type=False).decode()
-        # update the state
-        self.state._parameters = self._parameters_as_obj
-
         print("+ _setParametersAsXml: {0:.3f} s".format(timeit.default_timer() - start_time))
         self.parametersAsXmlChanged.emit()
 
@@ -1209,7 +1283,7 @@ class PyQmlProxy(QObject):
 
     def _onCurrentCalculatorChanged(self):
         print("***** _onCurrentCalculatorChanged")
-        data = self.state._data.simulations
+        data = self._data.simulations
         data = data[0]  # THIS IS WHERE WE WOULD LOOK UP CURRENT EXP INDEX
         data.name = f'{self._interface.current_interface_name} engine'
         self._sample._updateInterface()
@@ -1221,21 +1295,40 @@ class PyQmlProxy(QObject):
 
     @Slot()
     def fit(self):
-        exp_data = self.state._data.experiments[0]
+        self.isFitFinished = False
+        exp_data = self._data.experiments[0]
 
         x = exp_data.x
         y = exp_data.y
         weights = 1 / exp_data.e
         method = self._current_minimizer_method_name
 
-        res = self.fitter.fit(x, y, weights=weights, method=method)
+        args = (x, y)
+        kwargs = {"weights": weights, "method": method}
+        self._fitter_thread = ThreadedFitter(self.fitter, 'fit', *args, **kwargs)
+        self._fitter_thread.finished.connect(self._setFitResults)
+        self._fitter_thread.failed.connect(self._setFitResultsFailed)
+        self._fitter_thread.start()
 
-        self._setFitResults(res)
-        self.fitFinished.emit()
+        # self._setFitResults(res)
+        # self.fitFinished.emit()
 
     @Property('QVariant', notify=fitResultsChanged)
     def fitResults(self):
         return self._fit_results
+
+    @Property(bool, notify=fitFinished)
+    def isFitFinished(self):
+        print('+ isfitFinished called')
+        return self._fit_finished
+
+    @isFitFinished.setter
+    def isFitFinished(self, fit_finished: bool):
+        print('+ isFitFinished.setter called', fit_finished)
+        if self._fit_finished == fit_finished:
+            return
+        self._fit_finished = fit_finished
+        self.fitFinished.emit()
 
     def _defaultFitResults(self):
         return {
@@ -1253,6 +1346,14 @@ class PyQmlProxy(QObject):
             "redchi2": float(res.reduced_chi)
         }
         self.fitResultsChanged.emit()
+        self.isFitFinished = True
+        self.fitFinished.emit()
+
+    def _setFitResultsFailed(self, res):
+        print("FIT FAILED")
+        print(str(res))
+        self.isFitFinished = True
+        self.fitFinished.emit()
 
     def _onFitFinished(self):
         print("***** _onFitFinished")
@@ -1298,6 +1399,7 @@ class PyQmlProxy(QObject):
             "calculation": self._interface.current_interface_name,
             "minimization": f'{self.fitter.current_engine.name} ({self._current_minimizer_method_name})'
         }
+        self._status_model = obj
         return obj
 
     @Property(str, notify=statusInfoChanged)
@@ -1331,24 +1433,83 @@ class PyQmlProxy(QObject):
 
     @Slot(str)
     def saveProjectAs(self, filepath):
-        self.state.saveProjectAs(filepath)
+        self._saveProjectAs(filepath)
         self.stateChanged.emit(False)
 
     @Slot()
     def saveProject(self):
-        self.state.saveProject()
+        self._saveProject()
         self.stateChanged.emit(False)
 
     @Slot(str)
     def loadProjectAs(self, filepath):
-        self.state.loadProjectAs(filepath)
+        self._loadProjectAs(filepath)
         self.stateChanged.emit(False)
 
     @Slot()
     def loadProject(self):
-        self.state.loadProject()
+        self._loadProject()
         self.stateChanged.emit(False)
 
     @Property(str, notify=dummySignal)
     def projectFilePath(self):
-        return self.state.project_save_filepath
+        return self.project_save_filepath
+
+    def _saveProjectAs(self, filepath):
+        """
+        """
+        self.project_save_filepath = filepath
+        self._saveProject()
+
+    def _saveProject(self):
+        """
+        """
+        descr = {}
+        descr['phases'] = self._phases_as_cif  # required for assignment to core object
+        # descr['experiment_data'] = self._experiment_data
+        # descr['experiments'] = self._data.experiments[0]
+        # descr['simulations'] = self._data.simulations
+        ## descr['data'] = self._data
+        # descr['parameters'] = self._parameters_as_obj
+        # descr['instrument_parameters'] = self._instrument_parameters_as_obj
+        # descr['status_model'] = self._status_model
+
+        content_json = json.dumps(descr, indent=4)
+
+        path = generalizePath(self.project_save_filepath)
+        createFile(path, content_json)
+
+    def _loadProjectAs(self, filepath):
+        """
+        """
+        self.project_load_filepath = filepath
+        print("LoadProjectAs " + filepath)
+        self.loadProject()
+
+    def _loadProject(self):
+        """
+        TODO
+        """
+        path = generalizePath(self.project_load_filepath)
+        if not os.path.isfile(path):
+            print("Failed to find project: '{0}'".format(path))
+        with open(path, 'r') as xml_file:
+            descr = json.load(xml_file)
+
+        self._phases_as_cif = descr['phases']
+        # send signal to tell the proxy we changed phases
+        self._sample.phases = Phases.from_cif_str(self._phases_as_cif)
+        self.phaseAdded.emit()
+        self.phasesAsObjChanged.emit()
+
+
+def createFile(path, content):
+    if os.path.exists(path):
+        print(f'File already exists {path}. Overwriting...')
+        os.unlink(path)
+    try:
+        message = f'create file {path}'
+        with open(path, "w") as file:
+            file.write(content)
+    except Exception as exception:
+        print(message, exception)

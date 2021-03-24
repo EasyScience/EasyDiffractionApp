@@ -60,7 +60,10 @@ EaComponents.SideBarColumn {
         id: fileDialogLoadProject
         nameFilters: ["Project files (*.xml)"]
         onAccepted: {
-            ExGlobals.Constants.proxy.loadProject(fileUrl)
+            ExGlobals.Constants.proxy.loadProjectAs(fileUrl)
+            ExGlobals.Variables.samplePageEnabled = true
+            ExGlobals.Variables.experimentPageEnabled = true
+            ExGlobals.Variables.sampleLoaded = true
         }
     }
 }

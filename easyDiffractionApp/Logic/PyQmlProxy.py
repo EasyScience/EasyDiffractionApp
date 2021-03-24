@@ -1465,19 +1465,26 @@ class PyQmlProxy(QObject):
         """
         """
         descr = {}
-        descr['phases'] = self._phases_as_cif  # required for assignment to core object
-        # descr['experiment_data'] = self._experiment_data
-        # descr['experiments'] = self._data.experiments[0]
-        # descr['simulations'] = self._data.simulations
-        ## descr['data'] = self._data
-        # descr['parameters'] = self._parameters_as_obj
-        # descr['instrument_parameters'] = self._instrument_parameters_as_obj
-        # descr['status_model'] = self._status_model
+        descr['phases'] = self._phases_as_cif
+        descr['experiments_x'] = self._data.experiments[0].x
+        descr['experiments_y'] = self._data.experiments[0].y
+        descr['experiments_e'] = self._data.experiments[0].e
 
-        content_json = json.dumps(descr, indent=4)
+        # Reading those is not yet implemented
+        descr['parameters'] = self._parameters_as_obj
+        descr['instrument_parameters'] = self._instrument_parameters_as_obj
 
+        content_json = json.dumps(descr, indent=4, default=self.default)
         path = generalizePath(self.project_save_filepath)
         createFile(path, content_json)
+
+    def default(self, obj):
+        if type(obj).__module__ == np.__name__:
+            if isinstance(obj, np.ndarray):
+                return obj.tolist()
+            else:
+                return obj.item()
+        raise TypeError('Unknown type:', type(obj))
 
     def _loadProjectAs(self, filepath):
         """
@@ -1501,6 +1508,16 @@ class PyQmlProxy(QObject):
         self._sample.phases = Phases.from_cif_str(self._phases_as_cif)
         self.phaseAdded.emit()
         self.phasesAsObjChanged.emit()
+
+        # experiment
+        self._data.experiments[0].x = np.array(descr['experiments_x'])
+        self._data.experiments[0].y = np.array(descr['experiments_y'])
+        self._data.experiments[0].e = np.array(descr['experiments_e'])
+        self._experiment_data = self._data.experiments[0]
+        self.experimentDataAdded.emit()
+
+        # parameters
+        # TODO
 
 
 def createFile(path, content):

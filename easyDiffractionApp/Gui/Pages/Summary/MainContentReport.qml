@@ -329,6 +329,7 @@ Item {
                          function(result) {
                              result = result.replace(/\<div id="toolbar".*?\/div\>/g, '<div id="toolbar"></div>')
                              result = result.replace(/\<canvas class="ChemDoodleWebComponent".*?\/canvas\>/g, '')
+                             result = result.replace('structureViewer.camera.zoomOut()', 'structureViewer.camera.zoomOut()\nstructureViewer.camera.zoomOut()')
                              structureChart = result
                          }
                          )

@@ -322,15 +322,16 @@ Item {
     }
 
     property string structureChart: ''
-
     property string cifStr: ExGlobals.Constants.proxy.phasesAsExtendedCif
     onCifStrChanged: ExGlobals.Variables.bokehStructureChart.runJavaScript(
                          'document.body.outerHTML',
                          function(result) {
                              result = result.replace(/\<div id="toolbar".*?\/div\>/g, '<div id="toolbar"></div>')
                              result = result.replace(/\<canvas class="ChemDoodleWebComponent".*?\/canvas\>/g, '')
+                             result = result.replace(/"data_.*"/g, JSON.stringify(cifStr))
                              result = result.replace('structureViewer.camera.zoomOut()', 'structureViewer.camera.zoomOut()\nstructureViewer.camera.zoomOut()')
                              structureChart = result
+                             structureChartChanged()
                          }
                          )
 
@@ -481,9 +482,7 @@ Item {
                   `<b>Space group:</b> ${spaceGroup}<br>`,
                   '</p>',
                   '<div id="structureSection">',
-                  //'<script>',
                   structureChart,
-                  //'</script>',
                   '</div>'
               ]
         return list.join('\n')

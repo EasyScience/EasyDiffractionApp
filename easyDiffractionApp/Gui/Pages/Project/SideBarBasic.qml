@@ -36,7 +36,7 @@ EaComponents.SideBarColumn {
 
                 onClicked: ExGlobals.Variables.samplePageEnabled = true
                 Component.onCompleted: {
-                    ExGlobals.Variables.continueWithoutProjectButton = continueWithoutProjectButton
+                    ExGlobals.Variables.continueWithoutProjectButton = this
                     ExGlobals.Constants.proxy.resetUndoRedoStack()
                 }
             }

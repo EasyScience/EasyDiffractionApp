@@ -48,6 +48,7 @@ QtObject {
 
     // Application bar tool buttons
     property var preferencesButton
+    property var preferencesOkButton
 
     // Main content and sidebar buttons
     property var startButton

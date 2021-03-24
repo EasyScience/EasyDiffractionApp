@@ -27,13 +27,8 @@ EaComponents.SideBarColumn {
                 width: minimizerSelector.width
                 model: ExGlobals.Constants.proxy.calculatorNames
                 currentIndex: ExGlobals.Constants.proxy.currentCalculatorIndex
-//                onActivated: ExGlobals.Constants.proxy.currentCalculatorIndex = currentIndex
                 onCurrentIndexChanged: ExGlobals.Constants.proxy.currentCalculatorIndex = currentIndex
-                //currentIndex: ExGlobals.Constants.proxy.calculatorIndex
-                Component.onCompleted: {
-                    ExGlobals.Variables.calculatorSelector = calculatorSelector
-//                    currentIndex = ExGlobals.Constants.proxy.currentCalculatorIndex
-                }
+                Component.onCompleted: ExGlobals.Variables.calculatorSelector = this
             }
         }
     }
@@ -62,7 +57,6 @@ EaComponents.SideBarColumn {
                 model: ExGlobals.Constants.proxy.minimizerNames
                 currentIndex: ExGlobals.Constants.proxy.currentMinimizerIndex
 
-                //onCurrentValueChanged: {
                 onCurrentIndexChanged: {
                     ExGlobals.Constants.proxy.currentMinimizerIndex = currentIndex
                 }

@@ -292,9 +292,15 @@ Item {
 
         rc.say("Application preferences can be accessed quickly from the application toolbar.")
         rc.mouseClick(ExGlobals.Variables.preferencesButton)
+
+        rc.mouseClick(ExGlobals.Variables.themeSelector)
+        y_pos = !EaStyle.Colors.isDarkTheme ? EaStyle.Sizes.comboBoxHeight * 1.5 : undefined
+        rc.mouseClick(ExGlobals.Variables.themeSelector, x_pos, y_pos)
+
         rc.mouseClick(ExGlobals.Variables.enableToolTipsCheckBox)
         rc.wait(500)
-        rc.keyClick(Qt.Key_Escape)
+        //rc.keyClick(Qt.Key_Escape) // DOESN'T WORK ON CI XVFB
+        rc.mouseClick(ExGlobals.Variables.preferencesOkButton)
 
         // Home Tab
 
@@ -326,7 +332,7 @@ Item {
         //rc.keyClick(Qt.Key_Right)
         rc.clearText(6)
         rc.typeText("7.00")
-        rc.keyClick(Qt.Key_Enter)
+        //rc.keyClick(Qt.Key_Enter) // DOESN'T WORK ON CI XVFB ?
         rc.show()
 
         rc.say("Append or remove new atoms.")
@@ -368,7 +374,7 @@ Item {
         y_pos = EaStyle.Sizes.comboBoxHeight * 1.5
         rc.mouseClick(ExGlobals.Variables.calculatorSelector, x_pos, y_pos)
         rc.wait(1000)
-        // GSAS
+        // GSAS-II
         rc.mouseClick(ExGlobals.Variables.calculatorSelector)
         x_pos = undefined
         y_pos = EaStyle.Sizes.comboBoxHeight * 2.5

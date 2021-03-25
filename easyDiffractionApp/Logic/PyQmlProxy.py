@@ -1445,11 +1445,15 @@ class PyQmlProxy(QObject):
         project_save_filepath = os.path.join(projectPath, 'project.json')
         descr = {}
         descr['phases'] = self._phases_as_cif
+
         if self.experiments:
             experiments_x = self._data.experiments[0].x
             experiments_y = self._data.experiments[0].y
             experiments_e = self._data.experiments[0].e
             descr['experiments'] = [experiments_x, experiments_y, experiments_e]
+            bg_x = self._background_proxy.asObj.x_sorted_points
+            bg_y = self._background_proxy.asObj.y_sorted_points
+            descr['background'] = [bg_x, bg_y]
 
         descr['project_info'] = self._project_info
         # Reading those is not yet implemented
@@ -1477,17 +1481,18 @@ class PyQmlProxy(QObject):
 
     def _loadProject(self):
         """
-        TODO
         """
         path = generalizePath(self.project_load_filepath)
         if not os.path.isfile(path):
             print("Failed to find project: '{0}'".format(path))
+            return
         with open(path, 'r') as xml_file:
             descr = json.load(xml_file)
 
         self._phases_as_cif = descr['phases']
         # send signal to tell the proxy we changed phases
         self._sample.phases = Phases.from_cif_str(self._phases_as_cif)
+
         self.phaseAdded.emit()
         self.phasesAsObjChanged.emit()
 
@@ -1500,6 +1505,24 @@ class PyQmlProxy(QObject):
             self._experiment_data = self._data.experiments[0]
             self.experimentDataAdded.emit()
             self._onParametersChanged()
+
+            # background
+            if 'background' in descr:
+                # remove old points ** this should be made a method on BackgroundProxy
+                bg_obj = self._background_proxy.asObj
+                for point_name in bg_obj.names:
+                    point_index = bg_obj.names.index(point_name)
+                    del bg_obj[point_index]
+
+                # add new points ** this should be made a method on BackgroundProxy
+                from easyDiffractionLib.Elements.Backgrounds.Point import BackgroundPoint
+                bg_x = descr['background'][0]
+                bg_y = descr['background'][1]
+                for i, point in enumerate(bg_x):
+                    bg_point = BackgroundPoint.from_pars(x=point, y=bg_y[i])
+                    bg_obj.append(bg_point)
+                self._background_proxy.asObjChanged.emit(self._background_proxy._background_as_obj)
+
         else:
             # delete existing experiment
             self.experimentLoaded = False

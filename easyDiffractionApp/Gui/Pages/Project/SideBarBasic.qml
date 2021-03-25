@@ -69,6 +69,7 @@ EaComponents.SideBarColumn {
             ExGlobals.Variables.samplePageEnabled = true
             ExGlobals.Variables.experimentPageEnabled = true
             ExGlobals.Variables.sampleLoaded = true
+            ExGlobals.Variables.projectCreated = true
             ExGlobals.Constants.proxy.loadProjectAs(fileUrl)
         }
     }

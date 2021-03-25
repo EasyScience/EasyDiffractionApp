@@ -1469,7 +1469,7 @@ class PyQmlProxy(QObject):
         descr['experiments_x'] = self._data.experiments[0].x
         descr['experiments_y'] = self._data.experiments[0].y
         descr['experiments_e'] = self._data.experiments[0].e
-
+        descr['project_info'] = self._project_info
         # Reading those is not yet implemented
         descr['parameters'] = self._parameters_as_obj
         descr['instrument_parameters'] = self._instrument_parameters_as_obj
@@ -1515,6 +1515,9 @@ class PyQmlProxy(QObject):
         self._data.experiments[0].e = np.array(descr['experiments_e'])
         self._experiment_data = self._data.experiments[0]
         self.experimentDataAdded.emit()
+
+        # project info
+        self.projectInfoAsJson = json.dumps(descr['project_info'])
 
         # parameters
         # TODO

@@ -88,18 +88,16 @@ Item {
                 spacing: EaStyle.Sizes.fontPixelSize
 
                 EaElements.Button {
-                    enabled: true
-                    id: aboutButton
                     text: qsTr("About %1".arg(ExGlobals.Constants.appName))
                     onClicked: EaGlobals.Variables.showAppAboutDialog = true
                 }
                 EaElements.Button {
-                    enabled: false
                     text: qsTr("Online documentation")
+                    onClicked: Qt.openUrlExternally(ExGlobals.Constants.appUrl)
                 }
                 EaElements.Button {
-                    enabled: false
                     text: qsTr("Get in touch online")
+                    onClicked: Qt.openUrlExternally(`${ExGlobals.Constants.appUrl}/issues`)
                 }
             }
 

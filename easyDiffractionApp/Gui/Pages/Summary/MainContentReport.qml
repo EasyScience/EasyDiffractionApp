@@ -197,7 +197,8 @@ Item {
                   `    background-color: ${htmlBackground};`,
                   '}',
                   'body {',
-                  '    font-family: "PT Sans", sans-serif;',
+                  `    overflow-y: auto;`,
+                  `    font-family: "PT Sans", sans-serif;`,
                   `    font-size: ${EaStyle.Sizes.fontPixelSize}px;`,
                   `    padding: ${EaStyle.Sizes.fontPixelSize}px;`,
                   `    color: ${EaStyle.Colors.themeForeground};`,
@@ -218,6 +219,29 @@ Item {
                   'a:hover {',
                   `    color: ${EaStyle.Colors.linkHovered};`,
                   '}',
+
+                  `::-webkit-scrollbar {`,
+                  `  -webkit-appearance: none;`,
+                  `}`,
+                  `::-webkit-scrollbar:vertical {`,
+                  `  width: 11px;`,
+                  `}`,
+                  `::-webkit-scrollbar-track {`,
+                  `  background-color: transparent;`,
+                  `  border-radius: 11px;`,
+                  `}`,
+                  `::-webkit-scrollbar-thumb {`,
+                  `  border-radius: 11px;`,
+                  `  background-clip: content-box;`,
+                  `  border: 2px solid transparent;`,
+                  `  background-color: ${EaStyle.Colors.themeForegroundMinor};`,
+                  `}`,
+                  `::-webkit-scrollbar-thumb:hover {`,
+                  `  background-color: ${EaStyle.Colors.themeForeground};`,
+                  `}`,
+                  `::-webkit-scrollbar-button {`,
+                  `    display:none;`,
+                  `}`,
 
                   '#parametersSection table {',
                   '    border-collapse: collapse;',
@@ -447,16 +471,6 @@ Item {
         return list.join('\n')
     }
 
-    property string minimizationSoftware: {
-        if (!isFitting)
-            return ''
-        const soft = ExGlobals.Constants.proxy.statusModelAsObj.minimization
-        let list = [
-                `<b>Minimization:</b> ${soft}<br>`
-            ]
-        return list.join('\n')
-    }
-
     property string softwareSection: {
         const list = [
                   '<h2>Software</h2>',
@@ -464,7 +478,8 @@ Item {
                   `<b>Analysis:</b> <a href="${ExGlobals.Constants.appUrl}">${ExGlobals.Constants.appName} v${ExGlobals.Constants.appVersion}</a><br>`,
                   `<b>Structure chart:</b> <a href="${ExGlobals.Variables.bokehStructureChart.info.url}"> ChemDoodle Web Components v${ExGlobals.Variables.bokehStructureChart.info.version}</a><br>`,
                   `<b>Data chart:</b> <a href="${dataChartLibUrl}"> BokehJS v${dataChartLibVersion}</a><br>`,
-                  minimizationSoftware,
+                  `<b>Calculation engine:</b> <a href="">${ExGlobals.Constants.proxy.statusModelAsObj.calculation}</a><br>`,
+                  isFitting ? `<b>Minimization:</b> <a href="">${ExGlobals.Constants.proxy.statusModelAsObj.minimization}</a><br>` : '',
                   '</div>'
               ]
         return list.join('\n')

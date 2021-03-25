@@ -60,19 +60,21 @@ EaComponents.SideBarColumn {
 
     QtQuickDialogs1.FileDialog{
         id: fileDialogLoadProject
-        nameFilters: ["Project files (*.xml)"]
+        nameFilters: ["Project files (*.json)"]
         onAccepted: {
             // enablement will depend on what is available in the project file,
             // obviously, so care is needed. TODO
-            ExGlobals.Variables.analysisPageEnabled = true
-            ExGlobals.Variables.summaryPageEnabled = true
-            ExGlobals.Constants.proxy.experimentSkipped = false
-            ExGlobals.Constants.proxy.experimentLoaded = true
             ExGlobals.Variables.samplePageEnabled = true
             ExGlobals.Variables.experimentPageEnabled = true
             ExGlobals.Variables.sampleLoaded = true
             ExGlobals.Variables.projectCreated = true
+
             ExGlobals.Constants.proxy.loadProjectAs(fileUrl)
+
+            if (ExGlobals.Constants.proxy.experimentDataAsXml != ""){
+                ExGlobals.Variables.analysisPageEnabled = true
+                ExGlobals.Variables.summaryPageEnabled = true
+            }
         }
     }
 }

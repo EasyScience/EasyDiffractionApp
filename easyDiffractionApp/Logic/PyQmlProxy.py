@@ -1419,11 +1419,6 @@ class PyQmlProxy(QObject):
     ####################################################################################################################
     ####################################################################################################################
 
-    @Slot(str)
-    def saveProjectAs(self, filepath):
-        self._saveProjectAs(filepath)
-        self.stateChanged.emit(False)
-
     @Slot()
     def saveProject(self):
         self._saveProject()
@@ -1443,27 +1438,26 @@ class PyQmlProxy(QObject):
     def projectFilePath(self):
         return self.project_save_filepath
 
-    def _saveProjectAs(self, filepath):
-        """
-        """
-        self.project_save_filepath = filepath
-        self._saveProject()
-
     def _saveProject(self):
         """
         """
+        projectPath = self.projectInfoAsJson['location']
+        project_save_filepath = os.path.join(projectPath, 'project.json')
         descr = {}
         descr['phases'] = self._phases_as_cif
-        descr['experiments_x'] = self._data.experiments[0].x
-        descr['experiments_y'] = self._data.experiments[0].y
-        descr['experiments_e'] = self._data.experiments[0].e
+        if self.experiments:
+            experiments_x = self._data.experiments[0].x
+            experiments_y = self._data.experiments[0].y
+            experiments_e = self._data.experiments[0].e
+            descr['experiments'] = [experiments_x, experiments_y, experiments_e]
+
         descr['project_info'] = self._project_info
         # Reading those is not yet implemented
         descr['parameters'] = self._parameters_as_obj
         descr['instrument_parameters'] = self._instrument_parameters_as_obj
 
         content_json = json.dumps(descr, indent=4, default=self.default)
-        path = generalizePath(self.project_save_filepath)
+        path = generalizePath(project_save_filepath)
         createFile(path, content_json)
 
     def default(self, obj):
@@ -1498,11 +1492,19 @@ class PyQmlProxy(QObject):
         self.phasesAsObjChanged.emit()
 
         # experiment
-        self._data.experiments[0].x = np.array(descr['experiments_x'])
-        self._data.experiments[0].y = np.array(descr['experiments_y'])
-        self._data.experiments[0].e = np.array(descr['experiments_e'])
-        self._experiment_data = self._data.experiments[0]
-        self.experimentDataAdded.emit()
+        if 'experiments' in descr:
+            self.experimentLoaded = True
+            self._data.experiments[0].x = np.array(descr['experiments'][0])
+            self._data.experiments[0].y = np.array(descr['experiments'][1])
+            self._data.experiments[0].e = np.array(descr['experiments'][2])
+            self._experiment_data = self._data.experiments[0]
+            self.experimentDataAdded.emit()
+            self._onParametersChanged()
+        else:
+            # delete existing experiment
+            self.experimentLoaded = False
+            self.experimentSkipped = True
+            self.removeExperiment()
 
         # project info
         self.projectInfoAsJson = json.dumps(descr['project_info'])

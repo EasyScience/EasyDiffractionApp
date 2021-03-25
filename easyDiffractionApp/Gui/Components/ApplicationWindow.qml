@@ -31,13 +31,7 @@ EaComponents.ApplicationWindow {
             enabled: ExGlobals.Constants.proxy.stateHasChanged
             fontIcon: "\uf0c7"
             ToolTip.text: qsTr("Save current state of the project")
-            onClicked: {
-                if (ExGlobals.Constants.proxy.projectFilePath != "") {
-                    ExGlobals.Constants.proxy.saveProject()
-                } else {
-                    ExGlobals.Variables.showSaveDialog = true
-                }
-            }
+            onClicked:  ExGlobals.Constants.proxy.saveProject()
         },
 
         EaElements.ToolButton {
@@ -338,18 +332,6 @@ EaComponents.ApplicationWindow {
         onAccepted: {
             ExGlobals.Variables.samplePageEnabled = true
             ExGlobals.Variables.projectCreated = true
-        }
-    }
-
-    // Save project dialog
-    Dialogs1.FileDialog{
-        id: fileDialogSaveProject
-        visible: ExGlobals.Variables.showSaveDialog && ExGlobals.Variables.needsSave
-        selectExisting: false
-        nameFilters: ["Project files (*.xml)"]
-        onAccepted: {
-            ExGlobals.Constants.proxy.saveProjectAs(fileUrl)
-            ExGlobals.Variables.showSaveDialog = false
         }
     }
 

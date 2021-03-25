@@ -6,8 +6,7 @@ import easyAppGui.Globals 1.0 as EaGlobals
 import Gui.Logic 1.0 as ExLogic
 
 QtObject {
-    readonly property var proxy: typeof _pyQmlProxyObj !== 'undefined' ? _pyQmlProxyObj : new ExLogic.PyQmlProxy.PyQmlProxy()
-
+    readonly property var proxy: typeof _pyQmlProxyObj !== "undefined" && _pyQmlProxyObj !== null ? _pyQmlProxyObj : new ExLogic.PyQmlProxy.PyQmlProxy()
     readonly property bool remote: typeof EaGlobals.Variables.projectConfig.ci.app.info !== 'undefined'
 
     readonly property string appName: EaGlobals.Variables.projectConfig.tool.poetry.name

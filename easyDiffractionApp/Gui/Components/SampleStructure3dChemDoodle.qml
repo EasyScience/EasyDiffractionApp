@@ -3,9 +3,6 @@ import easyAppGui.Charts 1.0 as EaCharts
 
 import Gui.Globals 1.0 as ExGlobals
 
-EaCharts.ChemDoodleChartView {
+EaCharts.BaseChemDoodle {
     cifStr: JSON.stringify(ExGlobals.Constants.proxy.phasesAsExtendedCif)
-
-    foregroundColor: EaStyle.Colors.themeForeground
-    backgroundColor: EaStyle.Colors.chartPlotAreaBackground
 }

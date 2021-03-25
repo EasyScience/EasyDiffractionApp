@@ -16,6 +16,7 @@ EaComponents.SideBarColumn {
     EaElements.GroupBox {
         title: qsTr("Structural phases")
         collapsible: false
+        enabled: ExGlobals.Constants.proxy.isFitFinished
 
         ExComponents.SamplePhasesExplorer {}
 
@@ -32,8 +33,6 @@ EaComponents.SideBarColumn {
             }
 
             EaElements.SideBarButton {
-                id: setNewSampleManuallyButton
-
                 enabled: ExGlobals.Constants.proxy.phasesAsObj.length === 0
 
                 fontIcon: "plus-circle"
@@ -41,35 +40,33 @@ EaComponents.SideBarColumn {
 
                 onClicked: {
                     ExGlobals.Constants.proxy.addDefaultPhase()
-                    ExGlobals.Variables.experimentPageEnabled = true
+//                    ExGlobals.Variables.experimentPageEnabled = true
                     ExGlobals.Variables.sampleLoaded = true
                 }
 
-                Component.onCompleted: ExGlobals.Variables.setNewSampleManuallyButton = setNewSampleManuallyButton
+                Component.onCompleted: ExGlobals.Variables.setNewSampleManuallyButton = this
             }
         }
 
     }
 
     EaElements.GroupBox {
-        id: symmetryGroup
-
         title: qsTr("Symmetry and cell parameters")
-        enabled: ExGlobals.Variables.sampleLoaded
+        enabled: ExGlobals.Constants.proxy.samplesPresent
 
         Column {
             ExComponents.SampleSymmetry {}
             ExComponents.SampleCell { titleText: "Cell parameters" }
         }
 
-        Component.onCompleted: ExGlobals.Variables.symmetryGroup = symmetryGroup
+        Component.onCompleted: ExGlobals.Variables.symmetryGroup = this
     }
 
     EaElements.GroupBox {
         id: atomsGroup
 
         title: qsTr("Atoms, atomic coordinates and occupations")
-        enabled: ExGlobals.Variables.sampleLoaded
+        enabled: ExGlobals.Constants.proxy.samplesPresent
 
         ExComponents.SampleAtoms {}
 
@@ -99,15 +96,13 @@ EaComponents.SideBarColumn {
     }
 
     EaElements.GroupBox {
-        id: adpsGroup
-
         title: qsTr("Atomic displacement parameters")
         last: true
-        enabled: ExGlobals.Variables.sampleLoaded
+        enabled: ExGlobals.Constants.proxy.samplesPresent
 
         ExComponents.SampleAdps {}
 
-        Component.onCompleted: ExGlobals.Variables.adpsGroup = adpsGroup
+        Component.onCompleted: ExGlobals.Variables.adpsGroup = this
     }
 
     // Open phase CIF file dialog
@@ -117,7 +112,7 @@ EaComponents.SideBarColumn {
         nameFilters: [ "CIF files (*.cif)"]
         onAccepted: {
             ExGlobals.Constants.proxy.addSampleFromCif(fileUrl)
-            ExGlobals.Variables.experimentPageEnabled = true
+//            ExGlobals.Variables.experimentPageEnabled = true
             ExGlobals.Variables.sampleLoaded = true
         }
     }

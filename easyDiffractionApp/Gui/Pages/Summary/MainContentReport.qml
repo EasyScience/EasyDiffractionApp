@@ -21,9 +21,6 @@ Item {
 
     // Structure chart
 
-    property string structureChartLibVersion: EaLogic.Plotting.chemDoodleInfo().version
-    property string structureChartLibUrl: EaLogic.Plotting.chemDoodleInfo().url
-
     property int structureChartWidth: chartWidth + EaStyle.Sizes.fontPixelSize * 1.5 * 2
     property int structureChartHeight: structureChartWidth
 
@@ -37,8 +34,8 @@ Item {
     property string dataChartLibUrl: EaLogic.Plotting.bokehInfo().url
 
     property int dataChartWidth: chartWidth
-    property int dataChartHeight: chartWidth / 5 * 4
-    property int dataChartPadding: EaStyle.Sizes.fontPixelSize * 1.5
+    property int dataChartHeight: chartWidth
+    property int dataChartPadding: EaStyle.Sizes.fontPixelSize
 
     property string dataChartBackgroundColor: EaStyle.Colors.chartPlotAreaBackground
     property string dataChartBorderColor: EaStyle.Colors.appBorder
@@ -83,8 +80,8 @@ Item {
         }
 
         Component.onCompleted: {
-            ExGlobals.Constants.proxy.htmlExportingFinished.connect(webView.htmlExportingFinished)
-            ExGlobals.Variables.reportWebView = webView
+            ExGlobals.Variables.reportWebView = this
+            ExGlobals.Constants.proxy.htmlExportingFinished.connect(htmlExportingFinished)
         }
     }
 
@@ -140,7 +137,7 @@ Item {
     property string headScripts: {
         const list = [
                   EaLogic.Plotting.bokehHeadScripts(),
-                  EaLogic.Plotting.chemDoodleHeadScripts()
+                  ExGlobals.Variables.bokehStructureChart.headScript
               ]
         return list.join('\n')
     }
@@ -149,6 +146,12 @@ Item {
         const list = [
                   '.bk-logo {',
                   '    display: none !important;',
+                  '}',
+                  '.bk-toolbar.bk-above  {',
+                  `    position: absolute;`,
+                  `    z-index: 1;`,
+                  `    top: ${0.5 * EaStyle.Sizes.fontPixelSize}px;`,
+                  `    right: ${1.5 * EaStyle.Sizes.fontPixelSize}px;`,
                   '}',
                   '#analysisSection {',
                   `    height: ${dataChartHeight}px;`,
@@ -172,11 +175,30 @@ Item {
 
     property string headMiscStyle: {
         const list = [
+                  `:root {`,
+                  `  --tooltipWidth:120;`,
+                  `  --chartWidth:${structureChartWidth};`,
+                  `  --chartHeight:${structureChartHeight};`,
+                  `  --fontPixelSize:${EaStyle.Sizes.fontPixelSize};`,
+                  `  --toolButtonHeight:${EaStyle.Sizes.toolButtonHeight};`,
+                  `  --backgroundColor:${EaStyle.Colors.chartPlotAreaBackground};`,
+                  `  --foregroundColor:${EaStyle.Colors.chartForeground};`,
+                  `  --buttonBackgroundColor:${EaStyle.Colors.contentBackground};`,
+                  `  --buttonBackgroundHoveredColor:${EaStyle.Colors.themeBackgroundHovered1};`,
+                  `  --buttonForegroundColor:${EaStyle.Colors.themeForeground};`,
+                  `  --buttonForegroundHoveredColor:${EaStyle.Colors.themeForegroundHovered};`,
+                  `  --buttonBorderColor:${EaStyle.Colors.chartAxis};`,
+                  `  --tooltipBackgroundColor:${EaStyle.Colors.dialogBackground};`,
+                  `  --tooltipForegroundColor:${EaStyle.Colors.themeForeground};`,
+                  `  --tooltipBorderColor:${EaStyle.Colors.themePrimary};`,
+                  `}`,
+
                   'html {',
                   `    background-color: ${htmlBackground};`,
                   '}',
                   'body {',
-                  '    font-family: "PT Sans", sans-serif;',
+                  `    overflow-y: auto;`,
+                  `    font-family: "PT Sans", sans-serif;`,
                   `    font-size: ${EaStyle.Sizes.fontPixelSize}px;`,
                   `    padding: ${EaStyle.Sizes.fontPixelSize}px;`,
                   `    color: ${EaStyle.Colors.themeForeground};`,
@@ -197,20 +219,107 @@ Item {
                   'a:hover {',
                   `    color: ${EaStyle.Colors.linkHovered};`,
                   '}',
-                  'table {',
+
+                  `::-webkit-scrollbar {`,
+                  `  -webkit-appearance: none;`,
+                  `}`,
+                  `::-webkit-scrollbar:vertical {`,
+                  `  width: 11px;`,
+                  `}`,
+                  `::-webkit-scrollbar-track {`,
+                  `  background-color: transparent;`,
+                  `  border-radius: 11px;`,
+                  `}`,
+                  `::-webkit-scrollbar-thumb {`,
+                  `  border-radius: 11px;`,
+                  `  background-clip: content-box;`,
+                  `  border: 2px solid transparent;`,
+                  `  background-color: ${EaStyle.Colors.themeForegroundMinor};`,
+                  `}`,
+                  `::-webkit-scrollbar-thumb:hover {`,
+                  `  background-color: ${EaStyle.Colors.themeForeground};`,
+                  `}`,
+                  `::-webkit-scrollbar-button {`,
+                  `    display:none;`,
+                  `}`,
+
+                  '#parametersSection table {',
                   '    border-collapse: collapse;',
                   '}',
-                  'td, th {',
+                  '#parametersSection td, th {',
                   `    border: 1px solid ${EaStyle.Colors.appBorder};`,
                   '    padding: 2px;',
                   '    padding-left: 12px;',
                   '    padding-right: 12px;',
                   '}',
-                  'tr:nth-child(odd) {',
+                  '#parametersSection tr:nth-child(odd) {',
                   `    background-color: ${EaStyle.Colors.chartPlotAreaBackground};`,
                   '}',
-                  'tr:nth-child(even) {',
+                  '#parametersSection tr:nth-child(even) {',
                   `    background-color: ${htmlBackground};`,
+                  '}',
+
+                  '#container {',
+                  '    position:relative;',
+                  '    display: flex;',
+                  '    justify-content: center;',
+                  '    align-items: center;',
+                  '    width: 100%;',
+                  '    height: 100%;',
+                  '}',
+
+                  '#toolbar {',
+                  '    position: absolute;',
+                  '    top: 0;',
+                  '    right: 0;',
+                  '    margin-top: calc(var(--fontPixelSize) * 1px);',
+                  '    margin-right: calc(var(--fontPixelSize) * 1px);',
+                  '}',
+                  '#toolbar .toolbar-separator {',
+                  '    width: calc(0.25 * var(--fontPixelSize) * 1px);',
+                  '    margin-left: calc(0.25 * var(--fontPixelSize) * 1px);',
+                  '    display: inline-block;',
+                  '}',
+                  '#toolbar button {',
+                  '    width: calc(var(--toolButtonHeight) * 1px);',
+                  '    height: calc(var(--toolButtonHeight) * 1px);',
+                  '    margin-left: calc(0.25 * var(--fontPixelSize) * 1px);',
+                  '    font-size: calc(1.25 * var(--fontPixelSize) * 1px);',
+                  '    color: var(--buttonForegroundColor);',
+                  '    background: var(--buttonBackgroundColor);',
+                  '    border: 1px solid var(--buttonBorderColor);',
+                  '}',
+                  '#toolbar button:hover {',
+                  '    color: var(--buttonForegroundHoveredColor);',
+                  '    background: var(--buttonBackgroundHoveredColor);',
+                  '}',
+                  '#toolbar button:focus {',
+                  '    outline: 0;',
+                  '}',
+
+                  '[data-tooltip] {',
+                  '    position: relative;',
+                  '}',
+                  '[data-tooltip]::after {',
+                  '    content: attr(data-tooltip);',
+                  '    display: inline-block;',
+                  '    white-space: nowrap;',
+                  '    position: absolute;',
+                  '    bottom: 100%;',
+                  '    left: 50%;',
+                  '    transform: translate(-50%, calc(-0.75 * var(--fontPixelSize) * 1px));',
+                  '    font-family: "PT Sans", sans-serif;',
+                  '    font-size: calc(var(--fontPixelSize) * 1px);',
+                  '    padding: calc(0.75 * var(--fontPixelSize) * 1px) calc(var(--fontPixelSize) * 1px);',
+                  '    background-color: var(--tooltipBackgroundColor);',
+                  '    color: var(--tooltipForegroundColor);',
+                  '    border: 1px solid var(--tooltipBorderColor);',
+                  '    border-radius: calc(0.25 * var(--fontPixelSize) * 1px);',
+                  '    opacity: 0;',
+                  '    transition: .3s;',
+                  '}',
+                  '[data-tooltip]:hover::after {',
+                  '    opacity: 1;',
                   '}'
               ]
         return list.join('\n')
@@ -236,37 +345,70 @@ Item {
         return list.join('\n')
     }
 
-    property string structureChart:
-        EaLogic.Plotting.chemDoodleChart(
-            // cif
-            JSON.stringify(ExGlobals.Constants.proxy.phasesAsExtendedCif),
-            // specs
-            {
-                chartWidth: structureChartWidth,
-                chartHeight: structureChartHeight,
-                chartForegroundColor: structureChartForegroundColor,
-                chartBackgroundColor: structureChartBackgroundColor
-            }
-            )
+    property string structureChart: ''
+    property string cifStr: ExGlobals.Constants.proxy.phasesAsExtendedCif
+    onCifStrChanged: ExGlobals.Variables.bokehStructureChart.runJavaScript(
+                         'document.body.outerHTML',
+                         function(result) {
+                             result = result.replace(/\<div id="toolbar".*?\/div\>/g, '<div id="toolbar"></div>')
+                             result = result.replace(/\<canvas class="ChemDoodleWebComponent".*?\/canvas\>/g, '')
+                             result = result.replace(/"data_.*"/g, JSON.stringify(cifStr))
+                             result = result.replace('structureViewer.camera.zoomOut()', 'structureViewer.camera.zoomOut()\nstructureViewer.camera.zoomOut()')
+                             structureChart = result
+                             structureChartChanged()
+                         }
+                         )
 
     property string dataChart:
         EaLogic.Plotting.bokehChart(
             // data
             {
-                measured: ExGlobals.Constants.proxy.bokeh.measuredDataObj,
-                calculated: ExGlobals.Constants.proxy.bokeh.calculatedDataObj
+                measured: ExGlobals.Constants.proxy.plotting1d.bokehMeasuredDataObj,
+                calculated: ExGlobals.Constants.proxy.plotting1d.bokehCalculatedDataObj,
+                difference: ExGlobals.Constants.proxy.plotting1d.bokehDifferenceDataObj,
+                bragg: ExGlobals.Constants.proxy.plotting1d.bokehBraggDataObj,
+                background: ExGlobals.Constants.proxy.plotting1d.bokehBackgroundDataObj,
+                ranges: ExGlobals.Variables.analysisChart.plotRanges,
+
+                hasMeasured: ExGlobals.Variables.analysisChart.hasMeasuredData,
+                hasCalculated: ExGlobals.Variables.analysisChart.hasCalculatedData,
+                hasDifference: ExGlobals.Variables.analysisChart.hasDifferenceData,
+                hasBragg: ExGlobals.Variables.analysisChart.hasBraggData,
+                hasBackground: ExGlobals.Variables.analysisChart.hasBackgroundData,
+                hasPlotRanges: ExGlobals.Variables.analysisChart.hasPlotRangesData
             },
             // specs
             {
-                chartWidth: dataChartWidth,
-                chartHeight: dataChartHeight,
-                chartBackgroundColor: dataChartBackgroundColor,
-                xAxisTitle: qsTr("2theta (deg)"),
-                yAxisTitle: qsTr("Intensity"),
-                experimentLineColor: EaStyle.Colors.chartForegrounds[0],
-                calculatedLineColor: EaStyle.Colors.chartForegrounds[1],
-                experimentLineWidth: 2,
-                calculatedLineWidth: 2,
+                chartWidth: dataChartWidth, //dataChartWidth,
+                mainChartHeight: ExGlobals.Variables.analysisChart.mainChartHeight * 0.84,
+                braggChartHeight: ExGlobals.Variables.analysisChart.braggChartHeight,
+                differenceChartHeight: ExGlobals.Variables.analysisChart.differenceChartHeight * 0.84,
+                xAxisChartHeight: ExGlobals.Variables.analysisChart.xAxisChartHeight,
+
+                xAxisTitle: ExGlobals.Variables.analysisChart.xAxisTitle,
+                yMainAxisTitle: ExGlobals.Variables.analysisChart.yMainAxisTitle,
+                yDifferenceAxisTitle: ExGlobals.Variables.analysisChart.yDifferenceAxisTitle,
+
+                chartBackgroundColor: ExGlobals.Variables.analysisChart.chartBackgroundColor,
+                chartForegroundColor: ExGlobals.Variables.analysisChart.chartForegroundColor,
+                chartGridLineColor: ExGlobals.Variables.analysisChart.chartGridLineColor,
+                chartMinorGridLineColor: ExGlobals.Variables.analysisChart.chartMinorGridLineColor,
+
+                measuredLineColor: ExGlobals.Variables.analysisChart.measuredLineColor,
+                measuredAreaColor: ExGlobals.Variables.analysisChart.measuredAreaColor,
+                calculatedLineColor: ExGlobals.Variables.analysisChart.calculatedLineColor,
+                braggTicksColor: ExGlobals.Variables.analysisChart.braggTicksColor,
+                backgroundLineColor: ExGlobals.Variables.analysisChart.backgroundLineColor,
+                differenceLineColor: ExGlobals.Variables.analysisChart.differenceLineColor,
+                differenceAreaColor: ExGlobals.Variables.analysisChart.differenceAreaColor,
+
+                measuredLineWidth: ExGlobals.Variables.analysisChart.measuredLineWidth,
+                calculatedLineWidth: ExGlobals.Variables.analysisChart.calculatedLineWidth,
+                differenceLineWidth: ExGlobals.Variables.analysisChart.differenceLineWidth,
+                backgroundLineWidth: ExGlobals.Variables.analysisChart.backgroundLineWidth,
+
+                fontPixelSize: ExGlobals.Variables.analysisChart.fontPixelSize,
+
                 containerId: "analysisSection"
             }
             )
@@ -329,24 +471,15 @@ Item {
         return list.join('\n')
     }
 
-    property string minimizationSoftware: {
-        if (!isFitting)
-            return ''
-        const soft = ExGlobals.Constants.proxy.statusModelAsObj.minimization
-        let list = [
-                `<b>Minimization:</b> ${soft}<br>`
-            ]
-        return list.join('\n')
-    }
-
     property string softwareSection: {
         const list = [
                   '<h2>Software</h2>',
                   '<div id="softwareSection">',
                   `<b>Analysis:</b> <a href="${ExGlobals.Constants.appUrl}">${ExGlobals.Constants.appName} v${ExGlobals.Constants.appVersion}</a><br>`,
-                  `<b>Structure chart:</b> <a href="${structureChartLibUrl}"> ChemDoodle v${structureChartLibVersion}</a><br>`,
-                  `<b>Data chart:</b> <a href="${dataChartLibUrl}"> Bokeh v${dataChartLibVersion}</a><br>`,
-                  minimizationSoftware,
+                  `<b>Structure chart:</b> <a href="${ExGlobals.Variables.bokehStructureChart.info.url}"> ChemDoodle Web Components v${ExGlobals.Variables.bokehStructureChart.info.version}</a><br>`,
+                  `<b>Data chart:</b> <a href="${dataChartLibUrl}"> BokehJS v${dataChartLibVersion}</a><br>`,
+                  `<b>Calculation engine:</b> <a href="">${ExGlobals.Constants.proxy.statusModelAsObj.calculation}</a><br>`,
+                  isFitting ? `<b>Minimization:</b> <a href="">${ExGlobals.Constants.proxy.statusModelAsObj.minimization}</a><br>` : '',
                   '</div>'
               ]
         return list.join('\n')
@@ -364,9 +497,7 @@ Item {
                   `<b>Space group:</b> ${spaceGroup}<br>`,
                   '</p>',
                   '<div id="structureSection">',
-                  '<script>',
                   structureChart,
-                  '</script>',
                   '</div>'
               ]
         return list.join('\n')

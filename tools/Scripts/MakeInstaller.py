@@ -93,15 +93,10 @@ def remoteRepositoryDir():
     remote_subdir_name = CONFIG['ci']['app']['setup']['ftp']['remote_subdir']
     return os.path.join(CONFIG.app_name, remote_subdir_name, CONFIG.setup_os)
 
-def installationDir():
-    var = CONFIG['ci']['app']['setup']['installation_dir'][CONFIG.os]
-    return Functions.environmentVariable(var, var)
-
 def installerConfigXml():
     try:
         message = f"create {CONFIG['ci']['app']['setup']['build']['config_xml']} content"
         app_url = CONFIG['tool']['poetry']['homepage']
-        target_dir = os.path.join(installationDir(), CONFIG.app_name)
         maintenance_tool_suffix = CONFIG['ci']['app']['setup']['maintenance_tool_suffix']
         maintenance_tool_name = maintenance_tool_suffix #f'{CONFIG.app_name}{maintenance_tool_suffix}'
         config_control_script = CONFIG['ci']['scripts']['config_control']
@@ -123,7 +118,7 @@ def installerConfigXml():
                 'WizardDefaultHeight': 600,
                 'StyleSheet': config_style,
                 'StartMenuDir': CONFIG.app_name,
-                'TargetDir': target_dir,
+                'TargetDir': CONFIG.installation_dir,
                 #'CreateLocalRepository': 'true',
                 #'SaveDefaultRepositories': 'false',
                 #'RepositorySettingsPageVisible': 'false',
@@ -289,6 +284,10 @@ def createInstallerSourceDir():
         #Functions.createFile(path=docs_package_xml_path, content=docsPackageXml())
         #Functions.copyDir(source=docs_dir_src, destination=os.path.join(docs_data_subsubdir_path, 'Documentation'))
         Functions.copyDir(source=docs_dir_src, destination=os.path.join(app_data_subsubdir_path, docs_dir_dest))
+        # package: examples
+        examples_dir_src = CONFIG['ci']['project']['subdirs']['examples']['src']
+        examples_dir_dest = CONFIG['ci']['project']['subdirs']['examples']['dest']
+        Functions.copyDir(source=examples_dir_src, destination=os.path.join(app_data_subsubdir_path, examples_dir_dest))
     except Exception as exception:
         Functions.printFailMessage(message, exception)
         sys.exit()

@@ -6,21 +6,19 @@ build-backend = 'poetry.masonry.api'
 
 [tool.poetry]
 name = 'easyDiffraction'
-version = '0.0.5'
+version = '0.1.0'
 description = 'Making diffraction data analysis and modelling easy.'
 license = 'GPL-3.0-only'
 authors = ['Andrew Sazonov', 'Simon Ward']
 readme = 'README.md'
-homepage = 'https://github.com/tempscience'
+homepage = 'https://github.com/easyScience/easyDiffractionApp'
 repository = 'https://easyscience.apptimity.com/'
-documentation = 'https://github.com/tempscience'
+documentation = 'https://github.com/easyScience/easyDiffractionApp'
 include = ['CHANGELOG.md']
 packages = [ { include = 'easyDiffractionApp' } ]
 
 [tool.poetry.dependencies]
 python = '^3.7, <3.8'
-pygit2 = '^1.5.0'
-matplotlib-backend-qtquick = '^0.0.8'
 vtk = '^8.1.2'
 pyobjc-core = { version = '^7.1', platform = 'darwin' }
 pyobjc-framework-cocoa = { version = '^7.1', platform = 'darwin' }
@@ -57,6 +55,7 @@ license_file = 'LICENSE.md' # how to combine this with tool.poetry.license???
 [ci.project.subdirs]
 scripts = 'tools/Scripts'
 docs = { src = 'docs', dest = 'Documentation' }
+examples = { src = 'examples', dest = 'Examples' }
 tutorials = 'docs/UserManual/VideoTutorials'
 download = '.ci/download'
 screenshots = '.ci/screenshots'
@@ -81,7 +80,7 @@ os = { macos = 'macOS', ubuntu = 'Linux', windows = 'Windows' }  # Should be the
 arch = { macos = 'x86-64', ubuntu = 'x86-64', windows = 'x86-32' }
 file_ext = { macos = '.app', ubuntu = '', windows = '.exe' }
 maintenance_tool_suffix = 'MaintenanceTool'
-installation_dir = { macos = '/Applications', ubuntu = '/opt', windows = 'C:/' }  # env: ProgramFiles(x86), qtifw: @RootDir@
+installation_dir_shortcut = { macos = '@ApplicationsDir@', ubuntu = '@HomeDir@', windows = '@ApplicationsDirX86@' }
 
 [ci.app.setup.ftp]
 host = 'ftp.apptimity.com'

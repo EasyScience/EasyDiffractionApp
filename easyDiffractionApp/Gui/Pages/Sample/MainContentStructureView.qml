@@ -5,9 +5,7 @@ import Gui.Globals 1.0 as ExGlobals
 
 Loader {
     source: {
-        if (ExGlobals.Constants.proxy.current3dPlottingLib === 'vtk') {
-            return ExLogic.Paths.component('SampleStructure3dVtk.qml')
-        } else if (ExGlobals.Constants.proxy.current3dPlottingLib === 'qtdatavisualization') {
+        if (ExGlobals.Constants.proxy.current3dPlottingLib === 'qtdatavisualization') {
             return ExLogic.Paths.component('SampleStructure3dQtDataVisualization.qml')
         } else if (ExGlobals.Constants.proxy.current3dPlottingLib === 'chemdoodle') {
             return ExLogic.Paths.component('SampleStructure3dChemDoodle.qml')

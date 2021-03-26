@@ -1,5 +1,6 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
+import QtQuick.Dialogs 1.3 as QtQuickDialogs1
 
 import easyAppGui.Globals 1.0 as EaGlobals
 import easyAppGui.Style 1.0 as EaStyle
@@ -20,30 +21,32 @@ EaComponents.SideBarColumn {
             spacing: EaStyle.Sizes.fontPixelSize
 
             EaElements.SideBarButton {
-                id: createProjectButton
-
                 fontIcon: "plus-circle"
                 text: qsTr("Create a new project")
 
                 onClicked: EaGlobals.Variables.showProjectDescriptionDialog = true
-                Component.onCompleted: ExGlobals.Variables.createProjectButton = createProjectButton
+                Component.onCompleted: {
+                    ExGlobals.Variables.createProjectButton = createProjectButton
+                    ExGlobals.Constants.proxy.resetUndoRedoStack()
+                }
             }
 
             EaElements.SideBarButton {
-                id: continueWithoutProjectButton
-
                 fontIcon: "arrow-circle-right"
                 text: qsTr("Continue without a project")
 
                 onClicked: ExGlobals.Variables.samplePageEnabled = true
-                Component.onCompleted: ExGlobals.Variables.continueWithoutProjectButton = continueWithoutProjectButton
+                Component.onCompleted: {
+                    ExGlobals.Variables.continueWithoutProjectButton = this
+                    ExGlobals.Constants.proxy.resetUndoRedoStack()
+                }
             }
 
             EaElements.SideBarButton {
-                enabled: false
-
+                enabled: true
                 fontIcon: "upload"
                 text: qsTr("Open an existing project")
+                onClicked: fileDialogLoadProject.open()
             }
 
             EaElements.SideBarButton {
@@ -55,5 +58,24 @@ EaComponents.SideBarColumn {
         }
     }
 
+    QtQuickDialogs1.FileDialog{
+        id: fileDialogLoadProject
+        nameFilters: ["Project files (*.json)"]
+        onAccepted: {
+            // enablement will depend on what is available in the project file,
+            // obviously, so care is needed. TODO
+            ExGlobals.Variables.samplePageEnabled = true
+            ExGlobals.Variables.experimentPageEnabled = true
+            ExGlobals.Variables.sampleLoaded = true
+            ExGlobals.Variables.projectCreated = true
+
+            ExGlobals.Constants.proxy.loadProjectAs(fileUrl)
+
+            if (ExGlobals.Constants.proxy.experimentDataAsXml != ""){
+                ExGlobals.Variables.analysisPageEnabled = true
+                ExGlobals.Variables.summaryPageEnabled = true
+            }
+        }
+    }
 }
 

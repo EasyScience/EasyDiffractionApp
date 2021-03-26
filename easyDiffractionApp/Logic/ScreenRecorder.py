@@ -1,5 +1,6 @@
 import mss
 import cv2
+import time
 import numpy as np
 from threading import Thread
 from PySide2.QtCore import QObject, Signal, Slot
@@ -13,7 +14,7 @@ class ScreenRecorder(QObject):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        self.frame_rate = 36
+        self.frame_rate = 12
         self.video_codec_name = 'mp4v'
         self.out_file_name = 'tutorial'
 
@@ -89,10 +90,21 @@ class ScreenRecorder(QObject):
         )
         with mss.mss() as sct:
             while self.is_recording_now:
+                # collect start time
+                start_time = time.time()
+                # grab and save screenshot
                 screenshot = sct.grab(self.mss_frame_rect)
                 frame = np.array(screenshot)
                 frame = cv2.cvtColor(frame, cv2.COLOR_BGRA2BGR)
                 out.write(frame)
+                # collect end time
+                end_time = time.time()
+                # calculate time to wait before next frame
+                desired_time = 1 / self.frame_rate
+                real_time = end_time - start_time
+                delay = desired_time - real_time
+                if delay > 0:
+                    time.sleep(delay)
         cv2.destroyAllWindows()
         out.release()
         self.recordingFinished.emit()

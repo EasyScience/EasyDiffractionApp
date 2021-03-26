@@ -28,7 +28,7 @@ EaComponents.TableView {
 
         onXmlChanged: {
             if (ExGlobals.Constants.proxy.phasesAsObj.length === 0) {
-                ExGlobals.Variables.experimentPageEnabled = false
+//                ExGlobals.Variables.experimentPageEnabled = false
                 ExGlobals.Variables.sampleLoaded = false
                 ExGlobals.Variables.analysisPageEnabled = false
                 ExGlobals.Variables.summaryPageEnabled = false

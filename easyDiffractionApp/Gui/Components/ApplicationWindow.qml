@@ -1,5 +1,6 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
+import QtQuick.Dialogs 1.3 as Dialogs1
 import QtQuick.XmlListModel 2.13
 
 import easyAppGui.Style 1.0 as EaStyle
@@ -27,24 +28,25 @@ EaComponents.ApplicationWindow {
     appBarLeftButtons: [
 
         EaElements.ToolButton {
-            enabled: false
+            enabled: ExGlobals.Constants.proxy.stateHasChanged
             fontIcon: "\uf0c7"
             ToolTip.text: qsTr("Save current state of the project")
+            onClicked:  ExGlobals.Constants.proxy.saveProject()
         },
 
         EaElements.ToolButton {
-            enabled: false
-            //enabled: ExGlobals.Constants.proxy.canUndo()
+            //enabled: false
+            enabled: ExGlobals.Constants.proxy.canUndo
             fontIcon: "\uf2ea"
-            ToolTip.text: qsTr("Undo")
+            ToolTip.text: qsTr("Undo: " + ExGlobals.Constants.proxy.undoText)
             onClicked: ExGlobals.Constants.proxy.undo()
         },
 
         EaElements.ToolButton {
-            enabled: false
-            //enabled: ExGlobals.Constants.proxy.canRedo()
+            //enabled: false
+            enabled: ExGlobals.Constants.proxy.canRedo
             fontIcon: "\uf2f9"
-            ToolTip.text: qsTr("Redo")
+            ToolTip.text: qsTr("Redo: " + ExGlobals.Constants.proxy.redoText)
             onClicked: ExGlobals.Constants.proxy.redo()
         }
 
@@ -54,23 +56,22 @@ EaComponents.ApplicationWindow {
     appBarRightButtons: [
 
         EaElements.ToolButton {
-            id: preferencesButton
             fontIcon: "\uf013"
             ToolTip.text: qsTr("Application preferences")
             onClicked: EaGlobals.Variables.showAppPreferencesDialog = true
-            Component.onCompleted: ExGlobals.Variables.preferencesButton = preferencesButton
+            Component.onCompleted: ExGlobals.Variables.preferencesButton = this
         },
 
         EaElements.ToolButton {
-            enabled: false
             fontIcon: "\uf059"
             ToolTip.text: qsTr("Get online help")
+            onClicked: Qt.openUrlExternally(ExGlobals.Constants.appUrl)
         },
 
         EaElements.ToolButton {
-            enabled: false
             fontIcon: "\uf188"
             ToolTip.text: qsTr("Report a bug or issue")
+            onClicked: Qt.openUrlExternally(`${ExGlobals.Constants.appUrl}/issues`)
         }
 
     ]
@@ -81,42 +82,39 @@ EaComponents.ApplicationWindow {
 
         // Home tab
         EaElements.AppBarTabButton {
-            id: homeTabButton
             enabled: ExGlobals.Variables.homePageEnabled
             fontIcon: "home"
             text: qsTr("Home")
             ToolTip.text: qsTr("Home page")
-            Component.onCompleted: ExGlobals.Variables.homeTabButton = homeTabButton
+            Component.onCompleted: ExGlobals.Variables.homeTabButton = this
         },
 
         // Project tab
         EaElements.AppBarTabButton {
-            id: projectTabButton
             enabled: ExGlobals.Variables.projectPageEnabled
             fontIcon: "archive"
             text: qsTr("Project")
             ToolTip.text: qsTr("Project description page")
-            Component.onCompleted: ExGlobals.Variables.projectTabButton = projectTabButton
+            Component.onCompleted: ExGlobals.Variables.projectTabButton = this
         },
 
         // Sample tab
         EaElements.AppBarTabButton {
-            id: sampleTabButton
             enabled: ExGlobals.Variables.samplePageEnabled
             fontIcon: "gem"
             text: qsTr("Sample")
             ToolTip.text: qsTr("Sample model description page")
-            Component.onCompleted: ExGlobals.Variables.sampleTabButton = sampleTabButton
+            Component.onCompleted: ExGlobals.Variables.sampleTabButton = this
         },
 
         // Experiment tab
         EaElements.AppBarTabButton {
             id: experimentTabButton
-            enabled: ExGlobals.Variables.experimentPageEnabled
+            enabled: ExGlobals.Constants.proxy.samplesPresent
             fontIcon: "microscope"
             text: qsTr("Experiment")
             ToolTip.text: qsTr("Experimental settings and data page")
-            Component.onCompleted: ExGlobals.Variables.experimentTabButton = experimentTabButton
+            Component.onCompleted: ExGlobals.Variables.experimentTabButton = this
         },
 
         // Analysis tab
@@ -182,7 +180,7 @@ EaComponents.ApplicationWindow {
 
         // Sample page
         EaComponents.ContentPage {
-            defaultInfo: ExGlobals.Variables.sampleLoaded ? "" : qsTr("No Samples Added/Loaded")
+            defaultInfo: ExGlobals.Constants.proxy.samplesPresent ? "" : qsTr("No Samples Added/Loaded")
 
             mainContent: EaComponents.MainContent {
                 tabs: [
@@ -203,7 +201,7 @@ EaComponents.ApplicationWindow {
             sideBar: EaComponents.SideBar {
                 tabs: [
                     EaElements.TabButton { text: qsTr("Basic controls") },
-                    EaElements.TabButton { text: qsTr("Advanced controls") }
+                    EaElements.TabButton { text: qsTr("Advanced controls"); enabled: false }
                 ]
 
                 items: [
@@ -267,14 +265,12 @@ EaComponents.ApplicationWindow {
             sideBar: EaComponents.SideBar {
                 tabs: [
                     EaElements.TabButton {
-                        id: analysisBasicControlsTabButton
                         text: qsTr("Basic controls")
-                        Component.onCompleted: ExGlobals.Variables.analysisBasicControlsTabButton = analysisBasicControlsTabButton
+                        Component.onCompleted: ExGlobals.Variables.analysisBasicControlsTabButton = this
                     },
                     EaElements.TabButton {
-                        id: analysisAdvancedControlsTabButton
                         text: qsTr("Advanced controls")
-                        Component.onCompleted: ExGlobals.Variables.analysisAdvancedControlsTabButton = analysisAdvancedControlsTabButton
+                        Component.onCompleted: ExGlobals.Variables.analysisAdvancedControlsTabButton = this
                     }
                 ]
 

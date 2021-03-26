@@ -67,7 +67,6 @@ Item {
 
         // Start button
         EaElements.SideBarButton {
-            id: startButton
             width: EaStyle.Sizes.fontPixelSize * 15
             anchors.horizontalCenter: parent.horizontalCenter
             fontIcon: "rocket"
@@ -75,8 +74,9 @@ Item {
             onClicked: {
                 ExGlobals.Variables.projectPageEnabled = true
                 ExGlobals.Variables.projectTabButton.toggle()
+                ExGlobals.Constants.proxy.resetUndoRedoStack()
             }
-            Component.onCompleted: ExGlobals.Variables.startButton = startButton
+            Component.onCompleted: ExGlobals.Variables.startButton = this
         }
 
         // Links
@@ -88,18 +88,16 @@ Item {
                 spacing: EaStyle.Sizes.fontPixelSize
 
                 EaElements.Button {
-                    enabled: true
-                    id: aboutButton
                     text: qsTr("About %1".arg(ExGlobals.Constants.appName))
                     onClicked: EaGlobals.Variables.showAppAboutDialog = true
                 }
                 EaElements.Button {
-                    enabled: false
                     text: qsTr("Online documentation")
+                    onClicked: Qt.openUrlExternally(ExGlobals.Constants.appUrl)
                 }
                 EaElements.Button {
-                    enabled: false
                     text: qsTr("Get in touch online")
+                    onClicked: Qt.openUrlExternally(`${ExGlobals.Constants.appUrl}/issues`)
                 }
             }
 
@@ -177,7 +175,7 @@ Item {
 
     Component.onCompleted: {
         if (EaGlobals.Variables.isTestMode) {
-            print('DEBUG MODE')
+            print('TEST MODE')
             runTutorialTimer.start()
         }
     }
@@ -194,10 +192,10 @@ Item {
                 height: window.height
             }
             const margin_rect = {
-                left: EaStyle.Sizes.fontPixelSize,
-                top: EaStyle.Sizes.fontPixelSize,
-                right: EaStyle.Sizes.fontPixelSize,
-                bottom: EaStyle.Sizes.fontPixelSize
+                left: 3 * EaStyle.Sizes.fontPixelSize,
+                top: 3 * EaStyle.Sizes.fontPixelSize,
+                right: 3 * EaStyle.Sizes.fontPixelSize,
+                bottom: 3 * EaStyle.Sizes.fontPixelSize
             }
             ExGlobals.Constants.proxy.screenRecorder.startRecording(frame_rect, margin_rect)
         }
@@ -288,6 +286,20 @@ Item {
         rc.posToCenter()
         rc.show()
 
+        // App preferences
+
+        rc.say("Application preferences can be accessed quickly from the application toolbar.")
+        rc.mouseClick(ExGlobals.Variables.preferencesButton)
+
+        rc.mouseClick(ExGlobals.Variables.themeSelector)
+        y_pos = !EaStyle.Colors.isDarkTheme ? EaStyle.Sizes.comboBoxHeight * 1.5 : undefined
+        rc.mouseClick(ExGlobals.Variables.themeSelector, x_pos, y_pos)
+
+        rc.mouseClick(ExGlobals.Variables.enableToolTipsCheckBox)
+        rc.wait(500)
+        //rc.keyClick(Qt.Key_Escape) // DOESN'T WORK ON CI XVFB
+        rc.mouseClick(ExGlobals.Variables.preferencesOkButton)
+
         // Home Tab
 
         rc.say("To start working with easy diffraction, just click start button.")
@@ -306,7 +318,7 @@ Item {
         rc.say("Use application toolbar to switch to the sample description page.")
         rc.mouseClick(ExGlobals.Variables.sampleTabButton)
 
-        rc.say("Use can set new phase from file or manually.")
+        rc.say("You can set new phase from file or manually.")
         rc.mouseClick(ExGlobals.Variables.setNewSampleManuallyButton)
 
         rc.say("Now, you can change the symmetry and cell parameters.")
@@ -317,13 +329,25 @@ Item {
         //rc.keyClick(Qt.Key_Right)
         //rc.keyClick(Qt.Key_Right)
         rc.clearText(6)
-        rc.typeText("4.55")
-        rc.keyClick(Qt.Key_Enter)
+        rc.typeText("7.00")
+        //rc.keyClick(Qt.Key_Enter) // DOESN'T WORK ON CI XVFB ?
         rc.show()
 
         rc.say("Append or remove new atoms.")
         rc.mouseClick(ExGlobals.Variables.atomsGroup, 15)
         rc.mouseClick(ExGlobals.Variables.appendNewAtomButton)
+
+        rc.say("To change the structure view parameters use the toolbar buttons.")
+        rc.mouseClick(ExGlobals.Variables.xProjectionButton)
+        rc.mouseClick(ExGlobals.Variables.showBondsButton)
+        rc.mouseClick(ExGlobals.Variables.showBondsButton)
+        rc.mouseClick(ExGlobals.Variables.showLabelsButton)
+        rc.mouseClick(ExGlobals.Variables.showLabelsButton)
+        rc.mouseClick(ExGlobals.Variables.projectionTypeButton)
+        rc.mouseClick(ExGlobals.Variables.projectionTypeButton)
+        rc.mouseClick(ExGlobals.Variables.yProjectionButton)
+        rc.mouseClick(ExGlobals.Variables.zProjectionButton)
+        rc.mouseClick(ExGlobals.Variables.defaultViewButton)
 
         rc.wait(1000)
 
@@ -348,7 +372,7 @@ Item {
         y_pos = EaStyle.Sizes.comboBoxHeight * 1.5
         rc.mouseClick(ExGlobals.Variables.calculatorSelector, x_pos, y_pos)
         rc.wait(1000)
-        // GSAS
+        // GSAS-II
         rc.mouseClick(ExGlobals.Variables.calculatorSelector)
         x_pos = undefined
         y_pos = EaStyle.Sizes.comboBoxHeight * 2.5

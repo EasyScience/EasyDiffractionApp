@@ -1,21 +1,13 @@
 import os
 import sys
+import pathlib
 import platform
-
-
-# Logging
-def isTestMode():
-    if len(sys.argv) > 1:
-        if 'test' in sys.argv[1:]:
-            return True
-    return False
-if not isTestMode():
-    import easyAppLogic.Logging
+import argparse
 
 # PySide
-from PySide2.QtCore import QCoreApplication, QUrl, qDebug, qCritical
+from PySide2.QtCore import QUrl, qDebug, qCritical
 from PySide2.QtWidgets import QApplication
-from PySide2.QtGui import Qt, QSurfaceFormat
+from PySide2.QtGui import Qt
 from PySide2.QtQml import QQmlApplicationEngine, qmlRegisterType
 from PySide2.QtWebEngine import QtWebEngine
 from PySide2.QtWebEngineWidgets import QWebEnginePage, QWebEngineView  # to call hook-PySide2.QtWebEngineWidgets.py
@@ -26,78 +18,40 @@ import easyAppGui
 from easyAppLogic.Translate import Translator
 from easyDiffractionApp.Logic.PyQmlProxy import PyQmlProxy
 
-# Matplotlib
-from matplotlib_backend_qtquick.backend_qtquickagg import FigureCanvasQtQuickAgg
-
-# VTK
-from easyDiffractionApp.Logic.Proxies.VtkBackend import VtkCanvasHandler
-from easyDiffractionApp.Logic.VTK.QVTKFrameBufferObjectItem import FboItem
-
-# Config
+# Global vars
 CONFIG = utils.conf()
 
 
-def defaultVtkFormat(stereo_capable):
-    """ Po prostu skopiowałem to z https://github.com/Kitware/VTK/blob/master/GUISupport/Qt/QVTKRenderWindowAdapter.cxx
-     i działa poprawnie bufor głębokości
-    """
-    fmt = QSurfaceFormat()
-    fmt.setRenderableType(QSurfaceFormat.OpenGL)
-    fmt.setVersion(3, 2)
-    fmt.setProfile(QSurfaceFormat.CoreProfile)
-    fmt.setSwapBehavior(QSurfaceFormat.DoubleBuffer)
-    fmt.setRedBufferSize(8)
-    fmt.setGreenBufferSize(8)
-    fmt.setBlueBufferSize(8)
-    fmt.setDepthBufferSize(8)
-    fmt.setAlphaBufferSize(8)
-    fmt.setStencilBufferSize(0)
-    fmt.setStereo(stereo_capable)
-    fmt.setSamples(0)
-    return fmt
-
-
 class App(QApplication):
-
     def __init__(self, sys_argv):
-        # sys_argv += ['-style', 'material']  #! MUST HAVE
-        self._m_vtkFboItem = None
+        QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)  # DOESN'T WORK?!, USE SCRIPT INSTEAD
         QApplication.setAttribute(Qt.AA_UseDesktopOpenGL)
-        QSurfaceFormat.setDefaultFormat(defaultVtkFormat(False))  # from vtk 8.2.0
         super(App, self).__init__(sys_argv)
 
-    def startApplication(self):
-        ###qDebug('CanvasHandler::startApplication()')
-        self._m_vtkFboItem.rendererInitialized.disconnect(self.startApplication)
-
-    def vtkSetup(self, root_window):
-        # Get reference to the QVTKFramebufferObjectItem in QML
-        self._m_vtkFboItem = root_window.findChild(FboItem, 'vtkFboItem')
-        #self._m_vtkFboItem.devicePixelRatio = self.devicePixelRatio()
-
-        # Give the vtkFboItem reference to the CanvasHandler
-        if (self._m_vtkFboItem):
-            ###qDebug('CanvasHandler::CanvasHandler: setting vtkFboItem to CanvasHandler')
-            self._m_vtkFboItem.devicePixelRatio = self.devicePixelRatio()
-            self._m_vtkFboItem.rendererInitialized.connect(self.startApplication)
-        else:
-            ###qCritical('CanvasHandler::CanvasHandler: Unable to get vtkFboItem instance')
-            return
-
 def main():
-    # Settings
-    QCoreApplication.setAttribute(Qt.AA_EnableHighDpiScaling)  # DOESN'T WORK, USE SCRIPT INSTEAD
-    QCoreApplication.setAttribute(Qt.AA_UseDesktopOpenGL, True)
+    # Arguments
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-l', '--logtofile', action='store_true',
+                        help='enable logging in the file easyDiffraction.log in the system directory tmp instead of the terminal')
+    parser.add_argument('-t', '--testmode', action='store_true',
+                    help='run the application in test mode: run the tutorial, record a video and exit the application')
+    args = parser.parse_args()
+    if args.logtofile:
+        import easyAppLogic.Logging
 
     # Paths
+    app_name = CONFIG['tool']['poetry']['name']
     current_path = os.path.dirname(sys.argv[0])
-    package_path = os.path.join(current_path, 'easyDiffractionApp')
+    package_path = os.path.join(current_path, f'{app_name}App')
     if not os.path.exists(package_path):
         package_path = current_path
 
     main_qml_path = QUrl.fromLocalFile(os.path.join(package_path, 'Gui', 'main.qml'))
     gui_path = str(QUrl.fromLocalFile(package_path).toString())
     easyAppGui_path = os.path.join(easyAppGui.__path__[0], '..')
+
+    home_path = pathlib.Path.home()
+    settings_path = str(home_path.joinpath(f'.{app_name}', 'settings.ini'))
 
     languages = CONFIG['ci']['app']['translations']['languages']
     translations_dir = CONFIG['ci']['app']['translations']['dir']
@@ -119,18 +73,13 @@ def main():
     # Python objects to be exposed to QML
     py_qml_proxy_obj = PyQmlProxy()
     translator = Translator(app, engine, translations_path, languages)
-    vtk_handler = VtkCanvasHandler()
 
     # Expose the Python objects to QML
     engine.rootContext().setContextProperty('_pyQmlProxyObj', py_qml_proxy_obj)
+    engine.rootContext().setContextProperty('_settingsPath', settings_path)
     engine.rootContext().setContextProperty('_translator', translator)
-    engine.rootContext().setContextProperty('_vtkHandler', vtk_handler)
     engine.rootContext().setContextProperty('_projectConfig', CONFIG)
-    engine.rootContext().setContextProperty('_isTestMode', isTestMode())
-
-    # Register types to be instantiated in QML
-    qmlRegisterType(FigureCanvasQtQuickAgg, 'MatplotlibBackend', 1, 0, 'FigureCanvas')
-    qmlRegisterType(FboItem, 'QtVTK', 1, 0, 'VtkFboItem')
+    engine.rootContext().setContextProperty('_isTestMode', args.testmode)
 
     # Add paths to search for installed modules
     engine.addImportPath(easyAppGui_path)
@@ -141,12 +90,6 @@ def main():
 
     # Root application window
     root_window = engine.rootObjects()[0]
-
-    # VTK setup
-    app.vtkSetup(root_window)
-    vtk_handler.fbo = app._m_vtkFboItem
-    vtk_handler.context = root_window
-    py_qml_proxy_obj.setVtkHandler(vtk_handler)
 
     # Customize app window titlebar
     if platform.system() == "Darwin":

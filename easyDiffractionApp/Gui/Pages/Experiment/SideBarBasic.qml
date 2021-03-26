@@ -33,8 +33,6 @@ EaComponents.SideBarColumn {
             }
 
             EaElements.SideBarButton {
-                id: continueWithoutExperimentDataButton
-
                 enabled: !ExGlobals.Constants.proxy.experimentLoaded && !ExGlobals.Constants.proxy.experimentSkipped
 
                 fontIcon: "arrow-circle-right"
@@ -46,7 +44,7 @@ EaComponents.SideBarColumn {
                     ExGlobals.Constants.proxy.experimentSkipped = true
                 }
 
-                Component.onCompleted: ExGlobals.Variables.continueWithoutExperimentDataButton = continueWithoutExperimentDataButton
+                Component.onCompleted: ExGlobals.Variables.continueWithoutExperimentDataButton = this
             }
         }
     }
@@ -137,8 +135,8 @@ EaComponents.SideBarColumn {
         onAccepted: {
             ExGlobals.Variables.analysisPageEnabled = true
             ExGlobals.Variables.summaryPageEnabled = true
-            ExGlobals.Constants.proxy.experimentSkipped = false
-            ExGlobals.Constants.proxy.experimentLoaded = true
+//            ExGlobals.Constants.proxy.experimentSkipped = false
+//            ExGlobals.Constants.proxy.experimentLoaded = true
             ExGlobals.Constants.proxy.addExperimentDataFromXye(fileUrl)
         }
     }

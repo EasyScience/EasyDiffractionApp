@@ -9,9 +9,10 @@ import Gui.Globals 1.0 as ExGlobals
 
 EaComponents.SideBarColumn {
 
+    /*
     EaElements.GroupBox {
         title: qsTr("Bonds")
-        enabled: ExGlobals.Variables.sampleLoaded
+        enabled: ExGlobals.Constants.proxy.samplesPresent
         collapsed: false
 
         Row {
@@ -61,5 +62,6 @@ EaComponents.SideBarColumn {
         }
 
     }
+    */
 
 }

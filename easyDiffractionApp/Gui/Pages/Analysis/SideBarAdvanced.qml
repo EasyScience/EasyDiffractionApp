@@ -24,17 +24,11 @@ EaComponents.SideBarColumn {
                 text: qsTr("Engine:")
             }
             EaElements.ComboBox {
-                id: calculatorSelector
-
                 width: minimizerSelector.width
                 model: ExGlobals.Constants.proxy.calculatorNames
-                onActivated: ExGlobals.Constants.proxy.changeCurrentCalculator(currentIndex)
-
-                //currentIndex: ExGlobals.Constants.proxy.calculatorIndex
-                Component.onCompleted: {
-                    ExGlobals.Variables.calculatorSelector = calculatorSelector
-                    currentIndex = ExGlobals.Constants.proxy.currentCalculatorIndex
-                }
+                currentIndex: ExGlobals.Constants.proxy.currentCalculatorIndex
+                onCurrentIndexChanged: ExGlobals.Constants.proxy.currentCalculatorIndex = currentIndex
+                Component.onCompleted: ExGlobals.Variables.calculatorSelector = this
             }
         }
     }
@@ -61,22 +55,11 @@ EaComponents.SideBarColumn {
                 width: (EaStyle.Sizes.sideBarContentWidth - minimizerLabel.width * 2 - EaStyle.Sizes.fontPixelSize * 4) / 2
 
                 model: ExGlobals.Constants.proxy.minimizerNames
+                currentIndex: ExGlobals.Constants.proxy.currentMinimizerIndex
 
-                onCurrentValueChanged: {
-                    ExGlobals.Constants.proxy.changeCurrentMinimizer(currentIndex)
-
-                    let idx = 0
-                    if (currentValue === 'lmfit') {
-                        idx = methodSelector.model.indexOf('leastsq')
-                    } else if (currentValue === 'bumps') {
-                        idx = methodSelector.model.indexOf('lm')
-                    }
-                    if (idx > -1) {
-                        methodSelector.currentIndex = idx
-                    }
+                onCurrentIndexChanged: {
+                    ExGlobals.Constants.proxy.currentMinimizerIndex = currentIndex
                 }
-
-                Component.onCompleted: currentIndex = ExGlobals.Constants.proxy.currentMinimizerIndex
             }
 
             // Spacer
@@ -93,8 +76,10 @@ EaComponents.SideBarColumn {
 
                 width: minimizerSelector.width
                 model: ExGlobals.Constants.proxy.minimizerMethodNames
-                onCurrentValueChanged: ExGlobals.Constants.proxy.changeCurrentMinimizerMethod(currentIndex)
-                Component.onCompleted: currentIndex = ExGlobals.Constants.proxy.currentMinimizerMethodIndex
+                currentIndex: ExGlobals.Constants.proxy.currentMinimizerMethodIndex
+                onCurrentIndexChanged: {
+                    ExGlobals.Constants.proxy.currentMinimizerMethodIndex = currentIndex
+                }
             }
         }
 
@@ -111,7 +96,7 @@ EaComponents.SideBarColumn {
             EaElements.CheckBox {
                 text: qsTr("Show legend")
                 checked: ExGlobals.Variables.showLegend
-                onCheckedChanged: ExGlobals.Variables.showLegend = checked //_matplotlibBridge.showLegend(checked, "figure")
+                onCheckedChanged: ExGlobals.Variables.showLegend = checked
             }
 
             EaElements.CheckBox {
@@ -130,7 +115,7 @@ EaComponents.SideBarColumn {
     */
 
     EaElements.GroupBox {
-        title: qsTr("Parameters settings")
+        title: qsTr("Parameters")
         last: true
         //collapsed: false
 

@@ -10,7 +10,7 @@ QtObject {
     property bool homePageEnabled: isDebugMode ? true : true
     property bool projectPageEnabled: isDebugMode ? true : false
     property bool samplePageEnabled: isDebugMode ? true : false
-    property bool experimentPageEnabled: isDebugMode ? true : false
+//    property bool experimentPageEnabled: isDebugMode ? true : false
     property bool analysisPageEnabled: isDebugMode ? true : false
     property bool summaryPageEnabled: isDebugMode ? true : false
 
@@ -18,7 +18,7 @@ QtObject {
     property bool projectCreated: false
     property bool sampleLoaded: false
     property bool experimentSkipped: false
-
+    property bool needsSave: true // while waiting for a proper undo/redo flag
 
     // //////////
     // HTML parts
@@ -46,8 +46,12 @@ QtObject {
     property var analysisBasicControlsTabButton
     property var analysisAdvancedControlsTabButton
 
+    // Main application window
+    property var showSaveDialog : false
+
     // Application bar tool buttons
     property var preferencesButton
+    property var preferencesOkButton
 
     // Main content and sidebar buttons
     property var startButton
@@ -64,6 +68,9 @@ QtObject {
 
     // Sidebar text inputs
     property var cellLengthALabel
+
+    // Checkboxes
+    property var enableToolTipsCheckBox
 
     // Comboboxes
     property var themeSelector
@@ -84,9 +91,17 @@ QtObject {
     property bool iconifiedNames: true
 
     // Plotting
-    //property var plottingLibrary: 'qtcharts'
+    property var bokehStructureChart
+    property var analysisChart
     property var analysisImageSource
     property var structureImageSource
+    property var showBondsButton
+    property var showLabelsButton
+    property var projectionTypeButton
+    property var xProjectionButton
+    property var yProjectionButton
+    property var zProjectionButton
+    property var defaultViewButton
 
     // Summary
     property var reportWebView

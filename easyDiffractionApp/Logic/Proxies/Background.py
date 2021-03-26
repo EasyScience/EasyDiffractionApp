@@ -52,9 +52,10 @@ class BackgroundProxy(QObject):
         self.asObjChanged.emit(self._background_as_obj)
 
     @Slot()
-    def addPoint(self):
+    def addPoint(self, point=(180.0, 0.0)):
         print(f"+ addBackgroundPoint")
-        point = BackgroundPoint.from_pars(x=180.0, y=0.0)
+        #point = BackgroundPoint.from_pars(x=180.0, y=0.0)
+        point = BackgroundPoint.from_pars(x=point[0], y=point[1])
         self._background_as_obj.append(point)
 
         self.asObjChanged.emit(self._background_as_obj)
@@ -67,6 +68,11 @@ class BackgroundProxy(QObject):
         del self._background_as_obj[point_index]
 
         self.asObjChanged.emit(self._background_as_obj)
+
+    def removeAllPoints(self):
+        for point_name in self._background_as_obj.names:
+            self.removePoint(point_name)
+        #self.asObjChanged.emit(self._background_as_obj)
 
     def onAsObjChanged(self):
         print(f"***** onAsObjChanged")

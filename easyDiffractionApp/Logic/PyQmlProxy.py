@@ -1451,6 +1451,7 @@ class PyQmlProxy(QObject):
             experiments_y = self._data.experiments[0].y
             experiments_e = self._data.experiments[0].e
             descr['experiments'] = [experiments_x, experiments_y, experiments_e]
+
             bg_x = self._background_proxy.asObj.x_sorted_points
             bg_y = self._background_proxy.asObj.y_sorted_points
             descr['background'] = [bg_x, bg_y]
@@ -1459,6 +1460,7 @@ class PyQmlProxy(QObject):
         # Reading those is not yet implemented
         descr['parameters'] = self._parameters_as_obj
         descr['instrument_parameters'] = self._instrument_parameters_as_obj
+        descr['experiment_skipped'] = self._experiment_skipped
 
         content_json = json.dumps(descr, indent=4, default=self.default)
         path = generalizePath(project_save_filepath)
@@ -1513,13 +1515,13 @@ class PyQmlProxy(QObject):
                 for i, point in enumerate(bg_x):
                     bg_point = (point, bg_y[i])
                     self._background_proxy.addPoint(bg_point)
-                # self._background_proxy.asObjChanged.emit(self._background_proxy._background_as_obj)
-
         else:
             # delete existing experiment
-            self.experimentLoaded = False
-            self.experimentSkipped = True
             self.removeExperiment()
+            self.experimentLoaded = False
+            if descr['experiment_skipped']:
+                self.experimentSkipped = True
+                self.experimentSkippedChanged.emit()
 
         # project info
         self.projectInfoAsJson = json.dumps(descr['project_info'])

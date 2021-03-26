@@ -1282,6 +1282,11 @@ class PyQmlProxy(QObject):
 
     @Slot()
     def fit(self):
+        # if running, stop the thread
+        if not self.isFitFinished:
+            self.stop_fit()
+            self._setFitResultsFailed("Fitting stopped")
+            return
         self.isFitFinished = False
         exp_data = self._data.experiments[0]
 
@@ -1295,10 +1300,14 @@ class PyQmlProxy(QObject):
         self._fitter_thread = ThreadedFitter(self.fitter, 'fit', *args, **kwargs)
         self._fitter_thread.finished.connect(self._setFitResults)
         self._fitter_thread.failed.connect(self._setFitResultsFailed)
+        self._fitter_thread.setTerminationEnabled(True)
         self._fitter_thread.start()
 
         # self._setFitResults(res)
         # self.fitFinished.emit()
+
+    def stop_fit(self):
+        self._fitter_thread.stop()
 
     @Property('QVariant', notify=fitResultsChanged)
     def fitResults(self):

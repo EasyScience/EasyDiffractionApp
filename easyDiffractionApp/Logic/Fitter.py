@@ -26,3 +26,7 @@ class Fitter(QThread):
                return str(ex)
         self.finished.emit(res)
         return res
+
+    def stop(self):
+        self.terminate()
+        self.wait()  # to assure proper termination

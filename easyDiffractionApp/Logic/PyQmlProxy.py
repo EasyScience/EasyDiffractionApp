@@ -4,6 +4,7 @@ import timeit
 import json
 from typing import Union
 from dicttoxml import dicttoxml
+from xml.dom.minidom import parseString
 
 from PySide2.QtCore import QObject, Slot, Signal, Property
 from PySide2.QtCore import QByteArray, QBuffer, QIODevice
@@ -27,9 +28,11 @@ from easyDiffractionLib.Elements.Experiments.Pattern import Pattern1D
 from easyAppLogic.Utils.Utils import generalizePath
 
 from easyDiffractionApp.Logic.DataStore import DataSet1D, DataStore
+
 from easyDiffractionApp.Logic.Proxies.Background import BackgroundProxy
 from easyDiffractionApp.Logic.Proxies.Plotting1d import Plotting1dProxy
 from easyDiffractionApp.Logic.Fitter import Fitter as ThreadedFitter
+
 
 
 class PyQmlProxy(QObject):
@@ -37,6 +40,7 @@ class PyQmlProxy(QObject):
 
     # Project
     projectInfoChanged = Signal()
+    stateChanged = Signal(bool)
 
     # Fitables
     parametersChanged = Signal()
@@ -126,6 +130,10 @@ class PyQmlProxy(QObject):
 
         # Project
         self._project_info = self._defaultProjectInfo()
+        self.project_save_filepath = ""
+        self._status_model = None
+        self._state_changed = False
+        self.stateChanged.connect(self._onStateChanged)
 
         # Structure
         self.structureParametersChanged.connect(self._onStructureParametersChanged)
@@ -220,6 +228,10 @@ class PyQmlProxy(QObject):
         self.currentMinimizerChanged.connect(self.undoRedoChanged)
         self.currentMinimizerMethodChanged.connect(self.statusInfoChanged)
         self.currentMinimizerMethodChanged.connect(self.undoRedoChanged)
+
+        # Multithreading
+        self._fitter_thread = None
+        self._fit_finished = True
 
         # Multithreading
         self._fitter_thread = None
@@ -375,6 +387,22 @@ class PyQmlProxy(QObject):
             modified=datetime.datetime.now().strftime("%d.%m.%Y %H:%M")
         )
 
+    @Property(bool, notify=stateChanged)
+    def stateHasChanged(self):
+        return self._state_changed
+
+    @stateHasChanged.setter
+    def stateHasChanged(self, changed: bool):
+        if self._state_changed == changed:
+            print("same state changed value - {}".format(str(changed)))
+            return
+        self._state_changed = changed
+        print("new state changed value - {}".format(str(changed)))
+        self.stateChanged.emit(changed)
+
+    def _onStateChanged(self, changed=True):
+        self.stateHasChanged = changed
+
     ####################################################################################################################
     ####################################################################################################################
     # SAMPLE
@@ -386,11 +414,11 @@ class PyQmlProxy(QObject):
         sample.pattern.zero_shift = 0.0
         sample.pattern.scale = 1.0
         sample.parameters.wavelength = 1.912
-        sample.parameters.resolution_u = 0.14
-        sample.parameters.resolution_v = -0.42
-        sample.parameters.resolution_w = 0.38
+        sample.parameters.resolution_u = 0.1447
+        sample.parameters.resolution_v = -0.4252
+        sample.parameters.resolution_w = 0.3864
         sample.parameters.resolution_x = 0.0
-        sample.parameters.resolution_y = 0.0
+        sample.parameters.resolution_y = 0.0961
         return sample
 
     ####################################################################################################################
@@ -456,6 +484,7 @@ class PyQmlProxy(QObject):
         self._setPhasesAsObj()  # 0.025 s
         self._setPhasesAsXml()  # 0.065 s
         self._setPhasesAsCif()  # 0.010 s
+        self.stateChanged.emit(True)
 
     ####################################################################################################################
     # Phase: Add / Remove
@@ -745,6 +774,7 @@ class PyQmlProxy(QObject):
     def _onExperimentDataChanged(self):
         print("***** _onExperimentDataChanged")
         self._setExperimentDataAsXml()  # ? s
+        self.stateChanged.emit(True)
 
     ####################################################################################################################
     # Experiment data: Add / Remove
@@ -1095,6 +1125,7 @@ class PyQmlProxy(QObject):
         print("***** _onParametersChanged")
         self._setParametersAsObj()
         self._setParametersAsXml()
+        self.stateChanged.emit(True)
 
     # Filtering
 
@@ -1355,6 +1386,7 @@ class PyQmlProxy(QObject):
             "calculation":  self._interface.current_interface_name,
             "minimization": f'{self.fitter.current_engine.name} ({self._current_minimizer_method_name})'
         }
+        self._status_model = obj
         return obj
 
     @Property(str, notify=statusInfoChanged)
@@ -1383,6 +1415,120 @@ class PyQmlProxy(QObject):
 
     ####################################################################################################################
     ####################################################################################################################
+    # State save/load
+    ####################################################################################################################
+    ####################################################################################################################
+
+    @Slot()
+    def saveProject(self):
+        self._saveProject()
+        self.stateChanged.emit(False)
+
+    @Slot(str)
+    def loadProjectAs(self, filepath):
+        self._loadProjectAs(filepath)
+        self.stateChanged.emit(False)
+
+    @Slot()
+    def loadProject(self):
+        self._loadProject()
+        self.stateChanged.emit(False)
+
+    @Property(str, notify=dummySignal)
+    def projectFilePath(self):
+        return self.project_save_filepath
+
+    def _saveProject(self):
+        """
+        """
+        projectPath = self.projectInfoAsJson['location']
+        project_save_filepath = os.path.join(projectPath, 'project.json')
+        descr = {}
+        descr['phases'] = self._phases_as_cif
+
+        if self.experiments:
+            experiments_x = self._data.experiments[0].x
+            experiments_y = self._data.experiments[0].y
+            experiments_e = self._data.experiments[0].e
+            descr['experiments'] = [experiments_x, experiments_y, experiments_e]
+
+            bg_x = self._background_proxy.asObj.x_sorted_points
+            bg_y = self._background_proxy.asObj.y_sorted_points
+            descr['background'] = [bg_x, bg_y]
+
+        descr['project_info'] = self._project_info
+        # Reading those is not yet implemented
+        descr['parameters'] = self._parameters_as_obj
+        descr['instrument_parameters'] = self._instrument_parameters_as_obj
+        descr['experiment_skipped'] = self._experiment_skipped
+
+        content_json = json.dumps(descr, indent=4, default=self.default)
+        path = generalizePath(project_save_filepath)
+        createFile(path, content_json)
+
+    def default(self, obj):
+        if type(obj).__module__ == np.__name__:
+            if isinstance(obj, np.ndarray):
+                return obj.tolist()
+            else:
+                return obj.item()
+        raise TypeError('Unknown type:', type(obj))
+
+    def _loadProjectAs(self, filepath):
+        """
+        """
+        self.project_load_filepath = filepath
+        print("LoadProjectAs " + filepath)
+        self.loadProject()
+
+    def _loadProject(self):
+        """
+        """
+        path = generalizePath(self.project_load_filepath)
+        if not os.path.isfile(path):
+            print("Failed to find project: '{0}'".format(path))
+            return
+        with open(path, 'r') as xml_file:
+            descr = json.load(xml_file)
+
+        self._phases_as_cif = descr['phases']
+        self._sample.phases = Phases.from_cif_str(self._phases_as_cif)
+        # send signal to tell the proxy we changed phases
+        self.phaseAdded.emit()
+        self.phasesAsObjChanged.emit()
+
+        # experiment
+        if 'experiments' in descr:
+            self.experimentLoaded = True
+            self._data.experiments[0].x = np.array(descr['experiments'][0])
+            self._data.experiments[0].y = np.array(descr['experiments'][1])
+            self._data.experiments[0].e = np.array(descr['experiments'][2])
+            self._experiment_data = self._data.experiments[0]
+            self.experimentDataAdded.emit()
+            self._onParametersChanged()
+
+            # background
+            if 'background' in descr:
+                self._background_proxy.removeAllPoints()
+                bg_x = descr['background'][0]
+                bg_y = descr['background'][1]
+                for i, point in enumerate(bg_x):
+                    bg_point = (point, bg_y[i])
+                    self._background_proxy.addPoint(bg_point)
+        else:
+            # delete existing experiment
+            self.removeExperiment()
+            self.experimentLoaded = False
+            if descr['experiment_skipped']:
+                self.experimentSkipped = True
+                self.experimentSkippedChanged.emit()
+
+        # project info
+        self.projectInfoAsJson = json.dumps(descr['project_info'])
+
+        # parameters
+        # TODO
+
     # Undo/Redo stack operations
     ####################################################################################################################
     ####################################################################################################################
@@ -1451,3 +1597,15 @@ class PyQmlProxy(QObject):
     def resetUndoRedoStack(self):
         if borg.stack.enabled:
             borg.stack.clear()
+
+
+def createFile(path, content):
+    if os.path.exists(path):
+        print(f'File already exists {path}. Overwriting...')
+        os.unlink(path)
+    try:
+        message = f'create file {path}'
+        with open(path, "w") as file:
+            file.write(content)
+    except Exception as exception:
+        print(message, exception)

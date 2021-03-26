@@ -18,7 +18,7 @@ QtObject {
     property bool projectCreated: false
     property bool sampleLoaded: false
     property bool experimentSkipped: false
-
+    property bool needsSave: true // while waiting for a proper undo/redo flag
 
     // //////////
     // HTML parts
@@ -45,6 +45,9 @@ QtObject {
     // Sidebar controls tab buttons
     property var analysisBasicControlsTabButton
     property var analysisAdvancedControlsTabButton
+
+    // Main application window
+    property var showSaveDialog : false
 
     // Application bar tool buttons
     property var preferencesButton

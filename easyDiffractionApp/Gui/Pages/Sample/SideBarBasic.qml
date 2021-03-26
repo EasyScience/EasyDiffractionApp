@@ -110,13 +110,10 @@ EaComponents.SideBarColumn {
     Dialogs1.FileDialog{
         id: loadPhaseFileDialog
         nameFilters: [ "CIF files (*.cif)"]
-        //folder: settings.value("lastOpenedProjectFolder", examplesDirUrl)
         onAccepted: {
-            //settings.setValue("lastOpenedProjectFolder", folder)
             ExGlobals.Constants.proxy.addSampleFromCif(fileUrl)
 //            ExGlobals.Variables.experimentPageEnabled = true
             ExGlobals.Variables.sampleLoaded = true
         }
     }
-
 }

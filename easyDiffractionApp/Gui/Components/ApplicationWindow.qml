@@ -1,5 +1,6 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
+import QtQuick.Dialogs 1.3 as Dialogs1
 import QtQuick.XmlListModel 2.13
 
 import easyAppGui.Style 1.0 as EaStyle
@@ -27,9 +28,10 @@ EaComponents.ApplicationWindow {
     appBarLeftButtons: [
 
         EaElements.ToolButton {
-            enabled: false
+            enabled: ExGlobals.Constants.proxy.stateHasChanged
             fontIcon: "\uf0c7"
             ToolTip.text: qsTr("Save current state of the project")
+            onClicked:  ExGlobals.Constants.proxy.saveProject()
         },
 
         EaElements.ToolButton {

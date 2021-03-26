@@ -6,7 +6,7 @@ build-backend = 'poetry.masonry.api'
 
 [tool.poetry]
 name = 'easyDiffraction'
-version = '0.0.5'
+version = '0.1.0'
 description = 'Making diffraction data analysis and modelling easy.'
 license = 'GPL-3.0-only'
 authors = ['Andrew Sazonov', 'Simon Ward']
@@ -55,6 +55,7 @@ license_file = 'LICENSE.md' # how to combine this with tool.poetry.license???
 [ci.project.subdirs]
 scripts = 'tools/Scripts'
 docs = { src = 'docs', dest = 'Documentation' }
+examples = { src = 'examples', dest = 'Examples' }
 tutorials = 'docs/UserManual/VideoTutorials'
 download = '.ci/download'
 screenshots = '.ci/screenshots'

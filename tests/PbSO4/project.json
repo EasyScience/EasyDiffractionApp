@@ -1,5 +1,5 @@
 {
-    "phases": "data_PbSO4\n\n_cell_length_a   8.47743(0)\n_cell_length_b   5.39598(0)\n_cell_length_c   6.95702(0)\n_cell_angle_alpha   90.0\n_cell_angle_beta   90.0\n_cell_angle_gamma   90.0\n_space_group_name_H-M_alt   'P n m a'\n\nloop_\n _atom_site_label\n _atom_site_type_symbol\n _atom_site_occupancy\n _atom_site_fract_x\n _atom_site_fract_y\n _atom_site_fract_z\n _atom_site_adp_type\n _atom_site_U_iso_or_equiv\n  Pb  Pb  1.0  0.188  0.25  0.166807  Uiso  0.0\n  S  S  1.0  0.065  0.25  0.685  Uiso  0.0\n  O1  O  1.0  0.908  0.25  0.595  Uiso  0.0\n  O2  O  1.0  0.19357  0.25  0.543237  Uiso  0.0\n  O3  O  1.0  0.08148  0.027453  0.808367  Uiso  0.0\n\n",
+    "phases": "data_PbSO4\n\n_cell_length_a   8.45\n_cell_length_b   5.39597098\n_cell_length_c   6.95703451\n_cell_angle_alpha   90.0\n_cell_angle_beta   90.0\n_cell_angle_gamma   90.0\n_space_group_name_H-M_alt   'P n m a'\n\nloop_\n _atom_site_label\n _atom_site_type_symbol\n _atom_site_occupancy\n _atom_site_fract_x\n _atom_site_fract_y\n _atom_site_fract_z\n _atom_site_adp_type\n _atom_site_U_iso_or_equiv\n  Pb  Pb  1.0  0.188  0.25  0.166807  Uiso  0.01692\n  S  S  1.0  0.065  0.25  0.685  Uiso  0.00258\n  O1  O  1.0  0.908  0.25  0.595  Uiso  0.02469\n  O2  O  1.0  0.19357  0.25  0.54326767  Uiso  0.01803\n  O3  O  1.0  0.08148  0.027453  0.80854688  Uiso  0.01655\n\n",
     "experiments": [
         [
             10.05,
@@ -6848,6 +6848,28 @@
             7.0
         ]
     ],
+    "background": [
+        [
+            10.0,
+            15.0,
+            20.0,
+            40.0,
+            60.0,
+            80.0,
+            100.0,
+            125.0
+        ],
+        [
+            208.29394406267627,
+            195.1808423411736,
+            192.6701004885105,
+            192.60524250693007,
+            206.71540269227927,
+            201.48306922747332,
+            228.94478409202733,
+            242.83992999107056
+        ]
+    ],
     "project_info": {
         "name": "PbSO4",
         "location": "/Users/andrewsazonov/Desktop/PbSO4",
@@ -6859,259 +6881,259 @@
     },
     "parameters": [
         {
-            "id": "264485874584280337589546137898257983951",
+            "id": "39930870357140812073366231902677551670",
             "number": 1,
-            "label": "Phases.PbSO4.lattice.length_a",
-            "value": 8.477425,
+            "label": "PbSO4.PbSO4.lattice.length_a",
+            "value": 8.45,
             "unit": "\u00c5",
-            "error": 3.6e-06,
-            "fit": 1
+            "error": 0.0,
+            "fit": 0
         },
         {
-            "id": "237561215846008451079441481509960897994",
+            "id": "233986081605136220419690210993931413949",
             "number": 2,
-            "label": "Phases.PbSO4.lattice.length_b",
-            "value": 5.395977,
+            "label": "PbSO4.PbSO4.lattice.length_b",
+            "value": 5.39597098,
             "unit": "\u00c5",
-            "error": 2.4e-06,
-            "fit": 1
+            "error": 0.0,
+            "fit": 0
         },
         {
-            "id": "151671889189818830853204309058196622519",
+            "id": "293092704117953729656329568052587480550",
             "number": 3,
-            "label": "Phases.PbSO4.lattice.length_c",
-            "value": 6.957025,
+            "label": "PbSO4.PbSO4.lattice.length_c",
+            "value": 6.95703451,
             "unit": "\u00c5",
-            "error": 3.2999999999999997e-06,
-            "fit": 1
+            "error": 0.0,
+            "fit": 0
         },
         {
-            "id": "53329585881174564297984350157415835013",
+            "id": "197456232006522796057324315952150802996",
             "number": 7,
-            "label": "Phases.PbSO4.atoms.Pb.occupancy",
+            "label": "PbSO4.PbSO4.atoms.Pb.occupancy",
             "value": 1.0,
             "unit": "",
             "error": 0.0,
             "fit": 0
         },
         {
-            "id": "207602954583448484042431961969953254858",
+            "id": "70364562920242524490467218198391479820",
             "number": 8,
-            "label": "Phases.PbSO4.atoms.Pb.fract_x",
+            "label": "PbSO4.PbSO4.atoms.Pb.fract_x",
             "value": 0.188,
             "unit": "",
             "error": 0.0,
             "fit": 0
         },
         {
-            "id": "124925797049743776680693808136139438308",
+            "id": "107858670284250388130598192823646111567",
             "number": 9,
-            "label": "Phases.PbSO4.atoms.Pb.fract_y",
+            "label": "PbSO4.PbSO4.atoms.Pb.fract_y",
             "value": 0.25,
             "unit": "",
             "error": 0.0,
             "fit": 0
         },
         {
-            "id": "45769205935226434511133965642150211104",
+            "id": "88179057354309468456130620236610485925",
             "number": 10,
-            "label": "Phases.PbSO4.atoms.Pb.fract_z",
+            "label": "PbSO4.PbSO4.atoms.Pb.fract_z",
             "value": 0.166807,
             "unit": "",
             "error": 0.0,
             "fit": 0
         },
         {
-            "id": "59059968609101623606336979129097979834",
+            "id": "8590226868300478465608142387704439984",
             "number": 11,
-            "label": "Phases.PbSO4.atoms.Pb.adp.Uiso.Uiso",
-            "value": 0.0,
+            "label": "PbSO4.PbSO4.atoms.Pb.adp.Uiso.Uiso",
+            "value": 0.01692,
             "unit": "\u00c5\u00b2",
             "error": 0.0,
             "fit": 0
         },
         {
-            "id": "12779636954853783199473055005079964719",
+            "id": "225214480851187382032246294662628742599",
             "number": 12,
-            "label": "Phases.PbSO4.atoms.S.occupancy",
+            "label": "PbSO4.PbSO4.atoms.S.occupancy",
             "value": 1.0,
             "unit": "",
             "error": 0.0,
             "fit": 0
         },
         {
-            "id": "248880293008942722908432107875322303092",
+            "id": "289417829724232202701686856080187234994",
             "number": 13,
-            "label": "Phases.PbSO4.atoms.S.fract_x",
+            "label": "PbSO4.PbSO4.atoms.S.fract_x",
             "value": 0.065,
             "unit": "",
             "error": 0.0,
             "fit": 0
         },
         {
-            "id": "118798060335235031137116053590659491948",
+            "id": "289485647562406456789132294421792180505",
             "number": 14,
-            "label": "Phases.PbSO4.atoms.S.fract_y",
+            "label": "PbSO4.PbSO4.atoms.S.fract_y",
             "value": 0.25,
             "unit": "",
             "error": 0.0,
             "fit": 0
         },
         {
-            "id": "206248226333250060121695048969707588689",
+            "id": "66249470843549586699883490011820256774",
             "number": 15,
-            "label": "Phases.PbSO4.atoms.S.fract_z",
+            "label": "PbSO4.PbSO4.atoms.S.fract_z",
             "value": 0.685,
             "unit": "",
             "error": 0.0,
             "fit": 0
         },
         {
-            "id": "56634385588451051408196714347066952155",
+            "id": "158364828249884285534001432790502003263",
             "number": 16,
-            "label": "Phases.PbSO4.atoms.S.adp.Uiso.Uiso",
-            "value": 0.0,
+            "label": "PbSO4.PbSO4.atoms.S.adp.Uiso.Uiso",
+            "value": 0.00258,
             "unit": "\u00c5\u00b2",
             "error": 0.0,
             "fit": 0
         },
         {
-            "id": "203284268608597943040161876420397786094",
+            "id": "161283648154896495003879992674633196955",
             "number": 17,
-            "label": "Phases.PbSO4.atoms.O1.occupancy",
+            "label": "PbSO4.PbSO4.atoms.O1.occupancy",
             "value": 1.0,
             "unit": "",
             "error": 0.0,
             "fit": 0
         },
         {
-            "id": "98063614416254496139918865169549408832",
+            "id": "109941121439586911353816305758117410618",
             "number": 18,
-            "label": "Phases.PbSO4.atoms.O1.fract_x",
+            "label": "PbSO4.PbSO4.atoms.O1.fract_x",
             "value": 0.908,
             "unit": "",
             "error": 0.0,
             "fit": 0
         },
         {
-            "id": "19277654116113650195174822289263821487",
+            "id": "138598437089824496310525544092527679823",
             "number": 19,
-            "label": "Phases.PbSO4.atoms.O1.fract_y",
+            "label": "PbSO4.PbSO4.atoms.O1.fract_y",
             "value": 0.25,
             "unit": "",
             "error": 0.0,
             "fit": 0
         },
         {
-            "id": "4615441323503625011008832168407086078",
+            "id": "29129072773799646274818142495563265843",
             "number": 20,
-            "label": "Phases.PbSO4.atoms.O1.fract_z",
+            "label": "PbSO4.PbSO4.atoms.O1.fract_z",
             "value": 0.595,
             "unit": "",
             "error": 0.0,
             "fit": 0
         },
         {
-            "id": "261086350540564070136806408015664079989",
+            "id": "77305261608803660145496930495631496732",
             "number": 21,
-            "label": "Phases.PbSO4.atoms.O1.adp.Uiso.Uiso",
-            "value": 0.0,
+            "label": "PbSO4.PbSO4.atoms.O1.adp.Uiso.Uiso",
+            "value": 0.02469,
             "unit": "\u00c5\u00b2",
             "error": 0.0,
             "fit": 0
         },
         {
-            "id": "171202630335630367866321945305784952825",
+            "id": "324315291228058870097692282923927445341",
             "number": 22,
-            "label": "Phases.PbSO4.atoms.O2.occupancy",
+            "label": "PbSO4.PbSO4.atoms.O2.occupancy",
             "value": 1.0,
             "unit": "",
             "error": 0.0,
             "fit": 0
         },
         {
-            "id": "162417834709772815489968078528733214002",
+            "id": "164841664762296508975955197130378666324",
             "number": 23,
-            "label": "Phases.PbSO4.atoms.O2.fract_x",
+            "label": "PbSO4.PbSO4.atoms.O2.fract_x",
             "value": 0.19357,
             "unit": "",
             "error": 0.0,
             "fit": 0
         },
         {
-            "id": "339292298826691140854903800502889699280",
+            "id": "74210288392761471510935043356580740868",
             "number": 24,
-            "label": "Phases.PbSO4.atoms.O2.fract_y",
+            "label": "PbSO4.PbSO4.atoms.O2.fract_y",
             "value": 0.25,
             "unit": "",
             "error": 0.0,
             "fit": 0
         },
         {
-            "id": "74864857450064322088623036434841586761",
+            "id": "111218441876674930181100889922334598865",
             "number": 25,
-            "label": "Phases.PbSO4.atoms.O2.fract_z",
-            "value": 0.543237,
+            "label": "PbSO4.PbSO4.atoms.O2.fract_z",
+            "value": 0.54326767,
             "unit": "",
             "error": 0.0,
             "fit": 0
         },
         {
-            "id": "160962696383990505573321684971985063894",
+            "id": "191982041242639633190883705612814196202",
             "number": 26,
-            "label": "Phases.PbSO4.atoms.O2.adp.Uiso.Uiso",
-            "value": 0.0,
+            "label": "PbSO4.PbSO4.atoms.O2.adp.Uiso.Uiso",
+            "value": 0.01803,
             "unit": "\u00c5\u00b2",
             "error": 0.0,
             "fit": 0
         },
         {
-            "id": "42942559553823153344162758250035270569",
+            "id": "118308772075552772854275943403041255190",
             "number": 27,
-            "label": "Phases.PbSO4.atoms.O3.occupancy",
+            "label": "PbSO4.PbSO4.atoms.O3.occupancy",
             "value": 1.0,
             "unit": "",
             "error": 0.0,
             "fit": 0
         },
         {
-            "id": "252521905606042792206071288990163430946",
+            "id": "305531638744643158411178546030060611072",
             "number": 28,
-            "label": "Phases.PbSO4.atoms.O3.fract_x",
+            "label": "PbSO4.PbSO4.atoms.O3.fract_x",
             "value": 0.08148,
             "unit": "",
             "error": 0.0,
             "fit": 0
         },
         {
-            "id": "324718635391347727558745749110595922133",
+            "id": "109160142754183306901574976150553721726",
             "number": 29,
-            "label": "Phases.PbSO4.atoms.O3.fract_y",
+            "label": "PbSO4.PbSO4.atoms.O3.fract_y",
             "value": 0.027453,
             "unit": "",
             "error": 0.0,
             "fit": 0
         },
         {
-            "id": "221874906081058316803609132192479243675",
+            "id": "128604037612924208439497306810063579810",
             "number": 30,
-            "label": "Phases.PbSO4.atoms.O3.fract_z",
-            "value": 0.808367,
+            "label": "PbSO4.PbSO4.atoms.O3.fract_z",
+            "value": 0.80854688,
             "unit": "",
             "error": 0.0,
             "fit": 0
         },
         {
-            "id": "215728269246076757289700799677332920733",
+            "id": "9129498483277325808375425757293024649",
             "number": 31,
-            "label": "Phases.PbSO4.atoms.O3.adp.Uiso.Uiso",
-            "value": 0.0,
+            "label": "PbSO4.PbSO4.atoms.O3.adp.Uiso.Uiso",
+            "value": 0.01655,
             "unit": "\u00c5\u00b2",
             "error": 0.0,
             "fit": 0
         },
         {
-            "id": "976374267666359402224287268343565027",
+            "id": "103837004643053183499604942740914205770",
             "number": 32,
             "label": "Instrument.wavelength",
             "value": 1.912,
@@ -7120,34 +7142,34 @@
             "fit": 0
         },
         {
-            "id": "237328457782123519065739384001891473424",
+            "id": "249756354698775429538883121579927930475",
             "number": 33,
             "label": "Instrument.resolution_u",
-            "value": 0.14207,
+            "value": 0.1447,
             "unit": "",
             "error": 0.0,
             "fit": 0
         },
         {
-            "id": "305288686081975302817558924312262253800",
+            "id": "118429050855201573096784297049994766548",
             "number": 34,
             "label": "Instrument.resolution_v",
-            "value": -0.4181,
+            "value": -0.4252,
             "unit": "",
             "error": 0.0,
             "fit": 0
         },
         {
-            "id": "271439791352313017136157048039467372626",
+            "id": "52200765268286790144920890998701206728",
             "number": 35,
             "label": "Instrument.resolution_w",
-            "value": 0.38629,
+            "value": 0.3864,
             "unit": "",
             "error": 0.0,
             "fit": 0
         },
         {
-            "id": "336980009240802926074513888937239910223",
+            "id": "216411923183325912296342495208463914097",
             "number": 36,
             "label": "Instrument.resolution_x",
             "value": 0.0,
@@ -7156,16 +7178,16 @@
             "fit": 0
         },
         {
-            "id": "79408772821450103209574283675003508557",
+            "id": "80137979513524644837283390979118295587",
             "number": 37,
             "label": "Instrument.resolution_y",
-            "value": 0.09038,
+            "value": 0.0961,
             "unit": "",
             "error": 0.0,
             "fit": 0
         },
         {
-            "id": "333368959096720259799265227952306992519",
+            "id": "41696777316793345514698532779782295465",
             "number": 38,
             "label": "Instrument.zero_shift",
             "value": 0.0,
@@ -7174,7 +7196,7 @@
             "fit": 0
         },
         {
-            "id": "160115785657751601941221768850094010886",
+            "id": "18704731705000450940946639446332282464",
             "number": 39,
             "label": "Instrument.scale",
             "value": 1.0,
@@ -7183,91 +7205,73 @@
             "fit": 0
         },
         {
-            "id": "325276669249927104527608315361296167070",
+            "id": "84878501776496075204378955740705253314",
             "number": 40,
             "label": "Instrument.background.point_background.10,0_deg.intensity",
-            "value": 205.6,
+            "value": 208.29394406267627,
             "unit": "",
             "error": 0.0,
             "fit": 0
         },
         {
-            "id": "165440950123894878436796289614489482289",
+            "id": "149735620187147649048733107532478583423",
             "number": 41,
             "label": "Instrument.background.point_background.15,0_deg.intensity",
-            "value": 194.3,
+            "value": 195.1808423411736,
             "unit": "",
             "error": 0.0,
             "fit": 0
         },
         {
-            "id": "220454499321181902369643510987968482846",
+            "id": "77828569386439994960731696206685974068",
             "number": 42,
             "label": "Instrument.background.point_background.20,0_deg.intensity",
-            "value": 194.6,
+            "value": 192.6701004885105,
             "unit": "",
             "error": 0.0,
             "fit": 0
         },
         {
-            "id": "132758429611396891414441747637425447905",
+            "id": "28296394415718685093425678975372415585",
             "number": 43,
-            "label": "Instrument.background.point_background.30,0_deg.intensity",
-            "value": 187.5,
+            "label": "Instrument.background.point_background.40,0_deg.intensity",
+            "value": 192.60524250693007,
             "unit": "",
             "error": 0.0,
             "fit": 0
         },
         {
-            "id": "142365817175685948083346998962709451491",
+            "id": "122664501006573866684642193864993208236",
             "number": 44,
-            "label": "Instrument.background.point_background.50,0_deg.intensity",
-            "value": 208.0,
+            "label": "Instrument.background.point_background.60,0_deg.intensity",
+            "value": 206.71540269227927,
             "unit": "",
             "error": 0.0,
             "fit": 0
         },
         {
-            "id": "182503703634973101656342100914306337633",
+            "id": "69691923859309122656775037512252843106",
             "number": 45,
-            "label": "Instrument.background.point_background.70,0_deg.intensity",
-            "value": 200.3,
+            "label": "Instrument.background.point_background.80,0_deg.intensity",
+            "value": 201.48306922747332,
             "unit": "",
             "error": 0.0,
             "fit": 0
         },
         {
-            "id": "118208113783180530315023515348346956804",
+            "id": "5331850821308406322024002825304021905",
             "number": 46,
-            "label": "Instrument.background.point_background.90,0_deg.intensity",
-            "value": 217.4,
+            "label": "Instrument.background.point_background.100,0_deg.intensity",
+            "value": 228.94478409202733,
             "unit": "",
             "error": 0.0,
             "fit": 0
         },
         {
-            "id": "205319720716088052438301158821428217730",
+            "id": "110940083145459855225754816493753007224",
             "number": 47,
-            "label": "Instrument.background.point_background.110,0_deg.intensity",
-            "value": 240.6,
-            "unit": "",
-            "error": 0.0,
-            "fit": 0
-        },
-        {
-            "id": "106418420036798350652411969881413806805",
-            "number": 48,
-            "label": "Instrument.background.point_background.130,0_deg.intensity",
-            "value": 233.6,
-            "unit": "",
-            "error": 0.0,
-            "fit": 0
-        },
-        {
-            "id": "243131535380664606910653275640761703692",
-            "number": 49,
-            "label": "Instrument.background.point_background.153,0_deg.intensity",
-            "value": 230.3,
+            "label": "Instrument.background.point_background.125,0_deg.intensity",
+            "value": 242.83992999107056,
             "unit": "",
             "error": 0.0,
             "fit": 0
@@ -7288,7 +7292,7 @@
             "max": Infinity,
             "fixed": true,
             "units": "angstrom",
-            "@id": "976374267666359402224287268343565027",
+            "@id": "103837004643053183499604942740914205770",
             "enabled": true
         },
         "resolution_u": {
@@ -7296,13 +7300,13 @@
             "@class": "Parameter",
             "@version": "0.0.1",
             "name": "resolution_u",
-            "value": 0.14207,
+            "value": 0.1447,
             "error": 0.0,
             "min": -Infinity,
             "max": Infinity,
             "fixed": true,
             "units": "dimensionless",
-            "@id": "237328457782123519065739384001891473424",
+            "@id": "249756354698775429538883121579927930475",
             "enabled": true
         },
         "resolution_v": {
@@ -7310,13 +7314,13 @@
             "@class": "Parameter",
             "@version": "0.0.1",
             "name": "resolution_v",
-            "value": -0.4181,
+            "value": -0.4252,
             "error": 0.0,
             "min": -Infinity,
             "max": Infinity,
             "fixed": true,
             "units": "dimensionless",
-            "@id": "305288686081975302817558924312262253800",
+            "@id": "118429050855201573096784297049994766548",
             "enabled": true
         },
         "resolution_w": {
@@ -7324,13 +7328,13 @@
             "@class": "Parameter",
             "@version": "0.0.1",
             "name": "resolution_w",
-            "value": 0.38629,
+            "value": 0.3864,
             "error": 0.0,
             "min": -Infinity,
             "max": Infinity,
             "fixed": true,
             "units": "dimensionless",
-            "@id": "271439791352313017136157048039467372626",
+            "@id": "52200765268286790144920890998701206728",
             "enabled": true
         },
         "resolution_x": {
@@ -7344,7 +7348,7 @@
             "max": Infinity,
             "fixed": true,
             "units": "dimensionless",
-            "@id": "336980009240802926074513888937239910223",
+            "@id": "216411923183325912296342495208463914097",
             "enabled": true
         },
         "resolution_y": {
@@ -7352,16 +7356,16 @@
             "@class": "Parameter",
             "@version": "0.0.1",
             "name": "resolution_y",
-            "value": 0.09038,
+            "value": 0.0961,
             "error": 0.0,
             "min": -Infinity,
             "max": Infinity,
             "fixed": true,
             "units": "dimensionless",
-            "@id": "79408772821450103209574283675003508557",
+            "@id": "80137979513524644837283390979118295587",
             "enabled": true
         },
         "interface": null,
-        "@id": "93863517306706616991722216190319161482"
+        "@id": "67826648263095728731722376114456005798"
     }
 }

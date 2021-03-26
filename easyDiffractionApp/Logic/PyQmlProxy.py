@@ -414,11 +414,11 @@ class PyQmlProxy(QObject):
         sample.pattern.zero_shift = 0.0
         sample.pattern.scale = 1.0
         sample.parameters.wavelength = 1.912
-        sample.parameters.resolution_u = 0.14
-        sample.parameters.resolution_v = -0.42
-        sample.parameters.resolution_w = 0.38
+        sample.parameters.resolution_u = 0.1447
+        sample.parameters.resolution_v = -0.4252
+        sample.parameters.resolution_w = 0.3864
         sample.parameters.resolution_x = 0.0
-        sample.parameters.resolution_y = 0.0
+        sample.parameters.resolution_y = 0.0961
         return sample
 
     ####################################################################################################################

@@ -325,7 +325,7 @@ EaComponents.ApplicationWindow {
     }
 
     onClosing: {
-       closeDialogue.visible = ExGlobals.Constants.proxy.stateHasChanged
+       closeDialog.visible = ExGlobals.Constants.proxy.stateHasChanged
        close.accepted = !ExGlobals.Constants.proxy.stateHasChanged
     }
 
@@ -342,7 +342,7 @@ EaComponents.ApplicationWindow {
     }
 
     ExComponents.CloseDialog {
-        id: closeDialogue
+        id: closeDialog
         visible: false
     }
 }

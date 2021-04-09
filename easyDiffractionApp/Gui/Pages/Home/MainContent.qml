@@ -139,8 +139,8 @@ Item {
     EaElements.RemoteController {
         id: rc
         visible: false
-        sayEnabled: false
         audioDir: Qt.resolvedUrl("../../Resources/Audio")
+        audioEnabled: false
     }
 
     Timer {
@@ -215,7 +215,7 @@ Item {
         startSavingScreenshots()
         rc.wait(1000)
         rc.posToCenter()
-        rc.show()
+        rc.showPointer()
 
         rc.mouseClick(ExGlobals.Variables.startButton)
         rc.mouseClick(ExGlobals.Variables.createProjectButton)
@@ -224,20 +224,20 @@ Item {
         rc.mouseClick(ExGlobals.Variables.sampleParametersGroup)
 
         rc.mouseClick(ExGlobals.Variables.amplitudeTextInput)
-        rc.hide()
+        rc.hidePointer()
         rc.keyClick(Qt.Key_Right)
-        rc.clearText(6)
+        rc.deleteCharacters(6)
         rc.typeText("2.1234")
         rc.keyClick(Qt.Key_Enter)
-        rc.show()
+        rc.showPointer()
 
         rc.mouseClick(ExGlobals.Variables.periodTextInput)
-        rc.hide()
+        rc.hidePointer()
         rc.keyClick(Qt.Key_Right)
-        rc.clearText(1)
+        rc.deleteCharacters(1)
         rc.typeText("6")
         rc.keyClick(Qt.Key_Enter)
-        rc.show()
+        rc.showPointer()
 
         rc.wait(2000)
 
@@ -250,15 +250,15 @@ Item {
         rc.mouseClick(ExGlobals.Variables.xShiftFitCheckBox)
 
         rc.mouseClick(ExGlobals.Variables.xShiftValueTextInput)
-        rc.hide()
+        rc.hidePointer()
         rc.keyClick(Qt.Key_Right)
         rc.keyClick(Qt.Key_Right)
         rc.keyClick(Qt.Key_Right)
         rc.keyClick(Qt.Key_Right)
-        rc.clearText(6)
+        rc.deleteCharacters(6)
         rc.typeText("-0.3")
         rc.keyClick(Qt.Key_Enter)
-        rc.show()
+        rc.showPointer()
 
         rc.mouseClick(ExGlobals.Variables.startFittingButton)
         rc.mouseClick(ExGlobals.Variables.xShiftFitCheckBox)
@@ -266,7 +266,7 @@ Item {
 
         rc.wait(1000)
 
-        rc.hide()
+        rc.hidePointer()
         rc.wait(1000)
         endSavingScreenshots()
     }
@@ -284,7 +284,7 @@ Item {
         startSavingScreenshots()
         rc.wait(1000)
         rc.posToCenter()
-        rc.show()
+        rc.showPointer()
 
         // App preferences
 
@@ -323,15 +323,17 @@ Item {
 
         rc.say("Now, you can change the symmetry and cell parameters.")
         rc.mouseClick(ExGlobals.Variables.symmetryGroup, 15)
-        x_pos = ExGlobals.Variables.cellLengthALabel.width
+        x_pos = typeof ExGlobals.Variables.cellLengthALabel !== 'undefined' ?
+                    ExGlobals.Variables.cellLengthALabel.width :
+                    0
         rc.mouseClick(ExGlobals.Variables.cellLengthALabel, x_pos)
-        rc.hide()
+        rc.hidePointer()
         //rc.keyClick(Qt.Key_Right)
         //rc.keyClick(Qt.Key_Right)
-        rc.clearText(6)
+        rc.deleteCharacters(6)
         rc.typeText("7.00")
         //rc.keyClick(Qt.Key_Enter) // DOESN'T WORK ON CI XVFB ?
-        rc.show()
+        rc.showPointer()
 
         rc.say("Append or remove new atoms.")
         rc.mouseClick(ExGlobals.Variables.atomsGroup, 15)
@@ -395,7 +397,7 @@ Item {
 
         // End
 
-        rc.hide()
+        rc.hidePointer()
         rc.say("Thank you for using easy diffraction.")
         rc.wait(1000)
         endSavingScreenshots()
@@ -411,7 +413,7 @@ Item {
         startSavingScreenshots()
         rc.wait(1000)
         rc.posToCenter()
-        rc.show()
+        rc.showPointer()
 
         rc.mouseClick(ExGlobals.Variables.preferencesButton)
         rc.mouseClick(ExGlobals.Variables.themeSelector)
@@ -427,18 +429,16 @@ Item {
         rc.mouseClick(ExGlobals.Variables.themeSelector, x_pos, y_pos)
 
         rc.wait(1000)
-        rc.keyClick(Qt.Key_Escape)
+        rc.mouseClick(ExGlobals.Variables.preferencesOkButton)
 
         rc.wait(1000)
 
-        rc.hide()
+        rc.hidePointer()
         rc.wait(1000)
         endSavingScreenshots()
 
         rc.visible = false
     }
-
-
 
     // TESTS
 

@@ -94,12 +94,6 @@ Item {
         visible: false
         title: qsTr("Save confirmation")
 
-        parent: Overlay.overlay
-
-        x: (parent.width - width) * 0.5
-        y: (parent.height - height) * 0.5
-
-        modal: true
         standardButtons: Dialog.Ok
 
         Row {

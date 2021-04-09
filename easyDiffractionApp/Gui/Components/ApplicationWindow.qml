@@ -9,6 +9,7 @@ import easyAppGui.Elements 1.0 as EaElements
 import easyAppGui.Components 1.0 as EaComponents
 
 import Gui.Globals 1.0 as ExGlobals
+import Gui.Components 1.0 as ExComponents
 import Gui.Pages.Home 1.0 as ExHomePage
 import Gui.Pages.Project 1.0 as ExProjectPage
 import Gui.Pages.Sample 1.0 as ExSamplePage
@@ -323,6 +324,11 @@ EaComponents.ApplicationWindow {
         }
     }
 
+    onClosing: {
+       closeDialog.visible = ExGlobals.Constants.proxy.stateHasChanged
+       close.accepted = !ExGlobals.Constants.proxy.stateHasChanged
+    }
+
     ///////////////
     // Init dialogs
     ///////////////
@@ -335,4 +341,8 @@ EaComponents.ApplicationWindow {
         }
     }
 
+    ExComponents.CloseDialog {
+        id: closeDialog
+        visible: false
+    }
 }

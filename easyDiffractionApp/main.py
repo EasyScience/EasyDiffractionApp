@@ -88,12 +88,15 @@ def main():
     # Load the root QML file
     engine.load(main_qml_path)
 
-    # Root application window
-    root_window = engine.rootObjects()[0]
-
     # Customize app window titlebar
     if platform.system() == "Darwin":
         import ctypes, objc, Cocoa
+
+        # Root application window
+        root_obj = engine.rootObjects()
+        if not root_obj:
+            sys.exit(-1)
+        root_window = root_obj[0]
 
         ptr = int(root_window.winId())
         view = objc.objc_object(c_void_p=ctypes.c_void_p(ptr))

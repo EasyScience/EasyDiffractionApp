@@ -105,29 +105,17 @@ Item {
                 spacing: EaStyle.Sizes.fontPixelSize
 
                 EaElements.Button {
-                    id: tutorial1Button
                     enabled: false
-                    text: qsTr("Tutorial 1") + ": " + qsTr("Data fitting")
-                    onPressed: {
-                        runTutorial1()
-                        setRootFocusTimer.start()
-                    }
+                    text: qsTr("Tutorial") + " 1: " + qsTr("Data fitting")
+                    onPressed: runTutorial1()
                 }
                 EaElements.Button {
-                    id: tutorial2Button
-                    text: qsTr("Tutorial 2") + ": " + qsTr("Data simulation")
-                    onPressed: {
-                        runTutorial2()
-                        setRootFocusTimer.start()
-                    }
+                    text: qsTr("Tutorial") + " 2: " + qsTr("Data simulation")
+                    onPressed: runTutorial2()
                 }
                 EaElements.Button {
-                    id: tutorial3Button
-                    text: qsTr("Tutorial 3") + ": " + qsTr("App settings")
-                    onPressed: {
-                        runTutorial3()
-                        setRootFocusTimer.start()
-                    }
+                    text: qsTr("Tutorial") + " 3: " + qsTr("App settings")
+                    onPressed: runTutorial3()
                 }
             }
         }
@@ -157,21 +145,6 @@ Item {
         interval: 1000
         onTriggered: runTutorial2()
     }
-
-    Timer {
-        id: setRootFocusTimer
-        interval: 100
-        onTriggered: {
-            tutorial1Button.enabled = !tutorial1Button.enabled
-            tutorial1Button.enabled = !tutorial1Button.enabled
-            tutorial2Button.enabled = !tutorial2Button.enabled
-            tutorial2Button.enabled = !tutorial2Button.enabled
-            tutorial3Button.enabled = !tutorial3Button.enabled
-            tutorial3Button.enabled = !tutorial3Button.enabled
-            root.forceActiveFocus()
-        }
-    }
-
 
     Component.onCompleted: {
         if (EaGlobals.Variables.isTestMode) {

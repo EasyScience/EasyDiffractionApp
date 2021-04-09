@@ -184,7 +184,7 @@ Item {
                   `  --buttonBorderColor:${EaStyle.Colors.chartAxis};`,
                   `  --tooltipBackgroundColor:${EaStyle.Colors.dialogBackground};`,
                   `  --tooltipForegroundColor:${EaStyle.Colors.themeForeground};`,
-                  `  --tooltipBorderColor:${EaStyle.Colors.themePrimary};`,
+                  `  --tooltipBorderColor:${EaStyle.Colors.toolTipBorder};`,
                   `}`,
 
                   'html {',

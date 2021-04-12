@@ -4,15 +4,14 @@ import timeit
 import json
 from typing import Union
 from dicttoxml import dicttoxml
-from xml.dom.minidom import parseString
 
 from PySide2.QtCore import QObject, Slot, Signal, Property
 from PySide2.QtCore import QByteArray, QBuffer, QIODevice
 
-from easyCore import np, borg, ureg
+from easyCore import np, borg
 
 from easyCore.Objects.Groups import BaseCollection
-from easyCore.Objects.Base import BaseObj, Parameter
+from easyCore.Objects.Base import BaseObj
 
 from easyCore.Symmetry.tools import SpacegroupInfo
 from easyCore.Fitting.Fitting import Fitter
@@ -32,7 +31,6 @@ from easyDiffractionApp.Logic.DataStore import DataSet1D, DataStore
 from easyDiffractionApp.Logic.Proxies.Background import BackgroundProxy
 from easyDiffractionApp.Logic.Proxies.Plotting1d import Plotting1dProxy
 from easyDiffractionApp.Logic.Fitter import Fitter as ThreadedFitter
-
 
 
 class PyQmlProxy(QObject):
@@ -83,7 +81,9 @@ class PyQmlProxy(QObject):
     simulationParametersChanged = Signal()
 
     fitFinished = Signal()
+    fitFinishedNotify = Signal()
     fitResultsChanged = Signal()
+    stopFit = Signal()
 
     currentMinimizerChanged = Signal()
     currentMinimizerMethodChanged = Signal()
@@ -232,6 +232,7 @@ class PyQmlProxy(QObject):
         # Multithreading
         self._fitter_thread = None
         self._fit_finished = True
+        self.stopFit.connect(self.onStopFit)
 
         # Multithreading
         self._fitter_thread = None
@@ -464,19 +465,19 @@ class PyQmlProxy(QObject):
     def _setPhasesAsObj(self):
         start_time = timeit.default_timer()
         self._phases_as_obj = self._sample.phases.as_dict()['data']
-        print("+ _setPhasesAsObj: {0:.3f} s".format(timeit.default_timer() - start_time))
+        # print("+ _setPhasesAsObj: {0:.3f} s".format(timeit.default_timer() - start_time))
         self.phasesAsObjChanged.emit()
 
     def _setPhasesAsXml(self):
         start_time = timeit.default_timer()
         self._phases_as_xml = dicttoxml(self._phases_as_obj, attr_type=True).decode()
-        print("+ _setPhasesAsXml: {0:.3f} s".format(timeit.default_timer() - start_time))
+        # print("+ _setPhasesAsXml: {0:.3f} s".format(timeit.default_timer() - start_time))
         self.phasesAsXmlChanged.emit()
 
     def _setPhasesAsCif(self):
         start_time = timeit.default_timer()
         self._phases_as_cif = str(self._sample.phases.cif)
-        print("+ _setPhasesAsCif: {0:.3f} s".format(timeit.default_timer() - start_time))
+        # print("+ _setPhasesAsCif: {0:.3f} s".format(timeit.default_timer() - start_time))
         self.phasesAsCifChanged.emit()
 
     def _onStructureParametersChanged(self):
@@ -803,7 +804,6 @@ class PyQmlProxy(QObject):
             return inner
 
         borg.stack.push(FunctionStack(self, outer1(self), outer2(self)))
-
 
     @Slot()
     def removeExperiment(self):
@@ -1284,8 +1284,7 @@ class PyQmlProxy(QObject):
     def fit(self):
         # if running, stop the thread
         if not self.isFitFinished:
-            self.stop_fit()
-            self._setFitResultsFailed("Fitting stopped")
+            self.onStopFit()
             return
         self.isFitFinished = False
         exp_data = self._data.experiments[0]
@@ -1298,13 +1297,24 @@ class PyQmlProxy(QObject):
         args = (x, y)
         kwargs = {"weights": weights, "method": method}
         self._fitter_thread = ThreadedFitter(self.fitter, 'fit', *args, **kwargs)
+        self._fitter_thread.setTerminationEnabled(True)
         self._fitter_thread.finished.connect(self._setFitResults)
         self._fitter_thread.failed.connect(self._setFitResultsFailed)
-        self._fitter_thread.setTerminationEnabled(True)
         self._fitter_thread.start()
 
-        # self._setFitResults(res)
-        # self.fitFinished.emit()
+    def onStopFit(self):
+        """
+        Slot for thread cancelling and reloading parameters
+        """
+        self._fitter_thread.terminate()
+        self._fitter_thread.wait()
+        self._fitter_thread = None
+
+        self._fit_results['success'] = 'cancelled'
+        self._fit_results['nvarys'] = None
+        self._fit_results['GOF'] = None
+        self._fit_results['redchi2'] = None
+        self._setFitResultsFailed("Fitting stopped")
 
     def stop_fit(self):
         self._fitter_thread.stop()
@@ -1313,18 +1323,16 @@ class PyQmlProxy(QObject):
     def fitResults(self):
         return self._fit_results
 
-    @Property(bool, notify=fitFinished)
+    @Property(bool, notify=fitFinishedNotify)
     def isFitFinished(self):
-        print('+ isfitFinished called')
         return self._fit_finished
 
     @isFitFinished.setter
     def isFitFinished(self, fit_finished: bool):
-        print('+ isFitFinished.setter called', fit_finished)
         if self._fit_finished == fit_finished:
             return
         self._fit_finished = fit_finished
-        self.fitFinished.emit()
+        self.fitFinishedNotify.emit()
 
     def _defaultFitResults(self):
         return {
@@ -1346,13 +1354,9 @@ class PyQmlProxy(QObject):
         self.fitFinished.emit()
 
     def _setFitResultsFailed(self, res):
-        print("FIT FAILED")
-        print(str(res))
         self.isFitFinished = True
-        self.fitFinished.emit()
 
     def _onFitFinished(self):
-        print("***** _onFitFinished")
         self.parametersChanged.emit()
 
     ####################################################################################################################

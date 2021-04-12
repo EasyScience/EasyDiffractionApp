@@ -18,13 +18,13 @@ class Fitter(QThread):
     def run(self):
         res = {}
         if hasattr(self._obj, self.method_name):
-           func = getattr(self._obj, self.method_name)
-           try:
-               res = func(*self.args, **self.kwargs)
-           except Exception as ex:
-               self.failed.emit(str(ex))
-               return str(ex)
-        self.finished.emit(res)
+            func = getattr(self._obj, self.method_name)
+            try:
+                res = func(*self.args, **self.kwargs)
+            except Exception as ex:
+                self.failed.emit(str(ex))
+                return str(ex)
+            self.finished.emit(res)
         return res
 
     def stop(self):

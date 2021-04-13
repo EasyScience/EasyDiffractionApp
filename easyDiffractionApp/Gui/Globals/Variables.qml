@@ -76,9 +76,8 @@ QtObject {
 
     // Sidebar elements
     property var samplePhasesExplorer
-
-    // Sidebar text inputs
     property var cellLengthALabel
+    property var loadExampleProjectButton
 
     // Checkboxes
     property var enableToolTipsCheckBox
@@ -117,5 +116,8 @@ QtObject {
 
     // Summary
     property var reportWebView
+
+    // User guides
+    property var userGuidesButtons: [[], [], [], [], [], []]
 
 }

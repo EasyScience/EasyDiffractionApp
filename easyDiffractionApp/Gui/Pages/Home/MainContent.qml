@@ -107,8 +107,7 @@ Item {
                 spacing: EaStyle.Sizes.fontPixelSize
 
                 EaElements.Button {
-                    enabled: false
-                    text: qsTr("Tutorial") + " 1: " + qsTr("Data fitting")
+                    text: qsTr("Tutorial") + " 1: " + qsTr("App interface")
                     onPressed: runTutorial1()
                 }
                 EaElements.Button {
@@ -116,7 +115,8 @@ Item {
                     onPressed: runTutorial2()
                 }
                 EaElements.Button {
-                    text: qsTr("Tutorial") + " 3: " + qsTr("App settings")
+                    enabled: false
+                    text: qsTr("Tutorial") + " 3: " + qsTr("Data fitting")
                     onPressed: runTutorial3()
                 }
             }
@@ -145,7 +145,7 @@ Item {
     Timer {
         id: runTutorialTimer
         interval: 1000
-        onTriggered: runTutorial2()
+        onTriggered: runTutorial1()
     }
 
     Component.onCompleted: {
@@ -187,63 +187,87 @@ Item {
     function runTutorial1() {
         print("* run Tutorial 1")
 
+        rc.visible = true
+
         startSavingScreenshots()
         rc.wait(1000)
         rc.posToCenter()
         rc.showPointer()
 
+        // General
+
+        rc.mouseClick(ExGlobals.Variables.preferencesButton)
+        rc.mouseClick(ExGlobals.Variables.enableUserGuidesCheckBox)
+        rc.wait(1000)
+        rc.mouseClick(ExGlobals.Variables.preferencesOkButton)
+
+        // Home page
+
+        for (let i = 0, buttons = ExGlobals.Variables.userGuidesButtons[0]; i < buttons.length - 1; ++i) {
+            rc.mouseClick(buttons[i])
+        }
         rc.mouseClick(ExGlobals.Variables.startButton)
-        rc.mouseClick(ExGlobals.Variables.createProjectButton)
+
+        // Project page
+
+        for (let i = 0, buttons = ExGlobals.Variables.userGuidesButtons[1]; i < buttons.length - 1; ++i) {
+            rc.mouseClick(buttons[i])
+        }
+        rc.mouseClick(ExGlobals.Variables.loadExampleProjectButton)
         rc.mouseClick(ExGlobals.Variables.sampleTabButton)
-        rc.mouseClick(ExGlobals.Variables.addNewSampleButton)
-        rc.mouseClick(ExGlobals.Variables.sampleParametersGroup)
 
-        rc.mouseClick(ExGlobals.Variables.amplitudeTextInput)
-        rc.hidePointer()
-        rc.keyClick(Qt.Key_Right)
-        rc.deleteCharacters(6)
-        rc.typeText("2.1234")
-        rc.keyClick(Qt.Key_Enter)
-        rc.showPointer()
+        // Sample page
 
-        rc.mouseClick(ExGlobals.Variables.periodTextInput)
-        rc.hidePointer()
-        rc.keyClick(Qt.Key_Right)
-        rc.deleteCharacters(1)
-        rc.typeText("6")
-        rc.keyClick(Qt.Key_Enter)
-        rc.showPointer()
-
-        rc.wait(2000)
-
+        for (let i = 0, buttons = ExGlobals.Variables.userGuidesButtons[2]; i < buttons.length - 1; ++i) {
+            rc.mouseClick(buttons[i])
+        }
         rc.mouseClick(ExGlobals.Variables.experimentTabButton)
-        rc.mouseClick(ExGlobals.Variables.generateMeasuredDataButton)
+
+        // Experiment page
+
+        for (let i = 0, buttons = ExGlobals.Variables.userGuidesButtons[3]; i < buttons.length - 1; ++i) {
+            rc.mouseClick(buttons[i])
+        }
+        rc.mouseClick(ExGlobals.Variables.analysisTabButton)
+
+        // Analysis page
+
+        for (let i = 0, buttons = ExGlobals.Variables.userGuidesButtons[4]; i < buttons.length - 1; ++i) {
+            rc.mouseClick(buttons[i])
+        }
+        rc.mouseClick(ExGlobals.Variables.summaryTabButton)
+
+        // Summary page
+
+        for (let i = 0, buttons = ExGlobals.Variables.userGuidesButtons[5]; i < buttons.length - 1; ++i) {
+            rc.mouseClick(buttons[i])
+        }
+
+        /*
+        rc.mouseClick(ExGlobals.Variables.preferencesButton)
+        rc.mouseClick(ExGlobals.Variables.themeSelector)
+
+        const x_pos = undefined
+        let y_pos = !EaStyle.Colors.isDarkTheme ? EaStyle.Sizes.comboBoxHeight * 1.5 : undefined
+        rc.mouseClick(ExGlobals.Variables.themeSelector, x_pos, y_pos)
 
         rc.wait(1000)
 
-        rc.mouseClick(ExGlobals.Variables.analysisTabButton)
-        rc.mouseClick(ExGlobals.Variables.xShiftFitCheckBox)
+        rc.mouseClick(ExGlobals.Variables.themeSelector)
+        y_pos = !EaStyle.Colors.isDarkTheme ? EaStyle.Sizes.comboBoxHeight * 1.5 : undefined
+        rc.mouseClick(ExGlobals.Variables.themeSelector, x_pos, y_pos)
 
-        rc.mouseClick(ExGlobals.Variables.xShiftValueTextInput)
-        rc.hidePointer()
-        rc.keyClick(Qt.Key_Right)
-        rc.keyClick(Qt.Key_Right)
-        rc.keyClick(Qt.Key_Right)
-        rc.keyClick(Qt.Key_Right)
-        rc.deleteCharacters(6)
-        rc.typeText("-0.3")
-        rc.keyClick(Qt.Key_Enter)
-        rc.showPointer()
-
-        rc.mouseClick(ExGlobals.Variables.startFittingButton)
-        rc.mouseClick(ExGlobals.Variables.xShiftFitCheckBox)
-        rc.mouseClick(ExGlobals.Variables.startFittingButton)
+        rc.wait(1000)
+        rc.mouseClick(ExGlobals.Variables.preferencesOkButton)
+        */
 
         rc.wait(1000)
 
         rc.hidePointer()
         rc.wait(1000)
         endSavingScreenshots()
+
+        rc.visible = false
     }
 
     function runTutorial2() {
@@ -383,36 +407,63 @@ Item {
     function runTutorial3() {
         print("* run Tutorial 3")
 
-        rc.visible = true
-
         startSavingScreenshots()
         rc.wait(1000)
         rc.posToCenter()
         rc.showPointer()
 
-        rc.mouseClick(ExGlobals.Variables.preferencesButton)
-        rc.mouseClick(ExGlobals.Variables.themeSelector)
+        rc.mouseClick(ExGlobals.Variables.startButton)
+        rc.mouseClick(ExGlobals.Variables.createProjectButton)
+        rc.mouseClick(ExGlobals.Variables.sampleTabButton)
+        rc.mouseClick(ExGlobals.Variables.addNewSampleButton)
+        rc.mouseClick(ExGlobals.Variables.sampleParametersGroup)
 
-        const x_pos = undefined
-        let y_pos = !EaStyle.Colors.isDarkTheme ? EaStyle.Sizes.comboBoxHeight * 1.5 : undefined
-        rc.mouseClick(ExGlobals.Variables.themeSelector, x_pos, y_pos)
+        rc.mouseClick(ExGlobals.Variables.amplitudeTextInput)
+        rc.hidePointer()
+        rc.keyClick(Qt.Key_Right)
+        rc.deleteCharacters(6)
+        rc.typeText("2.1234")
+        rc.keyClick(Qt.Key_Enter)
+        rc.showPointer()
+
+        rc.mouseClick(ExGlobals.Variables.periodTextInput)
+        rc.hidePointer()
+        rc.keyClick(Qt.Key_Right)
+        rc.deleteCharacters(1)
+        rc.typeText("6")
+        rc.keyClick(Qt.Key_Enter)
+        rc.showPointer()
+
+        rc.wait(2000)
+
+        rc.mouseClick(ExGlobals.Variables.experimentTabButton)
+        rc.mouseClick(ExGlobals.Variables.generateMeasuredDataButton)
 
         rc.wait(1000)
 
-        rc.mouseClick(ExGlobals.Variables.themeSelector)
-        y_pos = !EaStyle.Colors.isDarkTheme ? EaStyle.Sizes.comboBoxHeight * 1.5 : undefined
-        rc.mouseClick(ExGlobals.Variables.themeSelector, x_pos, y_pos)
+        rc.mouseClick(ExGlobals.Variables.analysisTabButton)
+        rc.mouseClick(ExGlobals.Variables.xShiftFitCheckBox)
 
-        rc.wait(1000)
-        rc.mouseClick(ExGlobals.Variables.preferencesOkButton)
+        rc.mouseClick(ExGlobals.Variables.xShiftValueTextInput)
+        rc.hidePointer()
+        rc.keyClick(Qt.Key_Right)
+        rc.keyClick(Qt.Key_Right)
+        rc.keyClick(Qt.Key_Right)
+        rc.keyClick(Qt.Key_Right)
+        rc.deleteCharacters(6)
+        rc.typeText("-0.3")
+        rc.keyClick(Qt.Key_Enter)
+        rc.showPointer()
+
+        rc.mouseClick(ExGlobals.Variables.startFittingButton)
+        rc.mouseClick(ExGlobals.Variables.xShiftFitCheckBox)
+        rc.mouseClick(ExGlobals.Variables.startFittingButton)
 
         rc.wait(1000)
 
         rc.hidePointer()
         rc.wait(1000)
         endSavingScreenshots()
-
-        rc.visible = false
     }
 
     // TESTS

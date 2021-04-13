@@ -48,6 +48,8 @@ EaComponents.SideBarColumn {
             }
         }
 
+        Component.onCompleted: ExGlobals.Variables.samplePhasesExplorer = this
+
     }
 
     EaElements.GroupBox {

@@ -34,6 +34,9 @@ QtObject {
     // References to GUI elements
     // //////////////////////////
 
+    // Application bar
+    property var appBarCentralTabs
+
     // Application bar tab buttons
     property var homeTabButton
     property var projectTabButton
@@ -48,14 +51,19 @@ QtObject {
 
     // Main application window
     property var showSaveDialog : false
+    property var projectPageMainContent
+    property var samplePageMainContent
 
     // Application bar tool buttons
     property var preferencesButton
     property var preferencesOkButton
 
     // Main content and sidebar buttons
+    property var aboutButton
+    property var getInTouchButton
     property var startButton
     property var createProjectButton
+    property var openProjectButton
     property var continueWithoutProjectButton
     property var setNewSampleManuallyButton
     property var appendNewAtomButton
@@ -66,11 +74,15 @@ QtObject {
     property var atomsGroup
     property var adpsGroup
 
+    // Sidebar elements
+    property var samplePhasesExplorer
+
     // Sidebar text inputs
     property var cellLengthALabel
 
     // Checkboxes
     property var enableToolTipsCheckBox
+    property var enableUserGuidesCheckBox
 
     // Comboboxes
     property var themeSelector

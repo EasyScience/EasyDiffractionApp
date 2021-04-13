@@ -90,6 +90,7 @@ Item {
                 EaElements.Button {
                     text: qsTr("About %1".arg(ExGlobals.Constants.appName))
                     onClicked: EaGlobals.Variables.showAppAboutDialog = true
+                    Component.onCompleted: ExGlobals.Variables.aboutButton = this
                 }
                 EaElements.Button {
                     text: qsTr("Online documentation")
@@ -98,6 +99,7 @@ Item {
                 EaElements.Button {
                     text: qsTr("Get in touch online")
                     onClicked: Qt.openUrlExternally(`${ExGlobals.Constants.appUrl}/issues`)
+                    Component.onCompleted: ExGlobals.Variables.getInTouchButton = this
                 }
             }
 

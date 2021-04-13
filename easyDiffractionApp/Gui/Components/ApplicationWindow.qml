@@ -79,7 +79,7 @@ EaComponents.ApplicationWindow {
 
     // Central group of application bar tab buttons (workflow tabs)
     // Tab buttons for the pages described below
-    appBarCentralTabs: [
+    appBarCentralTabs.contentData: [
 
         // Home tab
         EaElements.AppBarTabButton {
@@ -164,6 +164,8 @@ EaComponents.ApplicationWindow {
                     ExProjectPage.MainContentDescription {},
                     ExProjectPage.MainContentTextView {}
                 ]
+
+                Component.onCompleted: ExGlobals.Variables.projectPageMainContent = this
             }
 
             sideBar: EaComponents.SideBar {
@@ -197,6 +199,8 @@ EaComponents.ApplicationWindow {
                     ExSamplePage.MainContentStructureView {},
                     ExSamplePage.MainContentTextView {}
                 ]
+
+                Component.onCompleted: ExGlobals.Variables.samplePageMainContent = this
             }
 
             sideBar: EaComponents.SideBar {
@@ -344,5 +348,13 @@ EaComponents.ApplicationWindow {
     ExComponents.CloseDialog {
         id: closeDialog
         visible: false
+    }
+
+    ///////////////
+    //
+    ///////////////
+
+    Component.onCompleted: {
+        ExGlobals.Variables.appBarCentralTabs = appBarCentralTabs
     }
 }

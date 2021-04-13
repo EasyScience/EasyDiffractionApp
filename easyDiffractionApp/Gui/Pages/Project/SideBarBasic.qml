@@ -26,7 +26,7 @@ EaComponents.SideBarColumn {
 
                 onClicked: EaGlobals.Variables.showProjectDescriptionDialog = true
                 Component.onCompleted: {
-                    ExGlobals.Variables.createProjectButton = createProjectButton
+                    ExGlobals.Variables.createProjectButton = this
                     ExGlobals.Constants.proxy.resetUndoRedoStack()
                 }
             }
@@ -47,6 +47,7 @@ EaComponents.SideBarColumn {
                 fontIcon: "upload"
                 text: qsTr("Open an existing project")
                 onClicked: fileDialogLoadProject.open()
+                Component.onCompleted: ExGlobals.Variables.openProjectButton = this
             }
 
             EaElements.SideBarButton {

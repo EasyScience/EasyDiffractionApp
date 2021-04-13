@@ -8,12 +8,12 @@ import easyAppGui.Elements 1.0 as EaElements
 import easyAppGui.Components 1.0 as EaComponents
 
 import Gui.Globals 1.0 as ExGlobals
+import Gui.Components 1.0 as ExComponents
 
 EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
         title: qsTr("Get started")
-        last: true
         collapsible: false
 
         Grid {
@@ -59,7 +59,7 @@ EaComponents.SideBarColumn {
         }
     }
 
-    QtQuickDialogs1.FileDialog{
+    QtQuickDialogs1.FileDialog {
         id: fileDialogLoadProject
         nameFilters: ["Project files (*.json)"]
         onAccepted: {
@@ -77,6 +77,14 @@ EaComponents.SideBarColumn {
                 ExGlobals.Variables.summaryPageEnabled = true
             }
         }
+    }
+
+    EaElements.GroupBox {
+        title: qsTr("Examples")
+        last: true
+        collapsible: false
+
+        ExComponents.ProjectExamples {}
     }
 }
 

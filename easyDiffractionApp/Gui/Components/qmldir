@@ -17,6 +17,8 @@ CloseDialog 1.0 CloseDialog.qml
 
 # Sidebar components
 
+ProjectExamples 1.0 ProjectExamples.qml
+
 SamplePhasesExplorer 1.0 SamplePhasesExplorer.qml
 SampleSymmetry 1.0 SampleSymmetry.qml
 SampleCell 1.0 SampleCell.qml

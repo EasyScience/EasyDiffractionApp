@@ -1,3 +1,4 @@
+# noqa: E501
 import os
 import datetime
 import timeit
@@ -1285,7 +1286,9 @@ class PyQmlProxy(QObject):
         # if running, stop the thread
         if not self.isFitFinished:
             self.onStopFit()
+            borg.stack.endMacro()  # need this to close the undo stack properly
             return
+
         self.isFitFinished = False
         exp_data = self._data.experiments[0]
 

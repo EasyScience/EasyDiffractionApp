@@ -192,6 +192,7 @@ EaComponents.ApplicationWindow {
                         text: typeof ExGlobals.Constants.proxy.phasesAsObj[ExGlobals.Constants.proxy.currentPhaseIndex] !== 'undefined' && ExGlobals.Constants.proxy.phasesAsObj.length > 0
                               ? ExGlobals.Constants.proxy.phasesAsObj[ExGlobals.Constants.proxy.currentPhaseIndex].name + '.cif'
                               : 'Unknown'
+                        Component.onCompleted: ExGlobals.Variables.phaseCifTab = this
                     }
                 ]
 
@@ -223,8 +224,8 @@ EaComponents.ApplicationWindow {
             mainContent: EaComponents.MainContent {
                 tabs: [
                     EaElements.TabButton { text: qsTr("Plot view") },
-                    EaElements.TabButton { enabled: false; text: qsTr("Table view") },
-                    EaElements.TabButton { enabled: false; text: 'D1A@ILL.cif' }
+                    EaElements.TabButton { enabled: false; text: qsTr("Table view"); Component.onCompleted: ExGlobals.Variables.experimentTableTab = this },
+                    EaElements.TabButton { enabled: false; text: 'D1A@ILL.cif'; Component.onCompleted: ExGlobals.Variables.experimentCifTab = this }
                 ]
 
                 items: [
@@ -232,6 +233,8 @@ EaComponents.ApplicationWindow {
                     ExExperimentPage.MainContentTableView {},
                     ExExperimentPage.MainContentTextView {}
                 ]
+
+                Component.onCompleted: ExGlobals.Variables.experimentPageMainContent = this
             }
 
             sideBar: EaComponents.SideBar {
@@ -265,6 +268,8 @@ EaComponents.ApplicationWindow {
                     ExAnalysisPage.MainContentFitting {},
                     ExAnalysisPage.MainContentTextView {}
                 ]
+
+                Component.onCompleted: ExGlobals.Variables.analysisPageMainContent = this
             }
 
             sideBar: EaComponents.SideBar {
@@ -296,6 +301,8 @@ EaComponents.ApplicationWindow {
                 items: [
                     ExSummaryPage.MainContentReport {}
                 ]
+
+                Component.onCompleted: ExGlobals.Variables.summaryPageMainContent = this
             }
 
             sideBar: EaComponents.SideBar {
@@ -328,11 +335,6 @@ EaComponents.ApplicationWindow {
         }
     }
 
-    onClosing: {
-       closeDialog.visible = ExGlobals.Constants.proxy.stateHasChanged
-       close.accepted = !ExGlobals.Constants.proxy.stateHasChanged
-    }
-
     ///////////////
     // Init dialogs
     ///////////////
@@ -347,12 +349,16 @@ EaComponents.ApplicationWindow {
 
     ExComponents.CloseDialog {
         id: closeDialog
-        visible: false
     }
 
-    ///////////////
-    //
-    ///////////////
+    ////////
+    // Misc
+    ////////
+
+    onClosing: {
+       closeDialog.visible = ExGlobals.Constants.proxy.stateHasChanged
+       close.accepted = !ExGlobals.Constants.proxy.stateHasChanged
+    }
 
     Component.onCompleted: {
         ExGlobals.Variables.appBarCentralTabs = appBarCentralTabs

@@ -5,6 +5,7 @@ import Gui.Globals 1.0 as ExGlobals
 import Gui.Components 1.0 as ExComponents
 
 import easyAppGui.Style 1.0 as EaStyle
+import easyAppGui.Globals 1.0 as EaGlobals
 import easyAppGui.Components 1.0 as EaComponents
 
 
@@ -14,7 +15,7 @@ ExComponents.ApplicationWindow {
     EaComponents.GuideWindowContainer {
         id: homePageGuidesContainer
 
-        appBarCurrentIndex: 0 //EaGlobals.Variables.HomePageIndex
+        appBarCurrentIndex: EaGlobals.Variables.HomePageIndex
 
         EaComponents.GuideWindow {
             container: homePageGuidesContainer
@@ -24,7 +25,7 @@ ExComponents.ApplicationWindow {
 
         EaComponents.GuideWindow {
             container: homePageGuidesContainer
-            parent: ExGlobals.Variables.getInTouchButton
+            parent: ExGlobals.Variables.onlineDocumentationButton
             text: qsTr("Links to the online resources.")
         }
 
@@ -44,7 +45,7 @@ ExComponents.ApplicationWindow {
     EaComponents.GuideWindowContainer {
         id: projectPageGuidesContainer
 
-        appBarCurrentIndex: 1 //EaGlobals.Variables.ProjectPageIndex
+        appBarCurrentIndex: EaGlobals.Variables.ProjectPageIndex
 
         EaComponents.GuideWindow {
             container: projectPageGuidesContainer
@@ -56,6 +57,12 @@ ExComponents.ApplicationWindow {
             container: projectPageGuidesContainer
             parent: ExGlobals.Variables.createProjectButton
             text: qsTr("Or here to create a new one...")
+        }
+
+        EaComponents.GuideWindow {
+            container: projectPageGuidesContainer
+            parent: ExGlobals.Variables.loadExampleProjectButton
+            text: qsTr("Or click open button here to load one of the examples.")
         }
 
         EaComponents.GuideWindow {
@@ -74,11 +81,11 @@ ExComponents.ApplicationWindow {
     EaComponents.GuideWindowContainer {
         id: samplePageGuidesContainer
 
-        appBarCurrentIndex: 2 //EaGlobals.Variables.ProjectPageIndex
+        appBarCurrentIndex: EaGlobals.Variables.SamplePageIndex
 
         EaComponents.GuideWindow {
             container: samplePageGuidesContainer
-            parent: ExGlobals.Variables.samplePhasesExplorer
+            parent: ExGlobals.Variables.structuralPhasesGroup
             text: qsTr("Here you can see labels of the structural phases.")
         }
 
@@ -86,6 +93,12 @@ ExComponents.ApplicationWindow {
             container: samplePageGuidesContainer
             parent: ExGlobals.Variables.samplePageMainContent
             text: qsTr("Crystal structure is shown in the main area.")
+        }
+
+        EaComponents.GuideWindow {
+            container: samplePageGuidesContainer
+            parent: ExGlobals.Variables.phaseCifTab
+            text: qsTr("This tab button allows to see the sample\ndetails as plain text (CIF).")
         }
 
         EaComponents.GuideWindow {
@@ -101,5 +114,47 @@ ExComponents.ApplicationWindow {
         }
     }
 
+    EaComponents.GuideWindowContainer {
+        id: experimentPageGuidesContainer
+
+        appBarCurrentIndex: EaGlobals.Variables.ExperimentPageIndex
+
+        EaComponents.GuideWindow {
+            container: experimentPageGuidesContainer
+            parent: ExGlobals.Variables.experimentalDataGroup
+            text: qsTr("Here you can see labels of the experimental data.")
+        }
+
+        EaComponents.GuideWindow {
+            container: experimentPageGuidesContainer
+            parent: ExGlobals.Variables.experimentPageMainContent
+            text: qsTr("Measured data points are plotted in the main area.")
+        }
+
+        EaComponents.GuideWindow {
+            container: experimentPageGuidesContainer
+            parent: ExGlobals.Variables.experimentTableTab
+            text: qsTr("This tab button switches to the table\nview of the measured data.")
+        }
+
+        EaComponents.GuideWindow {
+            container: experimentPageGuidesContainer
+            parent: ExGlobals.Variables.experimentCifTab
+            text: qsTr("This tab button allows to see the\nmeasured data as plain text.")
+        }
+
+        EaComponents.GuideWindow {
+            container: experimentPageGuidesContainer
+            parent: ExGlobals.Variables.associatedPhases
+            text: qsTr("The sidebar groups contain details related to the experiment.\n\nClick on the group name to unfold the group.")
+        }
+
+        EaComponents.GuideWindow {
+            container: experimentPageGuidesContainer
+            parent: ExGlobals.Variables.analysisTabButton
+            text: qsTr("Click here to go to the next page: Analysis.")
+        }
+
+    }
 
 }

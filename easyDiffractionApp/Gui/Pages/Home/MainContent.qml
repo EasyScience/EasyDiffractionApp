@@ -95,11 +95,11 @@ Item {
                 EaElements.Button {
                     text: qsTr("Online documentation")
                     onClicked: Qt.openUrlExternally(ExGlobals.Constants.appUrl)
+                    Component.onCompleted: ExGlobals.Variables.onlineDocumentationButton = this
                 }
                 EaElements.Button {
                     text: qsTr("Get in touch online")
                     onClicked: Qt.openUrlExternally(`${ExGlobals.Constants.appUrl}/issues`)
-                    Component.onCompleted: ExGlobals.Variables.getInTouchButton = this
                 }
             }
 
@@ -184,6 +184,13 @@ Item {
         }
     }
 
+    function playPageUserGuides(pageIndex) {
+        const buttons = ExGlobals.Variables.userGuidesButtons[pageIndex]
+        for (let i = 0; i < buttons.length - 1; ++i) {
+            rc.mouseClick(buttons[i])
+        }
+    }
+
     function runTutorial1() {
         print("* run Tutorial 1")
 
@@ -195,53 +202,34 @@ Item {
         rc.showPointer()
 
         // General
-
         rc.mouseClick(ExGlobals.Variables.preferencesButton)
         rc.mouseClick(ExGlobals.Variables.enableUserGuidesCheckBox)
-        rc.wait(1000)
         rc.mouseClick(ExGlobals.Variables.preferencesOkButton)
 
         // Home page
-
-        for (let i = 0, buttons = ExGlobals.Variables.userGuidesButtons[0]; i < buttons.length - 1; ++i) {
-            rc.mouseClick(buttons[i])
-        }
+        playPageUserGuides(EaGlobals.Variables.HomePageIndex)
         rc.mouseClick(ExGlobals.Variables.startButton)
 
         // Project page
-
-        for (let i = 0, buttons = ExGlobals.Variables.userGuidesButtons[1]; i < buttons.length - 1; ++i) {
-            rc.mouseClick(buttons[i])
-        }
+        playPageUserGuides(EaGlobals.Variables.ProjectPageIndex)
         rc.mouseClick(ExGlobals.Variables.loadExampleProjectButton)
         rc.mouseClick(ExGlobals.Variables.sampleTabButton)
 
         // Sample page
-
-        for (let i = 0, buttons = ExGlobals.Variables.userGuidesButtons[2]; i < buttons.length - 1; ++i) {
-            rc.mouseClick(buttons[i])
-        }
+        playPageUserGuides(EaGlobals.Variables.SamplePageIndex)
         rc.mouseClick(ExGlobals.Variables.experimentTabButton)
 
         // Experiment page
-
-        for (let i = 0, buttons = ExGlobals.Variables.userGuidesButtons[3]; i < buttons.length - 1; ++i) {
-            rc.mouseClick(buttons[i])
-        }
+        playPageUserGuides(EaGlobals.Variables.ExperimentPageIndex)
         rc.mouseClick(ExGlobals.Variables.analysisTabButton)
 
         // Analysis page
-
-        for (let i = 0, buttons = ExGlobals.Variables.userGuidesButtons[4]; i < buttons.length - 1; ++i) {
-            rc.mouseClick(buttons[i])
-        }
+        playPageUserGuides(EaGlobals.Variables.AnalysisPageIndex)
         rc.mouseClick(ExGlobals.Variables.summaryTabButton)
 
         // Summary page
+        playPageUserGuides(EaGlobals.Variables.SummaryPageIndex)
 
-        for (let i = 0, buttons = ExGlobals.Variables.userGuidesButtons[5]; i < buttons.length - 1; ++i) {
-            rc.mouseClick(buttons[i])
-        }
 
         /*
         rc.mouseClick(ExGlobals.Variables.preferencesButton)

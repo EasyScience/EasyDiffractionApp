@@ -47,6 +47,8 @@ EaComponents.SideBarColumn {
                 Component.onCompleted: ExGlobals.Variables.continueWithoutExperimentDataButton = this
             }
         }
+
+        Component.onCompleted: ExGlobals.Variables.experimentalDataGroup = this
     }
 
     EaElements.GroupBox {
@@ -54,6 +56,8 @@ EaComponents.SideBarColumn {
         enabled: ExGlobals.Constants.proxy.experimentLoaded
 
         ExComponents.ExperimentAssociatedPhases {}
+
+        Component.onCompleted: ExGlobals.Variables.associatedPhases = this
     }
 
     EaElements.GroupBox {

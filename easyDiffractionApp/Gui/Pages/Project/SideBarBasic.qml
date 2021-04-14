@@ -65,14 +65,14 @@ EaComponents.SideBarColumn {
         onAccepted: {
             // enablement will depend on what is available in the project file,
             // obviously, so care is needed. TODO
-            ExGlobals.Variables.samplePageEnabled = true
-            ExGlobals.Variables.experimentPageEnabled = true
+            ExGlobals.Constants.proxy.loadProjectAs(fileUrl)
+
             ExGlobals.Variables.sampleLoaded = true
             ExGlobals.Variables.projectCreated = true
 
-            ExGlobals.Constants.proxy.loadProjectAs(fileUrl)
-
-            if (ExGlobals.Constants.proxy.experimentDataAsXml != ""){
+            ExGlobals.Variables.samplePageEnabled = true
+            ExGlobals.Variables.experimentPageEnabled = true
+            if (ExGlobals.Constants.proxy.experimentDataAsXml !== "") {
                 ExGlobals.Variables.analysisPageEnabled = true
                 ExGlobals.Variables.summaryPageEnabled = true
             }
@@ -86,5 +86,6 @@ EaComponents.SideBarColumn {
 
         ExComponents.ProjectExamples {}
     }
+
 }
 

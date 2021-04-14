@@ -53,6 +53,9 @@ QtObject {
     property var showSaveDialog : false
     property var projectPageMainContent
     property var samplePageMainContent
+    property var experimentPageMainContent
+    property var analysisPageMainContent
+    property var summaryPageMainContent
 
     // Application bar tool buttons
     property var preferencesButton
@@ -60,6 +63,7 @@ QtObject {
 
     // Main content and sidebar buttons
     property var aboutButton
+    property var onlineDocumentationButton
     property var getInTouchButton
     property var startButton
     property var createProjectButton
@@ -70,14 +74,21 @@ QtObject {
     property var continueWithoutExperimentDataButton
 
     // Sidebar group boxes
+    property var structuralPhasesGroup
     property var symmetryGroup
     property var atomsGroup
     property var adpsGroup
+    property var experimentalDataGroup
+    property var associatedPhases
 
     // Sidebar elements
-    property var samplePhasesExplorer
     property var cellLengthALabel
     property var loadExampleProjectButton
+
+    // Tab buttons
+    property var phaseCifTab
+    property var experimentTableTab
+    property var experimentCifTab
 
     // Checkboxes
     property var enableToolTipsCheckBox

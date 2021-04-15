@@ -117,6 +117,8 @@ EaComponents.SideBarColumn {
                     ExGlobals.Variables.reportWebView.printToPdf(reportLocationField.text)
                 }
             }
+
+            Component.onCompleted: ExGlobals.Variables.exportReportButton = this
         }
 
         Component.onCompleted: ExGlobals.Variables.exportReportGroup = this

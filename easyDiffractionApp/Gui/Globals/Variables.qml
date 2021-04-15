@@ -59,7 +59,6 @@ QtObject {
 
     // Application bar tool buttons
     property var preferencesButton
-    property var preferencesOkButton
 
     // Main content and sidebar buttons
     property var aboutButton
@@ -69,10 +68,17 @@ QtObject {
     property var createProjectButton
     property var openProjectButton
     property var continueWithoutProjectButton
+    property var loadExampleProjectButton
     property var setNewSampleManuallyButton
     property var appendNewAtomButton
     property var continueWithoutExperimentDataButton
     property var startFittingButton
+    property var exportReportButton
+
+    // Dialog buttons
+    property var preferencesOkButton
+    property var refinementResultsOkButton
+    property var saveConfirmationOkButton
 
     // Sidebar group boxes
     property var structuralPhasesGroup
@@ -86,7 +92,6 @@ QtObject {
 
     // Sidebar elements
     property var cellLengthALabel
-    property var loadExampleProjectButton
 
     // Tab buttons
     property var phaseCifTab
@@ -97,10 +102,14 @@ QtObject {
     // Checkboxes
     property var enableToolTipsCheckBox
     property var enableUserGuidesCheckBox
+    property var fitCellACheckBox
+    property var fitZeroShiftCheckBox
+    property var fitScaleCheckBox
 
     // Comboboxes
     property var themeSelector
     property var calculatorSelector
+    property var parametersFilterTypeSelector
 
     // Tables
     property var phasesTable

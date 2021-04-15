@@ -78,6 +78,8 @@ EaComponents.SideBarColumn {
                     ]
 
                     onActivated: filterCriteriaField.text = currentValue
+
+                    Component.onCompleted: ExGlobals.Variables.parametersFilterTypeSelector = this
                 }
             }
 

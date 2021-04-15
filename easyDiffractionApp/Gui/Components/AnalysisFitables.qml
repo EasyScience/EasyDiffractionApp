@@ -62,7 +62,7 @@ EaComponents.TableView {
                    valueColumn.width -
                    unitColumn.width -
                    errorColumn.width -
-                   useColumn.width
+                   fitColumn.width
             headerText: "Label"
             text: formatLabel(model.index, model.label)
             textFormat: Text.RichText
@@ -95,10 +95,19 @@ EaComponents.TableView {
 
         EaComponents.TableViewCheckBox {
             enabled: ExGlobals.Constants.proxy.experimentLoaded
-            id: useColumn
+            id: fitColumn
             headerText: "Fit"
             checked: model.fit
             onCheckedChanged: editParameterFit(model.id, checked)
+
+            Component.onCompleted: {
+                if (model.label.endsWith('.length_a'))
+                    ExGlobals.Variables.fitCellACheckBox = this
+                if (model.label.endsWith('.zero_shift'))
+                    ExGlobals.Variables.fitZeroShiftCheckBox = this
+                if (model.label.endsWith('.scale'))
+                    ExGlobals.Variables.fitScaleCheckBox = this
+            }
         }
 
     }

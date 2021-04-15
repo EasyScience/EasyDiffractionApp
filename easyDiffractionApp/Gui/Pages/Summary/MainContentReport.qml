@@ -96,6 +96,8 @@ Item {
 
         standardButtons: Dialog.Ok
 
+        Component.onCompleted: setSaveConfirmationOkButton()
+
         Row {
             padding: EaStyle.Sizes.fontPixelSize
             spacing: EaStyle.Sizes.fontPixelSize * 0.75
@@ -112,6 +114,19 @@ Item {
                 text: saveConfirmationDialog.success
                       ? qsTr('File "<a href="%1">%1</a>" is successfully saved'.arg(saveConfirmationDialog.filePath))
                       : qsTr('Failed to save file "%1"'.arg(saveConfirmationDialog.filePath))
+            }
+        }
+
+        // Logic
+
+        function setSaveConfirmationOkButton() {
+            const buttons = saveConfirmationDialog.footer.contentModel.children
+            for (let i in buttons) {
+                const button = buttons[i]
+                if (button.text === 'OK') {
+                    ExGlobals.Variables.saveConfirmationOkButton = button
+                    return
+                }
             }
         }
     }

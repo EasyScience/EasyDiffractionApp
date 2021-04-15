@@ -30,7 +30,7 @@ EaElements.RemoteController {
         onTriggered: {
             startScreenRecording()
             beforeRunTutorial()
-            runAppInterfaceTutorial()
+            runDataFittingTutorial()
             afterRunTutorial()
             stopScreenRecording()
         }
@@ -69,10 +69,13 @@ EaElements.RemoteController {
     function playPageUserGuides(pageIndex) {
         const buttons = ExGlobals.Variables.userGuidesNextButtons[pageIndex]
         const textList = ExGlobals.Variables.userGuidesTextList[pageIndex]
-        for (let i = 0; i < buttons.length - 1; ++i) {
+        const waitingMultiplier = 40
+        for (let i = 0; i < buttons.length; ++i) {
             //rc.say(textList[i])
-            rc.wait(textList[i].length * 40)
-            rc.mouseClick(buttons[i])
+            rc.wait(textList[i].length * waitingMultiplier)
+            if (i !== buttons.length - 1) {
+                rc.mouseClick(buttons[i])
+            }
         }
     }
 
@@ -104,52 +107,28 @@ EaElements.RemoteController {
 
         // Home page
         playPageUserGuides(EaGlobals.Variables.HomePageIndex)
-        rc.wait(1000)
         rc.mouseClick(ExGlobals.Variables.startButton)
 
         // Project page
         playPageUserGuides(EaGlobals.Variables.ProjectPageIndex)
-        rc.wait(1000)
         rc.mouseClick(ExGlobals.Variables.loadExampleProjectButton)
         rc.mouseClick(ExGlobals.Variables.sampleTabButton)
 
         // Sample page
         playPageUserGuides(EaGlobals.Variables.SamplePageIndex)
-        rc.wait(1000)
         rc.mouseClick(ExGlobals.Variables.experimentTabButton)
 
         // Experiment page
         playPageUserGuides(EaGlobals.Variables.ExperimentPageIndex)
-        rc.wait(1000)
         rc.mouseClick(ExGlobals.Variables.analysisTabButton)
 
         // Analysis page
         playPageUserGuides(EaGlobals.Variables.AnalysisPageIndex)
-        rc.wait(1000)
         rc.mouseClick(ExGlobals.Variables.summaryTabButton)
 
         // Summary page
         playPageUserGuides(EaGlobals.Variables.SummaryPageIndex)
-        rc.wait(1000)
         rc.mouseClick(ExGlobals.Variables.userGuidesLastDisableButton)
-
-        /*
-        rc.mouseClick(ExGlobals.Variables.preferencesButton)
-        rc.mouseClick(ExGlobals.Variables.themeSelector)
-
-        const x_pos = undefined
-        let y_pos = !EaStyle.Colors.isDarkTheme ? EaStyle.Sizes.comboBoxHeight * 1.5 : undefined
-        rc.mouseClick(ExGlobals.Variables.themeSelector, x_pos, y_pos)
-
-        rc.wait(1000)
-
-        rc.mouseClick(ExGlobals.Variables.themeSelector)
-        y_pos = !EaStyle.Colors.isDarkTheme ? EaStyle.Sizes.comboBoxHeight * 1.5 : undefined
-        rc.mouseClick(ExGlobals.Variables.themeSelector, x_pos, y_pos)
-
-        rc.wait(1000)
-        rc.mouseClick(ExGlobals.Variables.preferencesOkButton)
-        */
 
         afterRunTutorial()
     }
@@ -157,10 +136,10 @@ EaElements.RemoteController {
     function runDataSimulationTutorial() {
         print("* run data simulation tutorial")
 
-        beforeRunTutorial()
-
         let x_pos = undefined
         let y_pos = undefined
+
+        beforeRunTutorial()
 
         // App preferences
 
@@ -277,7 +256,39 @@ EaElements.RemoteController {
     function runDataFittingTutorial() {
         print("* run data fitting tutorial")
 
+        let x_pos = undefined
+        let y_pos = EaStyle.Sizes.comboBoxHeight * 2.5
+
         beforeRunTutorial()
+
+        // Home Tab
+        rc.mouseClick(ExGlobals.Variables.startButton)
+
+        // Project Tab
+        rc.mouseClick(ExGlobals.Variables.loadExampleProjectButton)
+        rc.mouseClick(ExGlobals.Variables.sampleTabButton)
+
+        // Sample page
+        rc.mouseClick(ExGlobals.Variables.experimentTabButton)
+
+        // Experiment page
+        rc.mouseClick(ExGlobals.Variables.analysisTabButton)
+
+        // Analysis page
+        rc.mouseClick(ExGlobals.Variables.fitCellACheckBox)
+        rc.mouseClick(ExGlobals.Variables.parametersFilterTypeSelector)
+        rc.mouseClick(ExGlobals.Variables.parametersFilterTypeSelector, x_pos, y_pos)
+        rc.mouseClick(ExGlobals.Variables.fitZeroShiftCheckBox)
+        rc.mouseClick(ExGlobals.Variables.fitScaleCheckBox)
+        rc.mouseClick(ExGlobals.Variables.startFittingButton)
+        rc.wait(20000)
+        rc.mouseClick(ExGlobals.Variables.refinementResultsOkButton)
+        rc.mouseClick(ExGlobals.Variables.summaryTabButton)
+
+        // Summary page
+        rc.mouseClick(ExGlobals.Variables.exportReportButton)
+        rc.mouseClick(ExGlobals.Variables.saveConfirmationOkButton)
+
         afterRunTutorial()
     }
 

@@ -133,7 +133,8 @@ QtObject {
     property var reportWebView
 
     // User guides
-    property var userGuidesNextButtons: [[], [], [], [], [], []]
     property var userGuidesLastDisableButton
+    property var userGuidesNextButtons: [[], [], [], [], [], []]
+    property var userGuidesTextList: [[], [], [], [], [], []]
 
 }

@@ -186,7 +186,10 @@ Item {
 
     function playPageUserGuides(pageIndex) {
         const buttons = ExGlobals.Variables.userGuidesNextButtons[pageIndex]
+        const textList = ExGlobals.Variables.userGuidesTextList[pageIndex]
         for (let i = 0; i < buttons.length - 1; ++i) {
+            //rc.say(textList[i])
+            rc.wait(textList[i].length * 40)
             rc.mouseClick(buttons[i])
         }
     }
@@ -208,27 +211,33 @@ Item {
 
         // Home page
         playPageUserGuides(EaGlobals.Variables.HomePageIndex)
+        rc.wait(1000)
         rc.mouseClick(ExGlobals.Variables.startButton)
 
         // Project page
         playPageUserGuides(EaGlobals.Variables.ProjectPageIndex)
+        rc.wait(1000)
         rc.mouseClick(ExGlobals.Variables.loadExampleProjectButton)
         rc.mouseClick(ExGlobals.Variables.sampleTabButton)
 
         // Sample page
         playPageUserGuides(EaGlobals.Variables.SamplePageIndex)
+        rc.wait(1000)
         rc.mouseClick(ExGlobals.Variables.experimentTabButton)
 
         // Experiment page
         playPageUserGuides(EaGlobals.Variables.ExperimentPageIndex)
+        rc.wait(1000)
         rc.mouseClick(ExGlobals.Variables.analysisTabButton)
 
         // Analysis page
         playPageUserGuides(EaGlobals.Variables.AnalysisPageIndex)
+        rc.wait(1000)
         rc.mouseClick(ExGlobals.Variables.summaryTabButton)
 
         // Summary page
         playPageUserGuides(EaGlobals.Variables.SummaryPageIndex)
+        rc.wait(1000)
         rc.mouseClick(ExGlobals.Variables.userGuidesLastDisableButton)
 
 

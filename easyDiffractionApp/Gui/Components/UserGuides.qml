@@ -75,7 +75,7 @@ Item {
         EaComponents.GuideWindow {
             container: projectPageGuidesContainer
             parent: ExGlobals.Variables.sampleTabButton
-            text: qsTr("Click here to go to the next page: Sample.")
+            text: qsTr("Click here to go to the next page.")
         }
     }
 
@@ -113,7 +113,7 @@ Item {
         EaComponents.GuideWindow {
             container: samplePageGuidesContainer
             parent: ExGlobals.Variables.experimentTabButton
-            text: qsTr("Click here to go to the next page: Experiment.")
+            text: qsTr("Click here to go to the next page.")
         }
     }
 
@@ -157,7 +157,7 @@ Item {
         EaComponents.GuideWindow {
             container: experimentPageGuidesContainer
             parent: ExGlobals.Variables.analysisTabButton
-            text: qsTr("Click here to go to the next page: Analysis.")
+            text: qsTr("Click here to go to the next page.")
         }
     }
 
@@ -195,7 +195,7 @@ Item {
         EaComponents.GuideWindow {
             container: analysisPageGuidesContainer
             parent: ExGlobals.Variables.summaryTabButton
-            text: qsTr("Click here to go to the next page: Summary.")
+            text: qsTr("Click here to go to the next page.")
         }
     }
 

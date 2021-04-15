@@ -281,7 +281,7 @@ EaElements.RemoteController {
         rc.mouseClick(ExGlobals.Variables.fitZeroShiftCheckBox)
         rc.mouseClick(ExGlobals.Variables.fitScaleCheckBox)
         rc.mouseClick(ExGlobals.Variables.startFittingButton)
-        rc.wait(20000)
+        rc.wait(40000)
         rc.mouseClick(ExGlobals.Variables.refinementResultsOkButton)
         rc.mouseClick(ExGlobals.Variables.summaryTabButton)
 

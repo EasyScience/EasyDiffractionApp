@@ -261,6 +261,7 @@ EaComponents.ApplicationWindow {
                         visible: ExGlobals.Constants.proxy.experimentLoaded
                         enabled: false
                         text: 'calculations.cif' //ExGlobals.Constants.proxy.projectInfoAsJson.calculations
+                        Component.onCompleted: ExGlobals.Variables.calculationCifTab = this
                     }
                 ]
 
@@ -350,6 +351,12 @@ EaComponents.ApplicationWindow {
     ExComponents.CloseDialog {
         id: closeDialog
     }
+
+    ///////////////////
+    // Init user guides
+    ///////////////////
+
+    ExComponents.UserGuides {}
 
     ////////
     // Misc

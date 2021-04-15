@@ -57,7 +57,7 @@ EaComponents.SideBarColumn {
 
         ExComponents.ExperimentAssociatedPhases {}
 
-        Component.onCompleted: ExGlobals.Variables.associatedPhases = this
+        Component.onCompleted: ExGlobals.Variables.associatedPhasesGroup = this
     }
 
     EaElements.GroupBox {

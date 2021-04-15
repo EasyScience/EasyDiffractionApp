@@ -72,6 +72,7 @@ QtObject {
     property var setNewSampleManuallyButton
     property var appendNewAtomButton
     property var continueWithoutExperimentDataButton
+    property var startFittingButton
 
     // Sidebar group boxes
     property var structuralPhasesGroup
@@ -79,7 +80,9 @@ QtObject {
     property var atomsGroup
     property var adpsGroup
     property var experimentalDataGroup
-    property var associatedPhases
+    property var associatedPhasesGroup
+    property var parametersGroup
+    property var exportReportGroup
 
     // Sidebar elements
     property var cellLengthALabel
@@ -89,6 +92,7 @@ QtObject {
     property var phaseCifTab
     property var experimentTableTab
     property var experimentCifTab
+    property var calculationCifTab
 
     // Checkboxes
     property var enableToolTipsCheckBox
@@ -129,6 +133,7 @@ QtObject {
     property var reportWebView
 
     // User guides
-    property var userGuidesButtons: [[], [], [], [], [], []]
+    property var userGuidesNextButtons: [[], [], [], [], [], []]
+    property var userGuidesLastDisableButton
 
 }

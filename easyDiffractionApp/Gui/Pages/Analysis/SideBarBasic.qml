@@ -178,13 +178,15 @@ EaComponents.SideBarColumn {
 
         // Start fitting button
         EaElements.SideBarButton {
-            id: fitButton
             wide: true
             enabled: ExGlobals.Constants.proxy.experimentLoaded
             fontIcon: ExGlobals.Constants.proxy.isFitFinished ? "play-circle" : "pause-circle"
             text: ExGlobals.Constants.proxy.isFitFinished ? qsTr("Start fitting") : qsTr("Stop fitting")
             onClicked: ExGlobals.Constants.proxy.fit()
+            Component.onCompleted: ExGlobals.Variables.startFittingButton = this
         }
+
+        Component.onCompleted: ExGlobals.Variables.parametersGroup = this
     }
 
     // Init results dialog

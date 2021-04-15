@@ -185,7 +185,7 @@ Item {
     }
 
     function playPageUserGuides(pageIndex) {
-        const buttons = ExGlobals.Variables.userGuidesButtons[pageIndex]
+        const buttons = ExGlobals.Variables.userGuidesNextButtons[pageIndex]
         for (let i = 0; i < buttons.length - 1; ++i) {
             rc.mouseClick(buttons[i])
         }
@@ -229,6 +229,7 @@ Item {
 
         // Summary page
         playPageUserGuides(EaGlobals.Variables.SummaryPageIndex)
+        rc.mouseClick(ExGlobals.Variables.userGuidesLastDisableButton)
 
 
         /*

@@ -119,6 +119,7 @@ EaComponents.SideBarColumn {
             }
         }
 
+        Component.onCompleted: ExGlobals.Variables.exportReportGroup = this
     }
 
     // Directory dialog

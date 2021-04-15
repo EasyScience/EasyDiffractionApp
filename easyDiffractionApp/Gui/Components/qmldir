@@ -39,3 +39,4 @@ AnalysisConstraints 1.0 AnalysisConstraints.qml
 
 ResultsDialog 1.0 ResultsDialog.qml
 UserGuides 1.0 UserGuides.qml
+UserTutorialsController 1.0 UserTutorialsController.qml

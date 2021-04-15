@@ -25,13 +25,13 @@ Item {
         EaComponents.GuideWindow {
             container: homePageGuidesContainer
             parent: ExGlobals.Variables.onlineDocumentationButton
-            text: qsTr("Links to the online resources.")
+            text: qsTr("Here you can find links to the online resources.")
         }
 
         EaComponents.GuideWindow {
             container: homePageGuidesContainer
             parent: ExGlobals.Variables.appBarCentralTabs
-            text: qsTr("Here you can see the steps in the data analysis workflow.\n\nThese buttons also allows you to easily navigate between the application pages.\n\nThe next page becomes enabled when the previous page is fully completed.")
+            text: qsTr("Application bar contains the steps of the data analysis workflow.\n\nThese tab buttons allows you to easily navigate between the application pages.\n\nThe next page becomes enabled when the previous page is fully completed.")
         }
 
         EaComponents.GuideWindow {
@@ -57,19 +57,19 @@ Item {
         EaComponents.GuideWindow {
             container: projectPageGuidesContainer
             parent: ExGlobals.Variables.createProjectButton
-            text: qsTr("Or here to create a new one...")
+            text: qsTr("Or click here to create a new one...")
         }
 
         EaComponents.GuideWindow {
             container: projectPageGuidesContainer
             parent: ExGlobals.Variables.loadExampleProjectButton
-            text: qsTr("Or click open button here to load one of the examples.")
+            text: qsTr("Or click button here to load one of the examples.")
         }
 
         EaComponents.GuideWindow {
             container: projectPageGuidesContainer
             parent: ExGlobals.Variables.projectPageMainContent
-            text: qsTr("Brief project details will be shown in the main area.")
+            text: qsTr("Brief project details will be shown here in the main area.")
         }
 
         EaComponents.GuideWindow {
@@ -89,19 +89,19 @@ Item {
         EaComponents.GuideWindow {
             container: samplePageGuidesContainer
             parent: ExGlobals.Variables.structuralPhasesGroup
-            text: qsTr("Here you can see labels of the structural phases.")
+            text: qsTr("This group on the sidebar allows you to load,\nmanually set or delete structural phases. ")
         }
 
         EaComponents.GuideWindow {
             container: samplePageGuidesContainer
             parent: ExGlobals.Variables.samplePageMainContent
-            text: qsTr("Crystal structure is shown in the main area.")
+            text: qsTr("Crystal structure is shown here in the main area.")
         }
 
         EaComponents.GuideWindow {
             container: samplePageGuidesContainer
             parent: ExGlobals.Variables.phaseCifTab
-            text: qsTr("This tab button allows to see the sample\ndetails as plain text (CIF).")
+            text: qsTr("This tab button allows to see the phase\ndetails as plain text (CIF format).")
         }
 
         EaComponents.GuideWindow {
@@ -127,13 +127,13 @@ Item {
         EaComponents.GuideWindow {
             container: experimentPageGuidesContainer
             parent: ExGlobals.Variables.experimentalDataGroup
-            text: qsTr("Here you can see labels of the experimental data.")
+            text: qsTr("This group on the sidebar allows you to load\nthe experimental data or continue without it.")
         }
 
         EaComponents.GuideWindow {
             container: experimentPageGuidesContainer
             parent: ExGlobals.Variables.experimentPageMainContent
-            text: qsTr("Measured data points are plotted in the main area.")
+            text: qsTr("Measured data points are plotted here in the main area.")
         }
 
         EaComponents.GuideWindow {
@@ -177,7 +177,7 @@ Item {
         EaComponents.GuideWindow {
             container: analysisPageGuidesContainer
             parent: ExGlobals.Variables.analysisPageMainContent
-            text: qsTr("Measured data (Iobs, blue) and calculate data (Icalc, red) points\n are shown in the main area.\n\nTheir difference (Iobs-Icalc, green) is given\nin the bottom plot.\n\nVertical ticks between the plots indicate\nBragg peak positions.")
+            text: qsTr("Measured data (Iobs) and calculate data (Icalc) points\n are shown in the main area.\n\nTheir difference (Iobs-Icalc) is given\nin the bottom plot.\n\nVertical ticks between the plots indicate\nBragg peak positions.")
         }
 
         EaComponents.GuideWindow {
@@ -209,7 +209,7 @@ Item {
         EaComponents.GuideWindow {
             container: summaryPageGuidesContainer
             parent: ExGlobals.Variables.summaryPageMainContent
-            text: qsTr("A report here includes brief project details,\nlist of fitable parameters, fitting plot and\nstructure view.")
+            text: qsTr("A report here includes brief project details,\nlist of fitable parameters, structure view and\nfitting plot.")
         }
 
         EaComponents.GuideWindow {

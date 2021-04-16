@@ -46,10 +46,10 @@ EaElements.RemoteController {
         running: isPreparationToFitDone && isFitSuccessfullyDone
         interval: 1000
         onTriggered: {
+            finishDataFittingTutorial()
             if (EaGlobals.Variables.isTestMode) {
                 stopScreenRecording()
             }
-            finishDataFittingTutorial()
         }
     }
 

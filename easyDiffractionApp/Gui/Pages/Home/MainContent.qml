@@ -110,25 +110,44 @@ Item {
 
                 EaElements.Button {
                     text: qsTr("Tutorial") + " 1: " + qsTr("App interface")
-                    onPressed: tutorialsController.runAppInterfaceTutorial()
+                    onClicked: appInterfaceTutorialTimer.start()
                 }
                 EaElements.Button {
                     text: qsTr("Tutorial") + " 2: " + qsTr("Data simulation")
-                    onPressed: tutorialsController.runDataSimulationTutorial()
+                    onClicked: dataSimulationTutorialTimer.start()
                 }
                 EaElements.Button {
                     text: qsTr("Tutorial") + " 3: " + qsTr("Data fitting")
-                    onPressed: tutorialsController.runDataFittingTutorial()
+                    onClicked: dataFittingTutorialTimer.start()
                 }
             }
         }
-
     }
 
-    // Remote controller for tutorials
-
+    // User tutorials
     ExComponents.UserTutorialsController {
         id: tutorialsController
+    }
+
+    Timer {
+        id: appInterfaceTutorialTimer
+
+        interval: 100
+        onTriggered: tutorialsController.runAppInterfaceTutorial()
+    }
+
+    Timer {
+        id: dataSimulationTutorialTimer
+
+        interval: 100
+        onTriggered: tutorialsController.runDataSimulationTutorial()
+    }
+
+    Timer {
+        id: dataFittingTutorialTimer
+
+        interval: 100
+        onTriggered: tutorialsController.startDataFittingTutorial()
     }
 
 }

@@ -11,12 +11,18 @@ import easyAppGui.Components 1.0 as EaComponents
 
 EaElements.RemoteController {
     id: rc
+
+    property bool isPreparationToFitDone: false
+    property bool isFitSuccessfullyDone: typeof ExGlobals.Constants.proxy.fitResults.success !== 'undefined' &&
+                                         ExGlobals.Constants.proxy.isFitFinished
+
     visible: false
     audioDir: Qt.resolvedUrl("../../Resources/Audio")
     audioEnabled: false
 
     Timer {
         id: quitAppTimer
+
         interval: 1000
         onTriggered: {
             print("* closing app")
@@ -26,6 +32,7 @@ EaElements.RemoteController {
 
     Timer {
         id: runTestTutorialTimer
+
         interval: 1000
         onTriggered: {
             startScreenRecording()
@@ -34,6 +41,14 @@ EaElements.RemoteController {
             afterRunTutorial()
             stopScreenRecording()
         }
+    }
+
+    Timer {
+        id: finishFittingTutorialTimer
+
+        running: isPreparationToFitDone && isFitSuccessfullyDone
+        interval: 1000
+        onTriggered: finishDataFittingTutorial()
     }
 
     Component.onCompleted: {
@@ -81,14 +96,14 @@ EaElements.RemoteController {
 
     function beforeRunTutorial() {
         rc.visible = true
-        rc.wait(1000)
         rc.posToCenter()
+        rc.wait(1000)
         rc.showPointer()
     }
 
     function afterRunTutorial() {
         rc.hidePointer()
-        rc.say("Thank you for using easy diffraction.")
+        //rc.say("Thank you for using easy diffraction.")
         rc.wait(1000)
         rc.visible = false
     }
@@ -253,8 +268,10 @@ EaElements.RemoteController {
         afterRunTutorial()
     }
 
-    function runDataFittingTutorial() {
+    function startDataFittingTutorial() {
         print("* run data fitting tutorial")
+
+        isPreparationToFitDone = false
 
         let x_pos = undefined
         let y_pos = EaStyle.Sizes.comboBoxHeight * 2.5
@@ -281,7 +298,15 @@ EaElements.RemoteController {
         rc.mouseClick(ExGlobals.Variables.fitZeroShiftCheckBox)
         rc.mouseClick(ExGlobals.Variables.fitScaleCheckBox)
         rc.mouseClick(ExGlobals.Variables.startFittingButton)
-        rc.wait(40000)
+
+        isPreparationToFitDone = true
+
+        print("* fitting started")
+    }
+
+    function finishDataFittingTutorial() {
+        print("* fitting finished")
+
         rc.mouseClick(ExGlobals.Variables.refinementResultsOkButton)
         rc.mouseClick(ExGlobals.Variables.summaryTabButton)
 

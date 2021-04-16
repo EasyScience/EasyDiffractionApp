@@ -147,7 +147,7 @@ Item {
         id: dataFittingTutorialTimer
 
         interval: 100
-        onTriggered: tutorialsController.startDataFittingTutorial()
+        onTriggered: tutorialsController.runDataFittingTutorial()
     }
 
 }

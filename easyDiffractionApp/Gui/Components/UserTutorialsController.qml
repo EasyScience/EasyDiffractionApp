@@ -36,10 +36,7 @@ EaElements.RemoteController {
         interval: 1000
         onTriggered: {
             startScreenRecording()
-            beforeRunTutorial()
             runDataFittingTutorial()
-            afterRunTutorial()
-            stopScreenRecording()
         }
     }
 
@@ -48,7 +45,12 @@ EaElements.RemoteController {
 
         running: isPreparationToFitDone && isFitSuccessfullyDone
         interval: 1000
-        onTriggered: finishDataFittingTutorial()
+        onTriggered: {
+            if (EaGlobals.Variables.isTestMode) {
+                stopScreenRecording()
+            }
+            finishDataFittingTutorial()
+        }
     }
 
     Component.onCompleted: {
@@ -268,7 +270,7 @@ EaElements.RemoteController {
         afterRunTutorial()
     }
 
-    function startDataFittingTutorial() {
+    function runDataFittingTutorial() {
         print("* run data fitting tutorial")
 
         isPreparationToFitDone = false

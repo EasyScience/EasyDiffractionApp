@@ -1,3 +1,4 @@
+# noqa: E501
 import os
 import datetime
 import timeit
@@ -114,7 +115,6 @@ class PyQmlProxy(QObject):
 
         # Main
         self._interface = InterfaceFactory()
-        self._sample = self._defaultSample()
 
         # Plotting 1D
         self._plotting_1d_proxy = Plotting1dProxy()
@@ -128,11 +128,8 @@ class PyQmlProxy(QObject):
 
         self.current3dPlottingLibChanged.connect(self.onCurrent3dPlottingLibChanged)
 
-        # Project
-        self._project_info = self._defaultProjectInfo()
-        self.project_save_filepath = ""
-        self._status_model = None
-        self._state_changed = False
+        # Initialize state
+        self.state = State(self, interface=self._interface)
         self.stateChanged.connect(self._onStateChanged)
 
         # Structure
@@ -141,9 +138,6 @@ class PyQmlProxy(QObject):
         self.structureParametersChanged.connect(self._onCalculatedDataChanged)
         self.structureViewChanged.connect(self._onStructureViewChanged)
 
-        self._phases_as_obj = []
-        self._phases_as_xml = ""
-        self._phases_as_cif = ""
         self.phaseAdded.connect(self._onPhaseAdded)
         self.phaseAdded.connect(self.phasesEnabled)
         self.phaseAdded.connect(self.undoRedoChanged)
@@ -151,48 +145,33 @@ class PyQmlProxy(QObject):
         self.phaseRemoved.connect(self.phasesEnabled)
         self.phaseRemoved.connect(self.undoRedoChanged)
 
-        self._current_phase_index = 0
         self.currentPhaseChanged.connect(self._onCurrentPhaseChanged)
 
-        # Experiment and calculated data
-        self._data = self._defaultData()
-
         # Experiment
-        self._pattern_parameters_as_obj = self._defaultPatternParameters()
         self.patternParametersChanged.connect(self._onPatternParametersChanged)
 
-        self._instrument_parameters_as_obj = self._defaultInstrumentParameters()
-        self._instrument_parameters_as_xml = ""
         self.instrumentParametersChanged.connect(self._onInstrumentParametersChanged)
 
-        self._experiment_parameters = None
-        self._experiment_data = None
-        self._experiment_data_as_xml = ""
-        self.experiments = self._defaultExperiments()
         self.experimentDataChanged.connect(self._onExperimentDataChanged)
         self.experimentDataAdded.connect(self._onExperimentDataAdded)
         self.experimentDataRemoved.connect(self._onExperimentDataRemoved)
 
-        self._experiment_loaded = False
-        self._experiment_skipped = False
         self.experimentLoadedChanged.connect(self._onExperimentLoadedChanged)
         self.experimentSkippedChanged.connect(self._onExperimentSkippedChanged)
 
         self._background_proxy = BackgroundProxy()
         self._background_proxy.asObjChanged.connect(self._onParametersChanged)
-        self._background_proxy.asObjChanged.connect(self._sample.set_background)
+        self._background_proxy.asObjChanged.connect(self.state._sample.set_background)
         self._background_proxy.asObjChanged.connect(self.calculatedDataChanged)
         self._background_proxy.asXmlChanged.connect(self.updateChartBackground)
 
         # Analysis
         self.calculatedDataChanged.connect(self._onCalculatedDataChanged)
-
-        self._simulation_parameters_as_obj = self._defaultSimulationParameters()
         self.simulationParametersChanged.connect(self._onSimulationParametersChanged)
         self.simulationParametersChanged.connect(self.undoRedoChanged)
 
         self._fit_results = self._defaultFitResults()
-        self.fitter = Fitter(self._sample, self._interface.fit_func)
+        self.fitter = Fitter(self.state._sample, self._interface.fit_func)
         self.fitFinished.connect(self._onFitFinished)
 
         self._current_minimizer_method_index = 0
@@ -203,8 +182,6 @@ class PyQmlProxy(QObject):
         self.currentCalculatorChanged.connect(self._onCurrentCalculatorChanged)
 
         # Parameters
-        self._parameters_as_obj = []
-        self._parameters_as_xml = []
         self.parametersChanged.connect(self._onParametersChanged)
         self.parametersChanged.connect(self._onCalculatedDataChanged)
         self.parametersChanged.connect(self._onStructureViewChanged)
@@ -214,7 +191,6 @@ class PyQmlProxy(QObject):
         self.parametersChanged.connect(self._background_proxy.onAsObjChanged)
         self.parametersChanged.connect(self.undoRedoChanged)
 
-        self._parameters_filter_criteria = ""
         self.parametersFilterCriteriaChanged.connect(self._onParametersFilterCriteriaChanged)
 
         # Report
@@ -310,17 +286,6 @@ class PyQmlProxy(QObject):
         self._bonds_max_distance = max_distance
         self.structureViewChanged.emit()
 
-    # Charts for report
-
-    @Slot('QVariant', result=str)
-    def imageToSource(self, image):
-        ba = QByteArray()
-        buffer = QBuffer(ba)
-        buffer.open(QIODevice.WriteOnly)
-        image.save(buffer, 'png')
-        data = ba.toBase64().data().decode('utf-8')
-        source = f'data:image/png;base64,{data}'
-        return source
 
     ####################################################################################################################
     ####################################################################################################################
@@ -334,92 +299,38 @@ class PyQmlProxy(QObject):
 
     @Property('QVariant', notify=projectInfoChanged)
     def projectInfoAsJson(self):
-        return self._project_info
+        return self.state._project_info
 
     @projectInfoAsJson.setter
     def projectInfoAsJson(self, json_str):
-        self._project_info = json.loads(json_str)
+        self.state.projectInfoAsJson(json_str)
         self.projectInfoChanged.emit()
 
     @Property(str, notify=projectInfoChanged)
     def projectInfoAsCif(self):
-        cif_list = []
-        for key, value in self.projectInfoAsJson.items():
-            if ' ' in value:
-                value = f"'{value}'"
-            cif_list.append(f'_{key} {value}')
-        cif_str = '\n'.join(cif_list)
-        return cif_str
+        return self.state.projectInfoAsCif()
 
     @Slot(str, str)
     def editProjectInfo(self, key, value):
-        if self._project_info[key] == value:
-            return
-
-        self._project_info[key] = value
+        self.state.editProjectInfo(key, value)
         self.projectInfoChanged.emit()
 
     @Slot()
     def createProject(self):
-        projectPath = self.projectInfoAsJson['location']
-        mainCif = os.path.join(projectPath, 'project.cif')
-        samplesPath = os.path.join(projectPath, 'samples')
-        experimentsPath = os.path.join(projectPath, 'experiments')
-        calculationsPath = os.path.join(projectPath, 'calculations')
-        if not os.path.exists(projectPath):
-            os.makedirs(projectPath)
-            os.makedirs(samplesPath)
-            os.makedirs(experimentsPath)
-            os.makedirs(calculationsPath)
-            with open(mainCif, 'w') as file:
-                file.write(self.projectInfoAsCif)
-        else:
-            print(f"ERROR: Directory {projectPath} already exists")
-
-    def _defaultProjectInfo(self):
-        return dict(
-            name="Example Project",
-            location=os.path.join(os.path.expanduser("~"), "Example Project"),
-            short_description="diffraction, powder, 1D",
-            samples="Not loaded",
-            experiments="Not loaded",
-            calculations="Not created",
-            modified=datetime.datetime.now().strftime("%d.%m.%Y %H:%M")
-        )
+        self.state.createProject()
 
     @Property(bool, notify=stateChanged)
     def stateHasChanged(self):
-        return self._state_changed
+        return self.state._state_changed
 
     @stateHasChanged.setter
     def stateHasChanged(self, changed: bool):
-        if self._state_changed == changed:
-            print("same state changed value - {}".format(str(changed)))
-            return
-        self._state_changed = changed
-        print("new state changed value - {}".format(str(changed)))
-        self.stateChanged.emit(changed)
+        self.state.stateHasChanged(changed)
+        # self.stateChanged.emit(changed)
 
     def _onStateChanged(self, changed=True):
         self.stateHasChanged = changed
 
-    ####################################################################################################################
-    ####################################################################################################################
-    # SAMPLE
-    ####################################################################################################################
-    ####################################################################################################################
-
-    def _defaultSample(self):
-        sample = Sample(parameters=Pars1D.default(), pattern=Pattern1D.default(), interface=self._interface)
-        sample.pattern.zero_shift = 0.0
-        sample.pattern.scale = 1.0
-        sample.parameters.wavelength = 1.912
-        sample.parameters.resolution_u = 0.1447
-        sample.parameters.resolution_v = -0.4252
-        sample.parameters.resolution_w = 0.3864
-        sample.parameters.resolution_x = 0.0
-        sample.parameters.resolution_y = 0.0961
-        return sample
 
     ####################################################################################################################
     # Phase models (list, xml, cif)
@@ -427,55 +338,41 @@ class PyQmlProxy(QObject):
 
     @Property('QVariant', notify=phasesAsObjChanged)
     def phasesAsObj(self):
-        # print("+ phasesAsObj")
-        return self._phases_as_obj
+        return self.state._phases_as_obj
 
     @Property(str, notify=phasesAsXmlChanged)
     def phasesAsXml(self):
-        # print("+ phasesAsXml")
-        return self._phases_as_xml
+        return self.state._phases_as_xml
 
     @Property(str, notify=phasesAsCifChanged)
     def phasesAsCif(self):
-        # print("+ phasesAsCif")
-        return self._phases_as_cif
+        return self.state._phases_as_cif
 
     @Property(str, notify=phasesAsCifChanged)
     def phasesAsExtendedCif(self):
-        if len(self._sample.phases) == 0:
-            return
-
-        symm_ops = self._sample.phases[0].spacegroup.symmetry_opts
-        symm_ops_cif_loop = "loop_\n _symmetry_equiv_pos_as_xyz\n"
-        for symm_op in symm_ops:
-            symm_ops_cif_loop += f' {symm_op.as_xyz_string()}\n'
-        return self._phases_as_cif + symm_ops_cif_loop
+        return self.state.phasesAsExtendedCif()
 
     @phasesAsCif.setter
     @property_stack_deco
     def phasesAsCif(self, phases_as_cif):
-        print("+ phasesAsCifSetter")
-        if self._phases_as_cif == phases_as_cif:
-            return
-
-        self._sample.phases = Phases.from_cif_str(phases_as_cif)
+        self.state.phasesAsCif(phases_as_cif)
         self.structureParametersChanged.emit()
 
     def _setPhasesAsObj(self):
         start_time = timeit.default_timer()
-        self._phases_as_obj = self._sample.phases.as_dict()['data']
-        print("+ _setPhasesAsObj: {0:.3f} s".format(timeit.default_timer() - start_time))
+        self.state._setPhasesAsObj()
+        print("+ _setPhasesAsObj: {0:.3f} s".format(timeit.default_timer() - start_time))  # noqa: E501
         self.phasesAsObjChanged.emit()
 
     def _setPhasesAsXml(self):
         start_time = timeit.default_timer()
-        self._phases_as_xml = dicttoxml(self._phases_as_obj, attr_type=True).decode()
+        self.state._setPhasesAsXml()
         print("+ _setPhasesAsXml: {0:.3f} s".format(timeit.default_timer() - start_time))
         self.phasesAsXmlChanged.emit()
 
     def _setPhasesAsCif(self):
         start_time = timeit.default_timer()
-        self._phases_as_cif = str(self._sample.phases.cif)
+        self.state._setPhasesAsCif()
         print("+ _setPhasesAsCif: {0:.3f} s".format(timeit.default_timer() - start_time))
         self.phasesAsCifChanged.emit()
 
@@ -492,54 +389,23 @@ class PyQmlProxy(QObject):
 
     @Slot(str)
     def addSampleFromCif(self, cif_url):
-        cif_path = generalizePath(cif_url)
-        if borg.stack.enabled:
-            borg.stack.beginMacro(f'Loaded cif: {cif_path}')
-        self._sample.phases = Phases.from_cif_file(cif_path)
-        if borg.stack.enabled:
-            borg.stack.endMacro()
-            # if len(self._sample.phases) < 2:
-            #     # We have problems with removing the only phase.....
-            #     borg.stack.pop()
+        self.state.addSampleFromCif(cif_url)
         self.phaseAdded.emit()
-        # self.undoRedoChanged.emit()
 
     @Slot()
     def addDefaultPhase(self):
         print("+ addDefaultPhase")
-        if borg.stack.enabled:
-            borg.stack.beginMacro('Loaded default phase')
-        self._sample.phases = self._defaultPhase()
-        if borg.stack.enabled:
-            borg.stack.endMacro()
-            # if len(self._sample.phases) < 2:
-            #     # We have problems with removing the only phase.....
-            #     borg.stack.pop()
+        self.state.addDefaultPhase()
         self.phaseAdded.emit()
-        # self.undoRedoChanged.emit()
-        # self.phasesEnabled.emit()
 
     @Slot(str)
     def removePhase(self, phase_name: str):
-        if phase_name in self._sample.phases.phase_names:
-            del self._sample.phases[phase_name]
+        if self.state.removePhase(phase_name):
             self.phaseRemoved.emit()
-
-    def _defaultPhase(self):
-        space_group = SpaceGroup.from_pars('P 42/n c m')
-        cell = Lattice.from_pars(8.56, 8.56, 6.12, 90, 90, 90)
-        atom = Site.from_pars(label='Cl1', specie='Cl', fract_x=0.125, fract_y=0.167, fract_z=0.107)
-        atom.add_adp('Uiso', Uiso=0.0)
-        phase = Phase('Dichlorine', spacegroup=space_group, cell=cell)
-        phase.add_atom(atom)
-        return phase
 
     def _onPhaseAdded(self):
         print("***** _onPhaseAdded")
-        if self._interface.current_interface_name != 'CrysPy':
-            self._interface.generate_sample_binding("filename", self._sample)
-        self._sample.phases.name = 'Phases'
-        self._sample.set_background(self._background_proxy.asObj)
+        self.state._onPhaseAdded(self._background_proxy.asObj)
         self.structureParametersChanged.emit()
 
     def _onPhaseRemoved(self):
@@ -548,7 +414,7 @@ class PyQmlProxy(QObject):
 
     @Property(bool, notify=phasesEnabled)
     def samplesPresent(self) -> bool:
-        return len(self._sample.phases) > 0
+        return len(self.state._sample.phases) > 0
 
     ####################################################################################################################
     # Phase: Symmetry
@@ -558,117 +424,42 @@ class PyQmlProxy(QObject):
 
     @Property('QVariant', notify=structureParametersChanged)
     def crystalSystemList(self):
-        systems = [system.capitalize() for system in SpacegroupInfo.get_all_systems()]
-        return systems
+        return self.state.crystalSystemList()
 
     @Property(str, notify=structureParametersChanged)
     def currentCrystalSystem(self):
-        phases = self._sample.phases
-        if not phases:
-            return ''
-
-        current_system = phases[self.currentPhaseIndex].spacegroup.crystal_system
-        current_system = current_system.capitalize()
-        return current_system
+        return self.state.currentCrystalSystem()
 
     @currentCrystalSystem.setter
     def currentCrystalSystem(self, new_system: str):
-        new_system = new_system.lower()
-        space_group_numbers = SpacegroupInfo.get_ints_from_system(new_system)
-        top_space_group_number = space_group_numbers[0]
-        top_space_group_name = SpacegroupInfo.get_symbol_from_int_number(top_space_group_number)
-        self._setCurrentSpaceGroup(top_space_group_name)
-
-    # Space group number and name
+        self.state.setCurrentCrystalSystem(new_system)
 
     @Property('QVariant', notify=structureParametersChanged)
     def formattedSpaceGroupList(self):
-        def format_display(num):
-            name = SpacegroupInfo.get_symbol_from_int_number(num)
-            return f"<font color='#999'>{num}</font> {name}"
-
-        space_group_numbers = self._spaceGroupNumbers()
-        display_list = [format_display(num) for num in space_group_numbers]
-        return display_list
+        return self.state.formattedSpaceGroupList()
 
     @Property(int, notify=structureParametersChanged)
     def currentSpaceGroup(self):
-        def space_group_index(number, numbers):
-            if number in numbers:
-                return numbers.index(number)
-            return 0
-
-        phases = self._sample.phases
-        if not phases:
-            return -1
-
-        space_group_numbers = self._spaceGroupNumbers()
-        current_number = self._currentSpaceGroupNumber()
-        current_idx = space_group_index(current_number, space_group_numbers)
-        return current_idx
+        return self.state.getCurrentSpaceGroup()
 
     @currentSpaceGroup.setter
     def currentSpaceGroup(self, new_idx: int):
-        space_group_numbers = self._spaceGroupNumbers()
-        space_group_number = space_group_numbers[new_idx]
-        space_group_name = SpacegroupInfo.get_symbol_from_int_number(space_group_number)
-        self._setCurrentSpaceGroup(space_group_name)
-
-    def _spaceGroupNumbers(self):
-        current_system = self.currentCrystalSystem.lower()
-        numbers = SpacegroupInfo.get_ints_from_system(current_system)
-        return numbers
-
-    def _currentSpaceGroupNumber(self):
-        phases = self._sample.phases
-        current_number = phases[self.currentPhaseIndex].spacegroup.int_number
-        return current_number
-
-    # Space group setting
+        self.state.currentSpaceGroup(new_idx)
 
     @Property('QVariant', notify=structureParametersChanged)
     def formattedSpaceGroupSettingList(self):
-        def format_display(num, name):
-            return f"<font color='#999'>{num}</font> {name}"
-
-        raw_list = self._spaceGroupSettingList()
-        formatted_list = [format_display(i + 1, name) for i, name in enumerate(raw_list)]
-        return formatted_list
+        return self.state.formattedSpaceGroupSettingList()
 
     @Property(int, notify=structureParametersChanged)
     def currentSpaceGroupSetting(self):
-        phases = self._sample.phases
-        if not phases:
-            return 0
-
-        settings = self._spaceGroupSettingList()
-        current_setting = phases[self.currentPhaseIndex].spacegroup.space_group_HM_name.raw_value
-        current_number = settings.index(current_setting)
-        return current_number
+        return self.state.currentSpaceGroupSetting()
 
     @currentSpaceGroupSetting.setter
     def currentSpaceGroupSetting(self, new_number: int):
-        settings = self._spaceGroupSettingList()
-        name = settings[new_number]
-        self._setCurrentSpaceGroup(name)
-
-    def _spaceGroupSettingList(self):
-        phases = self._sample.phases
-        if not phases:
-            return []
-
-        current_number = self._currentSpaceGroupNumber()
-        settings = SpacegroupInfo.get_compatible_HM_from_int(current_number)
-        return settings
-
-    # Common
+        self.state.setCurrentSpaceGroupSetting(new_number)
 
     def _setCurrentSpaceGroup(self, new_name: str):
-        phases = self._sample.phases
-        if phases[self.currentPhaseIndex].spacegroup.space_group_HM_name == new_name:
-            return
-
-        phases[self.currentPhaseIndex].spacegroup.space_group_HM_name = new_name
+        self.state._setCurrentSpaceGroup(new_name)
         self.structureParametersChanged.emit()
 
     ####################################################################################################################
@@ -678,20 +469,14 @@ class PyQmlProxy(QObject):
     @Slot()
     def addDefaultAtom(self):
         try:
-            atom = Site.from_pars(label='Label2',
-                                  specie='O',
-                                  fract_x=0.05,
-                                  fract_y=0.05,
-                                  fract_z=0.05)
-            atom.add_adp('Uiso', Uiso=0.0)
-            self._sample.phases[self.currentPhaseIndex].add_atom(atom)
+            self.state.addDefaultAtom()
             self.structureParametersChanged.emit()
         except AttributeError:
             print("Error: failed to add atom")
 
     @Slot(str)
     def removeAtom(self, atom_label: str):
-        del self._sample.phases[self.currentPhaseIndex].atoms[atom_label]
+        self.state.removeAtom(atom_label)
         self.structureParametersChanged.emit()
 
     ####################################################################################################################
@@ -700,14 +485,11 @@ class PyQmlProxy(QObject):
 
     @Property(int, notify=currentPhaseChanged)
     def currentPhaseIndex(self):
-        return self._current_phase_index
+        return self.state._current_phase_index
 
     @currentPhaseIndex.setter
     def currentPhaseIndex(self, new_index: int):
-        if self._current_phase_index == new_index or new_index == -1:
-            return
-
-        self._current_phase_index = new_index
+        self.state.currentPhaseIndex(new_index)
         self.currentPhaseChanged.emit()
 
     def _onCurrentPhaseChanged(self):
@@ -720,55 +502,13 @@ class PyQmlProxy(QObject):
     ####################################################################################################################
     ####################################################################################################################
 
-    def _defaultExperiments(self):
-        return []
-
-    def _defaultData(self):
-        x_min = self._defaultSimulationParameters()['x_min']
-        x_max = self._defaultSimulationParameters()['x_max']
-        x_step = self._defaultSimulationParameters()['x_step']
-        num_points = int((x_max - x_min) / x_step + 1)
-        x_data = np.linspace(x_min, x_max, num_points)
-
-        data = DataStore()
-
-        data.append(
-            DataSet1D(
-                name='D1A@ILL data',
-                x=x_data, y=np.zeros_like(x_data),
-                x_label='2theta (deg)', y_label='Intensity',
-                data_type='experiment'
-            )
-        )
-        data.append(
-            DataSet1D(
-                name='{:s} engine'.format(self._interface.current_interface_name),
-                x=x_data, y=np.zeros_like(x_data),
-                x_label='2theta (deg)', y_label='Intensity',
-                data_type='simulation'
-            )
-        )
-        data.append(
-            DataSet1D(
-                name='Difference',
-                x=x_data, y=np.zeros_like(x_data),
-                x_label='2theta (deg)', y_label='Difference',
-                data_type='simulation'
-            )
-        )
-        return data
-
-    ####################################################################################################################
-    # Experiment models (list, xml, cif)
-    ####################################################################################################################
-
     @Property(str, notify=experimentDataAsXmlChanged)
     def experimentDataAsXml(self):
-        return self._experiment_data_as_xml
+        return self.state._experiment_data_as_xml
 
     def _setExperimentDataAsXml(self):
         print("+ _setExperimentDataAsXml")
-        self._experiment_data_as_xml = dicttoxml(self.experiments, attr_type=True).decode()
+        self.state._setExperimentDataAsXml()
         self.experimentDataAsXmlChanged.emit()
 
     def _onExperimentDataChanged(self):
@@ -782,85 +522,23 @@ class PyQmlProxy(QObject):
 
     @Slot(str)
     def addExperimentDataFromXye(self, file_url):
-        print(f"+ addExperimentDataFromXye: {file_url}")
-
-        def outer1(obj):
-            def inner():
-                obj._experiment_data = self._loadExperimentData(file_url)
-                obj.experimentLoaded = True
-                obj.experimentSkipped = False
-                obj.undoRedoChanged.emit()
-                obj.experimentDataAdded.emit()
-            return inner
-
-        def outer2(obj):
-            def inner():
-                obj.experiments.clear()
-                obj.experimentLoaded = False
-                obj.experimentSkipped = True
-                obj.undoRedoChanged.emit()
-                obj.experimentDataRemoved.emit()
-            return inner
-
-        borg.stack.push(FunctionStack(self, outer1(self), outer2(self)))
-
+        self.state.addExperimentDataFromXye(file_url)
 
     @Slot()
     def removeExperiment(self):
         print("+ removeExperiment")
-
-        def outer1(obj):
-            def inner():
-                obj.experiments.clear()
-                obj.experimentDataRemoved.emit()
-                obj.experimentLoaded = False
-                obj.experimentSkipped = False
-                obj.undoRedoChanged.emit()
-            return inner
-
-        def outer2(obj):
-            data = self._experiment_data
-
-            def inner():
-                obj._experiment_data = data
-                obj.experimentDataAdded.emit()
-                obj.experimentLoaded = True
-                obj.experimentSkipped = False
-                obj.undoRedoChanged.emit()
-            return inner
-
-        borg.stack.push(FunctionStack(self, outer1(self), outer2(self)))
-
-    def _defaultExperiment(self):
-        return {
-            "label": "D1A@ILL",
-            "color": "#00a3e3"
-        }
+        self.state.removeExperiment()
 
     def _loadExperimentData(self, file_url):
         print("+ _loadExperimentData")
-        file_path = generalizePath(file_url)
-        data = self._data.experiments[0]
-        data.x, data.y, data.e = np.loadtxt(file_path, unpack=True)
-        return data
-
-    def _experimentDataParameters(self, data):
-        x_min = data.x[0]
-        x_max = data.x[-1]
-        x_step = (x_max - x_min) / (len(data.x) - 1)
-        parameters = {
-            "x_min":  x_min,
-            "x_max":  x_max,
-            "x_step": x_step
-        }
-        return parameters
+        return self.state._loadExperimentData(file_url)
 
     def _onExperimentDataAdded(self):
         print("***** _onExperimentDataAdded")
-        self._plotting_1d_proxy.setMeasuredData(self._experiment_data.x, self._experiment_data.y, self._experiment_data.e)
-        self._experiment_parameters = self._experimentDataParameters(self._experiment_data)
-        self.simulationParametersAsObj = json.dumps(self._experiment_parameters)
-        self.experiments = [self._defaultExperiment()]
+        self.state._onExperimentDataAdded()
+        ##### stays until background proxy refactored
+        x, y, z = self.state.experimentDataXYZ()
+        self._plotting_1d_proxy.setMeasuredData(x, y, z)
         self._background_proxy.setDefaultPoints()
         self.experimentDataChanged.emit()
 
@@ -875,26 +553,20 @@ class PyQmlProxy(QObject):
 
     @Property(bool, notify=experimentLoadedChanged)
     def experimentLoaded(self):
-        return self._experiment_loaded
+        return self.state._experiment_loaded
 
     @experimentLoaded.setter
     def experimentLoaded(self, loaded: bool):
-        if self._experiment_loaded == loaded:
-            return
-
-        self._experiment_loaded = loaded
+        self.state.experimentLoaded(loaded)
         self.experimentLoadedChanged.emit()
 
     @Property(bool, notify=experimentSkippedChanged)
     def experimentSkipped(self):
-        return self._experiment_skipped
+        return self.state._experiment_skipped
 
     @experimentSkipped.setter
     def experimentSkipped(self, skipped: bool):
-        if self._experiment_skipped == skipped:
-            return
-
-        self._experiment_skipped = skipped
+        self.state.experimentSkipped(skipped)
         self.experimentSkippedChanged.emit()
 
     def _onExperimentLoadedChanged(self):
@@ -918,22 +590,12 @@ class PyQmlProxy(QObject):
 
     @Property('QVariant', notify=simulationParametersChanged)
     def simulationParametersAsObj(self):
-        return self._simulation_parameters_as_obj
+        return self.state._simulation_parameters_as_obj
 
     @simulationParametersAsObj.setter
     def simulationParametersAsObj(self, json_str):
-        if self._simulation_parameters_as_obj == json.loads(json_str):
-            return
-
-        self._simulation_parameters_as_obj = json.loads(json_str)
+        self.state.simulationParametersAsObj(json_str)
         self.simulationParametersChanged.emit()
-
-    def _defaultSimulationParameters(self):
-        return {
-            "x_min": 10.0,
-            "x_max": 120.0,
-            "x_step": 0.1
-        }
 
     def _onSimulationParametersChanged(self):
         print("***** _onSimulationParametersChanged")
@@ -945,18 +607,11 @@ class PyQmlProxy(QObject):
 
     @Property('QVariant', notify=patternParametersAsObjChanged)
     def patternParametersAsObj(self):
-        return self._pattern_parameters_as_obj
-
-    def _defaultPatternParameters(self):
-        return {
-            "scale":      1.0,
-            "zero_shift": 0.0
-        }
+        return self.state._pattern_parameters_as_obj
 
     def _setPatternParametersAsObj(self):
         start_time = timeit.default_timer()
-        parameters = self._sample.pattern.as_dict()
-        self._pattern_parameters_as_obj = parameters
+        self.state._setPatternParametersAsObj()
         print("+ _setPatternParametersAsObj: {0:.3f} s".format(timeit.default_timer() - start_time))
         self.patternParametersAsObjChanged.emit()
 
@@ -970,33 +625,21 @@ class PyQmlProxy(QObject):
 
     @Property('QVariant', notify=instrumentParametersAsObjChanged)
     def instrumentParametersAsObj(self):
-        return self._instrument_parameters_as_obj
+        return self.state._instrument_parameters_as_obj
 
     @Property(str, notify=instrumentParametersAsXmlChanged)
     def instrumentParametersAsXml(self):
-        return self._instrument_parameters_as_xml
-
-    def _defaultInstrumentParameters(self):
-        return {
-            "wavelength":   1.0,
-            "resolution_u": 0.01,
-            "resolution_v": -0.01,
-            "resolution_w": 0.01,
-            "resolution_x": 0.0,
-            "resolution_y": 0.0
-        }
+        return self.state._instrument_parameters_as_xml
 
     def _setInstrumentParametersAsObj(self):
         start_time = timeit.default_timer()
-        parameters = self._sample.parameters.as_dict()
-        self._instrument_parameters_as_obj = parameters
+        self.state._setInstrumentParametersAsObj()
         print("+ _setInstrumentParametersAsObj: {0:.3f} s".format(timeit.default_timer() - start_time))
         self.instrumentParametersAsObjChanged.emit()
 
     def _setInstrumentParametersAsXml(self):
         start_time = timeit.default_timer()
-        parameters = [self._instrument_parameters_as_obj]
-        self._instrument_parameters_as_xml = dicttoxml(parameters, attr_type=True).decode()
+        self.state._setInstrumentParametersAsXml()
         print("+ _setInstrumentParametersAsXml: {0:.3f} s".format(timeit.default_timer() - start_time))
         self.instrumentParametersAsXmlChanged.emit()
 
@@ -1027,50 +670,12 @@ class PyQmlProxy(QObject):
     # Calculated data
     ####################################################################################################################
 
-    def _updateCalculatedData(self):
-        start_time = timeit.default_timer()
-
-        if not self.experimentLoaded and not self.experimentSkipped:
-            return
-
-        self._sample.output_index = self.currentPhaseIndex
-
-        #  THIS IS WHERE WE WOULD LOOK UP CURRENT EXP INDEX
-        sim = self._data.simulations[0]
-
-        if self.experimentLoaded:
-            exp = self._data.experiments[0]
-            sim.x = exp.x
-
-        elif self.experimentSkipped:
-            x_min = float(self._simulation_parameters_as_obj['x_min'])
-            x_max = float(self._simulation_parameters_as_obj['x_max'])
-            x_step = float(self._simulation_parameters_as_obj['x_step'])
-            num_points = int((x_max - x_min) / x_step + 1)
-            sim.x = np.linspace(x_min, x_max, num_points)
-
-        sim.y = self._interface.fit_func(sim.x)  # CrysPy: 0.5 s, CrysFML: 0.005 s, GSAS-II: 0.25 s
-        hkl = self._interface.get_hkl()
-
-        self._plotting_1d_proxy.setCalculatedData(sim.x, sim.y)
-        self._plotting_1d_proxy.setBraggData(hkl['ttheta'], hkl['h'], hkl['k'], hkl['l'])
-
-        print("+ _updateCalculatedData: {0:.3f} s".format(timeit.default_timer() - start_time))
-
     def _onCalculatedDataChanged(self):
         print("***** _onCalculatedDataChanged")
         try:
-            self._updateCalculatedData()
+            self.state._updateCalculatedData()
         finally:
             self.calculatedDataUpdated.emit()
-
-    @Property(str, notify=calculatedDataUpdated)
-    def calculatedDataXStr(self):
-        return self._calculated_data_x_str
-
-    @Property(str, notify=calculatedDataUpdated)
-    def calculatedDataYStr(self):
-        return self._calculated_data_y_str
 
     ####################################################################################################################
     # Fitables (parameters table from analysis tab & ...)
@@ -1078,46 +683,21 @@ class PyQmlProxy(QObject):
 
     @Property('QVariant', notify=parametersAsObjChanged)
     def parametersAsObj(self):
-        # print("+ parametersAsObj")
-        return self._parameters_as_obj
+        return self.state._parameters_as_obj
 
     @Property(str, notify=parametersAsXmlChanged)
     def parametersAsXml(self):
-        # print("+ parametersAsXml")
-        return self._parameters_as_xml
+        return self.state._parameters_as_xml
 
     def _setParametersAsObj(self):
         start_time = timeit.default_timer()
-        self._parameters_as_obj.clear()
-
-        par_ids, par_paths = generatePath(self._sample, True)
-        for par_index, par_path in enumerate(par_paths):
-            par_id = par_ids[par_index]
-            par = borg.map.get_item_by_key(par_id)
-
-            if not par.enabled:
-                continue
-
-            if self._parameters_filter_criteria.lower() not in par_path.lower():
-                continue
-
-            self._parameters_as_obj.append({
-                "id":     str(par_id),
-                "number": par_index + 1,
-                "label":  par_path,
-                "value":  par.raw_value,
-                "unit":   '{:~P}'.format(par.unit),
-                "error":  float(par.error),
-                "fit":    int(not par.fixed)
-            })
-
+        self.state._setParametersAsObj()
         print("+ _setParametersAsObj: {0:.3f} s".format(timeit.default_timer() - start_time))
         self.parametersAsObjChanged.emit()
 
     def _setParametersAsXml(self):
         start_time = timeit.default_timer()
-        # print(f" _setParametersAsObj self._parameters_as_obj id C {id(self._parameters_as_obj)}")
-        self._parameters_as_xml = dicttoxml(self._parameters_as_obj, attr_type=False).decode()
+        self.state._setParametersAsXml()
         print("+ _setParametersAsXml: {0:.3f} s".format(timeit.default_timer() - start_time))
         self.parametersAsXmlChanged.emit()
 
@@ -1128,12 +708,9 @@ class PyQmlProxy(QObject):
         self.stateChanged.emit(True)
 
     # Filtering
-
     @Slot(str)
     def setParametersFilterCriteria(self, new_criteria):
-        if self._parameters_filter_criteria == new_criteria:
-            return
-        self._parameters_filter_criteria = new_criteria
+        self.state.setParametersFilterCriteria()
         self.parametersFilterCriteriaChanged.emit()
 
     def _onParametersFilterCriteriaChanged(self):
@@ -1146,35 +723,7 @@ class PyQmlProxy(QObject):
 
     @Slot(str, 'QVariant')
     def editParameter(self, obj_id: str, new_value: Union[bool, float, str]):  # covers both parameter and descriptor
-        if not obj_id:
-            return
-
-        obj = self._parameterObj(obj_id)
-        if obj is None:
-            return
-        print(f"\n\n+ editParameter {obj_id} of {type(new_value)} from {obj.raw_value} to {new_value}")
-
-        if isinstance(new_value, bool):
-            if obj.fixed == (not new_value):
-                return
-
-            obj.fixed = not new_value
-            self._onParametersChanged()
-            self.undoRedoChanged.emit()
-
-        else:
-            if obj.raw_value == new_value:
-                return
-
-            obj.value = new_value
-            self.parametersChanged.emit()
-
-    def _parameterObj(self, obj_id: str):
-        if not obj_id:
-            return
-        obj_id = int(obj_id)
-        obj = borg.map.get_item_by_key(obj_id)
-        return obj
+        self.state.editParameter(obj_id, new_value)
 
     ####################################################################################################################
     # Minimizer
@@ -1199,15 +748,6 @@ class PyQmlProxy(QObject):
         new_name = self.minimizerNames[new_index]
         self.fitter.switch_engine(new_name)
         self.currentMinimizerChanged.emit()
-
-    # @Slot(int)
-    # def changeCurrentMinimizer(self, new_index: int):
-    #     if self.currentMinimizerIndex == new_index:
-    #         return
-    #
-    #     new_name = self.minimizerNames[new_index]
-    #     self.fitter.switch_engine(new_name)
-    #     self.currentMinimizerChanged.emit()
 
     def _onCurrentMinimizerChanged(self):
         print("***** _onCurrentMinimizerChanged")
@@ -1270,10 +810,10 @@ class PyQmlProxy(QObject):
 
     def _onCurrentCalculatorChanged(self):
         print("***** _onCurrentCalculatorChanged")
-        data = self._data.simulations
+        data = self.status._data.simulations
         data = data[0]  # THIS IS WHERE WE WOULD LOOK UP CURRENT EXP INDEX
         data.name = f'{self._interface.current_interface_name} engine'
-        self._sample._updateInterface()
+        self.state._sample._updateInterface()
         self.calculatedDataChanged.emit()
 
     ####################################################################################################################
@@ -1283,7 +823,7 @@ class PyQmlProxy(QObject):
     @Slot()
     def fit(self):
         self.isFitFinished = False
-        exp_data = self._data.experiments[0]
+        exp_data = self.state._data.experiments[0]
 
         x = exp_data.x
         y = exp_data.y
@@ -1296,9 +836,6 @@ class PyQmlProxy(QObject):
         self._fitter_thread.finished.connect(self._setFitResults)
         self._fitter_thread.failed.connect(self._setFitResultsFailed)
         self._fitter_thread.start()
-
-        # self._setFitResults(res)
-        # self.fitFinished.emit()
 
     @Property('QVariant', notify=fitResultsChanged)
     def fitResults(self):
@@ -1382,23 +919,11 @@ class PyQmlProxy(QObject):
 
     @Property('QVariant', notify=statusInfoChanged)
     def statusModelAsObj(self):
-        obj = {
-            "calculation":  self._interface.current_interface_name,
-            "minimization": f'{self.fitter.current_engine.name} ({self._current_minimizer_method_name})'
-        }
-        self._status_model = obj
-        return obj
+        return self.state.statusModelAsObj()
 
     @Property(str, notify=statusInfoChanged)
     def statusModelAsXml(self):
-        model = [
-            {"label": "Calculation", "value": self._interface.current_interface_name},
-            {"label": "Minimization",
-             "value": f'{self.fitter.current_engine.name} ({self._current_minimizer_method_name})'}
-        ]
-        xml = dicttoxml(model, attr_type=False)
-        xml = xml.decode()
-        return xml
+        return self.state.statusModelAsXml()
 
     def _onStatusInfoChanged(self):
         print("***** _onStatusInfoChanged")
@@ -1436,98 +961,16 @@ class PyQmlProxy(QObject):
 
     @Property(str, notify=dummySignal)
     def projectFilePath(self):
-        return self.project_save_filepath
+        return self.state.project_save_filepath
 
     def _saveProject(self):
-        """
-        """
-        projectPath = self.projectInfoAsJson['location']
-        project_save_filepath = os.path.join(projectPath, 'project.json')
-        descr = {}
-        descr['phases'] = self._phases_as_cif
-
-        if self.experiments:
-            experiments_x = self._data.experiments[0].x
-            experiments_y = self._data.experiments[0].y
-            experiments_e = self._data.experiments[0].e
-            descr['experiments'] = [experiments_x, experiments_y, experiments_e]
-
-            bg_x = self._background_proxy.asObj.x_sorted_points
-            bg_y = self._background_proxy.asObj.y_sorted_points
-            descr['background'] = [bg_x, bg_y]
-
-        descr['project_info'] = self._project_info
-        # Reading those is not yet implemented
-        descr['parameters'] = self._parameters_as_obj
-        descr['instrument_parameters'] = self._instrument_parameters_as_obj
-        descr['experiment_skipped'] = self._experiment_skipped
-
-        content_json = json.dumps(descr, indent=4, default=self.default)
-        path = generalizePath(project_save_filepath)
-        createFile(path, content_json)
-
-    def default(self, obj):
-        if type(obj).__module__ == np.__name__:
-            if isinstance(obj, np.ndarray):
-                return obj.tolist()
-            else:
-                return obj.item()
-        raise TypeError('Unknown type:', type(obj))
+        self.state._saveProject()
 
     def _loadProjectAs(self, filepath):
-        """
-        """
-        self.project_load_filepath = filepath
-        print("LoadProjectAs " + filepath)
-        self.loadProject()
+        self.state._loadProjectAs(filepath)
 
     def _loadProject(self):
-        """
-        """
-        path = generalizePath(self.project_load_filepath)
-        if not os.path.isfile(path):
-            print("Failed to find project: '{0}'".format(path))
-            return
-        with open(path, 'r') as xml_file:
-            descr = json.load(xml_file)
-
-        self._phases_as_cif = descr['phases']
-        self._sample.phases = Phases.from_cif_str(self._phases_as_cif)
-        # send signal to tell the proxy we changed phases
-        self.phaseAdded.emit()
-        self.phasesAsObjChanged.emit()
-
-        # experiment
-        if 'experiments' in descr:
-            self.experimentLoaded = True
-            self._data.experiments[0].x = np.array(descr['experiments'][0])
-            self._data.experiments[0].y = np.array(descr['experiments'][1])
-            self._data.experiments[0].e = np.array(descr['experiments'][2])
-            self._experiment_data = self._data.experiments[0]
-            self.experimentDataAdded.emit()
-            self._onParametersChanged()
-
-            # background
-            if 'background' in descr:
-                self._background_proxy.removeAllPoints()
-                bg_x = descr['background'][0]
-                bg_y = descr['background'][1]
-                for i, point in enumerate(bg_x):
-                    bg_point = (point, bg_y[i])
-                    self._background_proxy.addPoint(bg_point)
-        else:
-            # delete existing experiment
-            self.removeExperiment()
-            self.experimentLoaded = False
-            if descr['experiment_skipped']:
-                self.experimentSkipped = True
-                self.experimentSkippedChanged.emit()
-
-        # project info
-        self.projectInfoAsJson = json.dumps(descr['project_info'])
-
-        # parameters
-        # TODO
+        self.state._loadProject()
 
     # Undo/Redo stack operations
     ####################################################################################################################
@@ -1597,15 +1040,3 @@ class PyQmlProxy(QObject):
     def resetUndoRedoStack(self):
         if borg.stack.enabled:
             borg.stack.clear()
-
-
-def createFile(path, content):
-    if os.path.exists(path):
-        print(f'File already exists {path}. Overwriting...')
-        os.unlink(path)
-    try:
-        message = f'create file {path}'
-        with open(path, "w") as file:
-            file.write(content)
-    except Exception as exception:
-        print(message, exception)

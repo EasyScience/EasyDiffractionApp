@@ -1,5 +1,16 @@
 from PySide2.QtCore import Signal, QThread
 
+from easyCore.Fitting.Fitting import Fitter
+
+
+class FitterLogic():
+    """
+    Logic related to the fitter setup
+    """
+    def __init__(self, parent=None, sample=None, fit_func=""):
+        self.fitter = Fitter(sample, fit_func)
+
+
 
 class Fitter(QThread):
     """

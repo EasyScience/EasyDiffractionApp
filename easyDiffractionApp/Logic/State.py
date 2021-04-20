@@ -153,7 +153,6 @@ class State(object):
         return []
 
     def experimentLoaded(self, loaded: bool):
-        print(">>> EXPERIMENT LOADED: {}".format(str(loaded)))
         if self._experiment_loaded == loaded:
             return
         self._experiment_loaded = loaded
@@ -193,8 +192,8 @@ class State(object):
             def inner():
                 obj.experiments.clear()
                 obj.experimentDataRemoved.emit()
-                obj.experimentLoaded = False
-                obj.experimentSkipped = False
+                obj.experimentLoaded(False)
+                obj.experimentSkipped(False)
                 obj.parent.undoRedoChanged.emit()
             return inner
 
@@ -204,8 +203,8 @@ class State(object):
             def inner():
                 obj._experiment_data = data
                 obj.parent.experimentDataAdded.emit()
-                obj.experimentLoaded = True
-                obj.experimentSkipped = False
+                obj.experimentLoaded(True)
+                obj.experimentSkipped(False)
                 obj.parent.undoRedoChanged.emit()
             return inner
 
@@ -293,13 +292,14 @@ class State(object):
 
         # experiment
         if 'experiments' in descr:
-            self.experimentLoaded = True
+            self.experimentLoaded(True)
             self._data.experiments[0].x = np.array(descr['experiments'][0])
             self._data.experiments[0].y = np.array(descr['experiments'][1])
             self._data.experiments[0].e = np.array(descr['experiments'][2])
             self._experiment_data = self._data.experiments[0]
             self.parent.experimentDataAdded.emit()
             self.parent._onParametersChanged()
+            self.parent.experimentLoadedChanged.emit()
 
             # background
             if 'background' in descr:
@@ -312,9 +312,9 @@ class State(object):
         else:
             # delete existing experiment
             self.removeExperiment()
-            self.experimentLoaded = False
+            self.experimentLoaded(False)
             if descr['experiment_skipped']:
-                self.experimentSkipped = True
+                self.experimentSkipped(True)
                 self.parent.experimentSkippedChanged.emit()
 
         # project info
@@ -605,7 +605,7 @@ class State(object):
     ####################################################################################################################
 
     def _updateCalculatedData(self):
-        if not self.experimentLoaded and not self.experimentSkipped:
+        if not self._experiment_loaded and not self._experiment_skipped:
             return
 
         self._sample.output_index = self._current_phase_index
@@ -613,11 +613,11 @@ class State(object):
         #  THIS IS WHERE WE WOULD LOOK UP CURRENT EXP INDEX
         sim = self._data.simulations[0]
 
-        if self.experimentLoaded:
+        if self._experiment_loaded:
             exp = self._data.experiments[0]
             sim.x = exp.x
 
-        elif self.experimentSkipped:
+        elif self._experiment_skipped:
             x_min = float(self._simulation_parameters_as_obj['x_min'])
             x_max = float(self._simulation_parameters_as_obj['x_max'])
             x_step = float(self._simulation_parameters_as_obj['x_step'])
@@ -705,19 +705,19 @@ class State(object):
     ####################################################################################################################
     ####################################################################################################################
 
-    def statusModelAsObj(self):
+    def statusModelAsObj(self, current_engine, current_minimizer):
         obj = {
             "calculation":  self._interface.current_interface_name,
-            "minimization": f'{self.parent.fitter.current_engine.name} ({self.parent._current_minimizer_method_name})'  # noqa: E501
+            "minimization": f'{current_engine} ({current_minimizer})'  # noqa: E501
         }
         self._status_model = obj
         return obj
 
-    def statusModelAsXml(self):
+    def statusModelAsXml(self, current_engine, current_minimizer):
         model = [
             {"label": "Calculation", "value": self._interface.current_interface_name},  # noqa: E501
             {"label": "Minimization",
-             "value": f'{self.parent.fitter.current_engine.name} ({self.parent._current_minimizer_method_name})'}  # noqa: E501
+             "value": f'{current_engine} ({current_minimizer})'}  # noqa: E501
         ]
         xml = dicttoxml(model, attr_type=False)
         xml = xml.decode()

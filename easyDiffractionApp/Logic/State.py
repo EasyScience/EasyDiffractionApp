@@ -4,8 +4,6 @@ import datetime
 from typing import Union
 
 from dicttoxml import dicttoxml
-# import xmltodict
-# from xml.dom.minidom import parseString
 import json
 
 from easyCore import np, borg
@@ -579,7 +577,7 @@ class State(object):
     def _setPatternParametersAsObj(self):
         parameters = self._sample.pattern.as_dict()
         self._pattern_parameters_as_obj = parameters
- 
+
     ####################################################################################################################
     # Instrument parameters (wavelength, resolution_u, ..., resolution_y)
     ####################################################################################################################
@@ -601,7 +599,7 @@ class State(object):
     def _setInstrumentParametersAsXml(self):
         parameters = [self._instrument_parameters_as_obj]
         self._instrument_parameters_as_xml = dicttoxml(parameters, attr_type=True).decode()  # noqa: E501
- 
+
     ####################################################################################################################
     # Calculated data
     ####################################################################################################################
@@ -760,6 +758,7 @@ class State(object):
         data = data[0]
         data.name = f'{self._interface.current_interface_name} engine'
         self._sample._updateInterface()
+
 
 # utilities. Should probably be moved away from here
 def createFile(path, content):

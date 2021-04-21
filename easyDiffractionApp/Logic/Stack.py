@@ -31,7 +31,8 @@ class StackLogic():
                 else:
                     callback = self.callbacks_no_history
             elif element is self:
-                # This is a property of the proxy. I.e. minimizer, minimizer method, name or something boring.
+                # This is a property of the proxy.
+                # I.e. minimizer, minimizer method, name or something boring.
                 # Signals should be sent by triggering the set method.
                 callback = []
             else:

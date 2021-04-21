@@ -1,39 +1,16 @@
 # noqa: E501
-import os
-import datetime
 import timeit
-import json
 from typing import Union
-from dicttoxml import dicttoxml
-from xml.dom.minidom import parseString
 
 from PySide2.QtCore import QObject, Slot, Signal, Property
-from PySide2.QtCore import QByteArray, QBuffer, QIODevice
 
-from easyCore import np, borg, ureg
-
-from easyCore.Objects.Groups import BaseCollection
-from easyCore.Objects.Base import BaseObj, Parameter
-
-from easyCore.Symmetry.tools import SpacegroupInfo
-from easyCore.Fitting.Fitting import Fitter
-from easyCore.Utils.classTools import generatePath
-from easyCore.Utils.UndoRedo import property_stack_deco, FunctionStack
-
-from easyDiffractionLib.sample import Sample
-from easyDiffractionLib import Phases, Phase, Lattice, Site, SpaceGroup
+from easyCore import borg
+from easyCore.Utils.UndoRedo import property_stack_deco
 from easyDiffractionLib.interface import InterfaceFactory
-from easyDiffractionLib.Elements.Experiments.Experiment import Pars1D
-from easyDiffractionLib.Elements.Experiments.Pattern import Pattern1D
-
-from easyAppLogic.Utils.Utils import generalizePath
-
-from easyDiffractionApp.Logic.DataStore import DataSet1D, DataStore
 from easyDiffractionApp.Logic.State import State
 
 from easyDiffractionApp.Logic.Proxies.Background import BackgroundProxy
 from easyDiffractionApp.Logic.Proxies.Plotting1d import Plotting1dProxy
-from easyDiffractionApp.Logic.Fitter import Fitter as ThreadedFitter
 from easyDiffractionApp.Logic.Fitter import FitterLogic as FitterLogic
 from easyDiffractionApp.Logic.Stack import StackLogic
 
@@ -292,15 +269,10 @@ class PyQmlProxy(QObject):
         self._bonds_max_distance = max_distance
         self.structureViewChanged.emit()
 
-
     ####################################################################################################################
     ####################################################################################################################
     # PROJECT
     ####################################################################################################################
-    ####################################################################################################################
-
-    ####################################################################################################################
-    # Project
     ####################################################################################################################
 
     @Property('QVariant', notify=projectInfoChanged)
@@ -337,7 +309,6 @@ class PyQmlProxy(QObject):
     def _onStateChanged(self, changed=True):
         self.stateHasChanged = changed
 
-
     ####################################################################################################################
     # Phase models (list, xml, cif)
     ####################################################################################################################
@@ -367,7 +338,7 @@ class PyQmlProxy(QObject):
     def _setPhasesAsObj(self):
         start_time = timeit.default_timer()
         self.state._setPhasesAsObj()
-        print("+ _setPhasesAsObj: {0:.3f} s".format(timeit.default_timer() - start_time))  # noqa: E501
+        print("+ _setPhasesAsObj: {0:.3f} s".format(timeit.default_timer() - start_time))
         self.phasesAsObjChanged.emit()
 
     def _setPhasesAsXml(self):
@@ -542,7 +513,6 @@ class PyQmlProxy(QObject):
     def _onExperimentDataAdded(self):
         print("***** _onExperimentDataAdded")
         self.state._onExperimentDataAdded()
-        ##### stays until background proxy refactored
         x, y, z = self.state.experimentDataXYZ()
         self._plotting_1d_proxy.setMeasuredData(x, y, z)
         self._background_proxy.setDefaultPoints()
@@ -734,8 +704,6 @@ class PyQmlProxy(QObject):
     ####################################################################################################################
     # Minimizer
     ####################################################################################################################
-
-    # Minimizer
 
     @Property('QVariant', notify=dummySignal)
     def minimizerNames(self):

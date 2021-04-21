@@ -45,6 +45,8 @@ class State(object):
         self._status_model = None
         self._state_changed = False
 
+        self._report = ""
+
         self.phases = None
         self._phases_as_obj = []
         self._phases_as_xml = ""
@@ -723,6 +725,41 @@ class State(object):
         xml = xml.decode()
         return xml
 
+    ####################################################################################################################
+    ####################################################################################################################
+    # Reporting
+    ####################################################################################################################
+    ####################################################################################################################
+
+    def setReport(self, report):
+        """
+        Keep the QML generated HTML report for saving
+        """
+        self._report = report
+
+    def saveReport(self, filepath):
+        """
+        Save the generated report to the specified file
+        Currently only html
+        """
+        try:
+            with open(filepath, 'w', encoding='utf-8') as f:
+                f.write(self._report)
+            success = True
+        except IOError:
+            success = False
+
+        return success
+
+    ####################################################################################################################
+    # Calculator
+    ####################################################################################################################
+
+    def _onCurrentCalculatorChanged(self):
+        data = self._data.simulations
+        data = data[0]
+        data.name = f'{self._interface.current_interface_name} engine'
+        self._sample._updateInterface()
 
 # utilities. Should probably be moved away from here
 def createFile(path, content):

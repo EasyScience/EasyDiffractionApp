@@ -81,6 +81,11 @@ class FitterLogic():
         self.parent.fitFinishedNotify.emit()
         self.parent.parametersChanged.emit()
 
+    def setFitFinished(self, fit_finished: bool):
+        if self._fit_finished == fit_finished:
+            return
+        self._fit_finished = fit_finished
+
 
 class Fitter(QThread):
     """

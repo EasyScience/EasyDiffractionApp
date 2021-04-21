@@ -35,6 +35,7 @@ from easyDiffractionApp.Logic.Proxies.Background import BackgroundProxy
 from easyDiffractionApp.Logic.Proxies.Plotting1d import Plotting1dProxy
 from easyDiffractionApp.Logic.Fitter import Fitter as ThreadedFitter
 from easyDiffractionApp.Logic.Fitter import FitterLogic as FitterLogic
+from easyDiffractionApp.Logic.Stack import StackLogic
 
 
 class PyQmlProxy(QObject):
@@ -133,9 +134,17 @@ class PyQmlProxy(QObject):
 
         self.current3dPlottingLibChanged.connect(self.onCurrent3dPlottingLibChanged)
 
-        # Initialize state
+        # Initialize logics
         self.state = State(self, interface=self._interface)
         self.stateChanged.connect(self._onStateChanged)
+
+        no_history = [self.parametersChanged]
+        with_history = [self.phaseAdded, self.parametersChanged]
+        self.stackLogic = StackLogic(self, callbacks_no_history=no_history, callbacks_with_history=with_history)
+
+        self.fitLogic = FitterLogic(self, self.state._sample, self._interface.fit_func)
+        self._fit_results = self.fitLogic._defaultFitResults()
+        self.fitFinished.connect(self.fitLogic._onFitFinished)
 
         # Structure
         self.structureParametersChanged.connect(self._onStructureParametersChanged)
@@ -175,14 +184,8 @@ class PyQmlProxy(QObject):
         self.simulationParametersChanged.connect(self._onSimulationParametersChanged)
         self.simulationParametersChanged.connect(self.undoRedoChanged)
 
-        self.fitter = Fitter(self.state._sample, self._interface.fit_func)
-        self.fitState = FitterLogic(self, self.state._sample, self._interface.fit_func)
-        self._fit_results = self.fitState._defaultFitResults()
-        self.fitFinished.connect(self.fitState._onFitFinished)
-
         self._current_minimizer_method_index = 0
-        # self._current_minimizer_method_name = self.fitState.fitter.available_methods()[0]
-        self._current_minimizer_method_name = self.fitter.available_methods()[0]
+        self._current_minimizer_method_name = self.fitLogic.fitter.available_methods()[0]
         self.currentMinimizerChanged.connect(self._onCurrentMinimizerChanged)
         self.currentMinimizerMethodChanged.connect(self._onCurrentMinimizerMethodChanged)
 
@@ -214,8 +217,7 @@ class PyQmlProxy(QObject):
 
         # Multithreading
         self._fitter_thread = None
-        self._fit_finished = True
-        self.stopFit.connect(self.fitState.onStopFit)
+        self.stopFit.connect(self.fitLogic.onStopFit)
 
         # Screen recorder
         recorder = None
@@ -737,13 +739,11 @@ class PyQmlProxy(QObject):
 
     @Property('QVariant', notify=dummySignal)
     def minimizerNames(self):
-        # return self.fitState.fitter.available_engines
-        return self.fitter.available_engines
+        return self.fitLogic.fitter.available_engines
 
     @Property(int, notify=currentMinimizerChanged)
     def currentMinimizerIndex(self):
-        # current_name = self.fitState.fitter.current_engine.name
-        current_name = self.fitter.current_engine.name
+        current_name = self.fitLogic.fitter.current_engine.name
         return self.minimizerNames.index(current_name)
 
     @currentMinimizerIndex.setter
@@ -752,15 +752,13 @@ class PyQmlProxy(QObject):
         if self.currentMinimizerIndex == new_index:
             return
         new_name = self.minimizerNames[new_index]
-        #self.fitState.fitter.switch_engine(new_name)
-        self.fitter.switch_engine(new_name)
+        self.fitLogic.fitter.switch_engine(new_name)
         self.currentMinimizerChanged.emit()
 
     def _onCurrentMinimizerChanged(self):
         print("***** _onCurrentMinimizerChanged")
         idx = 0
-        # minimizer_name = self.fitState.fitter.current_engine.name
-        minimizer_name = self.fitter.current_engine.name
+        minimizer_name = self.fitLogic.fitter.current_engine.name
         if minimizer_name == 'lmfit':
             idx = self.minimizerMethodNames.index('leastsq')
         elif minimizer_name == 'bumps':
@@ -775,8 +773,7 @@ class PyQmlProxy(QObject):
 
     @Property('QVariant', notify=currentMinimizerChanged)
     def minimizerMethodNames(self):
-        # return self.fitState.fitter.available_methods()
-        return self.fitter.available_methods()
+        return self.fitLogic.fitter.available_methods()
 
     @Property(int, notify=currentMinimizerMethodChanged)
     def currentMinimizerMethodIndex(self):
@@ -819,10 +816,7 @@ class PyQmlProxy(QObject):
 
     def _onCurrentCalculatorChanged(self):
         print("***** _onCurrentCalculatorChanged")
-        data = self.status._data.simulations
-        data = data[0]  # THIS IS WHERE WE WOULD LOOK UP CURRENT EXP INDEX
-        data.name = f'{self._interface.current_interface_name} engine'
-        self.state._sample._updateInterface()
+        self.state._onCurrentCalculatorChanged()
         self.calculatedDataChanged.emit()
 
     ####################################################################################################################
@@ -831,23 +825,20 @@ class PyQmlProxy(QObject):
 
     @Slot()
     def fit(self):
-        self.fitState.fit(self.state._data, self._current_minimizer_method_name)
+        self.fitLogic.fit(self.state._data, self._current_minimizer_method_name)
 
     @Property('QVariant', notify=fitResultsChanged)
     def fitResults(self):
-        return self.fitState._fit_results
+        return self.fitLogic._fit_results
 
     @Property(bool, notify=fitFinishedNotify)
     def isFitFinished(self):
-        return self._fit_finished
+        return self.fitLogic._fit_finished
 
     @isFitFinished.setter
     def isFitFinished(self, fit_finished: bool):
-        if self._fit_finished == fit_finished:
-            return
-        self._fit_finished = fit_finished
+        self.fitLogic.setFitFinished(fit_finished)
         self.fitFinishedNotify.emit()
-
 
     ####################################################################################################################
     ####################################################################################################################
@@ -860,7 +851,7 @@ class PyQmlProxy(QObject):
         """
         Keep the QML generated HTML report for saving
         """
-        self._report = report
+        self.state._report = report
 
     @Slot(str)
     def saveReport(self, filepath):
@@ -868,14 +859,8 @@ class PyQmlProxy(QObject):
         Save the generated report to the specified file
         Currently only html
         """
-        try:
-            with open(filepath, 'w', encoding='utf-8') as f:
-                f.write(self._report)
-            success = True
-        except IOError:
-            success = False
-        finally:
-            self.htmlExportingFinished.emit(success, filepath)
+        success = self.state.saveReport(filepath)
+        self.htmlExportingFinished.emit(success, filepath)
 
     ####################################################################################################################
     ####################################################################################################################
@@ -885,11 +870,15 @@ class PyQmlProxy(QObject):
 
     @Property('QVariant', notify=statusInfoChanged)
     def statusModelAsObj(self):
-        return self.state.statusModelAsObj(self.fitter.current_engine.name, self._current_minimizer_method_name)
+        engine_name = self.fitLogic.fitter.current_engine.name
+        minimizer_name = self._current_minimizer_method_name
+        return self.state.statusModelAsObj(engine_name, minimizer_name)
 
     @Property(str, notify=statusInfoChanged)
     def statusModelAsXml(self):
-        return self.state.statusModelAsXml(self.fitter.current_engine.name, self._current_minimizer_method_name)
+        engine_name = self.fitLogic.fitter.current_engine.name
+        minimizer_name = self._current_minimizer_method_name
+        return self.state.statusModelAsXml(engine_name, minimizer_name)
 
     def _onStatusInfoChanged(self):
         print("***** _onStatusInfoChanged")
@@ -944,65 +933,28 @@ class PyQmlProxy(QObject):
 
     @Property(bool, notify=undoRedoChanged)
     def canUndo(self) -> bool:
-        return borg.stack.canUndo()
+        return self.stackLogic.canUndo()
 
     @Property(bool, notify=undoRedoChanged)
     def canRedo(self) -> bool:
-        return borg.stack.canRedo()
+        return self.stackLogic.canRedo()
 
     @Slot()
     def undo(self):
-        if self.canUndo:
-            callback = [self.parametersChanged]
-            if len(borg.stack.history[0]) > 1:
-                callback = [self.phaseAdded, self.parametersChanged]
-            else:
-                old = borg.stack.history[0].current._parent
-                if isinstance(old, (BaseObj, BaseCollection)):
-                    if isinstance(old, (Phase, Phases)):
-                        callback = [self.phaseAdded, self.parametersChanged]
-                    else:
-                        callback = [self.parametersChanged]
-                elif old is self:
-                    # This is a property of the proxy. I.e. minimizer, minimizer method, name or something boring.
-                    # Signals should be sent by triggering the set method.
-                    callback = []
-                else:
-                    print(f'Unknown undo thing: {old}')
-            borg.stack.undo()
-            _ = [call.emit() for call in callback]
+        self.stackLogic.undo()
 
     @Slot()
     def redo(self):
-        if self.canRedo:
-            callback = [self.parametersChanged]
-            if len(borg.stack.future[0]) > 1:
-                callback = [self.phaseAdded, self.parametersChanged]
-            else:
-                new = borg.stack.future[0].current._parent
-                if isinstance(new, (BaseObj, BaseCollection)):
-                    if isinstance(new, (Phase, Phases)):
-                        callback = [self.phaseAdded, self.parametersChanged]
-                    else:
-                        callback = [self.parametersChanged, self.undoRedoChanged]
-                elif new is self:
-                    # This is a property of the proxy. I.e. minimizer, minimizer method, name or something boring.
-                    # Signals should be sent by triggering the set method.
-                    callback = []
-                else:
-                    print(f'Unknown redo thing: {new}')
-            borg.stack.redo()
-            _ = [call.emit() for call in callback]
+        self.stackLogic.redo()
 
     @Property(str, notify=undoRedoChanged)
     def undoText(self):
-        return borg.stack.undoText()
+        return self.stackLogic.undoText()
 
     @Property(str, notify=undoRedoChanged)
     def redoText(self):
-        return borg.stack.redoText()
+        return self.stackLogic.redoText()
 
     @Slot()
     def resetUndoRedoStack(self):
-        if borg.stack.enabled:
-            borg.stack.clear()
+        self.stackLogic.resetUndoRedoStack()

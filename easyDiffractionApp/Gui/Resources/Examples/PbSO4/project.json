@@ -6872,7 +6872,6 @@
     ],
     "project_info": {
         "name": "PbSO4",
-        "location": "/Users/asazonov/Desktop/PbSO4",
         "short_description": "diffraction, powder, 1D",
         "samples": "PbSO4",
         "experiments": "D1A@ILL",

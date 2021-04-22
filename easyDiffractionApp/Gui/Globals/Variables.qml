@@ -105,6 +105,10 @@ QtObject {
     property var fitCellACheckBox
     property var fitZeroShiftCheckBox
     property var fitScaleCheckBox
+    property var fitResolutionUValue
+    property var fitResolutionVValue
+    property var fitResolutionWValue
+    property var fitResolutionYValue
 
     // Comboboxes
     property var themeSelector

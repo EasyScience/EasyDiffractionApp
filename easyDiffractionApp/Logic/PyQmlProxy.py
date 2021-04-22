@@ -418,7 +418,7 @@ class PyQmlProxy(QObject):
         sample.parameters.resolution_v = -0.4252
         sample.parameters.resolution_w = 0.3864
         sample.parameters.resolution_x = 0.0
-        sample.parameters.resolution_y = 0.0961
+        sample.parameters.resolution_y = 0.0  # 0.0961
         return sample
 
     ####################################################################################################################

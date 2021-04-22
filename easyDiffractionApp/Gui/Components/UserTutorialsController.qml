@@ -204,7 +204,7 @@ EaElements.RemoteController {
         //rc.keyClick(Qt.Key_Right)
         rc.deleteCharacters(6)
         rc.typeText("7.00")
-        //rc.keyClick(Qt.Key_Enter) // DOESN'T WORK ON CI XVFB ?
+        rc.keyClick(Qt.Key_Enter) // DOESN'T WORK ON CI XVFB ?
         rc.showPointer()
 
         rc.say("Append or remove new atoms.")
@@ -299,6 +299,14 @@ EaElements.RemoteController {
         rc.mouseClick(ExGlobals.Variables.parametersFilterTypeSelector, x_pos, y_pos)
         rc.mouseClick(ExGlobals.Variables.fitZeroShiftCheckBox)
         rc.mouseClick(ExGlobals.Variables.fitScaleCheckBox)
+        x_pos = typeof ExGlobals.Variables.fitResolutionYValue !== 'undefined' ?
+                    ExGlobals.Variables.fitResolutionYValue.width :
+                    0
+        rc.mouseClick(ExGlobals.Variables.fitResolutionYValue, x_pos)
+        rc.deleteCharacters(4)
+        rc.typeText("0961")
+        rc.keyClick(Qt.Key_Enter) // DOESN'T WORK ON CI XVFB ?
+        rc.wait(1000)
         rc.mouseClick(ExGlobals.Variables.startFittingButton)
 
         isPreparationToFitDone = true
@@ -309,6 +317,7 @@ EaElements.RemoteController {
     function finishDataFittingTutorial() {
         print("* fitting finished")
 
+        rc.wait(1000)
         rc.mouseClick(ExGlobals.Variables.refinementResultsOkButton)
         rc.mouseClick(ExGlobals.Variables.summaryTabButton)
 

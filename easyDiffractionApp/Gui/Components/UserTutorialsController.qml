@@ -99,7 +99,7 @@ EaElements.RemoteController {
     function beforeRunTutorial() {
         rc.visible = true
         rc.posToCenter()
-        rc.wait(1000)
+        rc.wait(2000)
         rc.showPointer()
     }
 

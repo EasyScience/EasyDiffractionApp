@@ -177,7 +177,7 @@ Item {
         EaComponents.GuideWindow {
             container: analysisPageGuidesContainer
             parent: ExGlobals.Variables.analysisPageMainContent
-            text: qsTr("Measured data (Iobs) and calculate data (Icalc) points\n are shown in the main area.\n\nTheir difference (Iobs-Icalc) is given\nin the bottom plot.\n\nVertical ticks between the plots indicate\nBragg peak positions.")
+            text: qsTr("Measured data (Imeas) and calculate data (Icalc) points\n are shown in the main area.\n\nTheir difference (Imeas-Icalc) is given\nin the bottom plot.\n\nVertical ticks between the plots indicate\nBragg peak positions.")
         }
 
         EaComponents.GuideWindow {

@@ -18,21 +18,9 @@ Item {
             font.family: EaStyle.Fonts.monoFontFamily
             textFormat: TextEdit.RichText
             text: ExLogic.Helpers.highlightCifSyntax(ExGlobals.Constants.proxy.phasesAsCif)
-            //text: ExGlobals.Constants.proxy.phasesAsExtendedCif
             onEditingFinished: ExGlobals.Constants.proxy.phasesAsCif = ExLogic.Helpers.removeCifSyntaxHighlighting(text)
         }
     }
-
-    /*
-    EaComponents.TableViewButton {
-        anchors.bottom: parent.bottom
-        anchors.right: parent.right
-        fontIcon: "sync-alt"
-        ToolTip.text: qsTr("Update")
-        onClicked: forceActiveFocus()
-    }
-    */
-
 
     ///////////////
     // Tool buttons
@@ -58,6 +46,5 @@ Item {
             onClicked: forceActiveFocus()
         }
     }
-
 
 }

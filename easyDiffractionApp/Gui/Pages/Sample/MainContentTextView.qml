@@ -7,6 +7,7 @@ import easyAppGui.Components 1.0 as EaComponents
 import easyAppGui.Logic 1.0 as EaLogic
 
 import Gui.Globals 1.0 as ExGlobals
+import Gui.Logic 1.0 as ExLogic
 
 Item {
 
@@ -15,9 +16,10 @@ Item {
 
         EaElements.TextArea {
             font.family: EaStyle.Fonts.monoFontFamily
-            text: ExGlobals.Constants.proxy.phasesAsCif
+            textFormat: TextEdit.RichText
+            text: ExLogic.Helpers.highlightCifSyntax(ExGlobals.Constants.proxy.phasesAsCif)
             //text: ExGlobals.Constants.proxy.phasesAsExtendedCif
-            onEditingFinished: ExGlobals.Constants.proxy.phasesAsCif = text
+            onEditingFinished: ExGlobals.Constants.proxy.phasesAsCif = ExLogic.Helpers.removeCifSyntaxHighlighting(text)
         }
     }
 

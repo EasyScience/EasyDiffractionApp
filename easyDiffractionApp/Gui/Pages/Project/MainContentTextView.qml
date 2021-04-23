@@ -50,7 +50,7 @@ Item {
             width: EaStyle.Sizes.toolButtonHeight
             borderColor: EaStyle.Colors.chartAxis
             fontIcon: "clipboard-check"
-            ToolTip.text: qsTr("Update text")
+            ToolTip.text: qsTr("Accept changes")
             onClicked: forceActiveFocus()
         }
     }

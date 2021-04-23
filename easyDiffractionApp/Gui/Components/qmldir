@@ -29,7 +29,8 @@ ExperimentDataExplorer 1.0 ExperimentDataExplorer.qml
 ExperimentAssociatedPhases 1.0 ExperimentAssociatedPhases.qml
 ExperimentSimulationSetup 1.0 ExperimentSimulationSetup.qml
 ExperimentInstrumentSetup 1.0 ExperimentInstrumentSetup.qml
-ExperimentPeakProfile 1.0 ExperimentPeakProfile.qml
+ExperimentPeakProfileG 1.0 ExperimentPeakProfileG.qml
+ExperimentPeakProfileL 1.0 ExperimentPeakProfileL.qml
 ExperimentBackground 1.0 ExperimentBackground.qml
 
 AnalysisFitables 1.0 AnalysisFitables.qml

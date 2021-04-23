@@ -15,6 +15,7 @@ Item {
         anchors.fill: parent
 
         EaElements.TextArea {
+            readOnly: true
             font.family: EaStyle.Fonts.monoFontFamily
             textFormat: TextEdit.RichText
             text: ExLogic.Helpers.highlightCifSyntax(ExGlobals.Constants.proxy.projectInfoAsCif)
@@ -27,6 +28,8 @@ Item {
     ///////////////
 
     Row {
+        visible: false
+
         anchors.top: parent.top
         anchors.right: parent.right
 

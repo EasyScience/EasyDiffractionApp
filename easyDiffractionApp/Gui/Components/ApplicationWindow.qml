@@ -158,7 +158,7 @@ EaComponents.ApplicationWindow {
             mainContent: EaComponents.MainContent {
                 tabs: [
                     EaElements.TabButton { text: qsTr("Description") },
-                    EaElements.TabButton { text: "project.cif" }
+                    EaElements.TabButton { text: qsTr("Text View (CIF)") }
                 ]
 
                 items: [

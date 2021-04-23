@@ -383,7 +383,6 @@ class PyQmlProxy(QObject):
             short_description="diffraction, powder, 1D",
             samples="Not loaded",
             experiments="Not loaded",
-            calculations="Not created",
             modified=datetime.datetime.now().strftime("%d.%m.%Y %H:%M")
         )
 
@@ -542,6 +541,8 @@ class PyQmlProxy(QObject):
         self._sample.phases.name = 'Phases'
         self._sample.set_background(self._background_proxy.asObj)
         self.structureParametersChanged.emit()
+        self.projectInfoAsJson['samples'] = self._sample.phases[self.currentPhaseIndex].name
+        self.projectInfoChanged.emit()
 
     def _onPhaseRemoved(self):
         print("***** _onPhaseRemoved")
@@ -715,7 +716,6 @@ class PyQmlProxy(QObject):
         print("***** _onCurrentPhaseChanged")
         self.structureViewChanged.emit()
 
-
     @Slot(str)
     def setCurrentPhaseName(self, name):
         if self._sample.phases[self.currentPhaseIndex].name == name:
@@ -723,6 +723,8 @@ class PyQmlProxy(QObject):
 
         self._sample.phases[self.currentPhaseIndex].name = name
         self.parametersChanged.emit()
+        self.projectInfoAsJson['samples'] = name
+        self.projectInfoChanged.emit()
 
     @Slot(str)
     def setCurrentExperimentDatasetName(self, name):
@@ -731,6 +733,8 @@ class PyQmlProxy(QObject):
 
         self._data.experiments[0].name = name
         self.experimentDataChanged.emit()
+        self.projectInfoAsJson['experiments'] = name
+        self.projectInfoChanged.emit()
 
     ####################################################################################################################
     ####################################################################################################################
@@ -878,6 +882,8 @@ class PyQmlProxy(QObject):
         self.simulationParametersAsObj = json.dumps(self._experiment_parameters)
         self._background_proxy.setDefaultPoints()
         self.experimentDataChanged.emit()
+        self.projectInfoAsJson['experiments'] = self._data.experiments[0].name
+        self.projectInfoChanged.emit()
 
     def _onExperimentDataRemoved(self):
         print("***** _onExperimentDataRemoved")

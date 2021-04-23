@@ -27,10 +27,11 @@ EaComponents.TableView {
         XmlRole { name: "color"; query: "color/string()" }
 
         onXmlChanged: {
-            if (ExGlobals.Constants.proxy.phaseList.length === 0) {
-                ExGlobals.Variables.experimentPageEnabled = false
+            if (ExGlobals.Constants.proxy.phasesAsObj.length === 0) {
+//                ExGlobals.Variables.experimentPageEnabled = false
                 ExGlobals.Variables.sampleLoaded = false
                 ExGlobals.Variables.analysisPageEnabled = false
+                ExGlobals.Variables.summaryPageEnabled = false
             }
         }
     }
@@ -51,7 +52,7 @@ EaComponents.TableView {
             width: EaStyle.Sizes.fontPixelSize * 27.9
             headerText: "Label"
             text: model.label
-            onEditingFinished: ExGlobals.Constants.proxy.modifyPhaseName(text)
+            //onEditingFinished: ExGlobals.Constants.proxy.changePhaseName(text) // use Id
         }
 
         /*

@@ -35,8 +35,13 @@ def addedData():
             {'from': easyDiffractionLib.__path__[0], 'to': 'easyDiffractionLib'},
             {'from': easyAppLogic.__path__[0], 'to': 'easyAppLogic'},
             {'from': easyAppGui.__path__[0], 'to': 'easyAppGui'},
-            {'from': 'pyproject.py', 'to': '.'},
+            {'from': 'utils.py', 'to': '.'},
             {'from': 'pyproject.toml', 'to': '.'}]
+    extras = CONFIG['ci']['pyinstaller']['missing_other_libraries'][CONFIG.os]
+    if extras:
+        for extra_file in extras:
+            data.append({'from': extra_file, 'to': '.'})
+
     formatted = []
     for element in data:
         formatted.append(f'--add-data={element["from"]}{separator}{element["to"]}')

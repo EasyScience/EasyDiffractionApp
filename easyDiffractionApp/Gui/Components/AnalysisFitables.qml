@@ -12,6 +12,8 @@ import Gui.Globals 1.0 as ExGlobals
 EaComponents.TableView {
     id: table
 
+    enabled: ExGlobals.Constants.proxy.isFitFinished
+
     maxRowCountShow: 8
     defaultInfoText: qsTr("No Parameters Found")
 
@@ -20,7 +22,8 @@ EaComponents.TableView {
     model: XmlListModel {
         id: fitablesModel
 
-        xml: ExGlobals.Constants.proxy.fitablesListAsXml
+        //xml: ExGlobals.Constants.proxy.fitablesListAsXml
+        xml: ExGlobals.Constants.proxy.parametersAsXml
 
         query: "/root/item"
 
@@ -91,7 +94,7 @@ EaComponents.TableView {
         }
 
         EaComponents.TableViewCheckBox {
-            enabled: ExGlobals.Variables.experimentLoaded
+            enabled: ExGlobals.Constants.proxy.experimentLoaded
             id: useColumn
             headerText: "Fit"
             checked: model.fit
@@ -112,10 +115,11 @@ EaComponents.TableView {
     }
 
     function editParameterValue(id, value) {
-        ExGlobals.Constants.proxy.editParameterValue(id, parseFloat(value))
+        //ExGlobals.Constants.proxy.editParameter(id, parseFloat(value))
+        ExGlobals.Constants.proxy.editParameter(id, parseFloat(value))
     }
     function editParameterFit(id, value) {
-        ExGlobals.Constants.proxy.editParameterFit(id, value)
+        ExGlobals.Constants.proxy.editParameter(id, value)
     }
 
     function formatLabel(index, label) {

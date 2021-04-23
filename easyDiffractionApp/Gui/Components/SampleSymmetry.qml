@@ -19,11 +19,11 @@ Row {
         }
 
         EaElements.ComboBox {
-            id: spaceGroupSystemSelect
+            id: crystalSystemSelector
             width: EaStyle.Sizes.sideBarContentWidth / 3 - EaStyle.Sizes.fontPixelSize * 2
-            model: ExGlobals.Constants.proxy.spaceGroupsSystems
-            currentIndex: indexOfValue(ExGlobals.Constants.proxy.spaceGroupSystem)
-            onActivated: ExGlobals.Constants.proxy.spaceGroupSystem = currentText
+            model: ExGlobals.Constants.proxy.crystalSystemList
+            currentIndex: indexOfValue(ExGlobals.Constants.proxy.currentCrystalSystem)
+            onActivated: ExGlobals.Constants.proxy.currentCrystalSystem = currentText
         }
     }
 
@@ -36,10 +36,10 @@ Row {
         }
 
         EaElements.ComboBox {
-            width: spaceGroupSystemSelect.width
-            model: ExGlobals.Constants.proxy.spaceGroupsInts.display
-            currentIndex: ExGlobals.Constants.proxy.spaceGroupInt
-            onActivated: ExGlobals.Constants.proxy.spaceGroupInt = currentIndex
+            width: crystalSystemSelector.width
+            model: ExGlobals.Constants.proxy.formattedSpaceGroupList
+            currentIndex: ExGlobals.Constants.proxy.currentSpaceGroup
+            onActivated: ExGlobals.Constants.proxy.currentSpaceGroup = currentIndex
         }
     }
 
@@ -52,11 +52,10 @@ Row {
         }
 
         EaElements.ComboBox {
-            width: spaceGroupSystemSelect.width + EaStyle.Sizes.fontPixelSize * 4.0
-            model: ExGlobals.Constants.proxy.currentSpaceGroupSettingList
-            currentIndex: ExGlobals.Constants.proxy.curentSpaceGroupSettingIndex
-            onActivated: ExGlobals.Constants.proxy.curentSpaceGroupSettingIndex = currentIndex
-            //onCurrentTextChanged: print("onCurrrentTextChanged", currentText, currentValue)
+            width: crystalSystemSelector.width + EaStyle.Sizes.fontPixelSize * 4.0
+            model: ExGlobals.Constants.proxy.formattedSpaceGroupSettingList
+            currentIndex: ExGlobals.Constants.proxy.currentSpaceGroupSetting
+            onActivated: ExGlobals.Constants.proxy.currentSpaceGroupSetting = currentIndex
         }
     }
 }

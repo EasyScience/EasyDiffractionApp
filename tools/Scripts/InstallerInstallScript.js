@@ -1,4 +1,3 @@
-
 function Component()
 {
   if (installer.isInstaller())
@@ -24,6 +23,7 @@ Component.prototype.createOperations = function()
   // call default implementation to actually install the registeredfile
   component.createOperations();
 
+  // https://doc.qt.io/qtinstallerframework/operations.html
   if (systemInfo.productType === "windows")
   {
     // Add desktop shortcut for the app
@@ -64,23 +64,42 @@ Component.prototype.createOperations = function()
   {
     component.addOperation(
       "CreateDesktopEntry",
-      "@TargetDir@/easyDiffraction.desktop",
+      "@TargetDir@/@ProductName@.desktop",
       "Comment=A scientific software for modelling and analysis of the neutron diffraction data.\n"+
       "Type=Application\n"+
       "Exec=@TargetDir@/@ProductName@/@ProductName@\n"+
       "Path=@TargetDir@/@ProductName@\n"+
-      "Name=easyDiffraction\n"+
-      "GenericName=easyDiffraction\n"+
-      "Icon=@TargetDir@/@ProductName@/QmlImports/@ProductName@/Resources/Icons/App.png\n"+
+      "Name=@ProductName@\n"+
+      "GenericName=@ProductName@\n"+
+      "Icon=@TargetDir@/@ProductName@/@ProductName@App/Gui/Resources/Logo/App.png\n"+
       "Terminal=false\n"+
       "Categories=Science;"
     )
 
+    /*
+    component.addOperation(
+      "Execute",
+      "gio",
+      "set", "@TargetDir@/@ProductName@.desktop",
+      "'metadata::trusted'", "yes"
+    )
+    */
+
+    /*
+    component.addOperation(
+      "Copy",
+      "@TargetDir@/easyDiffraction.desktop",
+      "@HomeDir@/Desktop/easyDiffraction.desktop"
+    )
+    */
+
+    /*
     component.addOperation(
       "Copy",
       "@TargetDir@/easyDiffraction.desktop",
       "/usr/share/applications/easyDiffraction.desktop"
     )
+    */
   }
 
 }

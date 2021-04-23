@@ -9,9 +9,10 @@ import Gui.Globals 1.0 as ExGlobals
 
 EaComponents.SideBarColumn {
 
+    /*
     EaElements.GroupBox {
         title: qsTr("Bonds")
-        enabled: ExGlobals.Variables.sampleLoaded
+        enabled: ExGlobals.Constants.proxy.samplesPresent
         collapsed: false
 
         Row {
@@ -54,12 +55,13 @@ EaComponents.SideBarColumn {
             EaElements.Parameter {
                 anchors.verticalCenter: parent.verticalCenter
                 width: 75
-                onEditingFinished: ExGlobals.Constants.proxy.maxDistance = text
-                Component.onCompleted: text = ExGlobals.Constants.proxy.maxDistance
+                onEditingFinished: ExGlobals.Constants.proxy.bondsMaxDistance = text
+                Component.onCompleted: text = ExGlobals.Constants.proxy.bondsMaxDistance
             }
 
         }
 
     }
+    */
 
 }

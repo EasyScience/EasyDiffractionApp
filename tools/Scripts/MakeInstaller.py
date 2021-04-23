@@ -19,7 +19,22 @@ def qtifwSetupFileName():
     return f'{file_name_base}{file_name_suffix}{file_ext}'
 
 def qtifwSetupDownloadDest():
-    return os.path.join(CONFIG['ci']['project']['subdirs']['download'], f'{qtifwSetupFileName()}')
+    return os.path.join(CONFIG.download_dir, f'{qtifwSetupFileName()}')
+
+def urlOk(url):
+    try:
+        message = f'access url {url}'
+        status_code = requests.head(url, timeout=10).status_code
+        if status_code == 200:
+            Functions.printSuccessMessage(message)
+            return True
+        else:
+            message += f' with status: {status_code}'
+            Functions.printFailMessage(message)
+            return False
+    except Exception as exception:
+        Functions.printFailMessage(message, exception)
+        return False
 
 def urlOk(url):
     try:
@@ -75,9 +90,8 @@ def qtifwDirPath():
     return d[CONFIG.os]
 
 def setupBuildDirPath():
-    build_dir = CONFIG['ci']['project']['subdirs']['build']
     setup_build_dir_suffix = CONFIG['ci']['app']['setup']['build_dir_suffix']
-    return os.path.join(build_dir, f'{CONFIG.app_name}{setup_build_dir_suffix}')
+    return os.path.join(CONFIG.build_dir, f'{CONFIG.app_name}{setup_build_dir_suffix}')
 
 def configDirPath():
     return os.path.join(setupBuildDirPath(), CONFIG['ci']['app']['setup']['build']['config_dir'])
@@ -96,15 +110,10 @@ def remoteRepositoryDir():
     remote_subdir_name = CONFIG['ci']['app']['setup']['ftp']['remote_subdir']
     return os.path.join(CONFIG.app_name, remote_subdir_name, CONFIG.setup_os)
 
-def installationDir():
-    var = CONFIG['ci']['app']['setup']['installation_dir'][CONFIG.os]
-    return Functions.environmentVariable(var, var)
-
 def installerConfigXml():
     try:
         message = f"create {CONFIG['ci']['app']['setup']['build']['config_xml']} content"
         app_url = CONFIG['tool']['poetry']['homepage']
-        target_dir = os.path.join(installationDir(), CONFIG.app_name)
         maintenance_tool_suffix = CONFIG['ci']['app']['setup']['maintenance_tool_suffix']
         maintenance_tool_name = maintenance_tool_suffix #f'{CONFIG.app_name}{maintenance_tool_suffix}'
         config_control_script = CONFIG['ci']['scripts']['config_control']
@@ -126,7 +135,7 @@ def installerConfigXml():
                 'WizardDefaultHeight': 600,
                 'StyleSheet': config_style,
                 'StartMenuDir': CONFIG.app_name,
-                'TargetDir': target_dir,
+                'TargetDir': CONFIG.installation_dir,
                 #'CreateLocalRepository': 'true',
                 #'SaveDefaultRepositories': 'false',
                 #'RepositorySettingsPageVisible': 'false',
@@ -217,7 +226,7 @@ def appPackageXml():
 #        return pretty_xml
 
 def downloadQtInstallerFramework():
-    Functions.createDir(CONFIG['ci']['project']['subdirs']['download'])
+    Functions.createDir(CONFIG.download_dir)
     Functions.downloadFile(
         url=qtifwSetupDownloadUrl(),
         destination=qtifwSetupDownloadDest()
@@ -313,6 +322,10 @@ def createInstallerSourceDir():
         #Functions.createFile(path=docs_package_xml_path, content=docsPackageXml())
         #Functions.copyDir(source=docs_dir_src, destination=os.path.join(docs_data_subsubdir_path, 'Documentation'))
         Functions.copyDir(source=docs_dir_src, destination=os.path.join(app_data_subsubdir_path, docs_dir_dest))
+        # package: examples
+        examples_dir_src = CONFIG['ci']['project']['subdirs']['examples']['src']
+        examples_dir_dest = CONFIG['ci']['project']['subdirs']['examples']['dest']
+        Functions.copyDir(source=examples_dir_src, destination=os.path.join(app_data_subsubdir_path, examples_dir_dest))
     except Exception as exception:
         Functions.printFailMessage(message, exception)
         sys.exit()
@@ -324,9 +337,10 @@ def createOnlineRepository():
         message = 'create online repository'
         qtifw_bin_dir_path = os.path.join(qtifwDirPath(), 'bin')
         qtifw_repogen_path = os.path.join(qtifw_bin_dir_path, 'repogen')
-        repository_dir_path = os.path.join(CONFIG['ci']['project']['subdirs']['distribution'], localRepositoryDir())
+        repository_dir_path = os.path.join(CONFIG.dist_dir, localRepositoryDir())
         Functions.run(
             qtifw_repogen_path,
+            '--verbose',
             '--update-new-components',
             '-p', packagesDirPath(),
             repository_dir_path

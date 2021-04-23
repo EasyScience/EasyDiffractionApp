@@ -40,7 +40,7 @@ EaComponents.SideBarColumn {
                     onTextChanged: {
                         exampleFilterCriteria.currentIndex = exampleFilterCriteria.indexOfValue(text)
                         namesFilterCriteria.currentIndex = namesFilterCriteria.indexOfValue(text)
-                        ExGlobals.Constants.proxy.setFilterCriteria(text)
+                        ExGlobals.Constants.proxy.setParametersFilterCriteria(text)
                     }
                 }
             }
@@ -102,17 +102,17 @@ EaComponents.SideBarColumn {
                     displayText: currentIndex === -1 ? qsTr("Filter by name") : currentText
 
                     model: {
-                        if (typeof ExGlobals.Constants.proxy.phaseList === 'undefined' || typeof ExGlobals.Constants.proxy.phaseList[0] === 'undefined' ) {
+                        if (typeof ExGlobals.Constants.proxy.phasesAsObj === 'undefined' || typeof ExGlobals.Constants.proxy.phasesAsObj[0] === 'undefined' ) {
                             return []
                         }
-                        const phase_name = ExGlobals.Constants.proxy.phaseList[0].name
+                        const phase_name = ExGlobals.Constants.proxy.phasesAsObj[0].name
                         let m = [
                                 { value: "", text: qsTr("All names") },
                                 { value: `.${phase_name}.`, text: formatFilterText("gem", "", phase_name) },
                                 { value: ".D1A@ILL.", text: formatFilterText("microscope", "", "D1A@ILL") },
                                 ]
-                        for (let i in ExGlobals.Constants.proxy.phaseList[0].atoms.data) {
-                            const atom_label = ExGlobals.Constants.proxy.phaseList[0].atoms.data[i].label.value
+                        for (let i in ExGlobals.Constants.proxy.phasesAsObj[0].atoms.data) {
+                            const atom_label = ExGlobals.Constants.proxy.phasesAsObj[0].atoms.data[i].label.value
                             m.push({ value: `.${atom_label}.`, text: formatFilterText("gem", "atom", atom_label) })
                         }
                         return m
@@ -173,46 +173,24 @@ EaComponents.SideBarColumn {
                 validator: sliderFromLabel.validator
                 maximumLength: sliderFromLabel.maximumLength
                 text: slider.to.toFixed(4)
-                onEditingFinished: {}
             }
         }
 
         // Start fitting button
         EaElements.SideBarButton {
-            enabled: ExGlobals.Variables.experimentLoaded
-            fontIcon: "play-circle"
-            text: qsTr("Start fitting")
-
+            id: fitButton
             wide: true
-
-            onClicked: {
-                //print("Start fitting button clicked")
-                ExGlobals.Constants.proxy.fit()
-                refinementResultsDialog.open()
-            }
+            enabled: ExGlobals.Constants.proxy.experimentLoaded
+            fontIcon: ExGlobals.Constants.proxy.isFitFinished ? "play-circle" : "pause-circle"
+            text: ExGlobals.Constants.proxy.isFitFinished ? qsTr("Start fitting") : qsTr("Stop fitting")
+            onClicked: ExGlobals.Constants.proxy.fit()
         }
     }
 
-    // Info dialog (after refinement)
-
-    EaElements.Dialog {
-        id: refinementResultsDialog
-
-        parent: Overlay.overlay
-
-        x: (parent.width - width) * 0.5
-        y: (parent.height - height) * 0.5
-
-        modal: true
-        standardButtons: Dialog.Ok
-
-        title: qsTr("Refinement Results")
-
-        Column {
-            EaElements.Label { text: typeof ExGlobals.Constants.proxy.fitResults !== 'undefined' ? `Success: ${ExGlobals.Constants.proxy.fitResults.success}` : "" }
-            EaElements.Label { text: typeof ExGlobals.Constants.proxy.fitResults !== 'undefined' ? `Num. refined parameters: ${ExGlobals.Constants.proxy.fitResults.nvarys}` : "" }
-            EaElements.Label { text: typeof ExGlobals.Constants.proxy.fitResults !== 'undefined' && typeof ExGlobals.Constants.proxy.fitResults.redchi2 !== 'undefined' ? `Goodness-of-fit (reduced \u03c7\u00b2): ${ExGlobals.Constants.proxy.fitResults.redchi2.toFixed(2)}` : "" }
-        }
+    // Init results dialog
+    ExComponents.ResultsDialog {
+        visible: typeof ExGlobals.Constants.proxy.fitResults.success !== 'undefined' &&
+                 ExGlobals.Constants.proxy.isFitFinished
     }
 
     // Logic
@@ -236,7 +214,7 @@ EaComponents.SideBarColumn {
     }
 
     function editParameterValue(id, value) {
-        ExGlobals.Constants.proxy.editParameterValue(id, parseFloat(value))
+        ExGlobals.Constants.proxy.editParameter(id, parseFloat(value))
     }
 
 }

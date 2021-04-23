@@ -16,6 +16,7 @@ EaComponents.SideBarColumn {
     EaElements.GroupBox {
         title: qsTr("Experimental data")
         collapsible: false
+        enabled: ExGlobals.Constants.proxy.isFitFinished
 
         ExComponents.ExperimentDataExplorer {}
 
@@ -23,7 +24,7 @@ EaComponents.SideBarColumn {
             spacing: EaStyle.Sizes.fontPixelSize
 
             EaElements.SideBarButton {
-                enabled: !ExGlobals.Variables.experimentLoaded
+                enabled: !ExGlobals.Constants.proxy.experimentLoaded
 
                 fontIcon: "upload"
                 text: qsTr("Import data from local drive")
@@ -32,47 +33,46 @@ EaComponents.SideBarColumn {
             }
 
             EaElements.SideBarButton {
-                id: continueWithoutExperimentDataButton
+                enabled: !ExGlobals.Constants.proxy.experimentLoaded && !ExGlobals.Constants.proxy.experimentSkipped
 
-                enabled: !ExGlobals.Variables.experimentLoaded && !ExGlobals.Variables.experimentSkipped
-
-                fontIcon: "chevron-circle-right"
+                fontIcon: "arrow-circle-right"
                 text: qsTr("Continue without experiment data")
 
                 onClicked: {
-                    ExGlobals.Variables.experimentSkipped = true
                     ExGlobals.Variables.analysisPageEnabled = true
+                    ExGlobals.Variables.summaryPageEnabled = true
+                    ExGlobals.Constants.proxy.experimentSkipped = true
                 }
 
-                Component.onCompleted: ExGlobals.Variables.continueWithoutExperimentDataButton = continueWithoutExperimentDataButton
+                Component.onCompleted: ExGlobals.Variables.continueWithoutExperimentDataButton = this
             }
         }
     }
 
     EaElements.GroupBox {
         title: qsTr("Associated phases")
-        enabled: ExGlobals.Variables.experimentLoaded
+        enabled: ExGlobals.Constants.proxy.experimentLoaded
 
         ExComponents.ExperimentAssociatedPhases {}
     }
 
     EaElements.GroupBox {
         title: qsTr("Simulation range")
-        enabled: ExGlobals.Variables.experimentLoaded || ExGlobals.Variables.experimentSkipped
+        enabled: ExGlobals.Constants.proxy.experimentLoaded || ExGlobals.Constants.proxy.experimentSkipped
 
         ExComponents.ExperimentSimulationSetup {}
     }
 
     EaElements.GroupBox {
         title: qsTr("Instrument setup")
-        enabled: ExGlobals.Variables.experimentLoaded || ExGlobals.Variables.experimentSkipped
+        enabled: ExGlobals.Constants.proxy.experimentLoaded || ExGlobals.Constants.proxy.experimentSkipped
 
         ExComponents.ExperimentInstrumentSetup {}
     }
 
     EaElements.GroupBox {
         title: qsTr("Peak profile")
-        enabled: ExGlobals.Variables.experimentLoaded || ExGlobals.Variables.experimentSkipped
+        enabled: ExGlobals.Constants.proxy.experimentLoaded || ExGlobals.Constants.proxy.experimentSkipped
 
         Column {
 
@@ -104,7 +104,7 @@ EaComponents.SideBarColumn {
     EaElements.GroupBox {
         title: qsTr("Background")
         last: true
-        enabled: ExGlobals.Variables.experimentLoaded || ExGlobals.Variables.experimentSkipped
+        enabled: ExGlobals.Constants.proxy.experimentLoaded || ExGlobals.Constants.proxy.experimentSkipped
 
         ExComponents.ExperimentBackground {}
 
@@ -114,13 +114,13 @@ EaComponents.SideBarColumn {
             EaElements.SideBarButton {
                 fontIcon: "plus-circle"
                 text: qsTr("Append new point")
-                onClicked: ExGlobals.Constants.proxy.addBackgroundPoint()
+                onClicked: ExGlobals.Constants.proxy.backgroundProxy.addPoint()
             }
 
             EaElements.SideBarButton {
-                enabled: false
-                fontIcon: "plus-square"
-                text: qsTr("Insert point before selected")
+                fontIcon: "undo-alt"
+                text: qsTr("Reset to default points")
+                onClicked: ExGlobals.Constants.proxy.backgroundProxy.setDefaultPoints()
             }
         }
     }
@@ -133,11 +133,11 @@ EaComponents.SideBarColumn {
         nameFilters: [ qsTr("Data files") + " (*.xye *.xys *.xy)" ]
 
         onAccepted: {
-            ExGlobals.Variables.experimentSkipped = false
-            ExGlobals.Variables.experimentLoaded = true
-            ExGlobals.Constants.proxy.experimentLoaded = true
             ExGlobals.Variables.analysisPageEnabled = true
-            ExGlobals.Constants.proxy.loadExperimentDataFromTxt(fileUrl)
+            ExGlobals.Variables.summaryPageEnabled = true
+//            ExGlobals.Constants.proxy.experimentSkipped = false
+//            ExGlobals.Constants.proxy.experimentLoaded = true
+            ExGlobals.Constants.proxy.addExperimentDataFromXye(fileUrl)
         }
     }
 

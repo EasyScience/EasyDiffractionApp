@@ -1,20 +1,26 @@
+import os
+import datetime
+import timeit
 import json
+from typing import Union
 from dicttoxml import dicttoxml
+from xml.dom.minidom import parseString
 
 from PySide2.QtCore import QObject, Slot, Signal, Property
+from PySide2.QtCore import QByteArray, QBuffer, QIODevice
 
-from easyCore import np
-from easyCore import borg
-# borg.debug = True
+from easyCore import np, borg, ureg
+
+from easyCore.Objects.Groups import BaseCollection
+from easyCore.Objects.Base import BaseObj, Parameter
 
 from easyCore.Symmetry.tools import SpacegroupInfo
 from easyCore.Fitting.Fitting import Fitter
-from easyCore.Fitting.Constraints import ObjConstraint, NumericConstraint
 from easyCore.Utils.classTools import generatePath
-from easyDiffractionLib.Elements.Backgrounds.Point import PointBackground, BackgroundPoint
+from easyCore.Utils.UndoRedo import property_stack_deco, FunctionStack
 
 from easyDiffractionLib.sample import Sample
-from easyDiffractionLib import Phases, Phase, Lattice, Site, Atoms, SpaceGroup
+from easyDiffractionLib import Phases, Phase, Lattice, Site, SpaceGroup
 from easyDiffractionLib.interface import InterfaceFactory
 from easyDiffractionLib.Elements.Experiments.Experiment import Pars1D
 from easyDiffractionLib.Elements.Experiments.Pattern import Pattern1D
@@ -22,760 +28,1584 @@ from easyDiffractionLib.Elements.Experiments.Pattern import Pattern1D
 from easyAppLogic.Utils.Utils import generalizePath
 
 from easyDiffractionApp.Logic.DataStore import DataSet1D, DataStore
-from easyDiffractionApp.Logic.MatplotlibBackend import DisplayBridge
+
+from easyDiffractionApp.Logic.Proxies.Background import BackgroundProxy
+from easyDiffractionApp.Logic.Proxies.Plotting1d import Plotting1dProxy
+from easyDiffractionApp.Logic.Fitter import Fitter as ThreadedFitter
+
 
 
 class PyQmlProxy(QObject):
-    _borg = borg
+    # SIGNALS
 
-    matplotlib_bridge = DisplayBridge()
-
+    # Project
     projectInfoChanged = Signal()
-    constraintsChanged = Signal()
-    calculatorChanged = Signal()
-    minimizerChanged = Signal()
-    minimizerMethodChanged = Signal()
-    statusChanged = Signal()
-    phasesChanged = Signal()
-    modelChanged = Signal()
-    currentPhaseChanged = Signal()
-    currentPhaseSitesChanged = Signal()
-    spaceGroupChanged = Signal()
-    backgroundChanged = Signal()
-    instrumentResolutionChanged = Signal()
-    experimentDataChanged = Signal()
+    stateChanged = Signal(bool)
 
-    parameterChanged = Signal()
-    fitResultsChanged = Signal()
+    # Fitables
+    parametersChanged = Signal()
+    parametersAsObjChanged = Signal()
+    parametersAsXmlChanged = Signal()
+    parametersFilterCriteriaChanged = Signal()
+
+    # Structure
+    structureParametersChanged = Signal()
+    structureViewChanged = Signal()
+
+    phaseAdded = Signal()
+    phaseRemoved = Signal()
+    phasesAsObjChanged = Signal()
+    phasesAsXmlChanged = Signal()
+    phasesAsCifChanged = Signal()
+    currentPhaseChanged = Signal()
+    phasesEnabled = Signal()
+
+    # Experiment
+    patternParametersChanged = Signal()
+    patternParametersAsObjChanged = Signal()
+
+    instrumentParametersChanged = Signal()
+    instrumentParametersAsObjChanged = Signal()
+    instrumentParametersAsXmlChanged = Signal()
+
+    experimentDataAdded = Signal()
+    experimentDataRemoved = Signal()
+    experimentDataChanged = Signal()
+    experimentDataAsXmlChanged = Signal()
+
+    experimentLoadedChanged = Signal()
+    experimentSkippedChanged = Signal()
+
+    # Analysis
+    calculatedDataChanged = Signal()
+    calculatedDataUpdated = Signal()
+
     simulationParametersChanged = Signal()
+
+    fitFinished = Signal()
+    fitResultsChanged = Signal()
+
+    currentMinimizerChanged = Signal()
+    currentMinimizerMethodChanged = Signal()
+
+    currentCalculatorChanged = Signal()
+
+    # Plotting
+    showMeasuredSeriesChanged = Signal()
+    showDifferenceChartChanged = Signal()
+    current1dPlottingLibChanged = Signal()
+    current3dPlottingLibChanged = Signal()
+
+    htmlExportingFinished = Signal(bool, str)
+
+    # Status info
+    statusInfoChanged = Signal()
+
+    # Undo Redo
+    undoRedoChanged = Signal()
+
+    # Misc
+    dummySignal = Signal()
+
+    # METHODS
 
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        self.experiments = []
-        self.interface = InterfaceFactory()
-        self.vtkHandler = None
-        self.sample = Sample(parameters=Pars1D.default(), pattern=Pattern1D.default(), interface=self.interface)
-        self.sample.pattern.zero_shift = 0.0
-        self.sample.pattern.scale = 1.0
-        self.sample.parameters.wavelength = 1.912
-        self.sample.parameters.resolution_u = 0.14
-        self.sample.parameters.resolution_v = -0.42
-        self.sample.parameters.resolution_w = 0.38
-        self.sample.parameters.resolution_x = 0.0
-        self.sample.parameters.resolution_y = 0.0
+        # Main
+        self._interface = InterfaceFactory()
+        self._sample = self._defaultSample()
 
-        #self.background = PointBackground(linked_experiment='NEED_TO_CHANGE')
-        self.background = PointBackground(BackgroundPoint.from_pars(0, 200), BackgroundPoint.from_pars(140, 200), linked_experiment='NEED_TO_CHANGE')
+        # Plotting 1D
+        self._plotting_1d_proxy = Plotting1dProxy()
 
-        self._simulation_parameters = { "x_min": 10.0, "x_max": 150.0, "x_step": 0.1 }
-        x_min = self._simulation_parameters['x_min']
-        x_max = self._simulation_parameters['x_max']
-        x_step = self._simulation_parameters['x_step']
-        num_points = int((x_max - x_min) / x_step + 1)
-        x_data = np.linspace(x_min, x_max, num_points)
-        self.data = DataStore()
-        self.data.append(
-            DataSet1D(name='D1A@ILL data',
-                      x=x_data, y=np.zeros_like(x_data),
-                      x_label='2theta (deg)', y_label='Intensity (arb. units)',
-                      data_type='experiment')
-        )
-        self.data.append(
-            DataSet1D(name='{:s} engine'.format(self.interface.current_interface_name),
-                      x=x_data, y=np.zeros_like(x_data),
-                      x_label='2theta (deg)', y_label='Intensity (arb. units)',
-                      data_type='simulation')
-        )
-        self.data.append(
-            DataSet1D(name='Difference',
-                      x=x_data, y=np.zeros_like(x_data),
-                      x_label='2theta (deg)', y_label='Intensity (arb. units)',
-                      data_type='simulation')
-        )
-        self.project_info = self.initProjectInfo()
+        # Plotting 3D
+        self._3d_plotting_libs = ['chemdoodle', 'qtdatavisualization']
+        self._current_3d_plotting_lib = self._3d_plotting_libs[0]
+
+        self._show_bonds = True
+        self._bonds_max_distance = 2.0
+
+        self.current3dPlottingLibChanged.connect(self.onCurrent3dPlottingLibChanged)
+
+        # Project
+        self._project_info = self._defaultProjectInfo()
+        self.project_save_filepath = ""
+        self._status_model = None
+        self._state_changed = False
+        self.stateChanged.connect(self._onStateChanged)
+
+        # Structure
+        self.structureParametersChanged.connect(self._onStructureParametersChanged)
+        self.structureParametersChanged.connect(self._onStructureViewChanged)
+        self.structureParametersChanged.connect(self._onCalculatedDataChanged)
+        self.structureViewChanged.connect(self._onStructureViewChanged)
+
+        self._phases_as_obj = []
+        self._phases_as_xml = ""
+        self._phases_as_cif = ""
+        self.phaseAdded.connect(self._onPhaseAdded)
+        self.phaseAdded.connect(self.phasesEnabled)
+        self.phaseAdded.connect(self.undoRedoChanged)
+        self.phaseRemoved.connect(self._onPhaseRemoved)
+        self.phaseRemoved.connect(self.phasesEnabled)
+        self.phaseRemoved.connect(self.undoRedoChanged)
+
         self._current_phase_index = 0
-        self._fitables_list = []
-        self._filter_criteria = ""
+        self.currentPhaseChanged.connect(self._onCurrentPhaseChanged)
 
-        self._experiment_figure_obj_name = None
-        self._analysis_figure_obj_name = None
-        self._difference_figure_obj_name = None
+        # Experiment and calculated data
+        self._data = self._defaultData()
 
-        self._fit_results = { "success": None, "nvarys": None, "GOF": None, "redchi": None }
+        # Experiment
+        self._pattern_parameters_as_obj = self._defaultPatternParameters()
+        self.patternParametersChanged.connect(self._onPatternParametersChanged)
+
+        self._instrument_parameters_as_obj = self._defaultInstrumentParameters()
+        self._instrument_parameters_as_xml = ""
+        self.instrumentParametersChanged.connect(self._onInstrumentParametersChanged)
+
+        self._experiment_parameters = None
+        self._experiment_data = None
+        self._experiment_data_as_xml = ""
+        self.experiments = self._defaultExperiments()
+        self.experimentDataChanged.connect(self._onExperimentDataChanged)
+        self.experimentDataAdded.connect(self._onExperimentDataAdded)
+        self.experimentDataRemoved.connect(self._onExperimentDataRemoved)
+
         self._experiment_loaded = False
+        self._experiment_skipped = False
+        self.experimentLoadedChanged.connect(self._onExperimentLoadedChanged)
+        self.experimentSkippedChanged.connect(self._onExperimentSkippedChanged)
 
-        self.fitter = Fitter(self.sample, self.interface.fit_func)
-        self._minimizer_method = self.fitter.available_methods()[0]
+        self._background_proxy = BackgroundProxy()
+        self._background_proxy.asObjChanged.connect(self._onParametersChanged)
+        self._background_proxy.asObjChanged.connect(self._sample.set_background)
+        self._background_proxy.asObjChanged.connect(self.calculatedDataChanged)
+        self._background_proxy.asXmlChanged.connect(self.updateChartBackground)
 
-        # when to emit status bar items cnahged
-        self.calculatorChanged.connect(self.statusChanged)
-        self.minimizerChanged.connect(self.statusChanged)
-        self.minimizerMethodChanged.connect(self.statusChanged)
-        self.parameterChanged.connect(self.experimentDataChanged)
+        # Analysis
+        self.calculatedDataChanged.connect(self._onCalculatedDataChanged)
 
-        #
-        self.simulationParametersChanged.connect(self.onSimulationParametersChanged)
+        self._simulation_parameters_as_obj = self._defaultSimulationParameters()
+        self.simulationParametersChanged.connect(self._onSimulationParametersChanged)
+        self.simulationParametersChanged.connect(self.undoRedoChanged)
 
-        # Create a connection between this signal and a receiver, the receiver can be a Python callable, a Slot or a
-        # Signal. But why does it not work :-(
-        # self.phaseChanged.connect(self.updateStructureView)
-        # self.currentPhaseChanged.connect(self.updateStructureView)
+        self._fit_results = self._defaultFitResults()
+        self.fitter = Fitter(self._sample, self._interface.fit_func)
+        self.fitFinished.connect(self._onFitFinished)
+
+        self._current_minimizer_method_index = 0
+        self._current_minimizer_method_name = self.fitter.available_methods()[0]
+        self.currentMinimizerChanged.connect(self._onCurrentMinimizerChanged)
+        self.currentMinimizerMethodChanged.connect(self._onCurrentMinimizerMethodChanged)
+
+        self.currentCalculatorChanged.connect(self._onCurrentCalculatorChanged)
+
+        # Parameters
+        self._parameters_as_obj = []
+        self._parameters_as_xml = []
+        self.parametersChanged.connect(self._onParametersChanged)
+        self.parametersChanged.connect(self._onCalculatedDataChanged)
+        self.parametersChanged.connect(self._onStructureViewChanged)
+        self.parametersChanged.connect(self._onStructureParametersChanged)
+        self.parametersChanged.connect(self._onPatternParametersChanged)
+        self.parametersChanged.connect(self._onInstrumentParametersChanged)
+        self.parametersChanged.connect(self._background_proxy.onAsObjChanged)
+        self.parametersChanged.connect(self.undoRedoChanged)
+
+        self._parameters_filter_criteria = ""
+        self.parametersFilterCriteriaChanged.connect(self._onParametersFilterCriteriaChanged)
+
+        # Report
+        self._report = ""
+
+        # Status info
+        self.statusInfoChanged.connect(self._onStatusInfoChanged)
+        self.currentCalculatorChanged.connect(self.statusInfoChanged)
+        self.currentCalculatorChanged.connect(self.undoRedoChanged)
+        self.currentMinimizerChanged.connect(self.statusInfoChanged)
+        self.currentMinimizerChanged.connect(self.undoRedoChanged)
+        self.currentMinimizerMethodChanged.connect(self.statusInfoChanged)
+        self.currentMinimizerMethodChanged.connect(self.undoRedoChanged)
+
+        # Multithreading
+        self._fitter_thread = None
+        self._fit_finished = True
+
+        # Multithreading
+        self._fitter_thread = None
+        self._fit_finished = True
+
+        # Screen recorder
+        recorder = None
+        try:
+            from easyDiffractionApp.Logic.ScreenRecorder import ScreenRecorder
+            recorder = ScreenRecorder()
+        except (ImportError, ModuleNotFoundError):
+            print('Screen recording disabled')
+        self._screen_recorder = recorder
+
+        # !! THIS SHOULD ALWAYS GO AT THE END !!
+        # Start the undo/redo stack
+        borg.stack.enabled = True
+        borg.stack.clear()
+        # borg.debug = True
+
+    ####################################################################################################################
+    ####################################################################################################################
+    # Charts
+    ####################################################################################################################
+    ####################################################################################################################
+
+    # 1d plotting
+
+    @Property('QVariant', notify=dummySignal)
+    def plotting1d(self):
+        return self._plotting_1d_proxy
+
+    # 3d plotting
+
+    @Property('QVariant', notify=dummySignal)
+    def plotting3dLibs(self):
+        return self._3d_plotting_libs
+
+    @Property('QVariant', notify=current3dPlottingLibChanged)
+    def current3dPlottingLib(self):
+        return self._current_3d_plotting_lib
+
+    @current3dPlottingLib.setter
+    @property_stack_deco('Changing 3D library from {old_value} to {new_value}')
+    def current3dPlottingLib(self, plotting_lib):
+        self._current_3d_plotting_lib = plotting_lib
+        self.current3dPlottingLibChanged.emit()
+
+    def onCurrent3dPlottingLibChanged(self):
+        pass
 
     # Structure view
 
-    @Property(bool, notify=False)
+    def _onStructureViewChanged(self):
+        print("***** _onStructureViewChanged")
+
+    @Property(bool, notify=structureViewChanged)
     def showBonds(self):
-        if self.vtkHandler is None:
-            return True
-        return self.vtkHandler.show_bonds
+        return self._show_bonds
 
     @showBonds.setter
-    def setShowBonds(self, show_bonds: bool):
-        if self.vtkHandler is None:
+    def showBonds(self, show_bonds: bool):
+        if self._show_bonds == show_bonds:
             return
-        self.vtkHandler.show_bonds = show_bonds
-        self.updateStructureView()
+        self._show_bonds = show_bonds
+        self.structureViewChanged.emit()
 
-    @Property(float, notify=False)
-    def maxDistance(self):
-        if self.vtkHandler is None:
-            return 2.0
-        return self.vtkHandler.max_distance
+    @Property(float, notify=structureViewChanged)
+    def bondsMaxDistance(self):
+        return self._bonds_max_distance
 
-    @maxDistance.setter
-    def setMaxDistance(self, max_distance: float):
-        if self.vtkHandler is None:
+    @bondsMaxDistance.setter
+    def bondsMaxDistance(self, max_distance: float):
+        if self._bonds_max_distance == max_distance:
             return
-        self.vtkHandler.max_distance = max_distance
-        self.updateStructureView()
+        self._bonds_max_distance = max_distance
+        self.structureViewChanged.emit()
 
-    def updateStructureView(self):
-        if self.vtkHandler is None or len(self.sample.phases) == 0:
-            return
-        self.vtkHandler.clearScene()
-        self.vtkHandler.plot_system2(self.sample.phases[0])
+    # Charts for report
 
-    # Experimental data
+    @Slot('QVariant', result=str)
+    def imageToSource(self, image):
+        ba = QByteArray()
+        buffer = QBuffer(ba)
+        buffer.open(QIODevice.WriteOnly)
+        image.save(buffer, 'png')
+        data = ba.toBase64().data().decode('utf-8')
+        source = f'data:image/png;base64,{data}'
+        return source
 
-    @Property(str, notify=experimentDataChanged)
-    def experimentDataAsXml(self):
-        xml = dicttoxml(self.experiments, attr_type=False)
-        xml = xml.decode()
-        return xml
+    ####################################################################################################################
+    ####################################################################################################################
+    # PROJECT
+    ####################################################################################################################
+    ####################################################################################################################
 
-    @Slot(str)
-    def loadExperimentDataFromTxt(self, file_path):
-        file_path = generalizePath(file_path)
-        print(f"Load data from: {file_path}")
-        #print("---1---self.simulationParameters", self._simulation_parameters)
-        data = self.data.experiments[0]
-        data.x, data.y, data.e = np.loadtxt(file_path, unpack=True)
-        x_min = data.x[0]
-        x_max = data.x[-1]
-        x_step = (x_max - x_min) / (len(data.x) - 1)
-        self.simulationParameters = json.dumps({ "x_min": x_min, "x_max": x_max, "x_step": x_step })
-        #print("---2---self.simulationParameters", self._simulation_parameters)
-        self.matplotlib_bridge.updateWithCanvas(self._experiment_figure_obj_name, data)
-        self.experiments = [{"label": "D1A@ILL", "color": "steelblue"}]
-        self.experimentDataChanged.emit()
-        self.updateCalculatedData()
-
-    @Slot()
-    def removeExperiment(self):
-        self.experiments = []
-        self.experimentDataChanged.emit()
-
-    def createFakeExperiment(self):
-        self.experiments = [{"label": "D2B_300K", "color": "steelblue"}]
-        data = self.data.experiments
-        data = data[0]
-        #  Of course this needs to change........
-        self._currentModel = Sample.from_dict(self.sample.as_dict(skip=['interface']))
-        pbg = PointBackground(linked_experiment='NEED_TO_CHANGE')
-        from random import random
-        ran_p = lambda r: min(data.x) + r*(max(data.x) - min(data.x))
-        pbg.append(BackgroundPoint.from_pars(ran_p(random()), 10000 * random()))
-        pbg.append(BackgroundPoint.from_pars(ran_p(random()), 10000 * random()))
-        pbg.append(BackgroundPoint.from_pars(ran_p(random()), 10000 * random()))
-        self._currentModel._pattern.backgrounds[0] = pbg
-        interface_f = InterfaceFactory()
-        self._currentModel.interface = interface_f
-        self._currentModel._updateInterface()
-        data.y = interface_f.fit_func(data.x)
-        self.bridge.updateWithCanvas('figureEXP', data)
-        self.experimentDataChanged.emit()
-
-    @Property(bool, notify=False)
-    def experimentLoaded(self):
-        return self._experiment_loaded
-
-    @experimentLoaded.setter
-    def setExperimentLoaded(self, experiment_loaded: bool):
-        if self._experiment_loaded == experiment_loaded:
-            return
-        self._experiment_loaded = experiment_loaded
-        self.updateCalculatedData()
-
-    # Pattern parameters
-
-    @Property('QVariant', notify=simulationParametersChanged)
-    def simulationParameters(self):
-        return self._simulation_parameters
-
-    @simulationParameters.setter
-    def setSimulationParameters(self, json_str):
-        self._simulation_parameters = json.loads(json_str)
-        self.simulationParametersChanged.emit()
-
-    def onSimulationParametersChanged(self):
-        #print("------------ self._simulation_parameters", self._simulation_parameters)
-        x_min = float(self._simulation_parameters['x_min'])
-        x_max = float(self._simulation_parameters['x_max'])
-        x_step = float(self._simulation_parameters['x_step'])
-        num_points = int((x_max - x_min) / x_step + 1)
-        sim = self.data.simulations[0]
-        sim.x = np.linspace(x_min, x_max, num_points)
-        sim.y = self.interface.fit_func(sim.x)
-        self.updateCalculatedData()
-
-    # Pattern parameters
-
-    @Property('QVariant', notify=experimentDataChanged)
-    def patternParameters(self):
-        parameters = self.sample.pattern.as_dict()
-        return parameters
-
-    # Instrument parameters
-
-    @Property('QVariant', notify=experimentDataChanged)
-    def instrumentParameters(self):
-        parameters = self.sample.parameters.as_dict()
-        return parameters
-
-    @Property(str, notify=experimentDataChanged)
-    def instrumentParametersAsXml(self):
-        parameters = [self.sample.parameters.as_dict()]
-        xml = dicttoxml(parameters, attr_type=False)
-        xml = xml.decode()
-        return xml
-
-    @Slot(str)
-    def updateFigureMargins(self, obj_name: str):
-        self.matplotlib_bridge.updateWithCanvas(obj_name)
-
-    # Calculated data
-
-    @Slot()
-    def updateCalculatedData(self):
-        if self._analysis_figure_obj_name is None:
-            return
-        self.sample.output_index = self.currentPhaseIndex
-        #  THIS IS WHERE WE WOULD LOOK UP CURRENT EXP INDEX
-        sim = self.data.simulations[0]
-        zeros_sim = DataSet1D(name='', x=[sim.x[0]], y=[sim.y[0]])  # Temp solution to have proper color for sim curve
-        zeros_diff = DataSet1D(name='', x=[sim.x[0]])  # Temp solution to have proper color for sim curve
-        if self.experimentLoaded:
-            exp = self.data.experiments[0]
-            sim.x = exp.x
-            sim.y = self.interface.fit_func(sim.x)
-            diff = self.data.simulations[1]
-            diff.x = exp.x
-            diff.y = exp.y - sim.y
-            data = [exp, sim]
-            zeros_diff.y = [exp.y[0] - sim.y[0]]
-            zeros_diff.x_label = diff.x_label
-            zeros_diff.y_label = diff.y_label
-            self.matplotlib_bridge.updateWithCanvas(self._difference_figure_obj_name, [zeros_diff, zeros_diff, diff])
-        else:
-            x_min = float(self._simulation_parameters['x_min'])
-            x_max = float(self._simulation_parameters['x_max'])
-            x_step = float(self._simulation_parameters['x_step'])
-            num_points = int((x_max - x_min) / x_step + 1)
-            sim.x = np.linspace(x_min, x_max, num_points)
-            sim.y = self.interface.fit_func(sim.x)
-            zeros_sim.x_label = sim.x_label
-            zeros_sim.y_label = sim.y_label
-            data = [zeros_sim, sim]
-        self.matplotlib_bridge.updateWithCanvas(self._analysis_figure_obj_name, data)
-        self.modelChanged.emit()
-
-    # Minimizer
-
-    @Property('QVariant', notify=minimizerChanged)
-    def minimizerList(self):
-        return self.fitter.available_engines
-
-    @Property(int, notify=minimizerChanged)
-    def minimizerIndex(self):
-        return self.minimizerList.index(self.fitter.current_engine.name)
-
-    @minimizerIndex.setter
-    def setMinimizer(self, index: int):
-        self.fitter.switch_engine(self.minimizerList[index])
-        self.minimizerChanged.emit()
-        self.minimizerMethodChanged.emit()
-
-    @Property('QVariant', notify=minimizerChanged)
-    def minimizerMethodList(self):
-        return self.fitter.available_methods()
-
-    @Property(int, notify=minimizerMethodChanged)
-    def minimizerMethodIndex(self):
-        return self._minimizer_method
-
-    @minimizerMethodIndex.setter
-    def setMinimizerMethodIndex(self, index: int):
-        self._minimizer_method = self.minimizerMethodList[index]
-        self.minimizerMethodChanged.emit()
-
-    # Calculator
-
-    @Property('QVariant', notify=calculatorChanged)
-    def calculatorList(self):
-        return self.interface.available_interfaces
-
-    @Property(int, notify=calculatorChanged)
-    def calculatorIndex(self):
-        return self.calculatorList.index(self.interface.current_interface_name)
-
-    @calculatorIndex.setter
-    def setCalculator(self, index: int):
-        self.interface.switch(self.calculatorList[index])
-        data = self.data.simulations
-        #  THIS IS WHERE WE WOULD LOOK UP CURRENT EXP INDEX
-        data = data[0]
-        data.name = '{:s} engine'.format(self.interface.current_interface_name)
-        self.sample._updateInterface()
-        self.updateCalculatedData()
-        self.calculatorChanged.emit()
-
-    # Charts
-
-    # @Slot(QtCharts.QXYSeries)
-    # def addMeasuredSeriesRef(self, series):
-    #     self._measured_data_model.addSeriesRef(series)
-    #
-    # @Slot(QtCharts.QXYSeries)
-    # def addLowerMeasuredSeriesRef(self, series):
-    #     self._measured_data_model.addLowerSeriesRef(series)
-    #
-    # @Slot(QtCharts.QXYSeries)
-    # def addUpperMeasuredSeriesRef(self, series):
-    #     self._measured_data_model.addUpperSeriesRef(series)
-    #
-    # @Slot(QtCharts.QXYSeries)
-    # def setCalculatedSeriesRef(self, series):
-    #     self._calculated_data_model.setSeriesRef(series)
-
-    @Slot(str)
-    def setExperimentFigureObjName(self, name):
-        if self._experiment_figure_obj_name == name:
-            return
-        self._experiment_figure_obj_name = name
-
-    @Slot(str)
-    def setAnalysisFigureObjName(self, name):
-        if self._analysis_figure_obj_name == name:
-            return
-        self._analysis_figure_obj_name = name
-
-
-    @Slot(str)
-    def setDifferenceFigureObjName(self, name):
-        if self._difference_figure_obj_name == name:
-            return
-        self._difference_figure_obj_name = name
-
-    # Status
-
-    @Property(str, notify=statusChanged)
-    def statusModelAsXml(self):
-        items = [{"label": "Engine", "value": self.interface.current_interface_name},
-                 {"label": "Minimizer", "value": self.fitter.current_engine.name},
-                 {"label": "Method", "value": self._minimizer_method}]
-        xml = dicttoxml(items, attr_type=False)
-        xml = xml.decode()
-        return xml
-
-    # App project info
-
-    def initProjectInfo(self):
-        return dict(name="Example Project",
-                    keywords="diffraction, cfml, cryspy",
-                    samples="samples.cif",
-                    experiments="experiments.cif",
-                    calculations="calculation.cif",
-                    modified="18.09.2020, 09:24")
+    ####################################################################################################################
+    # Project
+    ####################################################################################################################
 
     @Property('QVariant', notify=projectInfoChanged)
     def projectInfoAsJson(self):
-        return self.project_info
+        return self._project_info
 
     @projectInfoAsJson.setter
-    def setProjectInfoAsJson(self, json_str):
-        self.project_info = json.loads(json_str)
+    def projectInfoAsJson(self, json_str):
+        self._project_info = json.loads(json_str)
         self.projectInfoChanged.emit()
+
+    @Property(str, notify=projectInfoChanged)
+    def projectInfoAsCif(self):
+        cif_list = []
+        for key, value in self.projectInfoAsJson.items():
+            if ' ' in value:
+                value = f"'{value}'"
+            cif_list.append(f'_{key} {value}')
+        cif_str = '\n'.join(cif_list)
+        return cif_str
 
     @Slot(str, str)
-    def editProjectInfoByKey(self, key, value):
-        self.project_info[key] = value
+    def editProjectInfo(self, key, value):
+        if self._project_info[key] == value:
+            return
+
+        self._project_info[key] = value
         self.projectInfoChanged.emit()
 
-    # Phases
+    @Slot()
+    def createProject(self):
+        projectPath = self.projectInfoAsJson['location']
+        mainCif = os.path.join(projectPath, 'project.cif')
+        samplesPath = os.path.join(projectPath, 'samples')
+        experimentsPath = os.path.join(projectPath, 'experiments')
+        calculationsPath = os.path.join(projectPath, 'calculations')
+        if not os.path.exists(projectPath):
+            os.makedirs(projectPath)
+            os.makedirs(samplesPath)
+            os.makedirs(experimentsPath)
+            os.makedirs(calculationsPath)
+            with open(mainCif, 'w') as file:
+                file.write(self.projectInfoAsCif)
+        else:
+            print(f"ERROR: Directory {projectPath} already exists")
 
-    @Property('QVariant', notify=phasesChanged)
-    def phaseList(self):
-        phases = self.sample.phases.as_dict()['data']
-        return phases
+    def _defaultProjectInfo(self):
+        return dict(
+            name="Example Project",
+            location=os.path.join(os.path.expanduser("~"), "Example Project"),
+            short_description="diffraction, powder, 1D",
+            samples="Not loaded",
+            experiments="Not loaded",
+            calculations="Not created",
+            modified=datetime.datetime.now().strftime("%d.%m.%Y %H:%M")
+        )
 
-    def _onSampleAdded(self):
-        if self.interface.current_interface_name != 'CrysPy':
-            self.interface.generate_sample_binding("filename", self.sample)
-        # self.vtkHandler.plot_system2(self.sample.phases[0])
-        self.sample.set_background(self.background)
-        self.updateStructureView()
-        self.updateCalculatedData()
-        self.phasesChanged.emit()
-        self.currentPhaseChanged.emit()
-        self.currentPhaseSitesChanged.emit()
-        self.spaceGroupChanged.emit()
+    @Property(bool, notify=stateChanged)
+    def stateHasChanged(self):
+        return self._state_changed
+
+    @stateHasChanged.setter
+    def stateHasChanged(self, changed: bool):
+        if self._state_changed == changed:
+            print("same state changed value - {}".format(str(changed)))
+            return
+        self._state_changed = changed
+        print("new state changed value - {}".format(str(changed)))
+        self.stateChanged.emit(changed)
+
+    def _onStateChanged(self, changed=True):
+        self.stateHasChanged = changed
+
+    ####################################################################################################################
+    ####################################################################################################################
+    # SAMPLE
+    ####################################################################################################################
+    ####################################################################################################################
+
+    def _defaultSample(self):
+        sample = Sample(parameters=Pars1D.default(), pattern=Pattern1D.default(), interface=self._interface)
+        sample.pattern.zero_shift = 0.0
+        sample.pattern.scale = 1.0
+        sample.parameters.wavelength = 1.912
+        sample.parameters.resolution_u = 0.1447
+        sample.parameters.resolution_v = -0.4252
+        sample.parameters.resolution_w = 0.3864
+        sample.parameters.resolution_x = 0.0
+        sample.parameters.resolution_y = 0.0961
+        return sample
+
+    ####################################################################################################################
+    # Phase models (list, xml, cif)
+    ####################################################################################################################
+
+    @Property('QVariant', notify=phasesAsObjChanged)
+    def phasesAsObj(self):
+        # print("+ phasesAsObj")
+        return self._phases_as_obj
+
+    @Property(str, notify=phasesAsXmlChanged)
+    def phasesAsXml(self):
+        # print("+ phasesAsXml")
+        return self._phases_as_xml
+
+    @Property(str, notify=phasesAsCifChanged)
+    def phasesAsCif(self):
+        # print("+ phasesAsCif")
+        return self._phases_as_cif
+
+    @Property(str, notify=phasesAsCifChanged)
+    def phasesAsExtendedCif(self):
+        if len(self._sample.phases) == 0:
+            return
+
+        symm_ops = self._sample.phases[0].spacegroup.symmetry_opts
+        symm_ops_cif_loop = "loop_\n _symmetry_equiv_pos_as_xyz\n"
+        for symm_op in symm_ops:
+            symm_ops_cif_loop += f' {symm_op.as_xyz_string()}\n'
+        return self._phases_as_cif + symm_ops_cif_loop
+
+    @phasesAsCif.setter
+    @property_stack_deco
+    def phasesAsCif(self, phases_as_cif):
+        print("+ phasesAsCifSetter")
+        if self._phases_as_cif == phases_as_cif:
+            return
+
+        self._sample.phases = Phases.from_cif_str(phases_as_cif)
+        self.structureParametersChanged.emit()
+
+    def _setPhasesAsObj(self):
+        start_time = timeit.default_timer()
+        self._phases_as_obj = self._sample.phases.as_dict()['data']
+        print("+ _setPhasesAsObj: {0:.3f} s".format(timeit.default_timer() - start_time))
+        self.phasesAsObjChanged.emit()
+
+    def _setPhasesAsXml(self):
+        start_time = timeit.default_timer()
+        self._phases_as_xml = dicttoxml(self._phases_as_obj, attr_type=True).decode()
+        print("+ _setPhasesAsXml: {0:.3f} s".format(timeit.default_timer() - start_time))
+        self.phasesAsXmlChanged.emit()
+
+    def _setPhasesAsCif(self):
+        start_time = timeit.default_timer()
+        self._phases_as_cif = str(self._sample.phases.cif)
+        print("+ _setPhasesAsCif: {0:.3f} s".format(timeit.default_timer() - start_time))
+        self.phasesAsCifChanged.emit()
+
+    def _onStructureParametersChanged(self):
+        print("***** _onStructureParametersChanged")
+        self._setPhasesAsObj()  # 0.025 s
+        self._setPhasesAsXml()  # 0.065 s
+        self._setPhasesAsCif()  # 0.010 s
+        self.stateChanged.emit(True)
+
+    ####################################################################################################################
+    # Phase: Add / Remove
+    ####################################################################################################################
 
     @Slot(str)
-    def addSampleFromCif(self, cif_path):
-        cif_path = generalizePath(cif_path)
-        crystals = Phases.from_cif_file(cif_path)
-        crystals.name = 'Phases'
-        self.sample.phases = crystals
-        self.sample.set_background(self.background)
-        self._onSampleAdded()
+    def addSampleFromCif(self, cif_url):
+        cif_path = generalizePath(cif_url)
+        if borg.stack.enabled:
+            borg.stack.beginMacro(f'Loaded cif: {cif_path}')
+        self._sample.phases = Phases.from_cif_file(cif_path)
+        if borg.stack.enabled:
+            borg.stack.endMacro()
+            # if len(self._sample.phases) < 2:
+            #     # We have problems with removing the only phase.....
+            #     borg.stack.pop()
+        self.phaseAdded.emit()
+        # self.undoRedoChanged.emit()
 
     @Slot()
-    def addSampleManual(self):
-        cell = Lattice.from_pars(8.56, 8.56, 6.12, 90, 90, 90)
-        spacegroup = SpaceGroup.from_pars('P 42/n c m')
-        atom = Site.from_pars(label='Cl1', specie='Cl', fract_x=0.125, fract_y=0.167, fract_z=0.107)
-        atom.add_adp('Uiso', Uiso=0.0)
-        crystal = Phase('Dichlorine', spacegroup=spacegroup, cell=cell)
-        crystal.add_atom(atom)
-        self.sample.phases = crystal
-        self.sample.phases.name = 'Phases'
-        self._onSampleAdded()
+    def addDefaultPhase(self):
+        print("+ addDefaultPhase")
+        if borg.stack.enabled:
+            borg.stack.beginMacro('Loaded default phase')
+        self._sample.phases = self._defaultPhase()
+        if borg.stack.enabled:
+            borg.stack.endMacro()
+            # if len(self._sample.phases) < 2:
+            #     # We have problems with removing the only phase.....
+            #     borg.stack.pop()
+        self.phaseAdded.emit()
+        # self.undoRedoChanged.emit()
+        # self.phasesEnabled.emit()
 
     @Slot(str)
     def removePhase(self, phase_name: str):
-        del self.sample.phases[phase_name]
-        # self.vtkHandler.clearScene()
-        self.updateStructureView()
-        self.updateCalculatedData()
-        self.phasesChanged.emit()
-        self.currentPhaseChanged.emit()
-        self.currentPhaseSitesChanged.emit()
-        self.spaceGroupChanged.emit()
+        if phase_name in self._sample.phases.phase_names:
+            del self._sample.phases[phase_name]
+            self.phaseRemoved.emit()
 
-    @Property(str, notify=phasesChanged)
-    def phasesAsXml(self):
-        phases = self.sample.phases.as_dict()['data']
-        xml = dicttoxml(phases, attr_type=True)
-        xml = xml.decode()
-        return xml
+    def _defaultPhase(self):
+        space_group = SpaceGroup.from_pars('P 42/n c m')
+        cell = Lattice.from_pars(8.56, 8.56, 6.12, 90, 90, 90)
+        atom = Site.from_pars(label='Cl1', specie='Cl', fract_x=0.125, fract_y=0.167, fract_z=0.107)
+        atom.add_adp('Uiso', Uiso=0.0)
+        phase = Phase('Dichlorine', spacegroup=space_group, cell=cell)
+        phase.add_atom(atom)
+        return phase
 
-    @Property(str, notify=phasesChanged)
-    def phasesAsCif(self):
-        cif = str(self.sample.phases.cif)
-        return cif
+    def _onPhaseAdded(self):
+        print("***** _onPhaseAdded")
+        if self._interface.current_interface_name != 'CrysPy':
+            self._interface.generate_sample_binding("filename", self._sample)
+        self._sample.phases.name = 'Phases'
+        self._sample.set_background(self._background_proxy.asObj)
+        self.structureParametersChanged.emit()
 
-    @phasesAsCif.setter
-    def setPhasesAsCif(self, cif_str):
-        self.phases = Phases.from_cif_str(cif_str)
-        self.sample.phases = self.phases
-        self.updateStructureView()
-        self.updateCalculatedData()
-        self.phasesChanged.emit()
-        self.currentPhaseChanged.emit()
-        self.currentPhaseSitesChanged.emit()
-        self.spaceGroupChanged.emit()
+    def _onPhaseRemoved(self):
+        print("***** _onPhaseRemoved")
+        self.structureParametersChanged.emit()
+
+    @Property(bool, notify=phasesEnabled)
+    def samplesPresent(self) -> bool:
+        return len(self._sample.phases) > 0
+
+    ####################################################################################################################
+    # Phase: Symmetry
+    ####################################################################################################################
+
+    # Crystal system
+
+    @Property('QVariant', notify=structureParametersChanged)
+    def crystalSystemList(self):
+        systems = [system.capitalize() for system in SpacegroupInfo.get_all_systems()]
+        return systems
+
+    @Property(str, notify=structureParametersChanged)
+    def currentCrystalSystem(self):
+        phases = self._sample.phases
+        if not phases:
+            return ''
+
+        current_system = phases[self.currentPhaseIndex].spacegroup.crystal_system
+        current_system = current_system.capitalize()
+        return current_system
+
+    @currentCrystalSystem.setter
+    def currentCrystalSystem(self, new_system: str):
+        new_system = new_system.lower()
+        space_group_numbers = SpacegroupInfo.get_ints_from_system(new_system)
+        top_space_group_number = space_group_numbers[0]
+        top_space_group_name = SpacegroupInfo.get_symbol_from_int_number(top_space_group_number)
+        self._setCurrentSpaceGroup(top_space_group_name)
+
+    # Space group number and name
+
+    @Property('QVariant', notify=structureParametersChanged)
+    def formattedSpaceGroupList(self):
+        def format_display(num):
+            name = SpacegroupInfo.get_symbol_from_int_number(num)
+            return f"<font color='#999'>{num}</font> {name}"
+
+        space_group_numbers = self._spaceGroupNumbers()
+        display_list = [format_display(num) for num in space_group_numbers]
+        return display_list
+
+    @Property(int, notify=structureParametersChanged)
+    def currentSpaceGroup(self):
+        def space_group_index(number, numbers):
+            if number in numbers:
+                return numbers.index(number)
+            return 0
+
+        phases = self._sample.phases
+        if not phases:
+            return -1
+
+        space_group_numbers = self._spaceGroupNumbers()
+        current_number = self._currentSpaceGroupNumber()
+        current_idx = space_group_index(current_number, space_group_numbers)
+        return current_idx
+
+    @currentSpaceGroup.setter
+    def currentSpaceGroup(self, new_idx: int):
+        space_group_numbers = self._spaceGroupNumbers()
+        space_group_number = space_group_numbers[new_idx]
+        space_group_name = SpacegroupInfo.get_symbol_from_int_number(space_group_number)
+        self._setCurrentSpaceGroup(space_group_name)
+
+    def _spaceGroupNumbers(self):
+        current_system = self.currentCrystalSystem.lower()
+        numbers = SpacegroupInfo.get_ints_from_system(current_system)
+        return numbers
+
+    def _currentSpaceGroupNumber(self):
+        phases = self._sample.phases
+        current_number = phases[self.currentPhaseIndex].spacegroup.int_number
+        return current_number
+
+    # Space group setting
+
+    @Property('QVariant', notify=structureParametersChanged)
+    def formattedSpaceGroupSettingList(self):
+        def format_display(num, name):
+            return f"<font color='#999'>{num}</font> {name}"
+
+        raw_list = self._spaceGroupSettingList()
+        formatted_list = [format_display(i + 1, name) for i, name in enumerate(raw_list)]
+        return formatted_list
+
+    @Property(int, notify=structureParametersChanged)
+    def currentSpaceGroupSetting(self):
+        phases = self._sample.phases
+        if not phases:
+            return 0
+
+        settings = self._spaceGroupSettingList()
+        current_setting = phases[self.currentPhaseIndex].spacegroup.space_group_HM_name.raw_value
+        current_number = settings.index(current_setting)
+        return current_number
+
+    @currentSpaceGroupSetting.setter
+    def currentSpaceGroupSetting(self, new_number: int):
+        settings = self._spaceGroupSettingList()
+        name = settings[new_number]
+        self._setCurrentSpaceGroup(name)
+
+    def _spaceGroupSettingList(self):
+        phases = self._sample.phases
+        if not phases:
+            return []
+
+        current_number = self._currentSpaceGroupNumber()
+        settings = SpacegroupInfo.get_compatible_HM_from_int(current_number)
+        return settings
+
+    # Common
+
+    def _setCurrentSpaceGroup(self, new_name: str):
+        phases = self._sample.phases
+        if phases[self.currentPhaseIndex].spacegroup.space_group_HM_name == new_name:
+            return
+
+        phases[self.currentPhaseIndex].spacegroup.space_group_HM_name = new_name
+        self.structureParametersChanged.emit()
+
+    ####################################################################################################################
+    # Phase: Atoms
+    ####################################################################################################################
+
+    @Slot()
+    def addDefaultAtom(self):
+        try:
+            atom = Site.from_pars(label='Label2',
+                                  specie='O',
+                                  fract_x=0.05,
+                                  fract_y=0.05,
+                                  fract_z=0.05)
+            atom.add_adp('Uiso', Uiso=0.0)
+            self._sample.phases[self.currentPhaseIndex].add_atom(atom)
+            self.structureParametersChanged.emit()
+        except AttributeError:
+            print("Error: failed to add atom")
 
     @Slot(str)
-    def modifyPhaseName(self, new_value: str):
-        self.sample.phases[self.currentPhaseIndex].name = new_value
-        self.phasesChanged.emit()
+    def removeAtom(self, atom_label: str):
+        del self._sample.phases[self.currentPhaseIndex].atoms[atom_label]
+        self.structureParametersChanged.emit()
 
-    @Property('QVariant', notify=currentPhaseSitesChanged)
-    def currentPhaseAllSites(self):
-        if not self.sample.phases:
-            return {}
-        all_sites = self.sample.phases[0].all_sites()
-        # convert numpy lists to python lists for qml
-        all_sites = {k: all_sites[k].tolist() for k in all_sites.keys()}
-        return all_sites
+    ####################################################################################################################
+    # Current phase
+    ####################################################################################################################
 
     @Property(int, notify=currentPhaseChanged)
     def currentPhaseIndex(self):
         return self._current_phase_index
 
     @currentPhaseIndex.setter
-    def setCurrentPhaseIndex(self, index: int):
-        if index == -1:
+    def currentPhaseIndex(self, new_index: int):
+        if self._current_phase_index == new_index or new_index == -1:
             return
-        self._current_phase_index = index
-        self.updateStructureView()
-        self.updateCalculatedData()
-        self.phasesChanged.emit()
+
+        self._current_phase_index = new_index
         self.currentPhaseChanged.emit()
 
-    # Peak profile
+    def _onCurrentPhaseChanged(self):
+        print("***** _onCurrentPhaseChanged")
+        self.structureViewChanged.emit()
 
-    @Property(str, notify=instrumentResolutionChanged)
-    def instrumentResolutionAsXml(self):
-        instrument_resolution = [{"U": 11.3, "V": -2.9, "W": 1.1, "X": 0.0, "Y": 0.0}]
-        xml = dicttoxml(instrument_resolution, attr_type=False)
-        xml = xml.decode()
-        return xml
+    ####################################################################################################################
+    ####################################################################################################################
+    # EXPERIMENT
+    ####################################################################################################################
+    ####################################################################################################################
 
+    def _defaultExperiments(self):
+        return []
+
+    def _defaultData(self):
+        x_min = self._defaultSimulationParameters()['x_min']
+        x_max = self._defaultSimulationParameters()['x_max']
+        x_step = self._defaultSimulationParameters()['x_step']
+        num_points = int((x_max - x_min) / x_step + 1)
+        x_data = np.linspace(x_min, x_max, num_points)
+
+        data = DataStore()
+
+        data.append(
+            DataSet1D(
+                name='D1A@ILL data',
+                x=x_data, y=np.zeros_like(x_data),
+                x_label='2theta (deg)', y_label='Intensity',
+                data_type='experiment'
+            )
+        )
+        data.append(
+            DataSet1D(
+                name='{:s} engine'.format(self._interface.current_interface_name),
+                x=x_data, y=np.zeros_like(x_data),
+                x_label='2theta (deg)', y_label='Intensity',
+                data_type='simulation'
+            )
+        )
+        data.append(
+            DataSet1D(
+                name='Difference',
+                x=x_data, y=np.zeros_like(x_data),
+                x_label='2theta (deg)', y_label='Difference',
+                data_type='simulation'
+            )
+        )
+        return data
+
+    ####################################################################################################################
+    # Experiment models (list, xml, cif)
+    ####################################################################################################################
+
+    @Property(str, notify=experimentDataAsXmlChanged)
+    def experimentDataAsXml(self):
+        return self._experiment_data_as_xml
+
+    def _setExperimentDataAsXml(self):
+        print("+ _setExperimentDataAsXml")
+        self._experiment_data_as_xml = dicttoxml(self.experiments, attr_type=True).decode()
+        self.experimentDataAsXmlChanged.emit()
+
+    def _onExperimentDataChanged(self):
+        print("***** _onExperimentDataChanged")
+        self._setExperimentDataAsXml()  # ? s
+        self.stateChanged.emit(True)
+
+    ####################################################################################################################
+    # Experiment data: Add / Remove
+    ####################################################################################################################
+
+    @Slot(str)
+    def addExperimentDataFromXye(self, file_url):
+        print(f"+ addExperimentDataFromXye: {file_url}")
+
+        def outer1(obj):
+            def inner():
+                obj._experiment_data = self._loadExperimentData(file_url)
+                obj.experimentLoaded = True
+                obj.experimentSkipped = False
+                obj.undoRedoChanged.emit()
+                obj.experimentDataAdded.emit()
+            return inner
+
+        def outer2(obj):
+            def inner():
+                obj.experiments.clear()
+                obj.experimentLoaded = False
+                obj.experimentSkipped = True
+                obj.undoRedoChanged.emit()
+                obj.experimentDataRemoved.emit()
+            return inner
+
+        borg.stack.push(FunctionStack(self, outer1(self), outer2(self)))
+
+
+    @Slot()
+    def removeExperiment(self):
+        print("+ removeExperiment")
+
+        def outer1(obj):
+            def inner():
+                obj.experiments.clear()
+                obj.experimentDataRemoved.emit()
+                obj.experimentLoaded = False
+                obj.experimentSkipped = False
+                obj.undoRedoChanged.emit()
+            return inner
+
+        def outer2(obj):
+            data = self._experiment_data
+
+            def inner():
+                obj._experiment_data = data
+                obj.experimentDataAdded.emit()
+                obj.experimentLoaded = True
+                obj.experimentSkipped = False
+                obj.undoRedoChanged.emit()
+            return inner
+
+        borg.stack.push(FunctionStack(self, outer1(self), outer2(self)))
+
+    def _defaultExperiment(self):
+        return {
+            "label": "D1A@ILL",
+            "color": "#00a3e3"
+        }
+
+    def _loadExperimentData(self, file_url):
+        print("+ _loadExperimentData")
+        file_path = generalizePath(file_url)
+        data = self._data.experiments[0]
+        data.x, data.y, data.e = np.loadtxt(file_path, unpack=True)
+        return data
+
+    def _experimentDataParameters(self, data):
+        x_min = data.x[0]
+        x_max = data.x[-1]
+        x_step = (x_max - x_min) / (len(data.x) - 1)
+        parameters = {
+            "x_min":  x_min,
+            "x_max":  x_max,
+            "x_step": x_step
+        }
+        return parameters
+
+    def _onExperimentDataAdded(self):
+        print("***** _onExperimentDataAdded")
+        self._plotting_1d_proxy.setMeasuredData(self._experiment_data.x, self._experiment_data.y, self._experiment_data.e)
+        self._experiment_parameters = self._experimentDataParameters(self._experiment_data)
+        self.simulationParametersAsObj = json.dumps(self._experiment_parameters)
+        self.experiments = [self._defaultExperiment()]
+        self._background_proxy.setDefaultPoints()
+        self.experimentDataChanged.emit()
+
+    def _onExperimentDataRemoved(self):
+        print("***** _onExperimentDataRemoved")
+        self._plotting_1d_proxy.clearFrontendState()
+        self.experimentDataChanged.emit()
+
+    ####################################################################################################################
+    # Experiment loaded and skipped flags
+    ####################################################################################################################
+
+    @Property(bool, notify=experimentLoadedChanged)
+    def experimentLoaded(self):
+        return self._experiment_loaded
+
+    @experimentLoaded.setter
+    def experimentLoaded(self, loaded: bool):
+        if self._experiment_loaded == loaded:
+            return
+
+        self._experiment_loaded = loaded
+        self.experimentLoadedChanged.emit()
+
+    @Property(bool, notify=experimentSkippedChanged)
+    def experimentSkipped(self):
+        return self._experiment_skipped
+
+    @experimentSkipped.setter
+    def experimentSkipped(self, skipped: bool):
+        if self._experiment_skipped == skipped:
+            return
+
+        self._experiment_skipped = skipped
+        self.experimentSkippedChanged.emit()
+
+    def _onExperimentLoadedChanged(self):
+        print("***** _onExperimentLoadedChanged")
+        if self.experimentLoaded:
+            self._onParametersChanged()
+            self.instrumentParametersChanged.emit()
+            self.patternParametersChanged.emit()
+
+    def _onExperimentSkippedChanged(self):
+        print("***** _onExperimentSkippedChanged")
+        if self.experimentSkipped:
+            self._onParametersChanged()
+            self.instrumentParametersChanged.emit()
+            self.patternParametersChanged.emit()
+            self.calculatedDataChanged.emit()
+
+    ####################################################################################################################
+    # Simulation parameters
+    ####################################################################################################################
+
+    @Property('QVariant', notify=simulationParametersChanged)
+    def simulationParametersAsObj(self):
+        return self._simulation_parameters_as_obj
+
+    @simulationParametersAsObj.setter
+    def simulationParametersAsObj(self, json_str):
+        if self._simulation_parameters_as_obj == json.loads(json_str):
+            return
+
+        self._simulation_parameters_as_obj = json.loads(json_str)
+        self.simulationParametersChanged.emit()
+
+    def _defaultSimulationParameters(self):
+        return {
+            "x_min": 10.0,
+            "x_max": 120.0,
+            "x_step": 0.1
+        }
+
+    def _onSimulationParametersChanged(self):
+        print("***** _onSimulationParametersChanged")
+        self.calculatedDataChanged.emit()
+
+    ####################################################################################################################
+    # Pattern parameters (scale, zero_shift, backgrounds)
+    ####################################################################################################################
+
+    @Property('QVariant', notify=patternParametersAsObjChanged)
+    def patternParametersAsObj(self):
+        return self._pattern_parameters_as_obj
+
+    def _defaultPatternParameters(self):
+        return {
+            "scale":      1.0,
+            "zero_shift": 0.0
+        }
+
+    def _setPatternParametersAsObj(self):
+        start_time = timeit.default_timer()
+        parameters = self._sample.pattern.as_dict()
+        self._pattern_parameters_as_obj = parameters
+        print("+ _setPatternParametersAsObj: {0:.3f} s".format(timeit.default_timer() - start_time))
+        self.patternParametersAsObjChanged.emit()
+
+    def _onPatternParametersChanged(self):
+        print("***** _onPatternParametersChanged")
+        self._setPatternParametersAsObj()
+
+    ####################################################################################################################
+    # Instrument parameters (wavelength, resolution_u, ..., resolution_y)
+    ####################################################################################################################
+
+    @Property('QVariant', notify=instrumentParametersAsObjChanged)
+    def instrumentParametersAsObj(self):
+        return self._instrument_parameters_as_obj
+
+    @Property(str, notify=instrumentParametersAsXmlChanged)
+    def instrumentParametersAsXml(self):
+        return self._instrument_parameters_as_xml
+
+    def _defaultInstrumentParameters(self):
+        return {
+            "wavelength":   1.0,
+            "resolution_u": 0.01,
+            "resolution_v": -0.01,
+            "resolution_w": 0.01,
+            "resolution_x": 0.0,
+            "resolution_y": 0.0
+        }
+
+    def _setInstrumentParametersAsObj(self):
+        start_time = timeit.default_timer()
+        parameters = self._sample.parameters.as_dict()
+        self._instrument_parameters_as_obj = parameters
+        print("+ _setInstrumentParametersAsObj: {0:.3f} s".format(timeit.default_timer() - start_time))
+        self.instrumentParametersAsObjChanged.emit()
+
+    def _setInstrumentParametersAsXml(self):
+        start_time = timeit.default_timer()
+        parameters = [self._instrument_parameters_as_obj]
+        self._instrument_parameters_as_xml = dicttoxml(parameters, attr_type=True).decode()
+        print("+ _setInstrumentParametersAsXml: {0:.3f} s".format(timeit.default_timer() - start_time))
+        self.instrumentParametersAsXmlChanged.emit()
+
+    def _onInstrumentParametersChanged(self):
+        print("***** _onInstrumentParametersChanged")
+        self._setInstrumentParametersAsObj()
+        self._setInstrumentParametersAsXml()
+
+    ####################################################################################################################
     # Background
+    ####################################################################################################################
 
-    @Property(str, notify=backgroundChanged)
-    def backgroundAsXml(self):
-        background = np.array([item.as_dict() for item in self.background])
-        idx = np.array([item.x.raw_value for item in self.background]).argsort()
-        xml = dicttoxml(background[idx], attr_type=False)
-        xml = xml.decode()
-        return xml
+    @Property('QVariant', notify=dummySignal)
+    def backgroundProxy(self):
+        return self._background_proxy
 
-    @Slot(str)
-    def removeBackgroundPoint(self, background_point_x_name: str):
-        print(f"removeBackgroundPoint for background_point_x_name: {background_point_x_name}")
-        self.sample.remove_background(self.background)
-        names = self.background.names
-        del self.background[names.index(background_point_x_name)]
-        self.sample.set_background(self.background)
-        self.backgroundChanged.emit()
-        self.updateCalculatedData()
-        self.phasesChanged.emit()
-        self.modelChanged.emit()
+    def updateChartBackground(self):
+        self._plotting_1d_proxy.setBackgroundData(self._background_proxy.asObj.x_sorted_points,
+                                                  self._background_proxy.asObj.y_sorted_points)
 
-    @Slot()
-    def addBackgroundPoint(self):
-        print(f"addBackgroundPoint")
-        self.sample.remove_background(self.background)
-        point = BackgroundPoint.from_pars(x=180.0, y=0.0)
-        self.background.append(point)
-        self.sample.set_background(self.background)
-        self.backgroundChanged.emit()
-        self.updateCalculatedData()
-        self.phasesChanged.emit()
-        self.modelChanged.emit()
+    ####################################################################################################################
+    ####################################################################################################################
+    # ANALYSIS
+    ####################################################################################################################
+    ####################################################################################################################
 
-    # Space groups
+    ####################################################################################################################
+    # Calculated data
+    ####################################################################################################################
 
-    @Property('QVariant', notify=spaceGroupChanged)
-    def spaceGroupsSystems(self):
-        return [group[0].upper() + group[1:] for group in SpacegroupInfo.get_all_systems()]
+    def _updateCalculatedData(self):
+        start_time = timeit.default_timer()
 
-    @Property(str, notify=spaceGroupChanged)
-    def spaceGroupSystem(self):
-        if len(self.sample.phases) == 0:
-            return ''
-        system = self.sample.phases[self.currentPhaseIndex].spacegroup.crystal_system
-        return system[0].upper() + system[1:]
-
-    @spaceGroupSystem.setter
-    def setSpaceGroupSystem(self, new_system: str):
-        ints = SpacegroupInfo.get_ints_from_system(new_system.lower())
-        name = SpacegroupInfo.get_symbol_from_int_number(ints[0])
-        self._setCurrentSpaceGroup(name)
-
-    ##
-
-    @Property('QVariant', notify=spaceGroupChanged)
-    def spaceGroupsInts(self):
-        ints = SpacegroupInfo.get_ints_from_system(self.spaceGroupSystem.lower())
-        out_list = [
-            "<font color='#999'>{}</font> {:s}".format(this_int, SpacegroupInfo.get_symbol_from_int_number(this_int))
-            for this_int in ints]
-        out = {'display': out_list, 'index': ints}
-        return out
-        # ints = SpacegroupInfo.get_ints_from_system(self.spaceGroupSystem)
-        # out_list = ["<font color='#999'>{}</font> {:s}".format(this_int, SpacegroupInfo.get_symbol_from_int_number(
-        # this_int)) for this_int in ints]
-        # display_list =  ["<font color='#999'>{}</font> {:s}".format(i, value) for i, value in enumerate(
-        # self._currentSpaceGroupSettingList())]
-        # return out
-
-    @Property(int, notify=spaceGroupChanged)
-    def spaceGroupInt(self):
-        if len(self.sample.phases) == 0:
-            return -1
-        this_int = self.sample.phases[self.currentPhaseIndex].spacegroup.int_number
-        idx = 0
-        ints: list = self.spaceGroupsInts['index']
-        if this_int in ints:
-            idx = ints.index(this_int)
-        return idx
-
-    @spaceGroupInt.setter
-    def setSpaceGroupInt(self, idx: int):
-        ints: list = self.spaceGroupsInts['index']
-        name = SpacegroupInfo.get_symbol_from_int_number(ints[idx])
-        self._setCurrentSpaceGroup(name)
-
-    ## Setting
-
-    def _currentSpaceGroupSettingList(self):
-        if len(self.sample.phases) == 0:
-            return []
-        space_group_index = self.sample.phases[self.currentPhaseIndex].spacegroup.int_number
-        setting_list = SpacegroupInfo.get_compatible_HM_from_int(space_group_index)
-        return setting_list
-
-    @Property('QVariant', notify=spaceGroupChanged)
-    def currentSpaceGroupSettingList(self):
-        display_list = ["<font color='#999'>{}</font> {:s}".format(i + 1, value) for i, value in
-                        enumerate(self._currentSpaceGroupSettingList())]
-        return display_list
-
-    @Property(int, notify=spaceGroupChanged)
-    def curentSpaceGroupSettingIndex(self):
-        if len(self.sample.phases) == 0:
-            return 0
-        setting = self.sample.phases[self.currentPhaseIndex].spacegroup.space_group_HM_name.raw_value
-        i = self._currentSpaceGroupSettingList().index(setting)
-        return i
-
-    @curentSpaceGroupSettingIndex.setter
-    def setCurrentSpaceGroupSettingIndex(self, i: int):
-        name = self._currentSpaceGroupSettingList()[i]
-        self._setCurrentSpaceGroup(name)
-
-    ##
-
-    def _setCurrentSpaceGroup(self, name: str):
-        self.sample.phases[self.currentPhaseIndex].spacegroup.space_group_HM_name = name
-        self.updateStructureView()
-        self.updateCalculatedData()
-        self.phasesChanged.emit()
-        self.currentPhaseChanged.emit()
-        self.currentPhaseSitesChanged.emit()
-        self.spaceGroupChanged.emit()
-
-    # Atoms
-
-    @Slot(str)
-    def removeAtom(self, atom_label: str):
-        del self.sample.phases[self.currentPhaseIndex].atoms[atom_label]
-        self.phasesChanged.emit()
-        self.currentPhaseChanged.emit()
-        self.currentPhaseSitesChanged.emit()
-        self.updateStructureView()
-        self.updateCalculatedData()
-
-    @Slot()
-    def addAtom(self):
-        try:
-            atom = Site.default('Label2', 'H')
-            atom.add_adp('Uiso', Uiso=0.0)
-            self.sample.phases[self.currentPhaseIndex].add_atom(atom)
-        except AttributeError:
+        if not self.experimentLoaded and not self.experimentSkipped:
             return
-        self.phasesChanged.emit()
-        self.currentPhaseChanged.emit()
-        self.currentPhaseSitesChanged.emit()
-        self.updateStructureView()
-        self.updateCalculatedData()
 
-    # Fitables
+        self._sample.output_index = self.currentPhaseIndex
 
-    def _setFitablesList(self):
-        self._fitables_list = []
-        pars_id, pars_path = generatePath(self.sample, True)
-        for index, par_path in enumerate(pars_path):
-            id = pars_id[index]
-            par = borg.map.get_item_by_key(id)
+        #  THIS IS WHERE WE WOULD LOOK UP CURRENT EXP INDEX
+        sim = self._data.simulations[0]
+
+        if self.experimentLoaded:
+            exp = self._data.experiments[0]
+            sim.x = exp.x
+
+        elif self.experimentSkipped:
+            x_min = float(self._simulation_parameters_as_obj['x_min'])
+            x_max = float(self._simulation_parameters_as_obj['x_max'])
+            x_step = float(self._simulation_parameters_as_obj['x_step'])
+            num_points = int((x_max - x_min) / x_step + 1)
+            sim.x = np.linspace(x_min, x_max, num_points)
+
+        sim.y = self._interface.fit_func(sim.x)  # CrysPy: 0.5 s, CrysFML: 0.005 s, GSAS-II: 0.25 s
+        hkl = self._interface.get_hkl()
+
+        self._plotting_1d_proxy.setCalculatedData(sim.x, sim.y)
+        self._plotting_1d_proxy.setBraggData(hkl['ttheta'], hkl['h'], hkl['k'], hkl['l'])
+
+        print("+ _updateCalculatedData: {0:.3f} s".format(timeit.default_timer() - start_time))
+
+    def _onCalculatedDataChanged(self):
+        print("***** _onCalculatedDataChanged")
+        try:
+            self._updateCalculatedData()
+        finally:
+            self.calculatedDataUpdated.emit()
+
+    @Property(str, notify=calculatedDataUpdated)
+    def calculatedDataXStr(self):
+        return self._calculated_data_x_str
+
+    @Property(str, notify=calculatedDataUpdated)
+    def calculatedDataYStr(self):
+        return self._calculated_data_y_str
+
+    ####################################################################################################################
+    # Fitables (parameters table from analysis tab & ...)
+    ####################################################################################################################
+
+    @Property('QVariant', notify=parametersAsObjChanged)
+    def parametersAsObj(self):
+        # print("+ parametersAsObj")
+        return self._parameters_as_obj
+
+    @Property(str, notify=parametersAsXmlChanged)
+    def parametersAsXml(self):
+        # print("+ parametersAsXml")
+        return self._parameters_as_xml
+
+    def _setParametersAsObj(self):
+        start_time = timeit.default_timer()
+        self._parameters_as_obj.clear()
+
+        par_ids, par_paths = generatePath(self._sample, True)
+        for par_index, par_path in enumerate(par_paths):
+            par_id = par_ids[par_index]
+            par = borg.map.get_item_by_key(par_id)
+
             if not par.enabled:
                 continue
-            if self._filter_criteria.lower() not in par_path.lower():
-                continue
-            self._fitables_list.append(
-                {"id":     str(id),
-                 "number": index + 1,
-                 "label":  par_path,
-                 "value":  par.raw_value,
-                 "unit":   '{:~P}'.format(par.unit),
-                 "error":  par.error,
-                 "fit":    int(not par.fixed)}
-            )
 
-    @Property(str, notify=modelChanged)
-    def fitablesListAsXml(self):
-        self._setFitablesList()
-        xml = dicttoxml(self._fitables_list, attr_type=False)
-        xml = xml.decode()
-        return xml
+            if self._parameters_filter_criteria.lower() not in par_path.lower():
+                continue
+
+            self._parameters_as_obj.append({
+                "id":     str(par_id),
+                "number": par_index + 1,
+                "label":  par_path,
+                "value":  par.raw_value,
+                "unit":   '{:~P}'.format(par.unit),
+                "error":  float(par.error),
+                "fit":    int(not par.fixed)
+            })
+
+        print("+ _setParametersAsObj: {0:.3f} s".format(timeit.default_timer() - start_time))
+        self.parametersAsObjChanged.emit()
+
+    def _setParametersAsXml(self):
+        start_time = timeit.default_timer()
+        # print(f" _setParametersAsObj self._parameters_as_obj id C {id(self._parameters_as_obj)}")
+        self._parameters_as_xml = dicttoxml(self._parameters_as_obj, attr_type=False).decode()
+        print("+ _setParametersAsXml: {0:.3f} s".format(timeit.default_timer() - start_time))
+        self.parametersAsXmlChanged.emit()
+
+    def _onParametersChanged(self):
+        print("***** _onParametersChanged")
+        self._setParametersAsObj()
+        self._setParametersAsXml()
+        self.stateChanged.emit(True)
+
+    # Filtering
 
     @Slot(str)
-    def setFilterCriteria(self, filter_criteria):
-        if self._filter_criteria == filter_criteria:
+    def setParametersFilterCriteria(self, new_criteria):
+        if self._parameters_filter_criteria == new_criteria:
             return
-        self._filter_criteria = filter_criteria
-        self.modelChanged.emit()
+        self._parameters_filter_criteria = new_criteria
+        self.parametersFilterCriteriaChanged.emit()
 
-    # Edit parameter or descriptor
+    def _onParametersFilterCriteriaChanged(self):
+        print("***** _onParametersFilterCriteriaChanged")
+        self._onParametersChanged()
 
-    def _editValue(self, obj_id, new_value):
+    ####################################################################################################################
+    # Any parameter
+    ####################################################################################################################
+
+    @Slot(str, 'QVariant')
+    def editParameter(self, obj_id: str, new_value: Union[bool, float, str]):  # covers both parameter and descriptor
+        if not obj_id:
+            return
+
+        obj = self._parameterObj(obj_id)
+        if obj is None:
+            return
+        print(f"\n\n+ editParameter {obj_id} of {type(new_value)} from {obj.raw_value} to {new_value}")
+
+        if isinstance(new_value, bool):
+            if obj.fixed == (not new_value):
+                return
+
+            obj.fixed = not new_value
+            self._onParametersChanged()
+            self.undoRedoChanged.emit()
+
+        else:
+            if obj.raw_value == new_value:
+                return
+
+            obj.value = new_value
+            self.parametersChanged.emit()
+
+    def _parameterObj(self, obj_id: str):
         if not obj_id:
             return
         obj_id = int(obj_id)
         obj = borg.map.get_item_by_key(obj_id)
-        obj.value = new_value
-        self.updateStructureView()
-        self.updateCalculatedData()
-        self.phasesChanged.emit()
-        self.backgroundChanged.emit()
+        return obj
 
-    @Slot(str, float)
-    def editParameterValue(self, obj_id: str, new_value: float):
-        self._editValue(obj_id, new_value)
-        self.parameterChanged.emit()
+    ####################################################################################################################
+    # Minimizer
+    ####################################################################################################################
 
-    @Slot(str, bool)
-    def editParameterFit(self, obj_id: str, new_value: bool):
-        if not obj_id:
+    # Minimizer
+
+    @Property('QVariant', notify=dummySignal)
+    def minimizerNames(self):
+        return self.fitter.available_engines
+
+    @Property(int, notify=currentMinimizerChanged)
+    def currentMinimizerIndex(self):
+        current_name = self.fitter.current_engine.name
+        return self.minimizerNames.index(current_name)
+
+    @currentMinimizerIndex.setter
+    @property_stack_deco('Minimizer change')
+    def currentMinimizerIndex(self, new_index: int):
+        if self.currentMinimizerIndex == new_index:
             return
-        obj_id = int(obj_id)
-        obj = borg.map.get_item_by_key(obj_id)
-        obj.fixed = not new_value
-        # self.updateStructureView()
-        # self.updateCalculatedData()
-        # self.phasesChanged.emit()
-        # self.backgroundChanged.emit()
-        self.parameterChanged.emit()
-        self.modelChanged.emit()
+        new_name = self.minimizerNames[new_index]
+        self.fitter.switch_engine(new_name)
+        self.currentMinimizerChanged.emit()
 
-    @Slot(str, str)
-    def editDescriptorValue(self, obj_id: str, new_value: str):
-        self._editValue(obj_id, new_value)
-
+    # @Slot(int)
+    # def changeCurrentMinimizer(self, new_index: int):
+    #     if self.currentMinimizerIndex == new_index:
+    #         return
     #
+    #     new_name = self.minimizerNames[new_index]
+    #     self.fitter.switch_engine(new_name)
+    #     self.currentMinimizerChanged.emit()
+
+    def _onCurrentMinimizerChanged(self):
+        print("***** _onCurrentMinimizerChanged")
+        idx = 0
+        minimizer_name = self.fitter.current_engine.name
+        if minimizer_name == 'lmfit':
+            idx = self.minimizerMethodNames.index('leastsq')
+        elif minimizer_name == 'bumps':
+            idx = self.minimizerMethodNames.index('lm')
+        if -1 < idx != self._current_minimizer_method_index:
+            # Bypass the property as it would be added to the stack.
+            self._current_minimizer_method_index = idx
+            self._current_minimizer_method_name = self.minimizerMethodNames[idx]
+            self.currentMinimizerMethodChanged.emit()
+
+    # Minimizer method
+
+    @Property('QVariant', notify=currentMinimizerChanged)
+    def minimizerMethodNames(self):
+        return self.fitter.available_methods()
+
+    @Property(int, notify=currentMinimizerMethodChanged)
+    def currentMinimizerMethodIndex(self):
+        return self._current_minimizer_method_index
+
+    @currentMinimizerMethodIndex.setter
+    @property_stack_deco('Minimizer method change')
+    def currentMinimizerMethodIndex(self, new_index: int):
+        if self._current_minimizer_method_index == new_index:
+            return
+
+        self._current_minimizer_method_index = new_index
+        self._current_minimizer_method_name = self.minimizerMethodNames[new_index]
+        self.currentMinimizerMethodChanged.emit()
+
+    def _onCurrentMinimizerMethodChanged(self):
+        print("***** _onCurrentMinimizerMethodChanged")
+
+    ####################################################################################################################
+    # Calculator
+    ####################################################################################################################
+
+    @Property('QVariant', notify=dummySignal)
+    def calculatorNames(self):
+        return self._interface.available_interfaces
+
+    @Property(int, notify=currentCalculatorChanged)
+    def currentCalculatorIndex(self):
+        return self.calculatorNames.index(self._interface.current_interface_name)
+
+    @currentCalculatorIndex.setter
+    @property_stack_deco('Calculation engine change')
+    def currentCalculatorIndex(self, new_index: int):
+        if self.currentCalculatorIndex == new_index:
+            return
+
+        new_name = self.calculatorNames[new_index]
+        self._interface.switch(new_name)
+        self.currentCalculatorChanged.emit()
+
+    def _onCurrentCalculatorChanged(self):
+        print("***** _onCurrentCalculatorChanged")
+        data = self._data.simulations
+        data = data[0]  # THIS IS WHERE WE WOULD LOOK UP CURRENT EXP INDEX
+        data.name = f'{self._interface.current_interface_name} engine'
+        self._sample._updateInterface()
+        self.calculatedDataChanged.emit()
+
+    ####################################################################################################################
+    # Fitting
+    ####################################################################################################################
 
     @Slot()
     def fit(self):
-        exp_data = self.data.experiments[0]
-        # result = f.fit(exp_data.x, exp_data.y, method='brute')
-        # print(result)
-        result = self.fitter.fit(exp_data.x, exp_data.y, weights=1/exp_data.e, method=self._minimizer_method)
-        self._fit_results = {"success": result.success,
-                             "nvarys": result.n_pars,
-                             "gof": float(result.goodness_of_fit),
-                             "redchi2": float(result.reduced_chi)}
-        #print(f"self._fit_results 1: {self._fit_results}")
-        self.fitResultsChanged.emit()
-        self.updateStructureView()
-        self.updateCalculatedData()
-        self.phasesChanged.emit()
-        self.backgroundChanged.emit()
+        self.isFitFinished = False
+        exp_data = self._data.experiments[0]
+
+        x = exp_data.x
+        y = exp_data.y
+        weights = 1 / exp_data.e
+        method = self._current_minimizer_method_name
+
+        args = (x, y)
+        kwargs = {"weights": weights, "method": method}
+        self._fitter_thread = ThreadedFitter(self.fitter, 'fit', *args, **kwargs)
+        self._fitter_thread.finished.connect(self._setFitResults)
+        self._fitter_thread.failed.connect(self._setFitResultsFailed)
+        self._fitter_thread.start()
+
+        # self._setFitResults(res)
+        # self.fitFinished.emit()
 
     @Property('QVariant', notify=fitResultsChanged)
     def fitResults(self):
-        #print(f"self._fit_results 2: {self._fit_results}")
         return self._fit_results
+
+    @Property(bool, notify=fitFinished)
+    def isFitFinished(self):
+        print('+ isfitFinished called')
+        return self._fit_finished
+
+    @isFitFinished.setter
+    def isFitFinished(self, fit_finished: bool):
+        print('+ isFitFinished.setter called', fit_finished)
+        if self._fit_finished == fit_finished:
+            return
+        self._fit_finished = fit_finished
+        self.fitFinished.emit()
+
+    def _defaultFitResults(self):
+        return {
+            "success": None,
+            "nvarys":  None,
+            "GOF":     None,
+            "redchi2": None
+        }
+
+    def _setFitResults(self, res):
+        self._fit_results = {
+            "success": res.success,
+            "nvarys":  res.n_pars,
+            "GOF":     float(res.goodness_of_fit),
+            "redchi2": float(res.reduced_chi)
+        }
+        self.fitResultsChanged.emit()
+        self.isFitFinished = True
+        self.fitFinished.emit()
+
+    def _setFitResultsFailed(self, res):
+        print("FIT FAILED")
+        print(str(res))
+        self.isFitFinished = True
+        self.fitFinished.emit()
+
+    def _onFitFinished(self):
+        print("***** _onFitFinished")
+        self.parametersChanged.emit()
+
+    ####################################################################################################################
+    ####################################################################################################################
+    # STATUS
+    ####################################################################################################################
+    ####################################################################################################################
+
+    @Slot(str)
+    def setReport(self, report):
+        """
+        Keep the QML generated HTML report for saving
+        """
+        self._report = report
+
+    @Slot(str)
+    def saveReport(self, filepath):
+        """
+        Save the generated report to the specified file
+        Currently only html
+        """
+        try:
+            with open(filepath, 'w', encoding='utf-8') as f:
+                f.write(self._report)
+            success = True
+        except IOError:
+            success = False
+        finally:
+            self.htmlExportingFinished.emit(success, filepath)
+
+    ####################################################################################################################
+    ####################################################################################################################
+    # STATUS
+    ####################################################################################################################
+    ####################################################################################################################
+
+    @Property('QVariant', notify=statusInfoChanged)
+    def statusModelAsObj(self):
+        obj = {
+            "calculation":  self._interface.current_interface_name,
+            "minimization": f'{self.fitter.current_engine.name} ({self._current_minimizer_method_name})'
+        }
+        self._status_model = obj
+        return obj
+
+    @Property(str, notify=statusInfoChanged)
+    def statusModelAsXml(self):
+        model = [
+            {"label": "Calculation", "value": self._interface.current_interface_name},
+            {"label": "Minimization",
+             "value": f'{self.fitter.current_engine.name} ({self._current_minimizer_method_name})'}
+        ]
+        xml = dicttoxml(model, attr_type=False)
+        xml = xml.decode()
+        return xml
+
+    def _onStatusInfoChanged(self):
+        print("***** _onStatusInfoChanged")
+
+    ####################################################################################################################
+    ####################################################################################################################
+    # Screen recorder
+    ####################################################################################################################
+    ####################################################################################################################
+
+    @Property('QVariant', notify=dummySignal)
+    def screenRecorder(self):
+        return self._screen_recorder
+
+    ####################################################################################################################
+    ####################################################################################################################
+    # State save/load
+    ####################################################################################################################
+    ####################################################################################################################
+
+    @Slot()
+    def saveProject(self):
+        self._saveProject()
+        self.stateChanged.emit(False)
+
+    @Slot(str)
+    def loadProjectAs(self, filepath):
+        self._loadProjectAs(filepath)
+        self.stateChanged.emit(False)
+
+    @Slot()
+    def loadProject(self):
+        self._loadProject()
+        self.stateChanged.emit(False)
+
+    @Property(str, notify=dummySignal)
+    def projectFilePath(self):
+        return self.project_save_filepath
+
+    def _saveProject(self):
+        """
+        """
+        projectPath = self.projectInfoAsJson['location']
+        project_save_filepath = os.path.join(projectPath, 'project.json')
+        descr = {}
+        descr['phases'] = self._phases_as_cif
+
+        if self.experiments:
+            experiments_x = self._data.experiments[0].x
+            experiments_y = self._data.experiments[0].y
+            experiments_e = self._data.experiments[0].e
+            descr['experiments'] = [experiments_x, experiments_y, experiments_e]
+
+            bg_x = self._background_proxy.asObj.x_sorted_points
+            bg_y = self._background_proxy.asObj.y_sorted_points
+            descr['background'] = [bg_x, bg_y]
+
+        descr['project_info'] = self._project_info
+        # Reading those is not yet implemented
+        descr['parameters'] = self._parameters_as_obj
+        descr['instrument_parameters'] = self._instrument_parameters_as_obj
+        descr['experiment_skipped'] = self._experiment_skipped
+
+        content_json = json.dumps(descr, indent=4, default=self.default)
+        path = generalizePath(project_save_filepath)
+        createFile(path, content_json)
+
+    def default(self, obj):
+        if type(obj).__module__ == np.__name__:
+            if isinstance(obj, np.ndarray):
+                return obj.tolist()
+            else:
+                return obj.item()
+        raise TypeError('Unknown type:', type(obj))
+
+    def _loadProjectAs(self, filepath):
+        """
+        """
+        self.project_load_filepath = filepath
+        print("LoadProjectAs " + filepath)
+        self.loadProject()
+
+    def _loadProject(self):
+        """
+        """
+        path = generalizePath(self.project_load_filepath)
+        if not os.path.isfile(path):
+            print("Failed to find project: '{0}'".format(path))
+            return
+        with open(path, 'r') as xml_file:
+            descr = json.load(xml_file)
+
+        self._phases_as_cif = descr['phases']
+        self._sample.phases = Phases.from_cif_str(self._phases_as_cif)
+        # send signal to tell the proxy we changed phases
+        self.phaseAdded.emit()
+        self.phasesAsObjChanged.emit()
+
+        # experiment
+        if 'experiments' in descr:
+            self.experimentLoaded = True
+            self._data.experiments[0].x = np.array(descr['experiments'][0])
+            self._data.experiments[0].y = np.array(descr['experiments'][1])
+            self._data.experiments[0].e = np.array(descr['experiments'][2])
+            self._experiment_data = self._data.experiments[0]
+            self.experimentDataAdded.emit()
+            self._onParametersChanged()
+
+            # background
+            if 'background' in descr:
+                self._background_proxy.removeAllPoints()
+                bg_x = descr['background'][0]
+                bg_y = descr['background'][1]
+                for i, point in enumerate(bg_x):
+                    bg_point = (point, bg_y[i])
+                    self._background_proxy.addPoint(bg_point)
+        else:
+            # delete existing experiment
+            self.removeExperiment()
+            self.experimentLoaded = False
+            if descr['experiment_skipped']:
+                self.experimentSkipped = True
+                self.experimentSkippedChanged.emit()
+
+        # project info
+        self.projectInfoAsJson = json.dumps(descr['project_info'])
+
+        # parameters
+        # TODO
+
+    # Undo/Redo stack operations
+    ####################################################################################################################
+    ####################################################################################################################
+
+    @Property(bool, notify=undoRedoChanged)
+    def canUndo(self) -> bool:
+        return borg.stack.canUndo()
+
+    @Property(bool, notify=undoRedoChanged)
+    def canRedo(self) -> bool:
+        return borg.stack.canRedo()
+
+    @Slot()
+    def undo(self):
+        if self.canUndo:
+            callback = [self.parametersChanged]
+            if len(borg.stack.history[0]) > 1:
+                callback = [self.phaseAdded, self.parametersChanged]
+            else:
+                old = borg.stack.history[0].current._parent
+                if isinstance(old, (BaseObj, BaseCollection)):
+                    if isinstance(old, (Phase, Phases)):
+                        callback = [self.phaseAdded, self.parametersChanged]
+                    else:
+                        callback = [self.parametersChanged]
+                elif old is self:
+                    # This is a property of the proxy. I.e. minimizer, minimizer method, name or something boring.
+                    # Signals should be sent by triggering the set method.
+                    callback = []
+                else:
+                    print(f'Unknown undo thing: {old}')
+            borg.stack.undo()
+            _ = [call.emit() for call in callback]
+
+    @Slot()
+    def redo(self):
+        if self.canRedo:
+            callback = [self.parametersChanged]
+            if len(borg.stack.future[0]) > 1:
+                callback = [self.phaseAdded, self.parametersChanged]
+            else:
+                new = borg.stack.future[0].current._parent
+                if isinstance(new, (BaseObj, BaseCollection)):
+                    if isinstance(new, (Phase, Phases)):
+                        callback = [self.phaseAdded, self.parametersChanged]
+                    else:
+                        callback = [self.parametersChanged, self.undoRedoChanged]
+                elif new is self:
+                    # This is a property of the proxy. I.e. minimizer, minimizer method, name or something boring.
+                    # Signals should be sent by triggering the set method.
+                    callback = []
+                else:
+                    print(f'Unknown redo thing: {new}')
+            borg.stack.redo()
+            _ = [call.emit() for call in callback]
+
+    @Property(str, notify=undoRedoChanged)
+    def undoText(self):
+        return borg.stack.undoText()
+
+    @Property(str, notify=undoRedoChanged)
+    def redoText(self):
+        return borg.stack.redoText()
+
+    @Slot()
+    def resetUndoRedoStack(self):
+        if borg.stack.enabled:
+            borg.stack.clear()
+
+
+def createFile(path, content):
+    if os.path.exists(path):
+        print(f'File already exists {path}. Overwriting...')
+        os.unlink(path)
+    try:
+        message = f'create file {path}'
+        with open(path, "w") as file:
+            file.write(content)
+    except Exception as exception:
+        print(message, exception)

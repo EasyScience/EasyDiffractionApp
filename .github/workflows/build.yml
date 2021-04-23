@@ -1,130 +1,141 @@
 name: build macOS, Linux, Windows
 
-# Trigger the workflow on push or pull request
 on: [push, pull_request]
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-
-  # This workflow contains a single job called "build"
   build:
-
-    # Rename job "build"
-    #name: App Build
-
-    # CI skip conditions
     if: "!contains(github.event.head_commit.message, '[ci skip]')"
-    #if: false
 
-    # Change default timeout
-    timeout-minutes: 20
+    timeout-minutes: 35
 
-    # The type of runner that the job will run on
     runs-on: ${{ matrix.os }}
 
-    # Build matrix for different platforms
     strategy:
       matrix:
-        os: [windows-latest]
-        # os: [macos-10.15, ubuntu-latest, windows-latest]
+        os: [macos-10.15, ubuntu-20.04, windows-2019]
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+      - name: Check-out repository
+        uses: actions/checkout@v2
 
-    - name: Check-out repository
-      uses: actions/checkout@v2
+      - name: Cancel previous workflow runs
+        uses: n1hility/cancel-previous-runs@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-    #- name: Set up access to private repos
-    #  uses: webfactory/ssh-agent@v0.4.1
-    #  with:
-    #    ssh-private-key: ${{ secrets.GH_WEBFACTORY_KEY }}
+      - name: Set up non-Python dependences (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get install libgfortran4
+          sudo apt-get install libxcb-xinerama0
+          sudo apt-get install libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xfixes0
+          sudo apt-get install libpulse-mainloop-glib0
+        # echo "QT_DEBUG_PLUGINS=1" >> $GITHUB_ENV
 
-    - name: Set up dependences
-      if: runner.os == 'Linux'
-      run: sudo apt-get install libgfortran4
+      - name: Set up Python environment
+        uses: actions/setup-python@v2
+        with:
+            python-version: 3.7
 
-    - name: Set up Python environment
-      uses: actions/setup-python@v2
-      with:
-          python-version: 3.7 #3.8
+      - name: Upgrade PIP
+        run: python -m pip install --upgrade pip
 
-    - name: Set up project config parser & Declare env variables
-      shell: bash
-      run: |
-        pip install toml
-        echo "SHORT_GITHUB_REF=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
-        echo "PYTHON_LOCATION=$pythonLocation" >> $GITHUB_ENV
-        echo "SCRIPTS_PATH=$(python pyproject.py ci.project.subdirs.scripts)" >> $GITHUB_ENV
-        echo "DOWNLOAD_PATH=$(python pyproject.py ci.project.subdirs.download)" >> $GITHUB_ENV
-        echo "DISTRIBUTION_PATH=$(python pyproject.py ci.project.subdirs.distribution)" >> $GITHUB_ENV
-        echo "APP_NAME=$(python pyproject.py tool.poetry.name)" >> $GITHUB_ENV
-        echo "POETRY_VENV_PATH=$(python pyproject.py ci.poetry.venv_path.${{ runner.os }})" >> $GITHUB_ENV
-        echo "QTIFW_PATH=$(python pyproject.py ci.qtifw.setup.installation_path.${{ runner.os }})" >> $GITHUB_ENV
+      - name: Declare env variables on push only
+        if: github.event_name == 'push'
+        shell: bash
+        run: echo "BRANCH_NAME=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
 
-    #- name: Cache dependencies
-    #  uses: actions/cache@v2
-    #  with:
-    #    path: |
-    #      ${{ env.POETRY_VENV_PATH }}
-    #      ${{ env.QTIFW_PATH }}
-    #      ${{ env.DOWNLOAD_PATH }}
-    #    key: ${{ matrix.os }}-poetry-${{ hashFiles('pyproject.toml') }}
+      - name: Declare env variables on pull_request only
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: echo "BRANCH_NAME=$GITHUB_HEAD_REF" >> $GITHUB_ENV
 
-    - name: Set up python packages manager
-      uses: Gr1N/setup-poetry@v4
+      - name: Add extra info to pyproject.toml
+        run: python utils.py --update
 
-    - name: Create venv and install dependences
-      # poetry self update: Update poetry
-      # --upgrade pip: To get rid of ERROR: No matching distribution found for opencv-python-headless==4.3.0.36
-      # WIN ERROR: Could not install packages due to an EnvironmentError: [WinError 5] Access is denied: 'C:\\Users\\runneradmin\\AppData\\Local\\Temp\\pip-uninstall-w29qfiig\\pip.exe'
-      # Consider using the `--user` option or check the permissions.
-      # --upgrade setuptools: To get rid of ModuleNotFoundError: No module named 'pkg_resources.py2_warn'
-      # poetry update: Install dependencies or update them
-      run: |
-        poetry env info
-        poetry env use 3.7
-        poetry update
+      # https://docs.github.com/en/actions/reference/environment-variables
+      - name: Declare env variables on push and pull_request
+        shell: bash
+        run: |
+          echo "APP_NAME=$(python utils.py --get tool.poetry.name)" >> $GITHUB_ENV
+          echo "SCRIPTS_PATH=$(python utils.py --get ci.project.subdirs.scripts)" >> $GITHUB_ENV
+          echo "DISTRIBUTION_PATH=$(python utils.py --get ci.project.subdirs.distribution)" >> $GITHUB_ENV
+          echo "DOWNLOAD_PATH=$(python utils.py --get ci.project.subdirs.download)" >> $GITHUB_ENV
+          echo "QTIFW_PATH=$(python utils.py --get ci.qtifw.setup.installation_path.${{ runner.os }})" >> $GITHUB_ENV
+          echo "PYTHON_PACKAGES_PATH=$(python utils.py --get ci.cache.python_packages_path)" >> $GITHUB_ENV
+          echo "GIT_INSTALL_URL=git+$GITHUB_SERVER_URL/$GITHUB_REPOSITORY@${{ env.BRANCH_NAME }}" >> $GITHUB_ENV
 
-    - name: Relink CrysFML from default Python dylib
-      # run: poetry run python ${{ env.SCRIPTS_PATH }}/RelinkCrysfml.py ${{ env.PYTHON_LOCATION }}
-      run: poetry run python ${{ env.SCRIPTS_PATH }}/RelinkCrysfml.py
+      - name: Cache dependencies
+        if: False  # disable caching
+        uses: actions/cache@v2
+        id: cache
+        with:
+          path: |
+            ${{ env.DOWNLOAD_PATH }}
+            ${{ env.QTIFW_PATH }}
+            ${{ env.PYTHON_PACKAGES_PATH }}
+          key: ${{ matrix.os }}-${{ hashFiles('pyproject.toml') }}
 
-    - name: Create freezed python app bundle
-      run: poetry run python ${{ env.SCRIPTS_PATH }}/FreezeApp.py
+      - name: Set up Python dependences
+        #if: steps.cache.outputs.cache-hit != 'true'
+        run: pip install ${{ env.GIT_INSTALL_URL }}
 
-    - name: Create app installer from freezed app bundle
-      run: poetry run python ${{ env.SCRIPTS_PATH }}/MakeInstaller.py ${{ secrets.BINARY_SIGN_WIN }} ${{ secrets.CERT_ZIP_PASS }}
+      - name: Relink CrysFML from default Python dylib
+        run: python ${{ env.SCRIPTS_PATH }}/RelinkCrysfml.py
 
-    - name: Sign the installer on platforms which support it
-      run: poetry run python ${{ env.SCRIPTS_PATH }}/Signatures.py ${{ secrets.BINARY_SIGN_WIN }} ${{ secrets.CERT_ZIP_PASS }}
+      - name: Create freezed python app bundle
+        run: python ${{ env.SCRIPTS_PATH }}/FreezeApp.py
 
-    - name: Install and run app in test mode to create GUI test videos
-      if: runner.os == 'macOS'
-      run: |
-        poetry run python ${{ env.SCRIPTS_PATH }}/InstallApp.py
-        poetry run python ${{ env.SCRIPTS_PATH }}/RunApp.py test
-        poetry run python ${{ env.SCRIPTS_PATH }}/CreateTestVideos.py
+      - name: Create offline and online app installers from freezed app bundle
+        run: poetry run python ${{ env.SCRIPTS_PATH }}/MakeInstaller.py ${{ secrets.BINARY_SIGN_WIN }} ${{ secrets.CERT_ZIP_PASS }}
 
-    - name: Upload GUI test videos to GitHub repository
-      if: runner.os == 'macOS'
-      uses: stefanzweifel/git-auto-commit-action@v4
-      with:
-        commit_message: Upload GUI test videos
+      - name: Sign the installer on platforms which support it
+        run: poetry run python ${{ env.SCRIPTS_PATH }}/Signatures.py ${{ secrets.BINARY_SIGN_WIN }} ${{ secrets.CERT_ZIP_PASS }}
 
-    - name: Create zip archive of app installer
-      run: poetry run python ${{ env.SCRIPTS_PATH }}/ZipArtifacts.py ${{ env.SHORT_GITHUB_REF }}
+      - name: Set up screen recording dependencies (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          "/Library/Application Support/VMware Tools/vmware-resolutionSet" 1920 1080
+          system_profiler SPDisplaysDataType | grep Resolution
 
-    - name: Upload zipped app installer to GitHub releases
-      uses: ncipollo/release-action@v1
-      with:
-        draft: true
-        prerelease: true
-        allowUpdates: true
-        replacesArtifacts: true
-        token: ${{ secrets.GITHUB_TOKEN }}
-        commit: ${{ env.SHORT_GITHUB_REF }}
-        tag: ${{ env.SHORT_GITHUB_REF }}
-        artifacts: "${{ env.DISTRIBUTION_PATH }}/${{ env.APP_NAME }}_*.zip"
+      - name: Set up screen recording dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get install libxkbcommon-x11-0
+          Xvfb :0 -screen 0 1920x1080x24 -ac &
+          echo "DISPLAY=:0" >> $GITHUB_ENV
 
-    - name: Deploy app installer repository via FTP
-      run: poetry run python ${{ env.SCRIPTS_PATH }}/DeployFtp.py ${{ env.SHORT_GITHUB_REF }} ${{ secrets.FTP_PASSWORD }}
+      - name: Set up screen recording dependencies (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          Set-DisplayResolution -Width 1920 -Height 1080 -Force
+          Get-DisplayResolution
+
+      - name: Install app
+        run: python ${{ env.SCRIPTS_PATH }}/InstallApp.py
+
+      - name: Run app in testmode, record screen and quit
+        run: python ${{ env.SCRIPTS_PATH }}/RunApp.py --testmode
+
+      - name: Rename test videos
+        run: python ${{ env.SCRIPTS_PATH }}/CreateTestVideos.py ${{ env.BRANCH_NAME }}
+
+      - name: Create zip archive of offline app installer
+        run: python ${{ env.SCRIPTS_PATH }}/ZipArtifacts.py ${{ env.BRANCH_NAME }}
+
+      - name: Upload zipped offline app installer to GitHub releases
+        if: github.event_name == 'push'
+        uses: ncipollo/release-action@v1
+        with:
+          draft: true
+          prerelease: true
+          allowUpdates: true
+          replacesArtifacts: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+          artifacts: "${{ env.DISTRIBUTION_PATH }}/${{ env.APP_NAME }}_*.zip,${{ env.DISTRIBUTION_PATH }}/tutorial_*.mp4"
+          tag: ${{ env.BRANCH_NAME }}
+          commit: ${{ env.BRANCH_NAME }}
+
+      - name: Upload online app installer to repository via FTP
+        if: github.event_name == 'push'
+        run: python ${{ env.SCRIPTS_PATH }}/UploadToFtp.py ${{ env.BRANCH_NAME }} ${{ secrets.APP_REPO_FTP_PASSWORD }}

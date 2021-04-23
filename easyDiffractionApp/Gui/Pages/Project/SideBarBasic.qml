@@ -1,5 +1,6 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
+import QtQuick.Dialogs 1.3 as QtQuickDialogs1
 
 import easyAppGui.Globals 1.0 as EaGlobals
 import easyAppGui.Style 1.0 as EaStyle
@@ -15,61 +16,66 @@ EaComponents.SideBarColumn {
         last: true
         collapsible: false
 
-        Row {
+        Grid {
+            columns: 2
             spacing: EaStyle.Sizes.fontPixelSize
 
             EaElements.SideBarButton {
-                id: createProjectButton
                 fontIcon: "plus-circle"
                 text: qsTr("Create a new project")
-                onClicked: {
-                    ExGlobals.Variables.samplePageEnabled = true
-                    ExGlobals.Variables.projectCreated = true
+
+                onClicked: EaGlobals.Variables.showProjectDescriptionDialog = true
+                Component.onCompleted: {
+                    ExGlobals.Variables.createProjectButton = createProjectButton
+                    ExGlobals.Constants.proxy.resetUndoRedoStack()
                 }
-                Component.onCompleted: ExGlobals.Variables.createProjectButton = createProjectButton
+            }
+
+            EaElements.SideBarButton {
+                fontIcon: "arrow-circle-right"
+                text: qsTr("Continue without a project")
+
+                onClicked: ExGlobals.Variables.samplePageEnabled = true
+                Component.onCompleted: {
+                    ExGlobals.Variables.continueWithoutProjectButton = this
+                    ExGlobals.Constants.proxy.resetUndoRedoStack()
+                }
+            }
+
+            EaElements.SideBarButton {
+                enabled: true
+                fontIcon: "upload"
+                text: qsTr("Open an existing project")
+                onClicked: fileDialogLoadProject.open()
             }
 
             EaElements.SideBarButton {
                 enabled: false
-                fontIcon: "upload"
-                text: qsTr("Open an existing project")
+
+                fontIcon: "download"
+                text: qsTr("Save project as...")
             }
-
         }
     }
 
-    EaElements.GroupBox {
-        title: qsTr("Test Group")
-        visible: false
-        //collapsed: false
+    QtQuickDialogs1.FileDialog{
+        id: fileDialogLoadProject
+        nameFilters: ["Project files (*.json)"]
+        onAccepted: {
+            // enablement will depend on what is available in the project file,
+            // obviously, so care is needed. TODO
+            ExGlobals.Variables.samplePageEnabled = true
+            ExGlobals.Variables.experimentPageEnabled = true
+            ExGlobals.Variables.sampleLoaded = true
+            ExGlobals.Variables.projectCreated = true
 
-        Grid {
-            columns: 1
-            columnSpacing: 20
-            rowSpacing: 10
-            verticalItemAlignment: Grid.AlignVCenter
+            ExGlobals.Constants.proxy.loadProjectAs(fileUrl)
 
-            EaElements.Label { text: qsTr("First Parameter: 200") }
-            EaElements.Label { text: qsTr("Parameter: 100") }
-            EaElements.Label { text: qsTr("Parameter: 100") }
-            EaElements.Label { text: qsTr("Parameter: 100") }
-            EaElements.Label { text: qsTr("Parameter: 100") }
-            EaElements.Label { text: qsTr("Parameter: 100") }
-            EaElements.Label { text: qsTr("Parameter: 100") }
-            EaElements.Label { text: qsTr("Parameter: 100") }
-            EaElements.Label { text: qsTr("Parameter: 100") }
-            EaElements.Label { text: qsTr("Parameter: 100") }
-            EaElements.Label { text: qsTr("Parameter: 100") }
-            EaElements.Label { text: qsTr("Parameter: 100") }
-            EaElements.Label { text: qsTr("Parameter: 100") }
-            EaElements.Label { text: qsTr("Parameter: 100") }
-            EaElements.Label { text: qsTr("Parameter: 100") }
-            EaElements.Label { text: qsTr("Parameter: 100") }
-            EaElements.Label { text: qsTr("Parameter: 100") }
-            EaElements.Label { text: qsTr("Parameter: 100") }
-            EaElements.Label { text: qsTr("Last Parameter: 300") }
+            if (ExGlobals.Constants.proxy.experimentDataAsXml != ""){
+                ExGlobals.Variables.analysisPageEnabled = true
+                ExGlobals.Variables.summaryPageEnabled = true
+            }
         }
     }
-
 }
 

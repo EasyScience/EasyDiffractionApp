@@ -1,4 +1,5 @@
 import os
+import pathlib
 import datetime
 import timeit
 import json
@@ -168,7 +169,6 @@ class PyQmlProxy(QObject):
         self._experiment_parameters = None
         self._experiment_data = None
         self._experiment_data_as_xml = ""
-        self.experiments = self._defaultExperiments()
         self.experimentDataChanged.connect(self._onExperimentDataChanged)
         self.experimentDataAdded.connect(self._onExperimentDataAdded)
         self.experimentDataRemoved.connect(self._onExperimentDataRemoved)
@@ -459,7 +459,8 @@ class PyQmlProxy(QObject):
             return
 
         self._sample.phases = Phases.from_cif_str(phases_as_cif)
-        self.structureParametersChanged.emit()
+        #self.structureParametersChanged.emit()
+        self.parametersChanged.emit()
 
     def _setPhasesAsObj(self):
         start_time = timeit.default_timer()
@@ -714,14 +715,28 @@ class PyQmlProxy(QObject):
         print("***** _onCurrentPhaseChanged")
         self.structureViewChanged.emit()
 
+
+    @Slot(str)
+    def setCurrentPhaseName(self, name):
+        if self._sample.phases[self.currentPhaseIndex].name == name:
+            return
+
+        self._sample.phases[self.currentPhaseIndex].name = name
+        self.parametersChanged.emit()
+
+    @Slot(str)
+    def setCurrentExperimentDatasetName(self, name):
+        if self._data.experiments[0].name == name:
+            return
+
+        self._data.experiments[0].name = name
+        self.experimentDataChanged.emit()
+
     ####################################################################################################################
     ####################################################################################################################
     # EXPERIMENT
     ####################################################################################################################
     ####################################################################################################################
-
-    def _defaultExperiments(self):
-        return []
 
     def _defaultData(self):
         x_min = self._defaultSimulationParameters()['x_min']
@@ -734,7 +749,7 @@ class PyQmlProxy(QObject):
 
         data.append(
             DataSet1D(
-                name='D1A@ILL data',
+                name='NPD data',
                 x=x_data, y=np.zeros_like(x_data),
                 x_label='2theta (deg)', y_label='Intensity',
                 data_type='experiment'
@@ -762,13 +777,18 @@ class PyQmlProxy(QObject):
     # Experiment models (list, xml, cif)
     ####################################################################################################################
 
+    @Property('QVariant', notify=experimentDataChanged)
+    def experimentDataAsObj(self):
+        return [{'name': experiment.name} for experiment in self._data.experiments]
+
     @Property(str, notify=experimentDataAsXmlChanged)
     def experimentDataAsXml(self):
         return self._experiment_data_as_xml
 
     def _setExperimentDataAsXml(self):
         print("+ _setExperimentDataAsXml")
-        self._experiment_data_as_xml = dicttoxml(self.experiments, attr_type=True).decode()
+        experiments = [{'name': experiment.name} for experiment in self._data.experiments]
+        self._experiment_data_as_xml = dicttoxml(experiments, attr_type=True).decode()
         self.experimentDataAsXmlChanged.emit()
 
     def _onExperimentDataChanged(self):
@@ -783,6 +803,8 @@ class PyQmlProxy(QObject):
     @Slot(str)
     def addExperimentDataFromXye(self, file_url):
         print(f"+ addExperimentDataFromXye: {file_url}")
+
+        self._data.experiments[0].name = pathlib.Path(file_url).stem
 
         def outer1(obj):
             def inner():
@@ -831,12 +853,6 @@ class PyQmlProxy(QObject):
 
         borg.stack.push(FunctionStack(self, outer1(self), outer2(self)))
 
-    def _defaultExperiment(self):
-        return {
-            "label": "D1A@ILL",
-            "color": "#00a3e3"
-        }
-
     def _loadExperimentData(self, file_url):
         print("+ _loadExperimentData")
         file_path = generalizePath(file_url)
@@ -860,7 +876,6 @@ class PyQmlProxy(QObject):
         self._plotting_1d_proxy.setMeasuredData(self._experiment_data.x, self._experiment_data.y, self._experiment_data.e)
         self._experiment_parameters = self._experimentDataParameters(self._experiment_data)
         self.simulationParametersAsObj = json.dumps(self._experiment_parameters)
-        self.experiments = [self._defaultExperiment()]
         self._background_proxy.setDefaultPoints()
         self.experimentDataChanged.emit()
 

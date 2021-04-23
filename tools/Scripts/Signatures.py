@@ -57,6 +57,8 @@ def sign_windows(file_to_sign=installer_exe_path, cert_pass=None):
 
 
 def sign_macos():
+    print('* Code signing on MacOS is disabled.')
+    return
     keychain_name = 'codesign.keychain'
     keychain_password = 'password'
     mac_certificate_file_path = certificate_file_path + ".p12"

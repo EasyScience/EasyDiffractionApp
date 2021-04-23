@@ -411,7 +411,7 @@ class PyQmlProxy(QObject):
     def _defaultSample(self):
         sample = Sample(parameters=Pars1D.default(), pattern=Pattern1D.default(), interface=self._interface)
         sample.pattern.zero_shift = 0.0
-        sample.pattern.scale = 1.0
+        sample.pattern.scale = 100.0
         sample.parameters.wavelength = 1.912
         sample.parameters.resolution_u = 0.1447
         sample.parameters.resolution_v = -0.4252
@@ -680,7 +680,9 @@ class PyQmlProxy(QObject):
     @Slot()
     def addDefaultAtom(self):
         try:
-            atom = Site.from_pars(label='Label2',
+            index = len(self._sample.phases[0].atoms.atom_labels) + 1
+            label = f'Label{index}'
+            atom = Site.from_pars(label=label,
                                   specie='O',
                                   fract_x=0.05,
                                   fract_y=0.05,

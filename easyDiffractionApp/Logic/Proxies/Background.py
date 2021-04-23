@@ -52,10 +52,13 @@ class BackgroundProxy(QObject):
         self.asObjChanged.emit(self._background_as_obj)
 
     @Slot()
-    def addPoint(self, point=(180.0, 0.0)):
+    def addPoint(self):
         print(f"+ addBackgroundPoint")
-        #point = BackgroundPoint.from_pars(x=180.0, y=0.0)
-        point = BackgroundPoint.from_pars(x=point[0], y=point[1])
+        x = 0.0
+        y = 100.0
+        if self._background_as_obj.x_sorted_points.size:
+            x = self._background_as_obj.x_sorted_points[-1] + 10.0
+        point = BackgroundPoint.from_pars(x=x, y=y)
         self._background_as_obj.append(point)
 
         self.asObjChanged.emit(self._background_as_obj)

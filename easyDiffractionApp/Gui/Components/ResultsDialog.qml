@@ -8,6 +8,8 @@ import easyAppGui.Elements 1.0 as EaElements
 import Gui.Globals 1.0 as ExGlobals
 
 EaElements.Dialog {
+    id: dialog
+
     property bool gotResults: typeof ExGlobals.Constants.proxy.fitResults.nvarys !== 'undefined' &&
                               ExGlobals.Constants.proxy.isFitFinished
 

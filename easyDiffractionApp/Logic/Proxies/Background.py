@@ -16,13 +16,15 @@ class BackgroundProxy(QObject):
     asXmlChanged = Signal()
     dummySignal = Signal()
 
-    def __init__(self, parent=None):
+    def __init__(self, main_proxy, parent=None):
         super().__init__(parent)
-
-        self._background_as_obj = PointBackground(linked_experiment='NEED_TO_CHANGE')
+        self.main_proxy = main_proxy
         self._background_as_xml = ""
-
         self.asObjChanged.connect(self.onAsObjChanged)
+
+    @property
+    def _background_as_obj(self):
+        return self.main_proxy._background_obj
 
     @Property('QVariant', notify=dummySignal)
     def asObj(self):
@@ -54,13 +56,11 @@ class BackgroundProxy(QObject):
     @Slot()
     def addPoint(self):
         print(f"+ addBackgroundPoint")
-        x = 0.0
-        y = 100.0
-        if self._background_as_obj.x_sorted_points.size:
-            x = self._background_as_obj.x_sorted_points[-1] + 10.0
-        point = BackgroundPoint.from_pars(x=x, y=y)
+        if self._background_as_obj is None:
+            # TODO THIS IS NOT HOW TO DO THINGS!!!
+            self.main_proxy._sample.backgrounds.append(PointBackground(linked_experiment='sample_1'))
+        point = BackgroundPoint.from_pars(x=point[0], y=point[1])
         self._background_as_obj.append(point)
-
         self.asObjChanged.emit(self._background_as_obj)
 
     @Slot(str)

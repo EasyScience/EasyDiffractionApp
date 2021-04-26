@@ -1309,8 +1309,7 @@ class PyQmlProxy(QObject):
         """
         Slot for thread cancelling and reloading parameters
         """
-        self._fitter_thread.terminate()
-        self._fitter_thread.wait()
+        self.stop_fit()
         self._fitter_thread = None
 
         self._fit_results['success'] = 'cancelled'

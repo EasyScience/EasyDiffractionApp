@@ -23,7 +23,7 @@ vtk = '^8.1.2'
 pyobjc-core = { version = '^7.1', platform = 'darwin' }
 pyobjc-framework-cocoa = { version = '^7.1', platform = 'darwin' }
 # easyScience
-easyDiffractionLib = { git = 'https://github.com/easyScience/easyDiffractionLib.git', rev = 'develop' }
+easyDiffractionLib = { git = 'https://github.com/easyScience/easyDiffractionLib.git', rev = 'new_cfml' }
 easyAppLogic = { git = 'https://github.com/easyScience/easyAppLogic.git', rev = 'develop' }
 easyAppGui = { git = 'https://github.com/easyScience/easyAppGui.git', rev = 'video_tutorials' }
 

@@ -29,11 +29,11 @@
                             "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Ispace_group_name_H-M_alt.html",
                             "display_name": "_space_group_HM_name",
                             "enabled": true,
-                            "@id": "300514758780563999828038431731093334314"
+                            "@id": "285429610891883182636857115401766727945"
                         },
                         "interface": null,
                         "setting": "",
-                        "@id": "19918854085371898990411170929735106819"
+                        "@id": "255355568138171747192497580602411817537"
                     },
                     "cell": {
                         "@module": "easyCore.Elements.Basic.Lattice",
@@ -53,14 +53,14 @@
                             "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Icell_length_.html",
                             "units": "angstrom",
                             "enabled": true,
-                            "@id": "208145562445922046874727062956053590569"
+                            "@id": "78570807957815705415902192294156126083"
                         },
                         "length_b": {
                             "@module": "easyCore.Objects.Base",
                             "@class": "Parameter",
                             "@version": "0.0.1",
                             "name": "length_b",
-                            "value": 5.39597098,
+                            "value": 5.396587488764175,
                             "error": 0.0,
                             "min": 0,
                             "max": Infinity,
@@ -69,14 +69,14 @@
                             "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Icell_length_.html",
                             "units": "angstrom",
                             "enabled": true,
-                            "@id": "205919274563389122137710264548096299514"
+                            "@id": "190077505831356677494429456762614169949"
                         },
                         "length_c": {
                             "@module": "easyCore.Objects.Base",
                             "@class": "Parameter",
                             "@version": "0.0.1",
                             "name": "length_c",
-                            "value": 6.95703451,
+                            "value": 6.957814737950935,
                             "error": 0.0,
                             "min": 0,
                             "max": Infinity,
@@ -85,7 +85,7 @@
                             "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Icell_length_.html",
                             "units": "angstrom",
                             "enabled": true,
-                            "@id": "13981655822673010524818265820659879993"
+                            "@id": "31002191715379837232482174997841266130"
                         },
                         "angle_alpha": {
                             "@module": "easyCore.Objects.Base",
@@ -101,7 +101,7 @@
                             "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Icell_angle_.html",
                             "units": "degree",
                             "enabled": false,
-                            "@id": "309202459040796245500888978526096682996"
+                            "@id": "112911982988727070449763831112419597364"
                         },
                         "angle_beta": {
                             "@module": "easyCore.Objects.Base",
@@ -117,7 +117,7 @@
                             "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Icell_angle_.html",
                             "units": "degree",
                             "enabled": false,
-                            "@id": "227648911948526371210272274400754036067"
+                            "@id": "187918726403921120415238932037380075165"
                         },
                         "angle_gamma": {
                             "@module": "easyCore.Objects.Base",
@@ -133,7 +133,7 @@
                             "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Icell_angle_.html",
                             "units": "degree",
                             "enabled": false,
-                            "@id": "54614739614051535316018685439241676963"
+                            "@id": "76405157328572768592939233008563037586"
                         },
                         "spacegroup": {
                             "@module": "easyCore.Elements.Basic.SpaceGroup",
@@ -150,14 +150,14 @@
                                 "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Ispace_group_name_H-M_alt.html",
                                 "display_name": "_space_group_HM_name",
                                 "enabled": true,
-                                "@id": "300514758780563999828038431731093334314"
+                                "@id": "285429610891883182636857115401766727945"
                             },
                             "interface": null,
                             "setting": "",
-                            "@id": "19918854085371898990411170929735106819"
+                            "@id": "255355568138171747192497580602411817537"
                         },
                         "interface": null,
-                        "@id": "10857564031042261249945069400915115248"
+                        "@id": "336807281214511291016099186846613244446"
                     },
                     "atoms": {
                         "@module": "easyCore.Elements.Basic.Site",
@@ -180,7 +180,7 @@
                                     "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_label.html",
                                     "display_name": "label",
                                     "enabled": true,
-                                    "@id": "199341609277522415539061233668675082601"
+                                    "@id": "223220780039220756900389942550017562105"
                                 },
                                 "specie": {
                                     "@module": "easyCore.Elements.Basic.Specie",
@@ -194,7 +194,7 @@
                                     },
                                     "value": "Pb",
                                     "units": "dimensionless",
-                                    "@id": "222539723902659182029902869063391785630"
+                                    "@id": "119373877641587232895400551480306361275"
                                 },
                                 "occupancy": {
                                     "@module": "easyCore.Objects.Base",
@@ -210,7 +210,7 @@
                                     "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_occupancy.html",
                                     "units": "dimensionless",
                                     "enabled": true,
-                                    "@id": "123023996280297979638079478316749944540"
+                                    "@id": "9674974269457102641025217134537937822"
                                 },
                                 "fract_x": {
                                     "@module": "easyCore.Objects.Base",
@@ -226,7 +226,7 @@
                                     "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_fract_.html",
                                     "units": "dimensionless",
                                     "enabled": true,
-                                    "@id": "56009992032041481661531705246148190428"
+                                    "@id": "286970493623000538474452523506897526307"
                                 },
                                 "fract_y": {
                                     "@module": "easyCore.Objects.Base",
@@ -242,7 +242,7 @@
                                     "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_fract_.html",
                                     "units": "dimensionless",
                                     "enabled": true,
-                                    "@id": "18351716789249739741233177336364954624"
+                                    "@id": "76784580399159904602711616373534676906"
                                 },
                                 "fract_z": {
                                     "@module": "easyCore.Objects.Base",
@@ -258,7 +258,7 @@
                                     "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_fract_.html",
                                     "units": "dimensionless",
                                     "enabled": true,
-                                    "@id": "142151882510012619149417049320251171714"
+                                    "@id": "332076026421395459495000508904122027901"
                                 },
                                 "interface": null,
                                 "adp": {
@@ -276,7 +276,7 @@
                                         "display_name": "adp_type",
                                         "enabled": true,
                                         "value": "Uiso",
-                                        "@id": "131463850024392432957199481155728610273"
+                                        "@id": "44720604025960387347750616060876493635"
                                     },
                                     "interface": null,
                                     "adp_class": {
@@ -288,7 +288,7 @@
                                             "@class": "Parameter",
                                             "@version": "0.0.1",
                                             "name": "Uiso",
-                                            "value": 0.01692,
+                                            "value": 0.016920000000000046,
                                             "error": 0.0,
                                             "min": 0,
                                             "max": Infinity,
@@ -297,14 +297,14 @@
                                             "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_U_iso_or_equiv.html",
                                             "units": "angstrom ** 2",
                                             "enabled": true,
-                                            "@id": "140939623123326738253492562288652467559"
+                                            "@id": "207754191771905840050612147140443271474"
                                         },
                                         "interface": null,
-                                        "@id": "176151016225253211705309164284309653968"
+                                        "@id": "283776912200574889359407946384216053030"
                                     },
-                                    "@id": "110413508014262482971547039505788133156"
+                                    "@id": "122115126183504189043245110188377103420"
                                 },
-                                "@id": "232667581097544697115814442568893618227"
+                                "@id": "170427150839042347873668162747338566809"
                             },
                             {
                                 "@module": "easyCore.Elements.Basic.Site",
@@ -321,7 +321,7 @@
                                     "display_name": "label",
                                     "enabled": true,
                                     "value": "S",
-                                    "@id": "186220399988011618347450861758054323118"
+                                    "@id": "216276926480353900944677030692899029565"
                                 },
                                 "specie": {
                                     "@module": "easyCore.Elements.Basic.Specie",
@@ -335,7 +335,7 @@
                                     },
                                     "value": "S",
                                     "units": "dimensionless",
-                                    "@id": "175494675052144334010860445156920068913"
+                                    "@id": "17173730580537061740100622109377224377"
                                 },
                                 "occupancy": {
                                     "@module": "easyCore.Objects.Base",
@@ -351,7 +351,7 @@
                                     "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_occupancy.html",
                                     "units": "dimensionless",
                                     "enabled": true,
-                                    "@id": "67426013379731884718437489789969480848"
+                                    "@id": "90385861122213270521845901154113513559"
                                 },
                                 "fract_x": {
                                     "@module": "easyCore.Objects.Base",
@@ -367,7 +367,7 @@
                                     "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_fract_.html",
                                     "units": "dimensionless",
                                     "enabled": true,
-                                    "@id": "317302013772839123204455784507121233579"
+                                    "@id": "205930691671809761628368418918512825235"
                                 },
                                 "fract_y": {
                                     "@module": "easyCore.Objects.Base",
@@ -383,7 +383,7 @@
                                     "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_fract_.html",
                                     "units": "dimensionless",
                                     "enabled": true,
-                                    "@id": "23258234982725666392028916155109253653"
+                                    "@id": "275686164201993206980283032295704498745"
                                 },
                                 "fract_z": {
                                     "@module": "easyCore.Objects.Base",
@@ -399,7 +399,7 @@
                                     "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_fract_.html",
                                     "units": "dimensionless",
                                     "enabled": true,
-                                    "@id": "174761698506086602981063220356994326189"
+                                    "@id": "157470180613234599128522866217891137903"
                                 },
                                 "interface": null,
                                 "adp": {
@@ -417,7 +417,7 @@
                                         "display_name": "adp_type",
                                         "enabled": true,
                                         "value": "Uiso",
-                                        "@id": "14209780741156815460844062298747102517"
+                                        "@id": "316657298685953742510820889182197603698"
                                     },
                                     "interface": null,
                                     "adp_class": {
@@ -429,7 +429,7 @@
                                             "@class": "Parameter",
                                             "@version": "0.0.1",
                                             "name": "Uiso",
-                                            "value": 0.00258,
+                                            "value": 0.0025800000000000267,
                                             "error": 0.0,
                                             "min": 0,
                                             "max": Infinity,
@@ -438,14 +438,14 @@
                                             "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_U_iso_or_equiv.html",
                                             "units": "angstrom ** 2",
                                             "enabled": true,
-                                            "@id": "307126906892586360298043996046885573457"
+                                            "@id": "112115055307862468736064249583290787562"
                                         },
                                         "interface": null,
-                                        "@id": "40187061960991319190233362790390845017"
+                                        "@id": "158527354968478485526515457955508539330"
                                     },
-                                    "@id": "166096258126419235711953814954366416718"
+                                    "@id": "193802855602553657579937508363630676379"
                                 },
-                                "@id": "190204680373784964544895013124426809600"
+                                "@id": "178152946898937657766292049394304224164"
                             },
                             {
                                 "@module": "easyCore.Elements.Basic.Site",
@@ -462,7 +462,7 @@
                                     "display_name": "label",
                                     "enabled": true,
                                     "value": "O1",
-                                    "@id": "325669474558650593917008211387873783394"
+                                    "@id": "76627994971018313531806310249507039970"
                                 },
                                 "specie": {
                                     "@module": "easyCore.Elements.Basic.Specie",
@@ -476,7 +476,7 @@
                                     },
                                     "value": "O",
                                     "units": "dimensionless",
-                                    "@id": "163070091104823910394294086958705434084"
+                                    "@id": "272249332274042540379743198487806168776"
                                 },
                                 "occupancy": {
                                     "@module": "easyCore.Objects.Base",
@@ -492,7 +492,7 @@
                                     "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_occupancy.html",
                                     "units": "dimensionless",
                                     "enabled": true,
-                                    "@id": "70610177915627815848851687022776036181"
+                                    "@id": "237968398039752640830432337634935088992"
                                 },
                                 "fract_x": {
                                     "@module": "easyCore.Objects.Base",
@@ -508,7 +508,7 @@
                                     "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_fract_.html",
                                     "units": "dimensionless",
                                     "enabled": true,
-                                    "@id": "137089477161718097805436991835763060165"
+                                    "@id": "197105788196113249545741258592089277668"
                                 },
                                 "fract_y": {
                                     "@module": "easyCore.Objects.Base",
@@ -524,7 +524,7 @@
                                     "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_fract_.html",
                                     "units": "dimensionless",
                                     "enabled": true,
-                                    "@id": "5972346916009944279219794344465336279"
+                                    "@id": "149298895022154900836007967512503419563"
                                 },
                                 "fract_z": {
                                     "@module": "easyCore.Objects.Base",
@@ -540,7 +540,7 @@
                                     "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_fract_.html",
                                     "units": "dimensionless",
                                     "enabled": true,
-                                    "@id": "244641323942446153627607627312373162537"
+                                    "@id": "28468987769792123233105777067782131293"
                                 },
                                 "interface": null,
                                 "adp": {
@@ -558,7 +558,7 @@
                                         "display_name": "adp_type",
                                         "enabled": true,
                                         "value": "Uiso",
-                                        "@id": "109623847674656666372086445755195667147"
+                                        "@id": "89576748480018573419091913670915091470"
                                     },
                                     "interface": null,
                                     "adp_class": {
@@ -570,7 +570,7 @@
                                             "@class": "Parameter",
                                             "@version": "0.0.1",
                                             "name": "Uiso",
-                                            "value": 0.02469,
+                                            "value": 0.0246900000000001,
                                             "error": 0.0,
                                             "min": 0,
                                             "max": Infinity,
@@ -579,14 +579,14 @@
                                             "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_U_iso_or_equiv.html",
                                             "units": "angstrom ** 2",
                                             "enabled": true,
-                                            "@id": "27806888079994464901675212312256838095"
+                                            "@id": "96822096434716672881709014853193827928"
                                         },
                                         "interface": null,
-                                        "@id": "34065225602072343919668334179816686834"
+                                        "@id": "241701171044556421129549991115062522730"
                                     },
-                                    "@id": "73675857102976345142775603638373754673"
+                                    "@id": "6341527728110270030418811042146461750"
                                 },
-                                "@id": "95745013965224138658045382526114557624"
+                                "@id": "1565137100442223401370489386126586463"
                             },
                             {
                                 "@module": "easyCore.Elements.Basic.Site",
@@ -603,7 +603,7 @@
                                     "display_name": "label",
                                     "enabled": true,
                                     "value": "O2",
-                                    "@id": "60750608452259683482518068848533520413"
+                                    "@id": "189795751819637629198261350280295415547"
                                 },
                                 "specie": {
                                     "@module": "easyCore.Elements.Basic.Specie",
@@ -617,7 +617,7 @@
                                     },
                                     "value": "O",
                                     "units": "dimensionless",
-                                    "@id": "55542950864238228394775646362575420841"
+                                    "@id": "324462186959051597376026485173952264213"
                                 },
                                 "occupancy": {
                                     "@module": "easyCore.Objects.Base",
@@ -633,7 +633,7 @@
                                     "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_occupancy.html",
                                     "units": "dimensionless",
                                     "enabled": true,
-                                    "@id": "183663118367464216793390263404451436389"
+                                    "@id": "118763875481951669035617006484402873034"
                                 },
                                 "fract_x": {
                                     "@module": "easyCore.Objects.Base",
@@ -649,7 +649,7 @@
                                     "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_fract_.html",
                                     "units": "dimensionless",
                                     "enabled": true,
-                                    "@id": "18035051389465358180107661628892370272"
+                                    "@id": "98049035669916615834585670646732018644"
                                 },
                                 "fract_y": {
                                     "@module": "easyCore.Objects.Base",
@@ -665,14 +665,14 @@
                                     "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_fract_.html",
                                     "units": "dimensionless",
                                     "enabled": true,
-                                    "@id": "44799629505729820127421887666562652955"
+                                    "@id": "310317393879369792312528840151310933496"
                                 },
                                 "fract_z": {
                                     "@module": "easyCore.Objects.Base",
                                     "@class": "Parameter",
                                     "@version": "0.0.1",
                                     "name": "fract_z",
-                                    "value": 0.54326767,
+                                    "value": 0.5433458267683289,
                                     "error": 0.0,
                                     "min": -Infinity,
                                     "max": Infinity,
@@ -681,7 +681,7 @@
                                     "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_fract_.html",
                                     "units": "dimensionless",
                                     "enabled": true,
-                                    "@id": "280935466351150626701330527121522667191"
+                                    "@id": "8119577881793877138269418764839691867"
                                 },
                                 "interface": null,
                                 "adp": {
@@ -699,7 +699,7 @@
                                         "display_name": "adp_type",
                                         "enabled": true,
                                         "value": "Uiso",
-                                        "@id": "74915505294397459663540152095791763889"
+                                        "@id": "75743678908074978743976588730060676202"
                                     },
                                     "interface": null,
                                     "adp_class": {
@@ -711,7 +711,7 @@
                                             "@class": "Parameter",
                                             "@version": "0.0.1",
                                             "name": "Uiso",
-                                            "value": 0.01803,
+                                            "value": 0.01802999999999999,
                                             "error": 0.0,
                                             "min": 0,
                                             "max": Infinity,
@@ -720,14 +720,14 @@
                                             "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_U_iso_or_equiv.html",
                                             "units": "angstrom ** 2",
                                             "enabled": true,
-                                            "@id": "275508175442679050888265618318727455528"
+                                            "@id": "262362258943578420313937300170059623391"
                                         },
                                         "interface": null,
-                                        "@id": "319767220914924124326092662704810707293"
+                                        "@id": "463091577983191899877197730086916269"
                                     },
-                                    "@id": "299560971171115649356133009016885457629"
+                                    "@id": "133786149804798437806758185596213187584"
                                 },
-                                "@id": "97168082024017049824642165103019570662"
+                                "@id": "81308450027186401359076389663856945984"
                             },
                             {
                                 "@module": "easyCore.Elements.Basic.Site",
@@ -744,7 +744,7 @@
                                     "display_name": "label",
                                     "enabled": true,
                                     "value": "O3",
-                                    "@id": "79158613734021334219391996742894375910"
+                                    "@id": "132863776965045637111024722151324281187"
                                 },
                                 "specie": {
                                     "@module": "easyCore.Elements.Basic.Specie",
@@ -758,7 +758,7 @@
                                     },
                                     "value": "O",
                                     "units": "dimensionless",
-                                    "@id": "314212442585105078093607616089661038620"
+                                    "@id": "42252670116776569749716226324712390888"
                                 },
                                 "occupancy": {
                                     "@module": "easyCore.Objects.Base",
@@ -774,7 +774,7 @@
                                     "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_occupancy.html",
                                     "units": "dimensionless",
                                     "enabled": true,
-                                    "@id": "50052143490864401418284380962954183931"
+                                    "@id": "189627173276791221201425313182202093734"
                                 },
                                 "fract_x": {
                                     "@module": "easyCore.Objects.Base",
@@ -790,7 +790,7 @@
                                     "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_fract_.html",
                                     "units": "dimensionless",
                                     "enabled": true,
-                                    "@id": "38444759919237856115716720670165330821"
+                                    "@id": "102410275256903100531449942851515835880"
                                 },
                                 "fract_y": {
                                     "@module": "easyCore.Objects.Base",
@@ -806,14 +806,14 @@
                                     "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_fract_.html",
                                     "units": "dimensionless",
                                     "enabled": true,
-                                    "@id": "264926093804653639217470936042815800696"
+                                    "@id": "47969853635342029895699618251261866116"
                                 },
                                 "fract_z": {
                                     "@module": "easyCore.Objects.Base",
                                     "@class": "Parameter",
                                     "@version": "0.0.1",
                                     "name": "fract_z",
-                                    "value": 0.80854688,
+                                    "value": 0.8085458017611021,
                                     "error": 0.0,
                                     "min": -Infinity,
                                     "max": Infinity,
@@ -822,7 +822,7 @@
                                     "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_fract_.html",
                                     "units": "dimensionless",
                                     "enabled": true,
-                                    "@id": "86656189261541835937308492431760584623"
+                                    "@id": "292886683464805176435780524170132250519"
                                 },
                                 "interface": null,
                                 "adp": {
@@ -840,7 +840,7 @@
                                         "display_name": "adp_type",
                                         "enabled": true,
                                         "value": "Uiso",
-                                        "@id": "239602000054787008439465841789220860133"
+                                        "@id": "23378261850614359372245896476021539224"
                                     },
                                     "interface": null,
                                     "adp_class": {
@@ -852,7 +852,7 @@
                                             "@class": "Parameter",
                                             "@version": "0.0.1",
                                             "name": "Uiso",
-                                            "value": 0.01655,
+                                            "value": 0.016550000000000065,
                                             "error": 0.0,
                                             "min": 0,
                                             "max": Infinity,
@@ -861,24 +861,24 @@
                                             "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_U_iso_or_equiv.html",
                                             "units": "angstrom ** 2",
                                             "enabled": true,
-                                            "@id": "135453248985494678765095477135805471267"
+                                            "@id": "244131051047938529225239066432105085085"
                                         },
                                         "interface": null,
-                                        "@id": "272645044195808593089901655229448203982"
+                                        "@id": "178881330034113429687627591971514707873"
                                     },
-                                    "@id": "303925413180049400313414673073985829305"
+                                    "@id": "42212762191246178057752567104967161415"
                                 },
-                                "@id": "86779714944908163810403796386507407657"
+                                "@id": "238467263670933643265083865427334258460"
                             }
                         ],
-                        "@id": "152591324787333208532479544736364839531"
+                        "@id": "116545612268445358504401576612550696892"
                     },
                     "interface": null,
                     "enforce_sym": true,
-                    "@id": "140510126887772452519774871607079035335"
+                    "@id": "167712202805375716433801518152504334425"
                 }
             ],
-            "@id": "1056938299280115702366763333186254933"
+            "@id": "118253765482175852266083631109141752494"
         },
         "parameters": {
             "@module": "easyDiffractionLib.Elements.Experiments.Experiment",
@@ -896,49 +896,49 @@
                 "fixed": true,
                 "units": "angstrom",
                 "enabled": true,
-                "@id": "33527562671470819551971535716095727247"
+                "@id": "195884405076555102395525839770754914528"
             },
             "resolution_u": {
                 "@module": "easyCore.Objects.Base",
                 "@class": "Parameter",
                 "@version": "0.0.1",
                 "name": "resolution_u",
-                "value": 0.1447,
+                "value": 0.13784020670815195,
                 "error": 0.0,
                 "min": -Infinity,
                 "max": Infinity,
                 "fixed": true,
                 "units": "dimensionless",
                 "enabled": true,
-                "@id": "75286139242315754844215904416209825078"
+                "@id": "40129833143028696170659335517818415178"
             },
             "resolution_v": {
                 "@module": "easyCore.Objects.Base",
                 "@class": "Parameter",
                 "@version": "0.0.1",
                 "name": "resolution_v",
-                "value": -0.4252,
+                "value": -0.4113443675888444,
                 "error": 0.0,
                 "min": -Infinity,
                 "max": Infinity,
                 "fixed": true,
                 "units": "dimensionless",
                 "enabled": true,
-                "@id": "136113059680120996833295790665822758066"
+                "@id": "210990652480210226362479812659914657352"
             },
             "resolution_w": {
                 "@module": "easyCore.Objects.Base",
                 "@class": "Parameter",
                 "@version": "0.0.1",
                 "name": "resolution_w",
-                "value": 0.3864,
+                "value": 0.3800086162067645,
                 "error": 0.0,
                 "min": -Infinity,
                 "max": Infinity,
                 "fixed": true,
                 "units": "dimensionless",
                 "enabled": true,
-                "@id": "302393814764907896759968491300619103926"
+                "@id": "206873375376372545422348690954450929410"
             },
             "resolution_x": {
                 "@module": "easyCore.Objects.Base",
@@ -952,24 +952,24 @@
                 "fixed": true,
                 "units": "dimensionless",
                 "enabled": true,
-                "@id": "76591047259042049146063861701343613496"
+                "@id": "247421918263291097338930630598625534487"
             },
             "resolution_y": {
                 "@module": "easyCore.Objects.Base",
                 "@class": "Parameter",
                 "@version": "0.0.1",
                 "name": "resolution_y",
-                "value": 0.0,
+                "value": 0.09605242506804061,
                 "error": 0.0,
                 "min": -Infinity,
                 "max": Infinity,
                 "fixed": true,
                 "units": "dimensionless",
                 "enabled": true,
-                "@id": "314545600080040175642169413948147890030"
+                "@id": "225295527534645175082034502257657557628"
             },
             "interface": null,
-            "@id": "119624930266684467122179989080099049261"
+            "@id": "214834405920841306156528946457877095857"
         },
         "pattern": {
             "@module": "easyDiffractionLib.Elements.Experiments.Pattern",
@@ -987,21 +987,21 @@
                 "fixed": false,
                 "units": "degree",
                 "enabled": true,
-                "@id": "228912329539637958925686410571017243345"
+                "@id": "148584294952364103021721030453771544672"
             },
             "scale": {
                 "@module": "easyCore.Objects.Base",
                 "@class": "Parameter",
                 "@version": "0.0.1",
                 "name": "scale",
-                "value": 300.0,
+                "value": 500.0,
                 "error": 0.0,
                 "min": -Infinity,
                 "max": Infinity,
                 "fixed": false,
                 "units": "dimensionless",
                 "enabled": true,
-                "@id": "75117818775000583291285536554221623573"
+                "@id": "55508995474596901179778621395523436361"
             },
             "backgrounds": {
                 "@module": "easyDiffractionLib.Elements.Backgrounds.Background",
@@ -1028,24 +1028,24 @@
                                     "url": "",
                                     "display_name": "x",
                                     "enabled": true,
-                                    "@id": "175822859419160800432671870705195044183"
+                                    "@id": "184091994229868727389509929003830354385"
                                 },
                                 "y": {
                                     "@module": "easyCore.Objects.Base",
                                     "@class": "Parameter",
                                     "@version": "0.0.1",
                                     "name": "intensity",
-                                    "value": 208.29,
+                                    "value": 207.8638604834717,
                                     "error": 0.0,
                                     "min": -Infinity,
                                     "max": Infinity,
                                     "fixed": true,
                                     "units": "dimensionless",
                                     "enabled": true,
-                                    "@id": "240203607628669929008271686786107298634"
+                                    "@id": "247668844388837691221580155032605546243"
                                 },
                                 "name": "10,0_deg",
-                                "@id": "312419156468678044059851027650846652678"
+                                "@id": "41637917815738624188688339431867582247"
                             },
                             {
                                 "@module": "easyDiffractionLib.Elements.Backgrounds.Point",
@@ -1062,24 +1062,24 @@
                                     "url": "",
                                     "display_name": "x",
                                     "enabled": true,
-                                    "@id": "283227300545685090739209437264864757417"
+                                    "@id": "267092851689143022474139223852872272387"
                                 },
                                 "y": {
                                     "@module": "easyCore.Objects.Base",
                                     "@class": "Parameter",
                                     "@version": "0.0.1",
                                     "name": "intensity",
-                                    "value": 195.18,
+                                    "value": 194.74249832631887,
                                     "error": 0.0,
                                     "min": -Infinity,
                                     "max": Infinity,
                                     "fixed": true,
                                     "units": "dimensionless",
                                     "enabled": true,
-                                    "@id": "61363365767693599258388713615938304750"
+                                    "@id": "21764869809382939451314958972104581162"
                                 },
                                 "name": "15,0_deg",
-                                "@id": "202356567858022413099539671764883824833"
+                                "@id": "73519685548780551061765426753348713816"
                             },
                             {
                                 "@module": "easyDiffractionLib.Elements.Backgrounds.Point",
@@ -1096,24 +1096,24 @@
                                     "url": "",
                                     "display_name": "x",
                                     "enabled": true,
-                                    "@id": "141735930933951117674353312800851480133"
+                                    "@id": "236288023763600314915130742988066144767"
                                 },
                                 "y": {
                                     "@module": "easyCore.Objects.Base",
                                     "@class": "Parameter",
                                     "@version": "0.0.1",
                                     "name": "intensity",
-                                    "value": 192.67,
+                                    "value": 192.24810212819094,
                                     "error": 0.0,
                                     "min": -Infinity,
                                     "max": Infinity,
                                     "fixed": true,
                                     "units": "dimensionless",
                                     "enabled": true,
-                                    "@id": "278614105860372824394223195772777098753"
+                                    "@id": "123739645347261614205427405806086609266"
                                 },
                                 "name": "20,0_deg",
-                                "@id": "194189544497075451609068055869704427033"
+                                "@id": "126264417312668551533273187602890553825"
                             },
                             {
                                 "@module": "easyDiffractionLib.Elements.Backgrounds.Point",
@@ -1130,24 +1130,24 @@
                                     "url": "",
                                     "display_name": "x",
                                     "enabled": true,
-                                    "@id": "307801333555166301401088095058015355632"
+                                    "@id": "246541055438165036577308981141971512729"
                                 },
                                 "y": {
                                     "@module": "easyCore.Objects.Base",
                                     "@class": "Parameter",
                                     "@version": "0.0.1",
                                     "name": "intensity",
-                                    "value": 206.71,
+                                    "value": 206.97661705010538,
                                     "error": 0.0,
                                     "min": -Infinity,
                                     "max": Infinity,
                                     "fixed": true,
                                     "units": "dimensionless",
                                     "enabled": true,
-                                    "@id": "233963079007423872122212484253174637971"
+                                    "@id": "204842341982584833216482675596912777738"
                                 },
                                 "name": "60,0_deg",
-                                "@id": "318944667395028444426201104853850718501"
+                                "@id": "231213626452430342064486263610535267745"
                             },
                             {
                                 "@module": "easyDiffractionLib.Elements.Backgrounds.Point",
@@ -1164,24 +1164,24 @@
                                     "url": "",
                                     "display_name": "x",
                                     "enabled": true,
-                                    "@id": "170447743791966417048269979521640525806"
+                                    "@id": "258837042660456192845361445081343045760"
                                 },
                                 "y": {
                                     "@module": "easyCore.Objects.Base",
                                     "@class": "Parameter",
                                     "@version": "0.0.1",
                                     "name": "intensity",
-                                    "value": 201.48,
+                                    "value": 201.23700725435262,
                                     "error": 0.0,
                                     "min": -Infinity,
                                     "max": Infinity,
                                     "fixed": true,
                                     "units": "dimensionless",
                                     "enabled": true,
-                                    "@id": "184521101553681016679251230926267180255"
+                                    "@id": "172121190111946826690783267271471281192"
                                 },
                                 "name": "80,0_deg",
-                                "@id": "311681279186636599184173674268146262024"
+                                "@id": "254354147788112553802363996506407562444"
                             },
                             {
                                 "@module": "easyDiffractionLib.Elements.Backgrounds.Point",
@@ -1198,24 +1198,24 @@
                                     "url": "",
                                     "display_name": "x",
                                     "enabled": true,
-                                    "@id": "94995568896307844036067665758327924776"
+                                    "@id": "290492989246140170217352086728625234131"
                                 },
                                 "y": {
                                     "@module": "easyCore.Objects.Base",
                                     "@class": "Parameter",
                                     "@version": "0.0.1",
                                     "name": "intensity",
-                                    "value": 228.94,
+                                    "value": 230.2920850898701,
                                     "error": 0.0,
                                     "min": -Infinity,
                                     "max": Infinity,
                                     "fixed": true,
                                     "units": "dimensionless",
                                     "enabled": true,
-                                    "@id": "207548735581068116577190733152207025417"
+                                    "@id": "167753317161919980500945879083243116868"
                                 },
                                 "name": "100,0_deg",
-                                "@id": "329585045240077051244116511188271376960"
+                                "@id": "116024265660731719123001961668818050017"
                             },
                             {
                                 "@module": "easyDiffractionLib.Elements.Backgrounds.Point",
@@ -1232,24 +1232,24 @@
                                     "url": "",
                                     "display_name": "x",
                                     "enabled": true,
-                                    "@id": "253936512277893404628975830041355759353"
+                                    "@id": "118180950483681031731265826547376297526"
                                 },
                                 "y": {
                                     "@module": "easyCore.Objects.Base",
                                     "@class": "Parameter",
                                     "@version": "0.0.1",
                                     "name": "intensity",
-                                    "value": 242.84,
+                                    "value": 237.28446520837042,
                                     "error": 0.0,
                                     "min": -Infinity,
                                     "max": Infinity,
                                     "fixed": true,
                                     "units": "dimensionless",
                                     "enabled": true,
-                                    "@id": "123206725861323237682539201434649543550"
+                                    "@id": "249156410005307175103373586561178616330"
                                 },
                                 "name": "125,0_deg",
-                                "@id": "8237994847877853342754560397114030057"
+                                "@id": "181728106837932801134576477815972597104"
                             },
                             {
                                 "@module": "easyDiffractionLib.Elements.Backgrounds.Point",
@@ -1266,27 +1266,95 @@
                                     "url": "",
                                     "display_name": "x",
                                     "enabled": true,
-                                    "@id": "228211440358899592122627088282145141043"
+                                    "@id": "32003841992727028977733470118790165559"
                                 },
                                 "y": {
                                     "@module": "easyCore.Objects.Base",
                                     "@class": "Parameter",
                                     "@version": "0.0.1",
                                     "name": "intensity",
-                                    "value": 192.61,
+                                    "value": 192.98872626105728,
                                     "error": 0.0,
                                     "min": -Infinity,
                                     "max": Infinity,
                                     "fixed": true,
                                     "units": "dimensionless",
                                     "enabled": true,
-                                    "@id": "78978959534288197465863937782700692166"
+                                    "@id": "311628205940038727102845666953674195230"
                                 },
                                 "name": "40,0_deg",
-                                "@id": "313624166351117807075757120121930189043"
+                                "@id": "27110571181747401639495741276992232731"
+                            },
+                            {
+                                "@module": "easyDiffractionLib.Elements.Backgrounds.Point",
+                                "@class": "BackgroundPoint",
+                                "@version": "0.0.1",
+                                "x": {
+                                    "@module": "easyCore.Objects.Base",
+                                    "@class": "Descriptor",
+                                    "@version": "0.0.1",
+                                    "name": "x",
+                                    "value": 140.0,
+                                    "units": "dimensionless",
+                                    "description": "",
+                                    "url": "",
+                                    "display_name": "x",
+                                    "enabled": true,
+                                    "@id": "24685160240407915751036141465892399955"
+                                },
+                                "y": {
+                                    "@module": "easyCore.Objects.Base",
+                                    "@class": "Parameter",
+                                    "@version": "0.0.1",
+                                    "name": "intensity",
+                                    "value": 229.34910307598858,
+                                    "error": 0.0,
+                                    "min": -Infinity,
+                                    "max": Infinity,
+                                    "fixed": true,
+                                    "units": "dimensionless",
+                                    "enabled": true,
+                                    "@id": "191555376307364244201946636430341729311"
+                                },
+                                "name": "140,0_deg",
+                                "@id": "282075767823140863593002113802724426853"
+                            },
+                            {
+                                "@module": "easyDiffractionLib.Elements.Backgrounds.Point",
+                                "@class": "BackgroundPoint",
+                                "@version": "0.0.1",
+                                "x": {
+                                    "@module": "easyCore.Objects.Base",
+                                    "@class": "Descriptor",
+                                    "@version": "0.0.1",
+                                    "name": "x",
+                                    "value": 156.0,
+                                    "units": "dimensionless",
+                                    "description": "",
+                                    "url": "",
+                                    "display_name": "x",
+                                    "enabled": true,
+                                    "@id": "50156720988295124108007010845644096328"
+                                },
+                                "y": {
+                                    "@module": "easyCore.Objects.Base",
+                                    "@class": "Parameter",
+                                    "@version": "0.0.1",
+                                    "name": "intensity",
+                                    "value": 230.78232167185772,
+                                    "error": 0.0,
+                                    "min": -Infinity,
+                                    "max": Infinity,
+                                    "fixed": true,
+                                    "units": "dimensionless",
+                                    "enabled": true,
+                                    "@id": "25021156570752529679105193896604776681"
+                                },
+                                "name": "156,0_deg",
+                                "@id": "146355751913351812335861032593254040290"
                             }
                         ],
-                        "@id": "177185485125045191056864775899309076244",
+                        "@id": "279548438505390498108463419589214161394",
                         "linked_experiment": "current_exp"
                     },
                     {
@@ -1294,7 +1362,7 @@
                         "@class": "PointBackground",
                         "@version": "0.0.1",
                         "data": [],
-                        "@id": "262307744726737933774594159419619566398",
+                        "@id": "262366932619809909260372543205270021796",
                         "linked_experiment": "current_exp"
                     },
                     {
@@ -1302,17 +1370,33 @@
                         "@class": "PointBackground",
                         "@version": "0.0.1",
                         "data": [],
-                        "@id": "61551943740883213009222349064302662624",
+                        "@id": "328746828469355137341775375268162987223",
+                        "linked_experiment": "current_exp"
+                    },
+                    {
+                        "@module": "easyDiffractionLib.Elements.Backgrounds.Point",
+                        "@class": "PointBackground",
+                        "@version": "0.0.1",
+                        "data": [],
+                        "@id": "82587387903798142318387486528028866061",
+                        "linked_experiment": "current_exp"
+                    },
+                    {
+                        "@module": "easyDiffractionLib.Elements.Backgrounds.Point",
+                        "@class": "PointBackground",
+                        "@version": "0.0.1",
+                        "data": [],
+                        "@id": "275185055521717587783034778025783675179",
                         "linked_experiment": "current_exp"
                     }
                 ],
-                "@id": "149772145686196475161467188485120412025"
+                "@id": "233062164844167624061564220323558288707"
             },
             "interface": null,
-            "@id": "239078024830160728994097895976808188321"
+            "@id": "252917484262701639216703559778398567261"
         },
         "name": "easySample",
-        "@id": "80801521009465799290310424167046871477"
+        "@id": "268295271269439028784214432866717802719"
     },
     "experiments": [
         [
@@ -10055,7 +10139,6 @@
     "experiment_skipped": false,
     "project_info": {
         "name": "PbSO4",
-        "location": "/Users/andrewsazonov/Desktop/PbSO4",
         "short_description": "diffraction, powder, 1D",
         "samples": "PbSO4",
         "experiments": "D1A@ILL",

@@ -2,9 +2,19 @@ function Component()
 {
   if (installer.isInstaller())
   {
-    installer.setDefaultPageVisible(QInstaller.ComponentSelection, false) // works for Installer, but not for Updater !?
+    installer.setDefaultPageVisible(QInstaller.ComponentSelection, false); // works for Installer, but not for Updater !?
+    installer.installationStarted.connect(this, Component.prototype.onInstallationStarted);
   }
   //installer.setDefaultPageVisible(QInstaller.LicenseCheck, false)
+}
+
+Component.prototype.onInstallationStarted = function()
+{
+    if (component.updateRequested() || component.installationRequested()) {
+        if (installer.value("os") == "win")
+            component.installerbaseBinaryPath = "@TargetDir@/signedmaintenancetool.exe";
+        installer.setInstallerBaseBinary(component.installerbaseBinaryPath);
+    }
 }
 
 // here we are creating the operation chain which will be processed at the real installation part later

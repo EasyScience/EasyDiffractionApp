@@ -21,6 +21,13 @@ class BackgroundProxy(QObject):
         self.main_proxy = main_proxy
         self._background_as_xml = ""
         self.asObjChanged.connect(self.onAsObjChanged)
+        self._bg_types = {
+            'point': {
+                'container': PointBackground,
+                'element': BackgroundPoint
+            }
+        }
+        self._default_type = 'point'
 
     @property
     def _background_as_obj(self):
@@ -40,6 +47,9 @@ class BackgroundProxy(QObject):
     def setDefaultPoints(self):
         print("+ setDefaultPoints")
 
+        if self._background_as_obj is None:
+            # TODO THIS IS NOT HOW TO DO THINGS!!!
+            self.initializeContainer()
         # remove old points
         for point_name in self._background_as_obj.names:
             point_index = self._background_as_obj.names.index(point_name)
@@ -53,12 +63,21 @@ class BackgroundProxy(QObject):
 
         self.asObjChanged.emit(self._background_as_obj)
 
+    def initializeContainer(self, experiment_name: str = 'current_exp', container_type=None):
+        container = None
+        if container_type is None:
+            container = self._bg_types[self._default_type]['container']
+        self.main_proxy._sample.pattern.backgrounds.append(
+            # TODO we will be the current exp name and use it here.
+            container(linked_experiment=experiment_name)
+        )
+
     @Slot()
     def addPoint(self):
         print(f"+ addBackgroundPoint")
         if self._background_as_obj is None:
             # TODO THIS IS NOT HOW TO DO THINGS!!!
-            self.main_proxy._sample.backgrounds.append(PointBackground(linked_experiment='sample_1'))
+            self.initializeContainer()
         x = 0.0
         y = 100.0
         if self._background_as_obj.x_sorted_points.size:

@@ -497,9 +497,11 @@ class PyQmlProxy(QObject):
         cif_path = generalizePath(cif_url)
         if borg.stack.enabled:
             borg.stack.beginMacro(f'Loaded cif: {cif_path}')
-        self._sample.phases = Phases.from_cif_file(cif_path)
-        if borg.stack.enabled:
-            borg.stack.endMacro()
+        try:
+            self._sample.phases = Phases.from_cif_file(cif_path)
+        finally:
+            if borg.stack.enabled:
+                borg.stack.endMacro()
             # if len(self._sample.phases) < 2:
             #     # We have problems with removing the only phase.....
             #     borg.stack.pop()
@@ -888,11 +890,9 @@ class PyQmlProxy(QObject):
                                                 self._experiment_data.e)
         self._experiment_parameters = self._experimentDataParameters(self._experiment_data)
         self.simulationParametersAsObj = json.dumps(self._experiment_parameters)
-        from easyDiffractionLib.Elements.Backgrounds.Point import PointBackground
-        self._sample.pattern.backgrounds.append(
-            # TODO we will be the current exp name and use it here.
-            PointBackground(linked_experiment='current_exp')
-        )
+        if len(self._sample.pattern.backgrounds) == 0:
+            self.backgroundProxy.initializeContainer()
+
         self.experimentDataChanged.emit()
         self.projectInfoAsJson['experiments'] = self._data.experiments[0].name
         self.projectInfoChanged.emit()

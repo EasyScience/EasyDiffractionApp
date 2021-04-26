@@ -94,13 +94,9 @@ Item {
         visible: false
         title: qsTr("Save confirmation")
 
-        parent: Overlay.overlay
-
-        x: (parent.width - width) * 0.5
-        y: (parent.height - height) * 0.5
-
-        modal: true
         standardButtons: Dialog.Ok
+
+        Component.onCompleted: setSaveConfirmationOkButton()
 
         Row {
             padding: EaStyle.Sizes.fontPixelSize
@@ -118,6 +114,19 @@ Item {
                 text: saveConfirmationDialog.success
                       ? qsTr('File "<a href="%1">%1</a>" is successfully saved'.arg(saveConfirmationDialog.filePath))
                       : qsTr('Failed to save file "%1"'.arg(saveConfirmationDialog.filePath))
+            }
+        }
+
+        // Logic
+
+        function setSaveConfirmationOkButton() {
+            const buttons = saveConfirmationDialog.footer.contentModel.children
+            for (let i in buttons) {
+                const button = buttons[i]
+                if (button.text === 'OK') {
+                    ExGlobals.Variables.saveConfirmationOkButton = button
+                    return
+                }
             }
         }
     }
@@ -190,7 +199,7 @@ Item {
                   `  --buttonBorderColor:${EaStyle.Colors.chartAxis};`,
                   `  --tooltipBackgroundColor:${EaStyle.Colors.dialogBackground};`,
                   `  --tooltipForegroundColor:${EaStyle.Colors.themeForeground};`,
-                  `  --tooltipBorderColor:${EaStyle.Colors.themePrimary};`,
+                  `  --tooltipBorderColor:${EaStyle.Colors.toolTipBorder};`,
                   `}`,
 
                   'html {',
@@ -457,7 +466,7 @@ Item {
             return ''
         const projectDescription = ExGlobals.Constants.proxy.projectInfoAsJson.short_description
         const phaseName = ExGlobals.Constants.proxy.phasesAsObj[0].name
-        const datasetName = 'D1A@ILL'
+        const datasetName = ExGlobals.Constants.proxy.experimentDataAsObj[0].name
         const modifiedDate = ExGlobals.Constants.proxy.projectInfoAsJson.modified
         const list = [
                 `<h1>${ExGlobals.Constants.proxy.projectInfoAsJson.name}</h1>`,

@@ -15,7 +15,7 @@
 [![w3c][90]][91]
 
 ### Download easyDiffractionApp repo
-* Open **Terminal**
+* Open **Terminal** 
 * Change the current working directory to the location where you want the **easyDiffractionApp** directory
 * Clone **easyDiffractionApp** repo from GitHub using **git**
   ```

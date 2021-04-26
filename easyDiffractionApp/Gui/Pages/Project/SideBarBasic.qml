@@ -8,12 +8,12 @@ import easyAppGui.Elements 1.0 as EaElements
 import easyAppGui.Components 1.0 as EaComponents
 
 import Gui.Globals 1.0 as ExGlobals
+import Gui.Components 1.0 as ExComponents
 
 EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
         title: qsTr("Get started")
-        last: true
         collapsible: false
 
         Grid {
@@ -26,7 +26,7 @@ EaComponents.SideBarColumn {
 
                 onClicked: EaGlobals.Variables.showProjectDescriptionDialog = true
                 Component.onCompleted: {
-                    ExGlobals.Variables.createProjectButton = createProjectButton
+                    ExGlobals.Variables.createProjectButton = this
                     ExGlobals.Constants.proxy.resetUndoRedoStack()
                 }
             }
@@ -47,6 +47,7 @@ EaComponents.SideBarColumn {
                 fontIcon: "upload"
                 text: qsTr("Open an existing project")
                 onClicked: fileDialogLoadProject.open()
+                Component.onCompleted: ExGlobals.Variables.openProjectButton = this
             }
 
             EaElements.SideBarButton {
@@ -58,24 +59,33 @@ EaComponents.SideBarColumn {
         }
     }
 
-    QtQuickDialogs1.FileDialog{
+    QtQuickDialogs1.FileDialog {
         id: fileDialogLoadProject
         nameFilters: ["Project files (*.json)"]
         onAccepted: {
             // enablement will depend on what is available in the project file,
             // obviously, so care is needed. TODO
-            ExGlobals.Variables.samplePageEnabled = true
-            ExGlobals.Variables.experimentPageEnabled = true
+            ExGlobals.Constants.proxy.loadProjectAs(fileUrl)
+
             ExGlobals.Variables.sampleLoaded = true
             ExGlobals.Variables.projectCreated = true
 
-            ExGlobals.Constants.proxy.loadProjectAs(fileUrl)
-
-            if (ExGlobals.Constants.proxy.experimentDataAsXml != ""){
+            ExGlobals.Variables.samplePageEnabled = true
+            ExGlobals.Variables.experimentPageEnabled = true
+            if (ExGlobals.Constants.proxy.experimentDataAsXml !== "") {
                 ExGlobals.Variables.analysisPageEnabled = true
                 ExGlobals.Variables.summaryPageEnabled = true
             }
         }
     }
+
+    EaElements.GroupBox {
+        title: qsTr("Examples")
+        last: true
+        collapsible: false
+
+        ExComponents.ProjectExamples {}
+    }
+
 }
 

@@ -34,6 +34,9 @@ QtObject {
     // References to GUI elements
     // //////////////////////////
 
+    // Application bar
+    property var appBarCentralTabs
+
     // Application bar tab buttons
     property var homeTabButton
     property var projectTabButton
@@ -48,33 +51,69 @@ QtObject {
 
     // Main application window
     property var showSaveDialog : false
+    property var projectPageMainContent
+    property var samplePageMainContent
+    property var experimentPageMainContent
+    property var analysisPageMainContent
+    property var summaryPageMainContent
 
     // Application bar tool buttons
     property var preferencesButton
-    property var preferencesOkButton
 
     // Main content and sidebar buttons
+    property var aboutButton
+    property var onlineDocumentationButton
+    property var getInTouchButton
     property var startButton
     property var createProjectButton
+    property var openProjectButton
     property var continueWithoutProjectButton
+    property var loadExampleProjectButton
     property var setNewSampleManuallyButton
     property var appendNewAtomButton
     property var continueWithoutExperimentDataButton
+    property var startFittingButton
+    property var exportReportButton
+
+    // Dialog buttons
+    property var preferencesOkButton
+    property var refinementResultsOkButton
+    property var saveConfirmationOkButton
 
     // Sidebar group boxes
+    property var structuralPhasesGroup
     property var symmetryGroup
     property var atomsGroup
     property var adpsGroup
+    property var experimentalDataGroup
+    property var associatedPhasesGroup
+    property var parametersGroup
+    property var exportReportGroup
 
-    // Sidebar text inputs
+    // Sidebar elements
     property var cellLengthALabel
+
+    // Tab buttons
+    property var phaseCifTab
+    property var experimentTableTab
+    property var experimentCifTab
+    property var calculationCifTab
 
     // Checkboxes
     property var enableToolTipsCheckBox
+    property var enableUserGuidesCheckBox
+    property var fitCellACheckBox
+    property var fitZeroShiftCheckBox
+    property var fitScaleCheckBox
+    property var fitResolutionUValue
+    property var fitResolutionVValue
+    property var fitResolutionWValue
+    property var fitResolutionYValue
 
     // Comboboxes
     property var themeSelector
     property var calculatorSelector
+    property var parametersFilterTypeSelector
 
     // Tables
     property var phasesTable
@@ -105,5 +144,10 @@ QtObject {
 
     // Summary
     property var reportWebView
+
+    // User guides
+    property var userGuidesLastDisableButton
+    property var userGuidesNextButtons: [[], [], [], [], [], []]
+    property var userGuidesTextList: [[], [], [], [], [], []]
 
 }

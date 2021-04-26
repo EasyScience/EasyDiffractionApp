@@ -52,22 +52,23 @@ Rectangle {
 
             EaElements.Label {
                 font.bold: true
-                text: qsTr("Samples:")
+                text: qsTr("Phases:")
             }
-            EaElements.TextInput {
+            EaElements.Label {
                 text: ExGlobals.Constants.proxy.projectInfoAsJson.samples
-                onEditingFinished: ExGlobals.Constants.proxy.editProjectInfo("samples", text)
+                //onEditingFinished: ExGlobals.Constants.proxy.editProjectInfo("samples", text)
             }
 
             EaElements.Label {
                 font.bold: true
                 text: qsTr("Experiments:")
             }
-            EaElements.TextInput {
+            EaElements.Label {
                 text: ExGlobals.Constants.proxy.projectInfoAsJson.experiments
-                onEditingFinished: ExGlobals.Constants.proxy.editProjectInfo("experiments", text)
+                //onEditingFinished: ExGlobals.Constants.proxy.editProjectInfo("experiments", text)
             }
 
+            /*
             EaElements.Label {
                 font.bold: true
                 text: qsTr("Calculations:")
@@ -76,6 +77,7 @@ Rectangle {
                 text: ExGlobals.Constants.proxy.projectInfoAsJson.calculations
                 onEditingFinished: ExGlobals.Constants.proxy.editProjectInfo("calculations", text)
             }
+            */
 
             EaElements.Label {
                 font.bold: true

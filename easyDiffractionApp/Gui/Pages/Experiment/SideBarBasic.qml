@@ -33,7 +33,8 @@ EaComponents.SideBarColumn {
             }
 
             EaElements.SideBarButton {
-                enabled: !ExGlobals.Constants.proxy.experimentLoaded && !ExGlobals.Constants.proxy.experimentSkipped
+                enabled: !ExGlobals.Constants.proxy.experimentLoaded &&
+                         !ExGlobals.Constants.proxy.experimentSkipped
 
                 fontIcon: "arrow-circle-right"
                 text: qsTr("Continue without experiment data")
@@ -47,41 +48,141 @@ EaComponents.SideBarColumn {
                 Component.onCompleted: ExGlobals.Variables.continueWithoutExperimentDataButton = this
             }
         }
+
+        Component.onCompleted: ExGlobals.Variables.experimentalDataGroup = this
     }
 
     EaElements.GroupBox {
-        title: qsTr("Associated phases")
-        enabled: ExGlobals.Constants.proxy.experimentLoaded
+        title: qsTr("Instrument and experiment type")
+        enabled: ExGlobals.Constants.proxy.experimentLoaded ||
+                 ExGlobals.Constants.proxy.experimentSkipped
 
-        ExComponents.ExperimentAssociatedPhases {}
+        Column {
+
+            Row {
+                spacing: EaStyle.Sizes.fontPixelSize
+
+                Column {
+                    spacing: EaStyle.Sizes.fontPixelSize * -0.5
+
+                    EaElements.Label {
+                        enabled: false
+                        text: qsTr("Facility")
+                    }
+
+                    EaElements.ComboBox {
+                        width: (EaStyle.Sizes.sideBarContentWidth - EaStyle.Sizes.fontPixelSize * 2 ) / 3
+                        model: ["Unknown"]
+                    }
+                }
+
+                Column {
+                    spacing: EaStyle.Sizes.fontPixelSize * -0.5
+
+                    EaElements.Label {
+                        enabled: false
+                        text: qsTr("Instrument")
+                    }
+
+                    EaElements.ComboBox {
+                        width: (EaStyle.Sizes.sideBarContentWidth - EaStyle.Sizes.fontPixelSize * 2 ) / 3
+                        model: ["Unknown"]
+                    }
+                }
+
+                Column {
+                    spacing: EaStyle.Sizes.fontPixelSize * -0.5
+
+                    EaElements.Label {
+                        enabled: false
+                        text: qsTr("Configuration")
+                    }
+
+                    EaElements.ComboBox {
+                        width: (EaStyle.Sizes.sideBarContentWidth - EaStyle.Sizes.fontPixelSize * 2 ) / 3
+                        model: ["Unknown"]
+                    }
+                }
+            }
+
+            Row {
+                spacing: EaStyle.Sizes.fontPixelSize
+
+                Column {
+                    spacing: EaStyle.Sizes.fontPixelSize * -0.5
+
+                    EaElements.Label {
+                        enabled: false
+                        text: qsTr("Radiation")
+                    }
+
+                    EaElements.ComboBox {
+                        width: (EaStyle.Sizes.sideBarContentWidth - EaStyle.Sizes.fontPixelSize * 2 ) / 3
+                        model: ["Neutron"]
+                    }
+                }
+
+                Column {
+                    spacing: EaStyle.Sizes.fontPixelSize * -0.5
+
+                    EaElements.Label {
+                        enabled: false
+                        text: qsTr("Mode")
+                    }
+
+                    EaElements.ComboBox {
+                        width: (EaStyle.Sizes.sideBarContentWidth - EaStyle.Sizes.fontPixelSize * 2 ) / 3
+                        model: ["Constant wavelength"]
+                    }
+                }
+
+                Column {
+                    spacing: EaStyle.Sizes.fontPixelSize * -0.5
+
+                    EaElements.Label {
+                        enabled: false
+                        text: qsTr("Method")
+                    }
+
+                    EaElements.ComboBox {
+                        width: (EaStyle.Sizes.sideBarContentWidth - EaStyle.Sizes.fontPixelSize * 2 ) / 3
+                        model: ["Powder"]
+                    }
+                }
+            }
+        }
     }
 
     EaElements.GroupBox {
-        title: qsTr("Simulation range")
-        enabled: ExGlobals.Constants.proxy.experimentLoaded || ExGlobals.Constants.proxy.experimentSkipped
+        title: ExGlobals.Constants.proxy.experimentLoaded ?
+                   qsTr("Measured range") :
+                   qsTr("Simulation range")
+        enabled: ExGlobals.Constants.proxy.experimentLoaded ||
+                 ExGlobals.Constants.proxy.experimentSkipped
 
         ExComponents.ExperimentSimulationSetup {}
     }
 
     EaElements.GroupBox {
         title: qsTr("Instrument setup")
-        enabled: ExGlobals.Constants.proxy.experimentLoaded || ExGlobals.Constants.proxy.experimentSkipped
+        enabled: ExGlobals.Constants.proxy.experimentLoaded ||
+                 ExGlobals.Constants.proxy.experimentSkipped
 
         ExComponents.ExperimentInstrumentSetup {}
     }
 
     EaElements.GroupBox {
         title: qsTr("Peak profile")
-        enabled: ExGlobals.Constants.proxy.experimentLoaded || ExGlobals.Constants.proxy.experimentSkipped
+        enabled: ExGlobals.Constants.proxy.experimentLoaded ||
+                 ExGlobals.Constants.proxy.experimentSkipped
 
         Column {
-
             Column {
                 spacing: EaStyle.Sizes.fontPixelSize * -0.5
 
                 EaElements.Label {
                     enabled: false
-                    text: qsTr("Instrument resolution function")
+                    text: qsTr("Profile function")
                 }
 
                 EaElements.ComboBox {
@@ -90,23 +191,59 @@ EaComponents.SideBarColumn {
                 }
             }
 
-            Column {
-                EaElements.Label {
-                    enabled: false
-                    text: qsTr("Profile parameters")
+            Row {
+                spacing: EaStyle.Sizes.tableColumnSpacing * 2
+
+                Column {
+                    EaElements.Label {
+                        enabled: false
+                        text: qsTr("Gaussian instrumental broadening")
+                    }
+
+                    ExComponents.ExperimentPeakProfileG {}
                 }
 
-                ExComponents.ExperimentPeakProfile {}
+                Column {
+                    EaElements.Label {
+                        enabled: false
+                        text: qsTr("Lorentzian sample broadening")
+                    }
+
+                    ExComponents.ExperimentPeakProfileL {}
+                }
             }
         }
     }
 
     EaElements.GroupBox {
         title: qsTr("Background")
-        last: true
-        enabled: ExGlobals.Constants.proxy.experimentLoaded || ExGlobals.Constants.proxy.experimentSkipped
+        enabled: ExGlobals.Constants.proxy.experimentLoaded ||
+                 ExGlobals.Constants.proxy.experimentSkipped
 
-        ExComponents.ExperimentBackground {}
+        Column {
+            Column {
+                spacing: EaStyle.Sizes.fontPixelSize * -0.5
+
+                EaElements.Label {
+                    enabled: false
+                    text: qsTr("Type")
+                }
+
+                EaElements.ComboBox {
+                    width: EaStyle.Sizes.sideBarContentWidth
+                    model: ["Point background"]
+                }
+            }
+
+            Column {
+                EaElements.Label {
+                    enabled: false
+                    text: qsTr("Points")
+                }
+
+                ExComponents.ExperimentBackground {}
+            }
+        }
 
         Row {
             spacing: EaStyle.Sizes.fontPixelSize
@@ -125,6 +262,16 @@ EaComponents.SideBarColumn {
         }
     }
 
+    EaElements.GroupBox {
+        title: qsTr("Associated phases")
+        last: true
+        enabled: ExGlobals.Constants.proxy.experimentLoaded
+
+        ExComponents.ExperimentAssociatedPhases {}
+
+        Component.onCompleted: ExGlobals.Variables.associatedPhasesGroup = this
+    }
+
     // Load experimental data file dialog
 
     Dialogs1.FileDialog{
@@ -135,8 +282,6 @@ EaComponents.SideBarColumn {
         onAccepted: {
             ExGlobals.Variables.analysisPageEnabled = true
             ExGlobals.Variables.summaryPageEnabled = true
-//            ExGlobals.Constants.proxy.experimentSkipped = false
-//            ExGlobals.Constants.proxy.experimentLoaded = true
             ExGlobals.Constants.proxy.addExperimentDataFromXye(fileUrl)
         }
     }

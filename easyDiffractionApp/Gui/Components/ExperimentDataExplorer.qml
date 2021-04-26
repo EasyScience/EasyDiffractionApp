@@ -21,8 +21,7 @@ EaComponents.TableView {
         xml: ExGlobals.Constants.proxy.experimentDataAsXml
         query: "/root/item"
 
-        XmlRole { name: "label"; query: "label/string()" }
-        XmlRole { name: "color"; query: "color/string()" }
+        XmlRole { name: "label"; query: "name/string()" }
     }
 
     // Table rows
@@ -40,12 +39,13 @@ EaComponents.TableView {
             width: EaStyle.Sizes.fontPixelSize * 27.9
             headerText: "Label"
             text: model.label
-            //onEditingFinished: ExGlobals.Constants.proxy.changePhaseName(text)
+            onEditingFinished: ExGlobals.Constants.proxy.setCurrentExperimentDatasetName(text)
         }
 
         EaComponents.TableViewLabel {
             headerText: "Color"
-            backgroundColor: model.color ? model.color : "transparent"
+            //backgroundColor: model.color ? model.color : "transparent"
+            backgroundColor: EaStyle.Colors.chartForegrounds[0]
         }
 
         EaComponents.TableViewButton {

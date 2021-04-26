@@ -112,8 +112,9 @@ class ScreenRecorder(QObject):
     @Slot('QVariant', 'QVariant')
     def startRecording(self, frame_rect=None, margin_rect=None):
         self.set_mss_frame_rect(frame_rect, margin_rect)
-        self.is_recording_now = True
-        self.recording_thread.start()
+        if not self.recording_thread.is_alive():
+            self.is_recording_now = True
+            self.recording_thread.start()
 
     @Slot()
     def stopRecording(self):

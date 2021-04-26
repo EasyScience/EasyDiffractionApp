@@ -9,6 +9,6 @@ EaCharts.BaseBokeh {
 
     plotRanges: ExGlobals.Constants.proxy.plotting1d.experimentPlotRangesObj
 
-    xAxisTitle: qsTr("2theta (deg)")
-    yMainAxisTitle: qsTr("Intensity")
+    xAxisTitle: "2θ (deg)"
+    yMainAxisTitle: "Imeas"
 }

@@ -9,6 +9,7 @@ import easyAppGui.Elements 1.0 as EaElements
 import easyAppGui.Components 1.0 as EaComponents
 
 import Gui.Globals 1.0 as ExGlobals
+import Gui.Components 1.0 as ExComponents
 import Gui.Pages.Home 1.0 as ExHomePage
 import Gui.Pages.Project 1.0 as ExProjectPage
 import Gui.Pages.Sample 1.0 as ExSamplePage
@@ -29,6 +30,7 @@ EaComponents.ApplicationWindow {
 
         EaElements.ToolButton {
             enabled: ExGlobals.Constants.proxy.stateHasChanged
+            highlighted: true
             fontIcon: "\uf0c7"
             ToolTip.text: qsTr("Save current state of the project")
             onClicked:  ExGlobals.Constants.proxy.saveProject()
@@ -78,7 +80,7 @@ EaComponents.ApplicationWindow {
 
     // Central group of application bar tab buttons (workflow tabs)
     // Tab buttons for the pages described below
-    appBarCentralTabs: [
+    appBarCentralTabs.contentData: [
 
         // Home tab
         EaElements.AppBarTabButton {
@@ -156,13 +158,15 @@ EaComponents.ApplicationWindow {
             mainContent: EaComponents.MainContent {
                 tabs: [
                     EaElements.TabButton { text: qsTr("Description") },
-                    EaElements.TabButton { text: "project.cif" }
+                    EaElements.TabButton { text: qsTr("Text View (CIF)") }
                 ]
 
                 items: [
                     ExProjectPage.MainContentDescription {},
                     ExProjectPage.MainContentTextView {}
                 ]
+
+                Component.onCompleted: ExGlobals.Variables.projectPageMainContent = this
             }
 
             sideBar: EaComponents.SideBar {
@@ -186,9 +190,13 @@ EaComponents.ApplicationWindow {
                 tabs: [
                     EaElements.TabButton { text: qsTr("Structure view") },
                     EaElements.TabButton {
+                        /*
                         text: typeof ExGlobals.Constants.proxy.phasesAsObj[ExGlobals.Constants.proxy.currentPhaseIndex] !== 'undefined' && ExGlobals.Constants.proxy.phasesAsObj.length > 0
                               ? ExGlobals.Constants.proxy.phasesAsObj[ExGlobals.Constants.proxy.currentPhaseIndex].name + '.cif'
                               : 'Unknown'
+                              */
+                        text: qsTr("Text view (CIF)")
+                        Component.onCompleted: ExGlobals.Variables.phaseCifTab = this
                     }
                 ]
 
@@ -196,6 +204,8 @@ EaComponents.ApplicationWindow {
                     ExSamplePage.MainContentStructureView {},
                     ExSamplePage.MainContentTextView {}
                 ]
+
+                Component.onCompleted: ExGlobals.Variables.samplePageMainContent = this
             }
 
             sideBar: EaComponents.SideBar {
@@ -218,8 +228,8 @@ EaComponents.ApplicationWindow {
             mainContent: EaComponents.MainContent {
                 tabs: [
                     EaElements.TabButton { text: qsTr("Plot view") },
-                    EaElements.TabButton { enabled: false; text: qsTr("Table view") },
-                    EaElements.TabButton { enabled: false; text: 'D1A@ILL.cif' }
+                    EaElements.TabButton { enabled: false; text: qsTr("Table view"); Component.onCompleted: ExGlobals.Variables.experimentTableTab = this },
+                    EaElements.TabButton { enabled: false; text: qsTr("Text view (CIF)"); Component.onCompleted: ExGlobals.Variables.experimentCifTab = this }
                 ]
 
                 items: [
@@ -227,6 +237,8 @@ EaComponents.ApplicationWindow {
                     ExExperimentPage.MainContentTableView {},
                     ExExperimentPage.MainContentTextView {}
                 ]
+
+                Component.onCompleted: ExGlobals.Variables.experimentPageMainContent = this
             }
 
             sideBar: EaComponents.SideBar {
@@ -253,6 +265,7 @@ EaComponents.ApplicationWindow {
                         visible: ExGlobals.Constants.proxy.experimentLoaded
                         enabled: false
                         text: 'calculations.cif' //ExGlobals.Constants.proxy.projectInfoAsJson.calculations
+                        Component.onCompleted: ExGlobals.Variables.calculationCifTab = this
                     }
                 ]
 
@@ -260,6 +273,8 @@ EaComponents.ApplicationWindow {
                     ExAnalysisPage.MainContentFitting {},
                     ExAnalysisPage.MainContentTextView {}
                 ]
+
+                Component.onCompleted: ExGlobals.Variables.analysisPageMainContent = this
             }
 
             sideBar: EaComponents.SideBar {
@@ -291,6 +306,8 @@ EaComponents.ApplicationWindow {
                 items: [
                     ExSummaryPage.MainContentReport {}
                 ]
+
+                Component.onCompleted: ExGlobals.Variables.summaryPageMainContent = this
             }
 
             sideBar: EaComponents.SideBar {
@@ -335,4 +352,26 @@ EaComponents.ApplicationWindow {
         }
     }
 
+    ExComponents.CloseDialog {
+        id: closeDialog
+    }
+
+    ///////////////////
+    // Init user guides
+    ///////////////////
+
+    ExComponents.UserGuides {}
+
+    ////////
+    // Misc
+    ////////
+
+    onClosing: {
+       closeDialog.visible = ExGlobals.Constants.proxy.stateHasChanged
+       close.accepted = !ExGlobals.Constants.proxy.stateHasChanged
+    }
+
+    Component.onCompleted: {
+        ExGlobals.Variables.appBarCentralTabs = appBarCentralTabs
+    }
 }

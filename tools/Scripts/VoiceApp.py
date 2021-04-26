@@ -11,12 +11,15 @@ CONFIG = Config.Config()
 
 def fileWithPhrases():
     return os.path.join(CONFIG.package_name, 'Gui', 'Pages', 'Home', 'MainContent.qml')
+    #return os.path.join(CONFIG.package_name, 'Gui', 'Components', 'UserGuides.qml')
 
 def phrasesList():
     pattern = "say\([\"\'](.+)[\"\']\)"
+    #pattern = "qsTr\([\"\'](.+)[\"\']\)"
     with open(fileWithPhrases(), "r") as f:
         lines = f.read()
         phrases = re.findall(pattern, lines)
+    phrases = [p.replace('\\n', ' ') for p in phrases]
     return phrases
 
 def audioDirPath():
@@ -30,6 +33,7 @@ def audioFilePath(name):
 
 def createAudioFiles():
     for p in phrasesList():
+        print(p)
         tts = gTTS(text=p, lang='en-au')
         tts.save(audioFilePath(p))
 

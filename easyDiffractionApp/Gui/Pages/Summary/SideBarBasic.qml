@@ -62,7 +62,11 @@ EaComponents.SideBarColumn {
                     bottomInset: 0
                     width: EaStyle.Sizes.fontPixelSize * 10
 
-                    model: ['html', 'pdf']
+                    textRole: "text"
+                    valueRole: "value"
+                    model: [
+                        { value: 'html', text: qsTr("Interactive HTML") },
+                        { value: 'pdf', text: qsTr("Static PDF") }                    ]
                 }
             }
 
@@ -88,7 +92,7 @@ EaComponents.SideBarColumn {
                 horizontalAlignment: TextInput.AlignLeft
 
                 placeholderText: qsTr("Enter report location here")
-                text: EaLogic.Utils.urlToLocalFile(reportParentDirDialog.folder + '/' + reportNameField.text + '.' + reportFormatField.currentText)
+                text: EaLogic.Utils.urlToLocalFile(reportParentDirDialog.folder + '/' + reportNameField.text + '.' + reportFormatField.currentValue)
 
                 EaElements.ToolButton {
                     id: chooseButton
@@ -117,8 +121,11 @@ EaComponents.SideBarColumn {
                     ExGlobals.Variables.reportWebView.printToPdf(reportLocationField.text)
                 }
             }
+
+            Component.onCompleted: ExGlobals.Variables.exportReportButton = this
         }
 
+        Component.onCompleted: ExGlobals.Variables.exportReportGroup = this
     }
 
     // Directory dialog

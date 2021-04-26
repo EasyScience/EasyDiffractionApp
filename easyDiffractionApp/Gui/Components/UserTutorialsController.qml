@@ -173,8 +173,9 @@ EaElements.RemoteController {
         if (!was_tool_tips_checked) {
             rc.mouseClick(ExGlobals.Variables.enableToolTipsCheckBox)
             rc.wait(500)
-            rc.mouseClick(ExGlobals.Variables.preferencesOkButton)
         }
+
+        rc.mouseClick(ExGlobals.Variables.preferencesOkButton)
 
         // Home Tab
 
@@ -282,8 +283,9 @@ EaElements.RemoteController {
         if (!was_tool_tips_checked) {
             rc.mouseClick(ExGlobals.Variables.enableToolTipsCheckBox)
             rc.wait(500)
-            rc.mouseClick(ExGlobals.Variables.preferencesOkButton)
         }
+
+        rc.mouseClick(ExGlobals.Variables.preferencesOkButton)
 
         afterRunTutorial()
     }

@@ -888,7 +888,6 @@ class PyQmlProxy(QObject):
                                                 self._experiment_data.e)
         self._experiment_parameters = self._experimentDataParameters(self._experiment_data)
         self.simulationParametersAsObj = json.dumps(self._experiment_parameters)
-        self.experiments = [self._defaultExperiment()]
         from easyDiffractionLib.Elements.Backgrounds.Point import PointBackground
         self._sample.pattern.backgrounds.append(
             # TODO we will be the current exp name and use it here.
@@ -1518,7 +1517,7 @@ class PyQmlProxy(QObject):
         descr = {}
         descr['sample'] = self._sample.as_dict(skip=['interface'])
 
-        if self.experiments:
+        if self._data.experiments:
             experiments_x = self._data.experiments[0].x
             experiments_y = self._data.experiments[0].y
             experiments_e = self._data.experiments[0].e

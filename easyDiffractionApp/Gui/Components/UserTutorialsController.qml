@@ -36,7 +36,9 @@ EaElements.RemoteController {
         interval: 1000
         onTriggered: {
             startScreenRecording()
-            runDataFittingTutorial()
+            //runDataFittingTutorial()
+            runDataSimulationTutorial()
+            stopScreenRecording()
         }
     }
 
@@ -153,6 +155,7 @@ EaElements.RemoteController {
     function runDataSimulationTutorial() {
         print("* run data simulation tutorial")
 
+        const was_tool_tips_checked = ExGlobals.Variables.enableToolTipsCheckBox.checked
         let x_pos = undefined
         let y_pos = undefined
 
@@ -167,10 +170,11 @@ EaElements.RemoteController {
         y_pos = !EaStyle.Colors.isDarkTheme ? EaStyle.Sizes.comboBoxHeight * 1.5 : undefined
         rc.mouseClick(ExGlobals.Variables.themeSelector, x_pos, y_pos)
 
-        rc.mouseClick(ExGlobals.Variables.enableToolTipsCheckBox)
-        rc.wait(500)
-        //rc.keyClick(Qt.Key_Escape) // DOESN'T WORK ON CI XVFB
-        rc.mouseClick(ExGlobals.Variables.preferencesOkButton)
+        if (!was_tool_tips_checked) {
+            rc.mouseClick(ExGlobals.Variables.enableToolTipsCheckBox)
+            rc.wait(500)
+            rc.mouseClick(ExGlobals.Variables.preferencesOkButton)
+        }
 
         // Home Tab
 
@@ -262,10 +266,24 @@ EaElements.RemoteController {
         rc.say("Now, you can see the interactive report generated on the summary page and export it in different formats.")
         rc.mouseClick(ExGlobals.Variables.summaryTabButton)
         rc.wait(1000)
-        rc.pointerMove(ExGlobals.Variables.reportWebView)
+        //rc.pointerMove(ExGlobals.Variables.reportWebView)
         //rc.mouseMove(ExGlobals.Variables.reportWebView)
         //rc.mouseWheel(ExGlobals.Variables.reportWebView)
-        rc.wait(1000)
+        //rc.wait(1000)
+
+        // Restore app preferences
+
+        rc.mouseClick(ExGlobals.Variables.preferencesButton)
+
+        rc.mouseClick(ExGlobals.Variables.themeSelector)
+        y_pos = !EaStyle.Colors.isDarkTheme ? EaStyle.Sizes.comboBoxHeight * 1.5 : undefined
+        rc.mouseClick(ExGlobals.Variables.themeSelector, x_pos, y_pos)
+
+        if (!was_tool_tips_checked) {
+            rc.mouseClick(ExGlobals.Variables.enableToolTipsCheckBox)
+            rc.wait(500)
+            rc.mouseClick(ExGlobals.Variables.preferencesOkButton)
+        }
 
         afterRunTutorial()
     }

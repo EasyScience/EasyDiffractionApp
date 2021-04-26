@@ -179,7 +179,7 @@ class PyQmlProxy(QObject):
         self.experimentLoadedChanged.connect(self._onExperimentLoadedChanged)
         self.experimentSkippedChanged.connect(self._onExperimentSkippedChanged)
 
-        self._background_proxy = BackgroundProxy()
+        self._background_proxy = BackgroundProxy(self)
         self._background_proxy.asObjChanged.connect(self._onParametersChanged)
         self._background_proxy.asObjChanged.connect(self._sample.set_background)
         self._background_proxy.asObjChanged.connect(self.calculatedDataChanged)
@@ -541,7 +541,7 @@ class PyQmlProxy(QObject):
         if self._interface.current_interface_name != 'CrysPy':
             self._interface.generate_sample_binding("filename", self._sample)
         self._sample.phases.name = 'Phases'
-        self._sample.set_background(self._background_proxy.asObj)
+        # self._sample.set_background(self._background_proxy.asObj)
         self.structureParametersChanged.emit()
 
     def _onPhaseRemoved(self):
@@ -793,6 +793,7 @@ class PyQmlProxy(QObject):
                 obj.experimentSkipped = False
                 obj.undoRedoChanged.emit()
                 obj.experimentDataAdded.emit()
+
             return inner
 
         def outer2(obj):
@@ -802,6 +803,7 @@ class PyQmlProxy(QObject):
                 obj.experimentSkipped = True
                 obj.undoRedoChanged.emit()
                 obj.experimentDataRemoved.emit()
+
             return inner
 
         borg.stack.push(FunctionStack(self, outer1(self), outer2(self)))
@@ -817,6 +819,7 @@ class PyQmlProxy(QObject):
                 obj.experimentLoaded = False
                 obj.experimentSkipped = False
                 obj.undoRedoChanged.emit()
+
             return inner
 
         def outer2(obj):
@@ -828,6 +831,7 @@ class PyQmlProxy(QObject):
                 obj.experimentLoaded = True
                 obj.experimentSkipped = False
                 obj.undoRedoChanged.emit()
+
             return inner
 
         borg.stack.push(FunctionStack(self, outer1(self), outer2(self)))
@@ -858,11 +862,16 @@ class PyQmlProxy(QObject):
 
     def _onExperimentDataAdded(self):
         print("***** _onExperimentDataAdded")
-        self._plotting_1d_proxy.setMeasuredData(self._experiment_data.x, self._experiment_data.y, self._experiment_data.e)
+        self._plotting_1d_proxy.setMeasuredData(self._experiment_data.x, self._experiment_data.y,
+                                                self._experiment_data.e)
         self._experiment_parameters = self._experimentDataParameters(self._experiment_data)
         self.simulationParametersAsObj = json.dumps(self._experiment_parameters)
         self.experiments = [self._defaultExperiment()]
-        self._background_proxy.setDefaultPoints()
+        from easyDiffractionLib.Elements.Backgrounds.Point import PointBackground
+        self._sample.pattern.backgrounds.append(
+            # TODO we will be the current exp name and use it here.
+            PointBackground(linked_experiment='current_exp')
+        )
         self.experimentDataChanged.emit()
 
     def _onExperimentDataRemoved(self):
@@ -931,8 +940,8 @@ class PyQmlProxy(QObject):
 
     def _defaultSimulationParameters(self):
         return {
-            "x_min": 10.0,
-            "x_max": 120.0,
+            "x_min":  10.0,
+            "x_max":  120.0,
             "x_step": 0.1
         }
 
@@ -1009,6 +1018,14 @@ class PyQmlProxy(QObject):
     ####################################################################################################################
     # Background
     ####################################################################################################################
+
+    @property
+    def _background_obj(self):
+        bgs = self._sample.pattern.backgrounds
+        itm = None
+        if len(bgs) > 0:
+            itm = bgs[0]
+        return itm
 
     @Property('QVariant', notify=dummySignal)
     def backgroundProxy(self):
@@ -1460,7 +1477,7 @@ class PyQmlProxy(QObject):
         projectPath = self.projectInfoAsJson['location']
         project_save_filepath = os.path.join(projectPath, 'project.json')
         descr = {}
-        descr['phases'] = self._phases_as_cif
+        descr['sample'] = self._sample.as_dict(skip=['interface'])
 
         if self.experiments:
             experiments_x = self._data.experiments[0].x
@@ -1468,15 +1485,15 @@ class PyQmlProxy(QObject):
             experiments_e = self._data.experiments[0].e
             descr['experiments'] = [experiments_x, experiments_y, experiments_e]
 
-            bg_x = self._background_proxy.asObj.x_sorted_points
-            bg_y = self._background_proxy.asObj.y_sorted_points
-            descr['background'] = [bg_x, bg_y]
-
-        descr['project_info'] = self._project_info
-        # Reading those is not yet implemented
-        descr['parameters'] = self._parameters_as_obj
-        descr['instrument_parameters'] = self._instrument_parameters_as_obj
         descr['experiment_skipped'] = self._experiment_skipped
+        descr['project_info'] = self._project_info
+
+        descr['interface'] = self._interface.current_interface_name
+
+        descr['minimizer'] = {
+            'engine': self.fitter.current_engine.name,
+            'method': self._current_minimizer_method_name
+        }
 
         content_json = json.dumps(descr, indent=4, default=self.default)
         path = generalizePath(project_save_filepath)
@@ -1505,13 +1522,24 @@ class PyQmlProxy(QObject):
             print("Failed to find project: '{0}'".format(path))
             return
         with open(path, 'r') as xml_file:
-            descr = json.load(xml_file)
+            descr: dict = json.load(xml_file)
 
-        self._phases_as_cif = descr['phases']
-        self._sample.phases = Phases.from_cif_str(self._phases_as_cif)
+        interface_name = descr.get('interface', None)
+        if interface_name is not None:
+            old_interface_name = self._interface.current_interface_name
+            if old_interface_name != interface_name:
+                self._interface.switch(interface_name)
+
+        self._sample = Sample.from_dict(descr['sample'])
+        self._sample.interface = self._interface
+        self._sample._updateInterface()
+
         # send signal to tell the proxy we changed phases
-        self.phaseAdded.emit()
+        self.phasesEnabled.emit()
+        self.undoRedoChanged.emit()
         self.phasesAsObjChanged.emit()
+        self.structureParametersChanged.emit()
+        self._background_proxy.onAsObjChanged()
 
         # experiment
         if 'experiments' in descr:
@@ -1523,14 +1551,6 @@ class PyQmlProxy(QObject):
             self.experimentDataAdded.emit()
             self._onParametersChanged()
 
-            # background
-            if 'background' in descr:
-                self._background_proxy.removeAllPoints()
-                bg_x = descr['background'][0]
-                bg_y = descr['background'][1]
-                for i, point in enumerate(bg_x):
-                    bg_point = (point, bg_y[i])
-                    self._background_proxy.addPoint(bg_point)
         else:
             # delete existing experiment
             self.removeExperiment()
@@ -1542,8 +1562,14 @@ class PyQmlProxy(QObject):
         # project info
         self.projectInfoAsJson = json.dumps(descr['project_info'])
 
-        # parameters
-        # TODO
+        new_minimizer_settings = descr.get('minimizer', None)
+        if new_minimizer_settings is not None:
+            new_engine = new_minimizer_settings['engine']
+            new_method = new_minimizer_settings['method']
+            new_engine_index = self.minimizerNames.index(new_engine)
+            self.currentMinimizerIndex = new_engine_index
+            new_method_index = self.minimizerMethodNames.index(new_method)
+            self.currentMinimizerMethodIndex = new_method_index
 
     # Undo/Redo stack operations
     ####################################################################################################################

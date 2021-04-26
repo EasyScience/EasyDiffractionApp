@@ -5,7 +5,7 @@ import platform
 import argparse
 
 # PySide
-from PySide2.QtCore import QUrl, qDebug, qCritical
+from PySide2.QtCore import QUrl
 from PySide2.QtWidgets import QApplication
 from PySide2.QtGui import Qt
 from PySide2.QtQml import QQmlApplicationEngine, qmlRegisterType

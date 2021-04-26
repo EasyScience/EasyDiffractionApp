@@ -22,6 +22,7 @@ EaComponents.TableView {
         query: "/root/item"
 
         XmlRole { name: "name"; query: "name/string()" }
+        XmlRole { name: "description"; query: "description/string()" }
         XmlRole { name: "path"; query: "path/string()" }
     }
 
@@ -41,14 +42,26 @@ EaComponents.TableView {
         EaComponents.TableViewLabel {
             width: tableView.width
                    - indexColumn.width
+                   - descriptionColumn.width
                    - uploadColumn.width
-                   - EaStyle.Sizes.tableColumnSpacing * 2
+                   - EaStyle.Sizes.tableColumnSpacing * 3
                    - EaStyle.Sizes.borderThickness
 
             horizontalAlignment: Text.AlignLeft
 
             headerText: "Name"
             text: model.name
+        }
+
+        EaComponents.TableViewLabel {
+            id: descriptionColumn
+
+            width: EaStyle.Sizes.fontPixelSize * 25
+
+            horizontalAlignment: Text.AlignLeft
+
+            headerText: "Description"
+            text: model.description
         }
 
         EaComponents.TableViewButton {

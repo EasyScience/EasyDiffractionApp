@@ -1609,6 +1609,8 @@ class PyQmlProxy(QObject):
             new_method_index = self.minimizerMethodNames.index(new_method)
             self.currentMinimizerMethodIndex = new_method_index
 
+        self.fitter.fit_object = self._sample
+
     # Undo/Redo stack operations
     ####################################################################################################################
     ####################################################################################################################

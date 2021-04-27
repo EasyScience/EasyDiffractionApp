@@ -1271,7 +1271,8 @@ class PyQmlProxy(QObject):
         current_minimizer = self.minimizerNames[self.currentMinimizerIndex]
         tested_methods = {
             'lmfit': ['leastsq', 'powell', 'cobyla'],
-            'bumps': ['newton', 'lm']
+            'bumps': ['newton', 'lm'],
+            'DFO_LS': ['leastsq']
         }
         #return self.fitter.available_methods()
         return tested_methods[current_minimizer]

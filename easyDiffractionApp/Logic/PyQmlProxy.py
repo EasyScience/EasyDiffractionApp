@@ -1268,7 +1268,14 @@ class PyQmlProxy(QObject):
 
     @Property('QVariant', notify=currentMinimizerChanged)
     def minimizerMethodNames(self):
-        return self.fitter.available_methods()
+        current_minimizer = self.minimizerNames[self.currentMinimizerIndex]
+        tested_methods = {
+            'lmfit': ['leastsq', 'powell', 'cobyla'],
+            'bumps': ['newton', 'lm'],
+            'DFO_LS': ['leastsq']
+        }
+        #return self.fitter.available_methods()
+        return tested_methods[current_minimizer]
 
     @Property(int, notify=currentMinimizerMethodChanged)
     def currentMinimizerMethodIndex(self):
@@ -1467,7 +1474,12 @@ class PyQmlProxy(QObject):
     @Property(str, notify=dummySignal)
     def projectExamplesAsXml(self):
         model = [
-            {"name": "PbSO4", "path": "../Resources/Examples/PbSO4/project.json"}
+            {"name": "PbSO4", "description": "neutrons, powder, 1D, D1A@ILL",
+             "path": "../Resources/Examples/PbSO4/project.json"},
+            {"name": "Co2SiO4", "description": "neutrons, powder, 1D, D20@ILL",
+             "path": "../Resources/Examples/Co2SiO4/project.json"},
+            {"name": "Dy3Al5O12", "description": "neutrons, powder, 1D, G410@LLB",
+             "path": "../Resources/Examples/Dy3Al5O12/project.json"}
         ]
         xml = dicttoxml(model, attr_type=False)
         xml = xml.decode()

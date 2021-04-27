@@ -73,6 +73,7 @@ EaComponents.ApplicationWindow {
         },
 
         EaElements.ToolButton {
+            enabled: false
             fontIcon: "question-circle"
             ToolTip.text: qsTr("Get online help")
             onClicked: Qt.openUrlExternally(ExGlobals.Constants.appUrl)

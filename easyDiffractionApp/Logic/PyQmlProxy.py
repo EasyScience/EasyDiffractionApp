@@ -1268,7 +1268,13 @@ class PyQmlProxy(QObject):
 
     @Property('QVariant', notify=currentMinimizerChanged)
     def minimizerMethodNames(self):
-        return self.fitter.available_methods()
+        current_minimizer = self.minimizerNames[self.currentMinimizerIndex]
+        tested_methods = {
+            'lmfit': ['leastsq', 'powell', 'cobyla'],
+            'bumps': ['newton', 'lm']
+        }
+        #return self.fitter.available_methods()
+        return tested_methods[current_minimizer]
 
     @Property(int, notify=currentMinimizerMethodChanged)
     def currentMinimizerMethodIndex(self):

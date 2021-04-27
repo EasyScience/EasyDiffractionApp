@@ -142,12 +142,11 @@ EaComponents.SideBarColumn {
             // Min edit area
             EaElements.TextField {
                 id: sliderFromLabel
-                readOnly: true
+                enabled: false
                 width: EaStyle.Sizes.fontPixelSize * 6
                 validator: DoubleValidator {}
                 maximumLength: 8
                 text: slider.from.toFixed(4)
-                onEditingFinished: {}
             }
 
             // Slider
@@ -172,7 +171,7 @@ EaComponents.SideBarColumn {
             // Max edit area
             EaElements.TextField {
                 id: sliderToLabel
-                readOnly: sliderToLabel.readOnly
+                enabled: sliderFromLabel.enabled
                 width: sliderFromLabel.width
                 validator: sliderFromLabel.validator
                 maximumLength: sliderFromLabel.maximumLength

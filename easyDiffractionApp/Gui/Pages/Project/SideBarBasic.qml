@@ -67,15 +67,10 @@ EaComponents.SideBarColumn {
             // obviously, so care is needed. TODO
             ExGlobals.Constants.proxy.loadProjectAs(fileUrl)
 
-            ExGlobals.Variables.sampleLoaded = true
             ExGlobals.Variables.projectCreated = true
 
             ExGlobals.Variables.samplePageEnabled = true
             ExGlobals.Variables.experimentPageEnabled = true
-            if (ExGlobals.Constants.proxy.experimentDataAsXml !== "") {
-                ExGlobals.Variables.analysisPageEnabled = true
-                ExGlobals.Variables.summaryPageEnabled = true
-            }
         }
     }
 

@@ -148,10 +148,10 @@ class PyQmlProxy(QObject):
         self._phases_as_cif = ""
         self.phaseAdded.connect(self._onPhaseAdded)
         self.phaseAdded.connect(self.phasesEnabled)
-        self.phaseAdded.connect(self.undoRedoChanged)
+        #self.phaseAdded.connect(self.undoRedoChanged)
         self.phaseRemoved.connect(self._onPhaseRemoved)
         self.phaseRemoved.connect(self.phasesEnabled)
-        self.phaseRemoved.connect(self.undoRedoChanged)
+        #self.phaseRemoved.connect(self.undoRedoChanged)
 
         self._current_phase_index = 0
         self.currentPhaseChanged.connect(self._onCurrentPhaseChanged)
@@ -170,6 +170,7 @@ class PyQmlProxy(QObject):
         self._experiment_parameters = None
         self._experiment_data = None
         self._experiment_data_as_xml = ""
+        self.experiments = []
         self.experimentDataChanged.connect(self._onExperimentDataChanged)
         self.experimentDataAdded.connect(self._onExperimentDataAdded)
         self.experimentDataRemoved.connect(self._onExperimentDataRemoved)
@@ -224,11 +225,11 @@ class PyQmlProxy(QObject):
         # Status info
         self.statusInfoChanged.connect(self._onStatusInfoChanged)
         self.currentCalculatorChanged.connect(self.statusInfoChanged)
-        self.currentCalculatorChanged.connect(self.undoRedoChanged)
+        #self.currentCalculatorChanged.connect(self.undoRedoChanged)
         self.currentMinimizerChanged.connect(self.statusInfoChanged)
-        self.currentMinimizerChanged.connect(self.undoRedoChanged)
+        #self.currentMinimizerChanged.connect(self.undoRedoChanged)
         self.currentMinimizerMethodChanged.connect(self.statusInfoChanged)
-        self.currentMinimizerMethodChanged.connect(self.undoRedoChanged)
+        #self.currentMinimizerMethodChanged.connect(self.undoRedoChanged)
 
         # Multithreading
         self._fitter_thread = None
@@ -495,30 +496,35 @@ class PyQmlProxy(QObject):
     @Slot(str)
     def addSampleFromCif(self, cif_url):
         cif_path = generalizePath(cif_url)
-        if borg.stack.enabled:
-            borg.stack.beginMacro(f'Loaded cif: {cif_path}')
-        try:
-            self._sample.phases = Phases.from_cif_file(cif_path)
-        finally:
-            if borg.stack.enabled:
-                borg.stack.endMacro()
-            # if len(self._sample.phases) < 2:
-            #     # We have problems with removing the only phase.....
-            #     borg.stack.pop()
+        borg.stack.enabled = False
+        self._sample.phases = Phases.from_cif_file(cif_path)
+        borg.stack.enabled = True
+        #if borg.stack.enabled:
+        #    borg.stack.beginMacro(f'Loaded cif: {cif_path}')
+        #try:
+        #    self._sample.phases = Phases.from_cif_file(cif_path)
+        #finally:
+        #    if borg.stack.enabled:
+        #        borg.stack.endMacro()
+        #    # if len(self._sample.phases) < 2:
+        #    #     # We have problems with removing the only phase.....
+        #    #     borg.stack.pop()
         self.phaseAdded.emit()
         # self.undoRedoChanged.emit()
 
     @Slot()
     def addDefaultPhase(self):
         print("+ addDefaultPhase")
-        if borg.stack.enabled:
-            borg.stack.beginMacro('Loaded default phase')
+        #if borg.stack.enabled:
+        #    borg.stack.beginMacro('Loaded default phase')
+        borg.stack.enabled = False
         self._sample.phases = self._defaultPhase()
-        if borg.stack.enabled:
-            borg.stack.endMacro()
-            # if len(self._sample.phases) < 2:
-            #     # We have problems with removing the only phase.....
-            #     borg.stack.pop()
+        borg.stack.enabled = True
+        #if borg.stack.enabled:
+        #    borg.stack.endMacro()
+        #    # if len(self._sample.phases) < 2:
+        #    #     # We have problems with removing the only phase.....
+        #    #     borg.stack.pop()
         self.phaseAdded.emit()
         # self.undoRedoChanged.emit()
         # self.phasesEnabled.emit()
@@ -799,8 +805,7 @@ class PyQmlProxy(QObject):
 
     def _setExperimentDataAsXml(self):
         print("+ _setExperimentDataAsXml")
-        experiments = [{'name': experiment.name} for experiment in self._data.experiments]
-        self._experiment_data_as_xml = dicttoxml(experiments, attr_type=True).decode()
+        self._experiment_data_as_xml = dicttoxml(self.experiments, attr_type=True).decode()
         self.experimentDataAsXmlChanged.emit()
 
     def _onExperimentDataChanged(self):
@@ -816,57 +821,67 @@ class PyQmlProxy(QObject):
     def addExperimentDataFromXye(self, file_url):
         print(f"+ addExperimentDataFromXye: {file_url}")
 
+        self._experiment_data = self._loadExperimentData(file_url)
         self._data.experiments[0].name = pathlib.Path(file_url).stem
+        self.experiments = [{'name': experiment.name} for experiment in self._data.experiments]
+        self.experimentLoaded = True
+        self.experimentSkipped = False
+        self.experimentDataAdded.emit()
 
-        def outer1(obj):
-            def inner():
-                obj._experiment_data = self._loadExperimentData(file_url)
-                obj.experimentLoaded = True
-                obj.experimentSkipped = False
-                obj.undoRedoChanged.emit()
-                obj.experimentDataAdded.emit()
-
-            return inner
-
-        def outer2(obj):
-            def inner():
-                obj.experiments.clear()
-                obj.experimentLoaded = False
-                obj.experimentSkipped = True
-                obj.undoRedoChanged.emit()
-                obj.experimentDataRemoved.emit()
-
-            return inner
-
-        borg.stack.push(FunctionStack(self, outer1(self), outer2(self)))
+        #def outer1(obj):
+        #    def inner():
+        #        obj._experiment_data = self._loadExperimentData(file_url)
+        #        obj.experimentLoaded = True
+        #        obj.experimentSkipped = False
+        #        #obj.undoRedoChanged.emit()
+        #        obj.experimentDataAdded.emit()
+        #
+        #    return inner
+        #
+        #def outer2(obj):
+        #    def inner():
+        #        #obj.experiments.clear()
+        #        obj.experimentLoaded = False
+        #        obj.experimentSkipped = True
+        #        #obj.undoRedoChanged.emit()
+        #        obj.experimentDataRemoved.emit()
+        #
+        #    return inner
+        #
+        #borg.stack.push(FunctionStack(self, outer1(self), outer2(self)))
 
     @Slot()
     def removeExperiment(self):
         print("+ removeExperiment")
 
-        def outer1(obj):
-            def inner():
-                obj.experiments.clear()
-                obj.experimentDataRemoved.emit()
-                obj.experimentLoaded = False
-                obj.experimentSkipped = False
-                obj.undoRedoChanged.emit()
+        self.experiments.clear()
+        self.experimentLoaded = False
+        self.experimentSkipped = False
+        self.experimentDataRemoved.emit()
 
-            return inner
-
-        def outer2(obj):
-            data = self._experiment_data
-
-            def inner():
-                obj._experiment_data = data
-                obj.experimentDataAdded.emit()
-                obj.experimentLoaded = True
-                obj.experimentSkipped = False
-                obj.undoRedoChanged.emit()
-
-            return inner
-
-        borg.stack.push(FunctionStack(self, outer1(self), outer2(self)))
+        #def outer1(obj):
+        #    def inner():
+        #        #obj.experiments.clear()
+        #        obj.experimentDataRemoved.emit()
+        #        obj.experimentLoaded = False
+        #        obj.experimentSkipped = False
+        #        #obj.undoRedoChanged.emit()
+        #
+        #    return inner
+        #
+        #def outer2(obj):
+        #    data = self._experiment_data
+        #
+        #    def inner():
+        #        obj._experiment_data = data
+        #        obj.experimentDataAdded.emit()
+        #        obj.experimentLoaded = True
+        #        obj.experimentSkipped = False
+        #        #obj.undoRedoChanged.emit()
+        #
+        #    return inner
+        #
+        #borg.stack.push(FunctionStack(self, outer1(self), outer2(self)))
 
     def _loadExperimentData(self, file_url):
         print("+ _loadExperimentData")
@@ -1588,7 +1603,7 @@ class PyQmlProxy(QObject):
 
         # send signal to tell the proxy we changed phases
         self.phasesEnabled.emit()
-        self.undoRedoChanged.emit()
+        #self.undoRedoChanged.emit()
         self.phasesAsObjChanged.emit()
         self.structureParametersChanged.emit()
         self._background_proxy.onAsObjChanged()
@@ -1600,6 +1615,10 @@ class PyQmlProxy(QObject):
             self._data.experiments[0].y = np.array(descr['experiments'][1])
             self._data.experiments[0].e = np.array(descr['experiments'][2])
             self._experiment_data = self._data.experiments[0]
+            self.experiments = [{'name': descr['project_info']['experiments']}]
+            self.setCurrentExperimentDatasetName(descr['project_info']['experiments'])
+            self.experimentLoaded = True
+            self.experimentSkipped = False
             self.experimentDataAdded.emit()
             self._onParametersChanged()
 
@@ -1624,6 +1643,8 @@ class PyQmlProxy(QObject):
             self.currentMinimizerMethodIndex = new_method_index
 
         self.fitter.fit_object = self._sample
+
+        self.resetUndoRedoStack()
 
     # Undo/Redo stack operations
     ####################################################################################################################
@@ -1693,6 +1714,7 @@ class PyQmlProxy(QObject):
     def resetUndoRedoStack(self):
         if borg.stack.enabled:
             borg.stack.clear()
+            self.undoRedoChanged.emit()
 
 
 def createFile(path, content):

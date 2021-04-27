@@ -38,11 +38,7 @@ EaComponents.SideBarColumn {
                 fontIcon: "plus-circle"
                 text: qsTr("Set new phase manually")
 
-                onClicked: {
-                    ExGlobals.Constants.proxy.addDefaultPhase()
-//                    ExGlobals.Variables.experimentPageEnabled = true
-                    ExGlobals.Variables.sampleLoaded = true
-                }
+                onClicked: ExGlobals.Constants.proxy.addDefaultPhase()
 
                 Component.onCompleted: ExGlobals.Variables.setNewSampleManuallyButton = this
             }
@@ -111,10 +107,6 @@ EaComponents.SideBarColumn {
     Dialogs1.FileDialog{
         id: loadPhaseFileDialog
         nameFilters: [ "CIF files (*.cif)"]
-        onAccepted: {
-            ExGlobals.Constants.proxy.addSampleFromCif(fileUrl)
-//            ExGlobals.Variables.experimentPageEnabled = true
-            ExGlobals.Variables.sampleLoaded = true
-        }
+        onAccepted: ExGlobals.Constants.proxy.addSampleFromCif(fileUrl)
     }
 }

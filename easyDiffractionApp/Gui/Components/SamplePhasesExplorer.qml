@@ -25,14 +25,6 @@ EaComponents.TableView {
 
         XmlRole { name: "label"; query: "name/string()" }
         XmlRole { name: "color"; query: "color/string()" }
-
-        onXmlChanged: {
-            if (ExGlobals.Constants.proxy.phasesAsObj.length === 0) {
-                ExGlobals.Variables.sampleLoaded = false
-                ExGlobals.Variables.analysisPageEnabled = false
-                ExGlobals.Variables.summaryPageEnabled = false
-            }
-        }
     }
 
     // Table rows

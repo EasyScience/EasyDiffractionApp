@@ -120,7 +120,8 @@ EaComponents.ApplicationWindow {
         // Analysis tab
         EaElements.AppBarTabButton {
             id: analysisTabButton
-            enabled: ExGlobals.Variables.analysisPageEnabled
+            enabled: ExGlobals.Constants.proxy.samplesPresent &&
+                     (ExGlobals.Constants.proxy.experimentSkipped || ExGlobals.Constants.proxy.experimentLoaded)
             fontIcon: "calculator"
             text: qsTr("Analysis")
             ToolTip.text: qsTr("Simulation and fitting page")
@@ -130,7 +131,8 @@ EaComponents.ApplicationWindow {
         // Summary tab
         EaElements.AppBarTabButton {
             id: summaryTabButton
-            enabled: ExGlobals.Variables.summaryPageEnabled
+            enabled: ExGlobals.Constants.proxy.samplesPresent &&
+                     (ExGlobals.Constants.proxy.experimentSkipped || ExGlobals.Constants.proxy.experimentLoaded)
             fontIcon: "clipboard-list"
             text: qsTr("Summary")
             ToolTip.text: qsTr("Summary of the work done")

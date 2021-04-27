@@ -74,13 +74,9 @@ EaComponents.TableView {
                 const fileUrl = Qt.resolvedUrl(model.path)
                 ExGlobals.Constants.proxy.loadProjectAs(fileUrl)
 
-                ExGlobals.Variables.sampleLoaded = true
-
                 ExGlobals.Variables.samplePageEnabled = true
                 ExGlobals.Variables.experimentPageEnabled = true
                 ExGlobals.Variables.projectCreated = true
-                ExGlobals.Variables.analysisPageEnabled = true
-                ExGlobals.Variables.summaryPageEnabled = true
             }
 
             Component.onCompleted: {

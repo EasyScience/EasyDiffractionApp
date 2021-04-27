@@ -10,14 +10,9 @@ QtObject {
     property bool homePageEnabled: isDebugMode ? true : true
     property bool projectPageEnabled: isDebugMode ? true : false
     property bool samplePageEnabled: isDebugMode ? true : false
-//    property bool experimentPageEnabled: isDebugMode ? true : false
-    property bool analysisPageEnabled: isDebugMode ? true : false
-    property bool summaryPageEnabled: isDebugMode ? true : false
 
     // Workflow states
     property bool projectCreated: false
-    property bool sampleLoaded: false
-    property bool experimentSkipped: false
     property bool needsSave: true // while waiting for a proper undo/redo flag
 
     // //////////

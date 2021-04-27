@@ -106,11 +106,13 @@ class BackgroundProxy(QObject):
 
     def _setAsXml(self):
         start_time = timeit.default_timer()
+        if self._background_as_obj is None:
+            self._background_as_xml = dicttoxml({}, attr_type=False).decode()
+        else:
+            background = np.array([item.as_dict() for item in self._background_as_obj])
+            point_index = np.array([item.x.raw_value for item in self._background_as_obj]).argsort()
+            self._background_as_xml = dicttoxml(background[point_index], attr_type=False).decode()
 
-        background = np.array([item.as_dict() for item in self._background_as_obj])
-        point_index = np.array([item.x.raw_value for item in self._background_as_obj]).argsort()
-        self._background_as_xml = dicttoxml(background[point_index], attr_type=False).decode()
-
-        print("+ _setAsXml: {0:.3f} s".format(timeit.default_timer() - start_time))
+            print("+ _setAsXml: {0:.3f} s".format(timeit.default_timer() - start_time))
 
         self.asXmlChanged.emit()

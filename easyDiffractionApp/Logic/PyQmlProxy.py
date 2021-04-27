@@ -1525,8 +1525,9 @@ class PyQmlProxy(QObject):
         """
         projectPath = self.projectInfoAsJson['location']
         project_save_filepath = os.path.join(projectPath, 'project.json')
-        descr = {}
-        descr['sample'] = self._sample.as_dict(skip=['interface'])
+        descr = {
+            'sample': self._sample.as_dict(skip=['interface'])
+        }
 
         if self._data.experiments:
             experiments_x = self._data.experiments[0].x

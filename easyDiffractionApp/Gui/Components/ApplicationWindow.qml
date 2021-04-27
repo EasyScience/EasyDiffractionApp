@@ -31,23 +31,33 @@ EaComponents.ApplicationWindow {
         EaElements.ToolButton {
             enabled: ExGlobals.Constants.proxy.stateHasChanged
             highlighted: true
-            fontIcon: "\uf0c7"
+            fontIcon: "save"
             ToolTip.text: qsTr("Save current state of the project")
             onClicked:  ExGlobals.Constants.proxy.saveProject()
         },
 
         EaElements.ToolButton {
             enabled: ExGlobals.Constants.proxy.canUndo
-            fontIcon: "\uf2ea"
+            fontIcon: "undo"
             ToolTip.text: qsTr("Undo: " + ExGlobals.Constants.proxy.undoText)
             onClicked: ExGlobals.Constants.proxy.undo()
         },
 
         EaElements.ToolButton {
             enabled: ExGlobals.Constants.proxy.canRedo
-            fontIcon: "\uf2f9"
+            fontIcon: "redo"
             ToolTip.text: qsTr("Redo: " + ExGlobals.Constants.proxy.redoText)
             onClicked: ExGlobals.Constants.proxy.redo()
+        },
+
+        EaElements.ToolButton {
+            enabled: ExGlobals.Constants.proxy.projectCreated ||
+                     ExGlobals.Constants.proxy.samplesPresent ||
+                     ExGlobals.Constants.proxy.experimentSkipped ||
+                     ExGlobals.Constants.proxy.experimentLoaded
+            fontIcon: "backspace"
+            ToolTip.text: qsTr("Reset to initial state without project, phases and data")
+            onClicked: resetStateDialog.open()
         }
 
     ]
@@ -56,20 +66,20 @@ EaComponents.ApplicationWindow {
     appBarRightButtons: [
 
         EaElements.ToolButton {
-            fontIcon: "\uf013"
+            fontIcon: "cog"
             ToolTip.text: qsTr("Application preferences")
             onClicked: EaGlobals.Variables.showAppPreferencesDialog = true
             Component.onCompleted: ExGlobals.Variables.preferencesButton = this
         },
 
         EaElements.ToolButton {
-            fontIcon: "\uf059"
+            fontIcon: "question-circle"
             ToolTip.text: qsTr("Get online help")
             onClicked: Qt.openUrlExternally(ExGlobals.Constants.appUrl)
         },
 
         EaElements.ToolButton {
-            fontIcon: "\uf188"
+            fontIcon: "bug"
             ToolTip.text: qsTr("Report a bug or issue")
             onClicked: Qt.openUrlExternally(`${ExGlobals.Constants.appUrl}/issues`)
         }
@@ -121,7 +131,8 @@ EaComponents.ApplicationWindow {
         EaElements.AppBarTabButton {
             id: analysisTabButton
             enabled: ExGlobals.Constants.proxy.samplesPresent &&
-                     (ExGlobals.Constants.proxy.experimentSkipped || ExGlobals.Constants.proxy.experimentLoaded)
+                     (ExGlobals.Constants.proxy.experimentSkipped ||
+                      ExGlobals.Constants.proxy.experimentLoaded)
             fontIcon: "calculator"
             text: qsTr("Analysis")
             ToolTip.text: qsTr("Simulation and fitting page")
@@ -132,7 +143,8 @@ EaComponents.ApplicationWindow {
         EaElements.AppBarTabButton {
             id: summaryTabButton
             enabled: ExGlobals.Constants.proxy.samplesPresent &&
-                     (ExGlobals.Constants.proxy.experimentSkipped || ExGlobals.Constants.proxy.experimentLoaded)
+                     (ExGlobals.Constants.proxy.experimentSkipped ||
+                      ExGlobals.Constants.proxy.experimentLoaded)
             fontIcon: "clipboard-list"
             text: qsTr("Summary")
             ToolTip.text: qsTr("Summary of the work done")
@@ -153,7 +165,9 @@ EaComponents.ApplicationWindow {
 
         // Project page
         EaComponents.ContentPage {
-            defaultInfo: ExGlobals.Variables.projectCreated ? "" : qsTr("No Project Created/Opened")
+            defaultInfo: ExGlobals.Constants.proxy.projectCreated ?
+                             "" :
+                             qsTr("No Project Created/Opened")
 
             mainContent: EaComponents.MainContent {
                 tabs: [
@@ -347,13 +361,42 @@ EaComponents.ApplicationWindow {
     // Application dialogs (invisible at the beginning)
     ExProjectPage.ProjectDescriptionDialog {
         onAccepted: {
+            ExGlobals.Constants.proxy.projectCreated = true
             ExGlobals.Variables.samplePageEnabled = true
-            ExGlobals.Variables.projectCreated = true
         }
     }
 
     ExComponents.CloseDialog {
         id: closeDialog
+    }
+
+    EaElements.Dialog {
+        id: resetStateDialog
+
+        title: qsTr("Reset state")
+
+        EaElements.Label {
+            horizontalAlignment: Text.AlignHCenter
+            text: qsTr("Are you sure you want to reset the application to its\noriginal state without project, phases and data?\n\nThis operation cannot be undone.")
+        }
+
+        footer: EaElements.DialogButtonBox {
+            EaElements.Button {
+                text: qsTr("Cancel")
+                onClicked: resetStateDialog.close()
+            }
+
+            EaElements.Button {
+                text: qsTr("OK")
+                onClicked: {
+                    EaGlobals.Variables.appBarCurrentIndex = 0
+                    ExGlobals.Variables.projectPageEnabled = false
+                    ExGlobals.Variables.samplePageEnabled = false
+                    ExGlobals.Constants.proxy.resetState()
+                    resetStateDialog.close()
+                }
+            }
+        }
     }
 
     ///////////////////

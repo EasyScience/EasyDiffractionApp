@@ -37,7 +37,6 @@ EaComponents.ApplicationWindow {
         },
 
         EaElements.ToolButton {
-            //enabled: false
             enabled: ExGlobals.Constants.proxy.canUndo
             fontIcon: "\uf2ea"
             ToolTip.text: qsTr("Undo: " + ExGlobals.Constants.proxy.undoText)
@@ -45,7 +44,6 @@ EaComponents.ApplicationWindow {
         },
 
         EaElements.ToolButton {
-            //enabled: false
             enabled: ExGlobals.Constants.proxy.canRedo
             fontIcon: "\uf2f9"
             ToolTip.text: qsTr("Redo: " + ExGlobals.Constants.proxy.redoText)
@@ -172,7 +170,7 @@ EaComponents.ApplicationWindow {
             sideBar: EaComponents.SideBar {
                 tabs: [
                     EaElements.TabButton { text: qsTr("Basic controls") },
-                    EaElements.TabButton { text: qsTr("Advanced controls"); enabled: false }
+                    EaElements.TabButton { enabled: false; text: qsTr("Advanced controls") }
                 ]
 
                 items: [
@@ -211,7 +209,7 @@ EaComponents.ApplicationWindow {
             sideBar: EaComponents.SideBar {
                 tabs: [
                     EaElements.TabButton { text: qsTr("Basic controls") },
-                    EaElements.TabButton { text: qsTr("Advanced controls"); enabled: false }
+                    EaElements.TabButton { enabled: false; text: qsTr("Advanced controls") }
                 ]
 
                 items: [
@@ -244,7 +242,7 @@ EaComponents.ApplicationWindow {
             sideBar: EaComponents.SideBar {
                 tabs: [
                     EaElements.TabButton { text: qsTr("Basic controls") },
-                    EaElements.TabButton { text: qsTr("Advanced controls") }
+                    EaElements.TabButton { enabled: false; text: qsTr("Advanced controls") }
                 ]
 
                 items: [
@@ -313,7 +311,7 @@ EaComponents.ApplicationWindow {
             sideBar: EaComponents.SideBar {
                 tabs: [
                     EaElements.TabButton { text: qsTr("Basic controls") },
-                    EaElements.TabButton { text: qsTr("Advanced controls"); enabled: false }
+                    EaElements.TabButton { enabled: false; text: qsTr("Advanced controls") }
                 ]
 
                 items: [

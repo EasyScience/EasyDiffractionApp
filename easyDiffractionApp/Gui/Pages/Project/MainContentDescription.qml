@@ -43,10 +43,12 @@ Rectangle {
             }
 
             EaElements.Label {
+                visible: ExGlobals.Constants.proxy.currentProjectPath !== '--- EXAMPLE ---'
                 font.bold: true
                 text: qsTr("Location:")
             }
             EaElements.Label {
+                visible: ExGlobals.Constants.proxy.currentProjectPath !== '--- EXAMPLE ---'
                 text: ExGlobals.Constants.proxy.currentProjectPath
             }
 

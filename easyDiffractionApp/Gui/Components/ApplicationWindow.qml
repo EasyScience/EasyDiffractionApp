@@ -29,7 +29,8 @@ EaComponents.ApplicationWindow {
     appBarLeftButtons: [
 
         EaElements.ToolButton {
-            enabled: ExGlobals.Constants.proxy.stateHasChanged
+            enabled: ExGlobals.Constants.proxy.stateHasChanged &&
+                     ExGlobals.Constants.proxy.currentProjectPath !== '--- EXAMPLE ---'
             highlighted: true
             fontIcon: "save"
             ToolTip.text: qsTr("Save current state of the project")

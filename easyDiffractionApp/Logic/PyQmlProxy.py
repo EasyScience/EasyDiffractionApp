@@ -364,6 +364,7 @@ class PyQmlProxy(QObject):
     def editProjectInfo(self, key, value):
         if key == 'location':
             self.currentProjectPath = value
+            return
         else:
             if self._project_info[key] == value:
                 return
@@ -376,7 +377,10 @@ class PyQmlProxy(QObject):
 
     @currentProjectPath.setter
     def currentProjectPath(self, new_path):
+        if self._currentProjectPath == new_path:
+            return
         self._currentProjectPath = new_path
+        self.projectInfoChanged.emit()
 
     @Slot()
     def createProject(self):
@@ -1570,8 +1574,7 @@ class PyQmlProxy(QObject):
     @Slot(str)
     def loadExampleProject(self, filepath):
         self._loadProjectAs(filepath)
-        self.currentProjectPath = '--- EXAMPLE --'
-        self.projectInfoChanged.emit()
+        self.currentProjectPath = '--- EXAMPLE ---'
         self.stateChanged.emit(False)
 
     @Property(str, notify=dummySignal)
@@ -1671,6 +1674,8 @@ class PyQmlProxy(QObject):
             if descr['experiment_skipped']:
                 self.experimentSkipped = True
                 self.experimentSkippedChanged.emit()
+            else:
+                self.experimentSkipped = False
 
         # project info
         self.projectInfoAsJson = json.dumps(descr['project_info'])

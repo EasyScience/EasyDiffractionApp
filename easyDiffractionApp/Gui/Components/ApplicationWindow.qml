@@ -39,14 +39,14 @@ EaComponents.ApplicationWindow {
         EaElements.ToolButton {
             enabled: ExGlobals.Constants.proxy.canUndo
             fontIcon: "undo"
-            ToolTip.text: qsTr("Undo: " + ExGlobals.Constants.proxy.undoText)
+            ToolTip.text: qsTr("Undo " + ExGlobals.Constants.proxy.undoText)
             onClicked: ExGlobals.Constants.proxy.undo()
         },
 
         EaElements.ToolButton {
             enabled: ExGlobals.Constants.proxy.canRedo
             fontIcon: "redo"
-            ToolTip.text: qsTr("Redo: " + ExGlobals.Constants.proxy.redoText)
+            ToolTip.text: qsTr("Redo " + ExGlobals.Constants.proxy.redoText)
             onClicked: ExGlobals.Constants.proxy.redo()
         },
 

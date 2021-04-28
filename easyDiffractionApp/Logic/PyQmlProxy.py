@@ -1529,7 +1529,7 @@ class PyQmlProxy(QObject):
              "path": "../Resources/Examples/PbSO4/project.json"},
             {"name": "Co2SiO4", "description": "neutrons, powder, 1D, D20@ILL",
              "path": "../Resources/Examples/Co2SiO4/project.json"},
-            {"name": "Dy3Al5O12", "description": "neutrons, powder, 1D, G410@LLB",
+            {"name": "Dy3Al5O12", "description": "neutrons, powder, 1D, G41@LLB",
              "path": "../Resources/Examples/Dy3Al5O12/project.json"}
         ]
         xml = dicttoxml(model, attr_type=False)
@@ -1766,7 +1766,10 @@ class PyQmlProxy(QObject):
                 return orig_tooltip
             frm = frm2.group(1)
         to = match.group(3)
-        tooltip = "'{}' value changed from {} to {}.".format(param, frm, to)
+        val_type = 'value'
+        if to == 'True' or to == 'False':
+            val_type = 'fit'
+        tooltip = "'{}' {} change from {} to {}".format(param, val_type, frm, to)
         return tooltip
 
     @Slot()

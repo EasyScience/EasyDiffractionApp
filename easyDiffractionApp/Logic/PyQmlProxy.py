@@ -1,5 +1,6 @@
 # noqa: E501
 import os
+import sys
 import pathlib
 import datetime
 import re
@@ -1355,7 +1356,25 @@ class PyQmlProxy(QObject):
             self.onStopFit()
             borg.stack.endMacro()  # need this to close the undo stack properly
             return
+        # macos is possibly problematic with MT, skip on this platform
+        if 'darwin' in sys.platform:
+            self.nonthreaded_fit()
+        else:
+            self.threaded_fit()
 
+    def nonthreaded_fit(self):
+        self.isFitFinished = False
+        exp_data = self._data.experiments[0]
+
+        x = exp_data.x
+        y = exp_data.y
+        weights = 1 / exp_data.e
+        method = self._current_minimizer_method_name
+
+        res = self.fitter.fit(x, y, weights=weights, method=method)
+        self._setFitResults(res)
+
+    def threaded_fit(self):
         self.isFitFinished = False
         exp_data = self._data.experiments[0]
 

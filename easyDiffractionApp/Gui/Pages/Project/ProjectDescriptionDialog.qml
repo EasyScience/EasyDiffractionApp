@@ -20,7 +20,6 @@ EaComponents.ProjectDescriptionDialog {
     }
 
     Component.onCompleted: {
-        print("=== onCompleted ExGlobals.Constants.proxy.currentProjectPath", ExGlobals.Constants.proxy.currentProjectPath)
         projectName = ExGlobals.Constants.proxy.projectInfoAsJson.name
         projectShortDescription = ExGlobals.Constants.proxy.projectInfoAsJson.short_description
         projectLocation = ExGlobals.Constants.proxy.currentProjectPath

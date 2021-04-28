@@ -19,7 +19,7 @@ Item {
         EaComponents.GuideWindow {
             container: homePageGuidesContainer
             parent: ExGlobals.Variables.aboutButton
-            text: qsTr("Click here to show about window.")
+            text: qsTr("Click here to show the 'About' window.")
         }
 
         EaComponents.GuideWindow {
@@ -37,7 +37,7 @@ Item {
         EaComponents.GuideWindow {
             container: homePageGuidesContainer
             parent: ExGlobals.Variables.startButton
-            text: qsTr("Click here to start your journey to easyDiffraction!")
+            text: qsTr("Click here to start your journey with easyDiffraction!")
         }
     }
 
@@ -51,7 +51,7 @@ Item {
         EaComponents.GuideWindow {
             container: projectPageGuidesContainer
             parent: ExGlobals.Variables.openProjectButton
-            text: qsTr("Click here to open existing project...")
+            text: qsTr("Click here to open an existing project...")
         }
 
         EaComponents.GuideWindow {
@@ -63,7 +63,7 @@ Item {
         EaComponents.GuideWindow {
             container: projectPageGuidesContainer
             parent: ExGlobals.Variables.loadExampleProjectButton
-            text: qsTr("Or click button here to load one of the examples.")
+            text: qsTr("Or click this button to load one of the examples.")
         }
 
         EaComponents.GuideWindow {
@@ -171,7 +171,7 @@ Item {
         EaComponents.GuideWindow {
             container: analysisPageGuidesContainer
             parent: ExGlobals.Variables.parametersGroup
-            text: qsTr("Here you can see all the refinable parameters.\n\nYou can change their starting values manually\nor using the slider below.")
+            text: qsTr("Here you can see all the refinable parameters.\n\nYou can change their starting values manually.")
         }
 
         EaComponents.GuideWindow {
@@ -183,7 +183,7 @@ Item {
         EaComponents.GuideWindow {
             container: analysisPageGuidesContainer
             parent: ExGlobals.Variables.calculationCifTab
-            text: qsTr("This tab button allows to see the\ncalcualted data as plain text.")
+            text: qsTr("This tab button allows us to see the\ncalcualted data as plain text.")
         }
 
         EaComponents.GuideWindow {
@@ -209,7 +209,7 @@ Item {
         EaComponents.GuideWindow {
             container: summaryPageGuidesContainer
             parent: ExGlobals.Variables.summaryPageMainContent
-            text: qsTr("A report here includes brief project details,\nlist of fitable parameters, structure view and\nfitting plot.")
+            text: qsTr("The report includes a project summary including;\nlist of fitable parameters, structure view and\nfitting plot.")
         }
 
         EaComponents.GuideWindow {

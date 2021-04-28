@@ -183,7 +183,7 @@ Item {
         EaComponents.GuideWindow {
             container: analysisPageGuidesContainer
             parent: ExGlobals.Variables.calculationCifTab
-            text: qsTr("This tab button allows us to see the\ncalcualted data as plain text.")
+            text: qsTr("This tab button allows us to see the\ncalculated data as plain text.")
         }
 
         EaComponents.GuideWindow {
@@ -209,7 +209,7 @@ Item {
         EaComponents.GuideWindow {
             container: summaryPageGuidesContainer
             parent: ExGlobals.Variables.summaryPageMainContent
-            text: qsTr("The report includes a project summary including;\nlist of fitable parameters, structure view and\nfitting plot.")
+            text: qsTr("The report contains a project summary including;\nlist of fitable parameters, structure view and\nfitting plot.")
         }
 
         EaComponents.GuideWindow {

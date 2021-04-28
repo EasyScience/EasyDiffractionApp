@@ -35,7 +35,8 @@ EaComponents.TableView {
             text: model.index + 1
         }
 
-        EaComponents.TableViewTextInput {
+        EaComponents.TableViewLabel {
+        //EaComponents.TableViewTextInput {
             horizontalAlignment: Text.AlignLeft
             width: EaStyle.Sizes.sideBarContentWidth
                    - numColumn.width
@@ -50,15 +51,14 @@ EaComponents.TableView {
 
         EaComponents.TableViewTextInput {
             id: scaleColumn
-            horizontalAlignment: Text.AlignRight
             headerText: "Scale"
-            //text: typeof ExGlobals.Constants.proxy.patternParametersAsObj.scale != "undefined" ? EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.patternParametersAsObj.scale.value) : ""
             text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.patternParametersAsObj.scale.value)
             onEditingFinished: editParameterValue(ExGlobals.Constants.proxy.patternParametersAsObj.scale["@id"], text)
         }
 
         EaComponents.TableViewCheckBox {
             id: useColumn
+            enabled: false
             width: EaStyle.Sizes.fontPixelSize * 4
             headerText: "Use"
             checked: true
@@ -66,6 +66,7 @@ EaComponents.TableView {
 
         EaComponents.TableViewButton {
             id: deleteRowColumn
+            enabled: false
             headerText: "Del."
             fontIcon: "minus-circle"
             ToolTip.text: qsTr("Remove this phase")

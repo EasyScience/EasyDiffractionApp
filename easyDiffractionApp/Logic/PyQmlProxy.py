@@ -40,6 +40,7 @@ class PyQmlProxy(QObject):
     # SIGNALS
 
     # Project
+    projectCreatedChanged = Signal()
     projectInfoChanged = Signal()
     stateChanged = Signal(bool)
 
@@ -132,6 +133,7 @@ class PyQmlProxy(QObject):
         self.current3dPlottingLibChanged.connect(self.onCurrent3dPlottingLibChanged)
 
         # Project
+        self._project_created = False
         self._project_info = self._defaultProjectInfo()
         self.project_save_filepath = ""
         self._status_model = None
@@ -1428,7 +1430,7 @@ class PyQmlProxy(QObject):
 
     ####################################################################################################################
     ####################################################################################################################
-    # STATUS
+    # Report
     ####################################################################################################################
     ####################################################################################################################
 
@@ -1647,8 +1649,10 @@ class PyQmlProxy(QObject):
 
         self.resetUndoRedoStack()
 
-    # Undo/Redo stack operations
+        self.projectCreated = True
+
     ####################################################################################################################
+    # Undo/Redo stack operations
     ####################################################################################################################
 
     @Property(bool, notify=undoRedoChanged)
@@ -1738,6 +1742,33 @@ class PyQmlProxy(QObject):
         if borg.stack.enabled:
             borg.stack.clear()
             self.undoRedoChanged.emit()
+
+    ####################################################################################################################
+    # Reset state
+    ####################################################################################################################
+
+    @Property(bool, notify=projectCreatedChanged)
+    def projectCreated(self):
+        return self._project_created
+
+    @projectCreated.setter
+    def projectCreated(self, created: bool):
+        if self._project_created == created:
+            return
+
+        self._project_created = created
+        self.projectCreatedChanged.emit()
+
+    @Slot()
+    def resetState(self):
+        self._project_info = self._defaultProjectInfo()
+        self.projectCreated = False
+        self.projectInfoChanged.emit()
+        self.project_save_filepath = ""
+        self.removeExperiment()
+        self.removePhase(self._sample.phases[self.currentPhaseIndex].name)
+        self.resetUndoRedoStack()
+        self.stateChanged.emit(False)
 
 
 def createFile(path, content):

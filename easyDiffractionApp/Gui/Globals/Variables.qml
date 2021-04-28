@@ -12,7 +12,6 @@ QtObject {
     property bool samplePageEnabled: isDebugMode ? true : false
 
     // Workflow states
-    property bool projectCreated: false
     property bool needsSave: true // while waiting for a proper undo/redo flag
 
     // //////////

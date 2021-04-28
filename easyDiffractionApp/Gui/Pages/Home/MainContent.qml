@@ -119,11 +119,13 @@ Item {
                     Component.onCompleted: ExGlobals.Variables.aboutButton = this
                 }
                 EaElements.Button {
+                    enabled: false
                     text: qsTr("Online documentation")
                     onClicked: Qt.openUrlExternally(ExGlobals.Constants.appUrl)
                     Component.onCompleted: ExGlobals.Variables.onlineDocumentationButton = this
                 }
                 EaElements.Button {
+                    enabled: false
                     text: qsTr("Get in touch online")
                     onClicked: Qt.openUrlExternally(`${ExGlobals.Constants.appUrl}/issues`)
                 }

@@ -76,7 +76,6 @@ EaComponents.TableView {
 
                 ExGlobals.Variables.samplePageEnabled = true
                 ExGlobals.Variables.experimentPageEnabled = true
-                ExGlobals.Variables.projectCreated = true
             }
 
             Component.onCompleted: {

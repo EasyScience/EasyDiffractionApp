@@ -174,7 +174,7 @@ EaComponents.ApplicationWindow {
             mainContent: EaComponents.MainContent {
                 tabs: [
                     EaElements.TabButton { text: qsTr("Description") },
-                    EaElements.TabButton { text: qsTr("Text View (CIF)") }
+                    EaElements.TabButton { text: qsTr("Text View") + " (CIF)" }
                 ]
 
                 items: [
@@ -211,7 +211,7 @@ EaComponents.ApplicationWindow {
                               ? ExGlobals.Constants.proxy.phasesAsObj[ExGlobals.Constants.proxy.currentPhaseIndex].name + '.cif'
                               : 'Unknown'
                               */
-                        text: qsTr("Text view (CIF)")
+                        text: qsTr("Text View") + " (CIF)"
                         Component.onCompleted: ExGlobals.Variables.phaseCifTab = this
                     }
                 ]
@@ -245,7 +245,7 @@ EaComponents.ApplicationWindow {
                 tabs: [
                     EaElements.TabButton { text: qsTr("Plot view") },
                     EaElements.TabButton { enabled: false; text: qsTr("Table view"); Component.onCompleted: ExGlobals.Variables.experimentTableTab = this },
-                    EaElements.TabButton { enabled: false; text: qsTr("Text view (CIF)"); Component.onCompleted: ExGlobals.Variables.experimentCifTab = this }
+                    EaElements.TabButton { enabled: false; text: qsTr("Text View") + " (CIF)"; Component.onCompleted: ExGlobals.Variables.experimentCifTab = this }
                 ]
 
                 items: [

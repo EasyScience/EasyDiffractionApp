@@ -62,8 +62,8 @@ Item {
             opacity: 0
 
             text: ExGlobals.Constants.branch && ExGlobals.Constants.branch !== 'master'
-                  ? qsTr(`Version <a href="${ExGlobals.Constants.commitUrl}">${ExGlobals.Constants.appVersion}-${ExGlobals.Constants.commit}</a> (${ExGlobals.Constants.appDate})`)
-                  : qsTr(`Version ${ExGlobals.Constants.appVersion} (${ExGlobals.Constants.appDate})`)
+                  ? qsTr('Version') + ` <a href="${ExGlobals.Constants.commitUrl}">${ExGlobals.Constants.appVersion}-${ExGlobals.Constants.commit}</a> (${ExGlobals.Constants.appDate})`
+                  : qsTr('Version') + ` ${ExGlobals.Constants.appVersion} (${ExGlobals.Constants.appDate})`
         }
 
         // Github branch
@@ -75,7 +75,7 @@ Item {
             anchors.horizontalCenter: parent.horizontalCenter
             opacity: 0
 
-            text: qsTr(`Branch <a href="${ExGlobals.Constants.branchUrl}">${ExGlobals.Constants.branch}</a>`)
+            text: qsTr('Branch') + ` <a href="${ExGlobals.Constants.branchUrl}">${ExGlobals.Constants.branch}</a>`
         }
 
         // Vertical spacer

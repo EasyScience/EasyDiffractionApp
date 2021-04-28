@@ -703,16 +703,16 @@ class PyQmlProxy(QObject):
                                   fract_z=0.05)
             atom.add_adp('Uiso', Uiso=0.0)
             self._sample.phases[self.currentPhaseIndex].add_atom(atom)
-            self.structureParametersChanged.emit()
             self._sample._updateInterface()
+            self.structureParametersChanged.emit()
         except AttributeError:
             print("Error: failed to add atom")
 
     @Slot(str)
     def removeAtom(self, atom_label: str):
         del self._sample.phases[self.currentPhaseIndex].atoms[atom_label]
-        self.structureParametersChanged.emit()
         self._sample._updateInterface()
+        self.structureParametersChanged.emit()
 
     ####################################################################################################################
     # Current phase

@@ -136,7 +136,7 @@ EaComponents.SideBarColumn {
         selectFolder: true
         selectMultiple: false
 
-        folder: ExGlobals.Constants.proxy.projectInfoAsJson.location
+        folder: ExGlobals.Constants.proxy.currentProjectPath
     }
 
 }

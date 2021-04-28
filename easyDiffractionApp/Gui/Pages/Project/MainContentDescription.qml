@@ -47,7 +47,7 @@ Rectangle {
                 text: qsTr("Location:")
             }
             EaElements.Label {
-                text: ExGlobals.Constants.proxy.projectInfoAsJson.location
+                text: ExGlobals.Constants.proxy.currentProjectPath
             }
 
             EaElements.Label {

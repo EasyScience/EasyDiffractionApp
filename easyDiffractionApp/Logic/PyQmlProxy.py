@@ -259,6 +259,8 @@ class PyQmlProxy(QObject):
         borg.stack.clear()
         # borg.debug = True
 
+        self._currentProjectPath = os.path.expanduser("~")
+
     ####################################################################################################################
     ####################################################################################################################
     # Charts
@@ -360,15 +362,25 @@ class PyQmlProxy(QObject):
 
     @Slot(str, str)
     def editProjectInfo(self, key, value):
-        if self._project_info[key] == value:
-            return
-
-        self._project_info[key] = value
+        if key == 'location':
+            self.currentProjectPath = value
+        else:
+            if self._project_info[key] == value:
+                return
+            self._project_info[key] = value
         self.projectInfoChanged.emit()
+
+    @Property(str, notify=projectInfoChanged)
+    def currentProjectPath(self):
+        return self._currentProjectPath
+
+    @currentProjectPath.setter
+    def currentProjectPath(self, new_path):
+        self._currentProjectPath = new_path
 
     @Slot()
     def createProject(self):
-        projectPath = self.projectInfoAsJson['location']
+        projectPath = self.currentProjectPath #self.projectInfoAsJson['location']
         mainCif = os.path.join(projectPath, 'project.cif')
         samplesPath = os.path.join(projectPath, 'samples')
         experimentsPath = os.path.join(projectPath, 'experiments')
@@ -386,7 +398,7 @@ class PyQmlProxy(QObject):
     def _defaultProjectInfo(self):
         return dict(
             name="Example Project",
-            location=os.path.join(os.path.expanduser("~"), "Example Project"),
+            # location=os.path.join(os.path.expanduser("~"), "Example Project"),
             short_description="diffraction, powder, 1D",
             samples="Not loaded",
             experiments="Not loaded",
@@ -1562,7 +1574,7 @@ class PyQmlProxy(QObject):
     def _saveProject(self):
         """
         """
-        projectPath = self.projectInfoAsJson['location']
+        projectPath = self.currentProjectPath
         project_save_filepath = os.path.join(projectPath, 'project.json')
         descr = {
             'sample': self._sample.as_dict(skip=['interface'])
@@ -1610,6 +1622,7 @@ class PyQmlProxy(QObject):
         if not os.path.isfile(path):
             print("Failed to find project: '{0}'".format(path))
             return
+        self.currentProjectPath = os.path.split(path)[0]
         with open(path, 'r') as xml_file:
             descr: dict = json.load(xml_file)
 

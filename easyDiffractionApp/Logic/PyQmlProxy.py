@@ -1567,6 +1567,13 @@ class PyQmlProxy(QObject):
         self._loadProject()
         self.stateChanged.emit(False)
 
+    @Slot(str)
+    def loadExampleProject(self, filepath):
+        self._loadProjectAs(filepath)
+        self.currentProjectPath = '--- EXAMPLE --'
+        self.projectInfoChanged.emit()
+        self.stateChanged.emit(False)
+
     @Property(str, notify=dummySignal)
     def projectFilePath(self):
         return self.project_save_filepath

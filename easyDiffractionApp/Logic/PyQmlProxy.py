@@ -2,6 +2,7 @@
 import os
 import pathlib
 import datetime
+import re
 import timeit
 import json
 from typing import Union
@@ -1704,11 +1705,33 @@ class PyQmlProxy(QObject):
 
     @Property(str, notify=undoRedoChanged)
     def undoText(self):
-        return borg.stack.undoText()
+        return self.tooltip(borg.stack.undoText())
 
     @Property(str, notify=undoRedoChanged)
     def redoText(self):
-        return borg.stack.redoText()
+        return self.tooltip(borg.stack.redoText())
+
+    def tooltip(self, orig_tooltip=""):
+        if 'Parameter' not in orig_tooltip:
+            # if this is not a parameter, print the full undo text
+            return orig_tooltip
+        pattern = "<Parameter '(.*)': .* from (.*) to (.*)"
+        match = re.match(pattern, orig_tooltip)
+        if match is None:
+           # regex parsing failed, return the original tooltip
+            return orig_tooltip
+        param = match.group(1)
+        frm = match.group(2)
+        if '+/-' in frm:
+            # numerical values
+            pattern2 = "\((.*) \+.*"
+            frm2 = re.match(pattern2, frm)
+            if frm2 is None:
+                return orig_tooltip
+            frm = frm2.group(1)
+        to = match.group(3)
+        tooltip = "'{}' value changed from {} to {}.".format(param, frm, to)
+        return tooltip
 
     @Slot()
     def resetUndoRedoStack(self):

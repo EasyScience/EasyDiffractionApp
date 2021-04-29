@@ -1814,6 +1814,8 @@ class PyQmlProxy(QObject):
         self.project_save_filepath = ""
         self.removeExperiment()
         self.removePhase(self._sample.phases[self.currentPhaseIndex].name)
+        self._plotting_1d_proxy.clearBackendState()
+        self._plotting_1d_proxy.clearFrontendState()
         self.resetUndoRedoStack()
         self.stateChanged.emit(False)
 

@@ -1176,6 +1176,9 @@ class PyQmlProxy(QObject):
             if not par.enabled:
                 continue
 
+            # add experimental dataset name
+            par_path = par_path.replace('Instrument.', f'Instrument.{self.experimentDataAsObj[0]["name"]}.')
+
             if self._parameters_filter_criteria.lower() not in par_path.lower():
                 continue
 

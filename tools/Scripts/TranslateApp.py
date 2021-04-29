@@ -3,13 +3,15 @@ __version__ = '0.0.1'
 
 import os, sys
 import xml.etree.ElementTree as ET
-import googletrans
+#import googletrans
+import google_trans_new
 import PySide2
 import Functions, Config
 
 
 CONFIG = Config.Config()
-TRANSLATOR = googletrans.Translator()
+#TRANSLATOR = googletrans.Translator()
+TRANSLATOR = google_trans_new.google_translator()
 
 def tsFilesDirPath():
     ts_files_dir = CONFIG['ci']['app']['translations']['dir']
@@ -67,8 +69,12 @@ def translateXmlString(xml_string, from_language, to_language):
     return ET.tostring(root, encoding='utf8').decode('utf8')
 
 def translateText(in_text, from_language, to_language):
-    translation = TRANSLATOR.translate(in_text, src=from_language, dest=to_language)
-    out_text = translation.text
+    #translation = TRANSLATOR.translate(in_text, src=from_language, dest=to_language)
+    #out_text = translation.text
+    out_text = TRANSLATOR.translate(in_text, lang_src=from_language, lang_tgt=to_language)
+    print(f'[{from_language}] {in_text} -> [{to_language}] {out_text}')
+    if isinstance(out_text, list):
+        out_text = out_text[0]
     if in_text[0].isupper():
         out_text = out_text.capitalize()
     return out_text

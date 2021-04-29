@@ -1,16 +1,12 @@
 {
 "files": [
     "easyDiffractionApp/main.py",
+    "easyDiffractionApp/Logic/MatplotlibBackend.py",
     "easyDiffractionApp/Logic/PyQmlProxy.py",
     "easyDiffractionApp/Logic/QtDataStore.py",
     "easyDiffractionApp/Logic/DisplayModels/DataModels.py",
+    "easyDiffractionApp/Logic/DisplayModels/StatusModel.py",
 
-    "../easyAppLogic/easyAppLogic/Translate.py",
-
-    "../easyExampleLib/easyExampleLib/interface.py",
-    "../easyExampleLib/easyExampleLib/model.py",
-    "../easyExampleLib/easyExampleLib/Calculators/calculator1.py",
-    "../easyExampleLib/easyExampleLib/Interfaces/interface1.py",
-    "../easyExampleLib/easyExampleLib/Interfaces/interfaceTemplate.py"
+    "../easyAppLogic/easyAppLogic/Translate.py"
     ]
 }

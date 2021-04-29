@@ -1,4 +1,8 @@
-# easyDiffractionApp
+<img src="https://easydiffraction.github.io/images/easydiffraction-logo.svg" height="80"><img width="15"><img src="https://easydiffraction.github.io/images/easydiffraction-text.svg" height="80">
+
+**easyDiffraction** is a scientific software for modelling and analysis of the diffraction data.
+
+## Dev info
 
 [![CI Build][20]][21]
 
@@ -10,10 +14,8 @@
 
 [![w3c][90]][91]
 
-## Dev setup
-
 ### Download easyDiffractionApp repo
-* Open **Terminal**
+* Open **Terminal** 
 * Change the current working directory to the location where you want the **easyDiffractionApp** directory
 * Clone **easyDiffractionApp** repo from GitHub using **git**
   ```

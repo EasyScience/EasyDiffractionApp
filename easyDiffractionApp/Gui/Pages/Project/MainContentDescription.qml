@@ -7,8 +7,10 @@ import easyAppGui.Components 1.0 as EaComponents
 
 import Gui.Globals 1.0 as ExGlobals
 
-Item {
+Rectangle {
     readonly property int commonSpacing: EaStyle.Sizes.fontPixelSize * 1.5
+
+    color: EaStyle.Colors.mainContentBackground
 
     Column {
 
@@ -23,7 +25,7 @@ Item {
             font.pixelSize: EaStyle.Sizes.fontPixelSize * 3
             font.weight: Font.ExtraLight
             text: ExGlobals.Constants.proxy.projectInfoAsJson.name
-            onEditingFinished: ExGlobals.Constants.proxy.editProjectInfoByKey("name", text)
+            onEditingFinished: ExGlobals.Constants.proxy.editProjectInfo("name", text)
         }
 
         Grid {
@@ -33,39 +35,51 @@ Item {
 
             EaElements.Label {
                 font.bold: true
-                text: qsTr("Keywords:")
+                text: qsTr("Short description:")
             }
             EaElements.TextInput {
-                text: ExGlobals.Constants.proxy.projectInfoAsJson.keywords
-                onEditingFinished: ExGlobals.Constants.proxy.editProjectInfoByKey("keywords", text)
+                text: ExGlobals.Constants.proxy.projectInfoAsJson.short_description
+                onEditingFinished: ExGlobals.Constants.proxy.editProjectInfo("short_description", text)
+            }
+
+            EaElements.Label {
+                visible: ExGlobals.Constants.proxy.currentProjectPath !== '--- EXAMPLE ---'
+                font.bold: true
+                text: qsTr("Location:")
+            }
+            EaElements.Label {
+                visible: ExGlobals.Constants.proxy.currentProjectPath !== '--- EXAMPLE ---'
+                text: ExGlobals.Constants.proxy.currentProjectPath
             }
 
             EaElements.Label {
                 font.bold: true
-                text: qsTr("Samples:")
+                text: qsTr("Phases:")
             }
-            EaElements.TextInput {
+            EaElements.Label {
                 text: ExGlobals.Constants.proxy.projectInfoAsJson.samples
-                onEditingFinished: ExGlobals.Constants.proxy.editProjectInfoByKey("samples", text)
+                //onEditingFinished: ExGlobals.Constants.proxy.editProjectInfo("samples", text)
             }
 
             EaElements.Label {
                 font.bold: true
                 text: qsTr("Experiments:")
             }
-            EaElements.TextInput {
+            EaElements.Label {
                 text: ExGlobals.Constants.proxy.projectInfoAsJson.experiments
-                onEditingFinished: ExGlobals.Constants.proxy.editProjectInfoByKey("experiments", text)
+                //onEditingFinished: ExGlobals.Constants.proxy.editProjectInfo("experiments", text)
             }
 
+            /*
             EaElements.Label {
                 font.bold: true
                 text: qsTr("Calculations:")
             }
             EaElements.TextInput {
                 text: ExGlobals.Constants.proxy.projectInfoAsJson.calculations
-                onEditingFinished: ExGlobals.Constants.proxy.editProjectInfoByKey("calculations", text)
+                onEditingFinished: ExGlobals.Constants.proxy.editProjectInfo("calculations", text)
             }
+            */
 
             EaElements.Label {
                 font.bold: true

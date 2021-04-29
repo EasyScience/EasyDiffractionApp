@@ -12,7 +12,6 @@ EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
         title: qsTr("Calculation")
-        collapsed: false
 
         Row {
             spacing: EaStyle.Sizes.fontPixelSize

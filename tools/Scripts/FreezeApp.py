@@ -2,9 +2,11 @@ __author__ = "github.com/AndrewSazonov"
 __version__ = '0.0.1'
 
 import os, sys
+import importlib
 import glob
 import PySide2, shiboken2
-import easyExampleLib, easyAppGui, easyAppLogic
+import cryspy
+import easyCore, easyDiffractionLib, easyAppGui, easyAppLogic
 import Functions, Config
 from PyInstaller.__main__ import run as pyInstallerMain
 
@@ -25,12 +27,21 @@ def excludedModules():
 
 def addedData():
     separator = CONFIG['ci']['pyinstaller']['separator'][CONFIG.os]
+    lib = CONFIG['ci']['pyinstaller']['libs'][CONFIG.os]
     data = [{'from': CONFIG.package_name, 'to': CONFIG.package_name},
-            {'from': easyExampleLib.__path__[0], 'to': 'easyExampleLib'},
+            {'from': importlib.import_module(lib).__path__[0], 'to': lib},
+            {'from': cryspy.__path__[0], 'to': 'cryspy'},
+            {'from': easyCore.__path__[0], 'to': 'easyCore'},
+            {'from': easyDiffractionLib.__path__[0], 'to': 'easyDiffractionLib'},
             {'from': easyAppLogic.__path__[0], 'to': 'easyAppLogic'},
             {'from': easyAppGui.__path__[0], 'to': 'easyAppGui'},
-            {'from': 'pyproject.py', 'to': '.'},
+            {'from': 'utils.py', 'to': '.'},
             {'from': 'pyproject.toml', 'to': '.'}]
+    extras = CONFIG['ci']['pyinstaller']['missing_other_libraries'][CONFIG.os]
+    if extras:
+        for extra_file in extras:
+            data.append({'from': extra_file, 'to': '.'})
+
     formatted = []
     for element in data:
         formatted.append(f'--add-data={element["from"]}{separator}{element["to"]}')

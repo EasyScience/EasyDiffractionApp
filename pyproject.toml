@@ -19,13 +19,12 @@ packages = [ { include = 'easyDiffractionApp' } ]
 
 [tool.poetry.dependencies]
 python = '^3.7, <3.8'
-vtk = '^8.1.2'
 pyobjc-core = { version = '^7.1', platform = 'darwin' }
 pyobjc-framework-cocoa = { version = '^7.1', platform = 'darwin' }
 # easyScience
-easyDiffractionLib = { git = 'https://github.com/easyScience/easyDiffractionLib.git', rev = 'develop' }
+easyDiffractionLib = { git = 'https://github.com/easyScience/easyDiffractionLib.git', rev = 'sprint12' }
 easyAppLogic = { git = 'https://github.com/easyScience/easyAppLogic.git', rev = 'develop' }
-easyAppGui = { git = 'https://github.com/easyScience/easyAppGui.git', rev = 'develop' }
+easyAppGui = { git = 'https://github.com/easyScience/easyAppGui.git', rev = 'sprint12' }
 
 #[tool.poetry.dev-dependencies]
 # PyInstaller
@@ -41,7 +40,8 @@ dephell_licenses = '^0.1.7'
 ffmpeg-python = '^0.2.0'
 mss = '^6.1.0'
 opencv-python = '^4.5.1'
-googletrans = '^3.0.0'
+#googletrans = "3.1.0a0"
+google-trans-new = "^1.1.9"
 gTTS = '^2.2.2'
 
 [tool.poetry.scripts]

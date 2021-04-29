@@ -67,7 +67,11 @@ Row {
     }
 
     function updateParameters() {
-        const json = { "x_min": xMin.text, "x_max": xMax.text, "x_step": xStep.text }
+        const json = {
+            "x_min": parseFloat(xMin.text),
+            "x_max": parseFloat(xMax.text),
+            "x_step": parseFloat(xStep.text)
+        }
         ExGlobals.Constants.proxy.simulationParametersAsObj = JSON.stringify(json)
     }
 }

@@ -130,7 +130,7 @@ EaComponents.TableView {
     }
 
     function editDescriptorValue(id, value) {
-        ExGlobals.Constants.proxy.editDescriptorValue(id, value)
+        ExGlobals.Constants.proxy.editParameter(id, value)
     }
 
     function jmolAtomColor(symbol) {

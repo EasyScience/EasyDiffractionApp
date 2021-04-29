@@ -6,6 +6,8 @@ import easyAppGui.Elements 1.0 as EaElements
 import Gui.Globals 1.0 as ExGlobals
 
 EaElements.Dialog {
+    visible: false
+
     title: qsTr("Save Changes")
 
     EaElements.Label {

@@ -6,6 +6,7 @@ import easyAppGui.Globals 1.0 as EaGlobals
 import easyAppGui.Style 1.0 as EaStyle
 import easyAppGui.Elements 1.0 as EaElements
 import easyAppGui.Components 1.0 as EaComponents
+import easyAppGui.Logic 1.0 as EaLogic
 
 import Gui.Globals 1.0 as ExGlobals
 import Gui.Components 1.0 as ExComponents
@@ -78,6 +79,8 @@ EaComponents.SideBarColumn {
                     ]
 
                     onActivated: filterCriteriaField.text = currentValue
+
+                    Component.onCompleted: ExGlobals.Variables.parametersFilterTypeSelector = this
                 }
             }
 
@@ -105,15 +108,16 @@ EaComponents.SideBarColumn {
                         if (typeof ExGlobals.Constants.proxy.phasesAsObj === 'undefined' || typeof ExGlobals.Constants.proxy.phasesAsObj[0] === 'undefined' ) {
                             return []
                         }
-                        const phase_name = ExGlobals.Constants.proxy.phasesAsObj[0].name
+                        const phaseName = ExGlobals.Constants.proxy.phasesAsObj[0].name
+                        const datasetName = ExGlobals.Constants.proxy.experimentDataAsObj[0].name
                         let m = [
                                 { value: "", text: qsTr("All names") },
-                                { value: `.${phase_name}.`, text: formatFilterText("gem", "", phase_name) },
-                                { value: ".D1A@ILL.", text: formatFilterText("microscope", "", "D1A@ILL") },
+                                { value: `.${phaseName}.`, text: formatFilterText("gem", "", phaseName) },
+                                { value: `.${datasetName}.`, text: formatFilterText("microscope", "", datasetName) },
                                 ]
                         for (let i in ExGlobals.Constants.proxy.phasesAsObj[0].atoms.data) {
-                            const atom_label = ExGlobals.Constants.proxy.phasesAsObj[0].atoms.data[i].label.value
-                            m.push({ value: `.${atom_label}.`, text: formatFilterText("gem", "atom", atom_label) })
+                            const atomLabel = ExGlobals.Constants.proxy.phasesAsObj[0].atoms.data[i].label.value
+                            m.push({ value: `.${atomLabel}.`, text: formatFilterText("gem", "atom", atomLabel) })
                         }
                         return m
                     }
@@ -138,12 +142,11 @@ EaComponents.SideBarColumn {
             // Min edit area
             EaElements.TextField {
                 id: sliderFromLabel
-                readOnly: true
+                enabled: false
                 width: EaStyle.Sizes.fontPixelSize * 6
                 validator: DoubleValidator {}
                 maximumLength: 8
                 text: slider.from.toFixed(4)
-                onEditingFinished: {}
             }
 
             // Slider
@@ -168,7 +171,7 @@ EaComponents.SideBarColumn {
             // Max edit area
             EaElements.TextField {
                 id: sliderToLabel
-                readOnly: sliderToLabel.readOnly
+                enabled: sliderFromLabel.enabled
                 width: sliderFromLabel.width
                 validator: sliderFromLabel.validator
                 maximumLength: sliderFromLabel.maximumLength
@@ -178,13 +181,19 @@ EaComponents.SideBarColumn {
 
         // Start fitting button
         EaElements.SideBarButton {
-            id: fitButton
             wide: true
-            enabled: ExGlobals.Constants.proxy.experimentLoaded
+            // temporarily disabled
+            // enabled: ExGlobals.Constants.proxy.experimentLoaded
+            enabled: ExGlobals.Constants.proxy.experimentLoaded && ExGlobals.Constants.proxy.isFitFinished
             fontIcon: ExGlobals.Constants.proxy.isFitFinished ? "play-circle" : "pause-circle"
-            text: ExGlobals.Constants.proxy.isFitFinished ? qsTr("Start fitting") : qsTr("Stop fitting")
+            // temporarily modified
+            // text: ExGlobals.Constants.proxy.isFitFinished ? qsTr("Start fitting") : qsTr("Stop fitting")
+            text: ExGlobals.Constants.proxy.isFitFinished ? qsTr("Start fitting") : qsTr("Fitting in progress")
             onClicked: ExGlobals.Constants.proxy.fit()
+            Component.onCompleted: ExGlobals.Variables.startFittingButton = this
         }
+
+        Component.onCompleted: ExGlobals.Variables.parametersGroup = this
     }
 
     // Init results dialog

@@ -62,7 +62,7 @@ EaComponents.TableView {
                    valueColumn.width -
                    unitColumn.width -
                    errorColumn.width -
-                   useColumn.width
+                   fitColumn.width
             headerText: "Label"
             text: formatLabel(model.index, model.label)
             textFormat: Text.RichText
@@ -75,6 +75,18 @@ EaComponents.TableView {
             headerText: "Value"
             text: model.value.toFixed(4)
             onEditingFinished: editParameterValue(model.id, text)
+
+            Component.onCompleted: {
+                if (model.label.endsWith('.resolution_u')) {
+                    ExGlobals.Variables.fitResolutionUValue = this
+                } else if (model.label.endsWith('.resolution_v')) {
+                    ExGlobals.Variables.fitResolutionVValue = this
+                } else if (model.label.endsWith('.resolution_w')) {
+                    ExGlobals.Variables.fitResolutionWValue = this
+                } else if (model.label.endsWith('.resolution_y')) {
+                    ExGlobals.Variables.fitResolutionYValue = this
+                }
+            }
         }
 
         EaComponents.TableViewLabel {
@@ -95,10 +107,19 @@ EaComponents.TableView {
 
         EaComponents.TableViewCheckBox {
             enabled: ExGlobals.Constants.proxy.experimentLoaded
-            id: useColumn
+            id: fitColumn
             headerText: "Fit"
             checked: model.fit
             onCheckedChanged: editParameterFit(model.id, checked)
+
+            Component.onCompleted: {
+                if (model.label.endsWith('.length_a'))
+                    ExGlobals.Variables.fitCellACheckBox = this
+                if (model.label.endsWith('.zero_shift'))
+                    ExGlobals.Variables.fitZeroShiftCheckBox = this
+                if (model.label.endsWith('.scale'))
+                    ExGlobals.Variables.fitScaleCheckBox = this
+            }
         }
 
     }
@@ -126,8 +147,10 @@ EaComponents.TableView {
         if (index < 0 || typeof label === "undefined")
             return ""
 
+        const datasetName = ExGlobals.Constants.proxy.experimentDataAsObj[0].name
+
         // Modify current label
-        label = label.replace("Instrument.", "Instrument.D1A@ILL.")
+        label = label.replace("Instrument.", `Instrument.${datasetName}.`)
         label = label.replace(".background.", ".")
         label = label.replace("Uiso.Uiso", "Uiso")
         label = label.replace("fract_", "fract.")
@@ -141,7 +164,7 @@ EaComponents.TableView {
 
         // Modify previous label to list
         let previousLabel = index > 0 ? fitablesModel.get(index - 1).label : ""
-        previousLabel = previousLabel.replace("Instrument.", "Instrument.D1A@ILL.")
+        previousLabel = previousLabel.replace("Instrument.", `Instrument.${datasetName}.`)
         previousLabel = previousLabel.replace(".background.", ".")
         previousLabel = previousLabel.replace("Uiso.Uiso", "Uiso")
         previousLabel = previousLabel.replace("fract_", "fract.")

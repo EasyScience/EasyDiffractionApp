@@ -7,6 +7,7 @@ import easyAppGui.Components 1.0 as EaComponents
 import easyAppGui.Logic 1.0 as EaLogic
 
 import Gui.Globals 1.0 as ExGlobals
+import Gui.Logic 1.0 as ExLogic
 
 Item {
 
@@ -14,27 +15,21 @@ Item {
         anchors.fill: parent
 
         EaElements.TextArea {
+            readOnly: true
             font.family: EaStyle.Fonts.monoFontFamily
-            text: ExGlobals.Constants.proxy.projectInfoAsCif
-            //onEditingFinished: ExGlobals.Constants.proxy.projectInfoAsCif = text
+            textFormat: TextEdit.RichText
+            text: ExLogic.Helpers.highlightCifSyntax(ExGlobals.Constants.proxy.projectInfoAsCif)
+            //onEditingFinished: ExGlobals.Constants.proxy.projectInfoAsCif = ExLogic.Helpers.removeCifSyntaxHighlighting(text)
         }
     }
-
-    /*
-    EaComponents.TableViewButton {
-        anchors.bottom: parent.bottom
-        anchors.right: parent.right
-        fontIcon: "sync-alt"
-        ToolTip.text: qsTr("Update")
-        onClicked: forceActiveFocus()
-    }
-    */
 
     ///////////////
     // Tool buttons
     ///////////////
 
     Row {
+        visible: false
+
         anchors.top: parent.top
         anchors.right: parent.right
 
@@ -50,7 +45,7 @@ Item {
             width: EaStyle.Sizes.toolButtonHeight
             borderColor: EaStyle.Colors.chartAxis
             fontIcon: "clipboard-check"
-            ToolTip.text: qsTr("Update text")
+            ToolTip.text: qsTr("Accept changes")
             onClicked: forceActiveFocus()
         }
     }

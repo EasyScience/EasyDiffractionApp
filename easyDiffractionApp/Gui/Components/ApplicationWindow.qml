@@ -146,7 +146,9 @@ EaComponents.ApplicationWindow {
             id: summaryTabButton
             enabled: ExGlobals.Constants.proxy.samplesPresent &&
                      (ExGlobals.Constants.proxy.experimentSkipped ||
-                      ExGlobals.Constants.proxy.experimentLoaded)
+                      ExGlobals.Constants.proxy.experimentLoaded) &&
+                     ExGlobals.Constants.proxy.projectCreated &&
+                     ExGlobals.Constants.proxy.currentProjectPath !== '--- EXAMPLE ---'
             fontIcon: "clipboard-list"
             text: qsTr("Summary")
             ToolTip.text: qsTr("Summary of the work done")

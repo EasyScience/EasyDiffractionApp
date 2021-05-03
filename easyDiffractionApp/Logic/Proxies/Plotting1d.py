@@ -311,7 +311,6 @@ class Plotting1dProxy(QObject):
         if self._background_xarray.size:
             self._setBokehBackgroundDataObj()
             if self.currentLib == 'qtcharts':
-                print("AAAAAAAAA")
                 self._setQtChartsBackgroundDataObj()
 
     def onCurrentLibChanged(self):

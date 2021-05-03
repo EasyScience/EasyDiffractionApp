@@ -1092,6 +1092,9 @@ class PyQmlProxy(QObject):
         return self._background_proxy
 
     def updateChartBackground(self):
+        if self._background_proxy.asObj is None:
+            return
+
         self._plotting_1d_proxy.setBackgroundData(self._background_proxy.asObj.x_sorted_points,
                                                   self._background_proxy.asObj.y_sorted_points)
 

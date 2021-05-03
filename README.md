@@ -1,6 +1,41 @@
 <img src="https://easydiffraction.github.io/images/easydiffraction-logo.svg" height="80"><img width="15"><img src="https://easydiffraction.github.io/images/easydiffraction-text.svg" height="80">
 
-**easyDiffraction** is a scientific software for modelling and analysis of the diffraction data.
+**easyDiffraction** is a scientific software for modelling and analysis of the diffraction data. Currently, **easyDiffraction** covers
+classical 1D unpolarized neutron single crystal and powder diffraction data collected at a constant wavelength.
+
+## Main features
+
+**easyDiffraction** allows simulation of diffraction patterns based on a structural model and refinement (fitting) of its parameters.
+For refinement, the program uses a number of fitting engines and minimizers.
+
+**easyDiffraction** is similar to crystallographic programs like FullProf, Jana, GSAS, ShelX.
+
+In contrast to these programs, **easyDiffraction** is based on _external_ crystallographic libraries,
+such as CrysPy and CrysFML in order to cover different functionality aspects within a single intuitive and user-friendly graphical interface.
+These libraries are included with the installation so there is no need to download and compile any additional components.
+
+**easyDiffraction** is of course open source (currently GPLv3, migrating to BSD) and cross-platform, with support for Windows, macOS and Linux (Ubuntu).
+
+The intuitive tabbed interface with built-in step-by-step user guides, video tutorials, as well as a clear workflow help speed up data modelling and analysis.
+
+Current main features of **easyDiffraction**:
+
+* support for constant-wavelength, unpolarized data
+* simulations of diffraction pattern using CrysPy and CrysFML
+* pattern refinement using CrysPy and CrysFML
+* multiple minimizing engines: bumps, lmfit, DFO-LS
+* structure viewer and builder
+* pattern viewer including HKL position chart and difference chart
+* interactive HTML and standard PDF report generation
+
+Planned functionality for **easyDiffraction** includes support for:
+
+* time-of-flight data
+* polarized data
+* additional libraries, e.g. GSASII
+* magnetic structures
+* pair-distribution-function analysis
+* X-ray experiments
 
 ## Dev info
 

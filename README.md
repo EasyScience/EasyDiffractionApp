@@ -71,7 +71,7 @@
 [21]: https://github.com/easyScience/easyDiffractionApp/actions?query=workflow%3A%22build+macOS%2C+Linux%2C+Windows%22
 
 <!---Release--->
-[30]: https://img.shields.io/github/release/easyScience/easyDiffractionApp.svg
+[30]: https://img.shields.io/github/release/easyScience/easyDiffractionApp.svg?include_prereleases
 [31]: https://github.com/easyScience/easyDiffractionApp/releases
 
 <!---License--->

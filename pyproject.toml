@@ -28,8 +28,8 @@ easyAppGui = { git = 'https://github.com/easyScience/easyAppGui.git', rev = 'spr
 
 #[tool.poetry.dev-dependencies]
 # PyInstaller
-#pyinstaller = '^4.2'
-pyinstaller = { git = 'https://github.com/pyinstaller/pyinstaller.git', rev = 'develop' }
+pyinstaller = '^4.3'
+#pyinstaller = { git = 'https://github.com/pyinstaller/pyinstaller.git', rev = 'develop' }
 pywin32-ctypes = { version = '^0.2.0', platform = 'win32' }
 pypiwin32 = { version = '^223', platform = 'win32' }
 pefile = { version = '^2019.4.18', platform = 'win32' }

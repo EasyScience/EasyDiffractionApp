@@ -59,6 +59,7 @@ EaComponents.ApplicationWindow {
             fontIcon: "backspace"
             ToolTip.text: qsTr("Reset to initial state without project, phases and data")
             onClicked: resetStateDialog.open()
+            Component.onCompleted: ExGlobals.Variables.resetStateButton = this
         }
 
     ]
@@ -146,9 +147,7 @@ EaComponents.ApplicationWindow {
             id: summaryTabButton
             enabled: ExGlobals.Constants.proxy.samplesPresent &&
                      (ExGlobals.Constants.proxy.experimentSkipped ||
-                      ExGlobals.Constants.proxy.experimentLoaded) &&
-                     ExGlobals.Constants.proxy.projectCreated &&
-                     ExGlobals.Constants.proxy.currentProjectPath !== '--- EXAMPLE ---'
+                      ExGlobals.Constants.proxy.experimentLoaded)
             fontIcon: "clipboard-list"
             text: qsTr("Summary")
             ToolTip.text: qsTr("Summary of the work done")
@@ -399,6 +398,7 @@ EaComponents.ApplicationWindow {
                     ExGlobals.Constants.proxy.resetState()
                     resetStateDialog.close()
                 }
+                Component.onCompleted: ExGlobals.Variables.resetStateOkButton = this
             }
         }
     }

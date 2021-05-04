@@ -30,6 +30,8 @@ EaComponents.SideBarColumn {
                 Component.onCompleted: ExGlobals.Variables.calculatorSelector = this
             }
         }
+
+        Component.onCompleted: ExGlobals.Variables.calculatorsGroup = this
     }
 
     EaElements.GroupBox {

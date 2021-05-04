@@ -111,6 +111,10 @@ jobs:
           Set-DisplayResolution -Width 1920 -Height 1080 -Force
           Get-DisplayResolution
 
+      - name: Make desktop file path (Linux)
+        if: runner.os == 'Linux'
+        run: mkdir -p ~/.local/share/applications/
+
       - name: Install app
         run: python ${{ env.SCRIPTS_PATH }}/InstallApp.py
 

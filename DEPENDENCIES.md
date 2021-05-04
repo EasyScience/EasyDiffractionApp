@@ -22,7 +22,6 @@ The following Open Source projects are used in easyDiffraction (if there are any
 * [PT Mono](https://fonts.google.com/specimen/PT+Mono): [SIL Open Font Licence (OFL)](https://scripts.sil.org/OFL)
 * [Font Awesome](https://github.com/FortAwesome/Font-Awesome): [SIL Open Font Licence (OFL)](https://scripts.sil.org/OFL)
 
-
 ## Notes
 
 * GSAS-II: This product includes software produced by UChicago Argonne, LLC under Contract No. DE-AC02-06CH11357 with the Department of Energy.

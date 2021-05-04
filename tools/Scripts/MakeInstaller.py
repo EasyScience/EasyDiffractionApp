@@ -135,7 +135,7 @@ def installerConfigXml():
                 'WizardDefaultHeight': 600,
                 'StyleSheet': config_style,
                 'StartMenuDir': CONFIG.app_name,
-                'TargetDir': CONFIG['ci']['app']['setup']['installation_dir_shortcut'][CONFIG.os],
+                'TargetDir': CONFIG.installation_dir_for_qtifw,
                 #'CreateLocalRepository': 'true',
                 #'SaveDefaultRepositories': 'false',
                 #'RepositorySettingsPageVisible': 'false',

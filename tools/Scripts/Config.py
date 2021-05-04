@@ -26,6 +26,7 @@ class Config():
         self.screenshots_dir = os.path.normpath(self.__dict__['ci']['project']['subdirs']['screenshots'])
         self.tutorials_dir = os.path.normpath(self.__dict__['ci']['project']['subdirs']['tutorials'])
         self.installation_dir = self.installationDir()
+        self.installation_dir_for_qtifw = os.path.join(self.__dict__['ci']['app']['setup']['installation_dir_shortcut'][self.os], self.app_name)
 
         # Application setup
         self.setup_os = self.__dict__['ci']['app']['setup']['os'][self.os]

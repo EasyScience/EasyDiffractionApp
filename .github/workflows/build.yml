@@ -26,10 +26,10 @@ jobs:
       - name: Set up non-Python dependences (Linux)
         if: runner.os == 'Linux'
         run: |
-          sudo apt-get install libgfortran4
           sudo apt-get install libxcb-xinerama0
           sudo apt-get install libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xfixes0
           sudo apt-get install libpulse-mainloop-glib0
+        # sudo apt-get install libgfortran4
         # echo "QT_DEBUG_PLUGINS=1" >> $GITHUB_ENV
 
       - name: Set up Python environment

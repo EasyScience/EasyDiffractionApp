@@ -119,9 +119,8 @@ Item {
                     Component.onCompleted: ExGlobals.Variables.aboutButton = this
                 }
                 EaElements.Button {
-                    enabled: false
                     text: qsTr("Online documentation")
-                    onClicked: Qt.openUrlExternally(ExGlobals.Constants.appUrl)
+                    onClicked: Qt.openUrlExternally("https://github.com/easyScience/easyDiffractionApp/blob/new_readme/README.md")  // ExGlobals.Constants.appUrl
                     Component.onCompleted: ExGlobals.Variables.onlineDocumentationButton = this
                 }
                 EaElements.Button {

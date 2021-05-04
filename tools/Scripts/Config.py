@@ -47,17 +47,11 @@ class Config():
         self.license_file = self.__dict__['ci']['project']['license_file']
 
         # Certificates
-        #print(self.__dict__['ci']['scripts']['certificate_name'][Functions.osName()])
-        print(Functions.osName())
-        print(self.__dict__['ci']['project']['subdirs']['certificates_path'])
-        print(self.__dict__['ci']['scripts']['certificate_name'])
         self.certificate_path = os.path.join(self.__dict__['ci']['project']['subdirs']['certificates_path'],
                                              self.__dict__['ci']['scripts']['certificate_name'] + "_" +
                                              Functions.osName()[0:3])
         self.certificate_zip_path = os.path.join(self.__dict__['ci']['project']['subdirs']['certificates_path'],
                                                  'Codesigning.zip')
-        print(self.certificate_path)
-
 
     def __getitem__(self, key):
         return self.__dict__[key]

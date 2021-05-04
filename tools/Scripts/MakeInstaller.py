@@ -13,10 +13,11 @@ import Signatures
 CONFIG = Config.Config()
 
 def qtifwSetupFileName():
+    file_version = CONFIG['ci']['qtifw']['setup']['version']
     file_name_base = CONFIG['ci']['qtifw']['setup']['file_name_base']
-    file_name_suffix = CONFIG['ci']['qtifw']['setup']['file_name_suffix'][CONFIG.os]
+    file_platform = CONFIG['ci']['qtifw']['setup']['file_platform'][CONFIG.os]
     file_ext = CONFIG['ci']['qtifw']['setup']['file_ext'][CONFIG.os]
-    return f'{file_name_base}{file_name_suffix}{file_ext}'
+    return f'{file_name_base}-{file_platform}-{file_version}.{file_ext}'
 
 def qtifwSetupDownloadDest():
     return os.path.join(CONFIG.download_dir, f'{qtifwSetupFileName()}')

@@ -114,6 +114,13 @@ jobs:
       - name: Install app
         run: python ${{ env.SCRIPTS_PATH }}/InstallApp.py
 
+      - name: Debug
+        if: runner.os == 'Linux'
+        run: |
+          ls -l /home/runner
+          ls -l /home/runner/easyDiffraction
+          ls -l /home/runner/easyDiffraction/easyDiffraction
+
       - name: Run app in testmode, record screen and quit
         run: python ${{ env.SCRIPTS_PATH }}/RunApp.py --testmode
 

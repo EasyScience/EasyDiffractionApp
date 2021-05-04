@@ -8,60 +8,58 @@ Controller.prototype.IntroductionPageCallback = function()
 {
   console.log("* enter IntroductionPage")
   gui.clickButton(buttons.NextButton)
-  console.log("  exit IntroductionPage")
+  console.log("   exit IntroductionPage")
 }
 
 Controller.prototype.TargetDirectoryPageCallback = function()
 {
   console.log("* enter TargetDirectoryPage")
   gui.clickButton(buttons.NextButton)
-  console.log("  exit TargetDirectoryPage")
+  console.log("   exit TargetDirectoryPage")
 }
 
 Controller.prototype.ComponentSelectionPageCallback = function()
 {
   console.log("* enter ComponentSelectionPage")
   var page = gui.currentPageWidget()
-  page.selectAll();
+  page.selectAll()
   gui.clickButton(buttons.NextButton)
-  console.log("  exit ComponentSelectionPage")
+  console.log("   exit ComponentSelectionPage")
 }
 
 Controller.prototype.LicenseAgreementPageCallback = function()
 {
   console.log("* enter LicenseAgreementPage")
   var page = gui.currentPageWidget()
-  console.log(page)
-  console.log(page.AcceptLicenseCheckBox)
   page.AcceptLicenseCheckBox.checked = true
   gui.clickButton(buttons.NextButton)
-  console.log("  exit LicenseAgreementPage")
+  console.log("   exit LicenseAgreementPage")
 }
 
 Controller.prototype.StartMenuDirectoryPageCallback = function()
 {
   console.log("* enter StartMenuDirectoryPage")
   gui.clickButton(buttons.NextButton)
-  console.log("  exit StartMenuDirectoryPage")
+  console.log("   exit StartMenuDirectoryPage")
 }
 
 Controller.prototype.ReadyForInstallationPageCallback = function()
 {
   console.log("* enter ReadyForInstallationPage")
   gui.clickButton(buttons.NextButton)
-  console.log("  exit ReadyForInstallationPage")
+  console.log("   exit ReadyForInstallationPage")
 }
 
 Controller.prototype.PerformInstallationPageCallback = function()
 {
   console.log("* enter PerformInstallationPage")
   gui.clickButton(buttons.NextButton);
-  console.log("  exit PerformInstallationPage")
+  console.log("   exit PerformInstallationPage")
 }
 
 Controller.prototype.FinishedPageCallback = function()
 {
   console.log("* enter FinishedPage")
   gui.clickButton(buttons.FinishButton)
-  console.log("  exit FinishedPage")
+  console.log("   exit FinishedPage")
 }

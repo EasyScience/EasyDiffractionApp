@@ -135,7 +135,7 @@ def installerConfigXml():
                 'WizardDefaultHeight': 600,
                 'StyleSheet': config_style,
                 'StartMenuDir': CONFIG.app_name,
-                'TargetDir': CONFIG.installation_dir,
+                'TargetDir': CONFIG['ci']['app']['setup']['installation_dir_shortcut'][CONFIG.os],
                 #'CreateLocalRepository': 'true',
                 #'SaveDefaultRepositories': 'false',
                 #'RepositorySettingsPageVisible': 'false',
@@ -172,6 +172,9 @@ def appPackageXml():
         package_install_script = CONFIG['ci']['scripts']['package_install']
         license_id = CONFIG['tool']['poetry']['license'].replace('-only', '')
         license_name = dephell_licenses.licenses.get_by_id(license_id).name
+        requires_root = 'false'
+        if CONFIG.os == 'ubuntu':
+            requires_root = 'true'
         raw_xml = Functions.dict2xml({
             'Package': {
                 'DisplayName': CONFIG.app_name,
@@ -182,7 +185,7 @@ def appPackageXml():
                 #'SortingPriority': 100,
                 'Essential': 'true',
                 'ForcedInstallation': 'true',
-                #'RequiresAdminRights': 'true',
+                'RequiresAdminRights': requires_root,
                 'Licenses': {
                     'License': {
                         '@name': license_name,

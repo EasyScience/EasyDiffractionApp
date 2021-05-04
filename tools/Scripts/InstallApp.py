@@ -25,8 +25,6 @@ def runInstallerSilently():
             'installer':     setupExePath(),
             'silent_script': silent_script_path
         }
-        if CONFIG.os == 'ubuntu':
-            args['sudo'] = True
         Functions.installSilently(**args)
     except Exception as exception:
         Functions.printFailMessage(message, exception)

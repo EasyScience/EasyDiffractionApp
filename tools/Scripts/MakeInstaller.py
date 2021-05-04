@@ -174,8 +174,6 @@ def appPackageXml():
         license_id = CONFIG['tool']['poetry']['license'].replace('-only', '')
         license_name = dephell_licenses.licenses.get_by_id(license_id).name
         requires_root = 'false'
-        if CONFIG.os == 'ubuntu':
-            requires_root = 'true'
         raw_xml = Functions.dict2xml({
             'Package': {
                 'DisplayName': CONFIG.app_name,

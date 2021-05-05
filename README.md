@@ -4,7 +4,7 @@
 
 **easyDiffraction** is a scientific software for modelling and analysis of diffraction data. Currently, **easyDiffraction** covers classical 1D unpolarized neutron powder diffraction data collected at constant wavelength.
 
-<img src="https://raw.githubusercontent.com/easyScience/easyDiffractionApp/new_readme/resources/images/ed_analysis.png">
+![easyDiffraction Screenshot](./resources/images/ed_analysis_dark.png) 
 
 ## What is easyDiffraction for?
 

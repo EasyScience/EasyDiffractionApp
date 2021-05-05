@@ -47,9 +47,9 @@ Planned improvements / new functionality for **easyDiffraction**:
 
 Download the official **easyDiffraction installer v0.8.0-beta** for your operating system:
 
-- [macOS 10.15, 64-bit](https://github.com/easyScience/easyDiffractionApp/releases/download/v0.8.0-beta/easyDiffraction_macOS_x86-64_v0.8.0.zip)
-- [Windows 10, 32-bit](https://github.com/easyScience/easyDiffractionApp/releases/download/v0.8.0-beta/easyDiffraction_Windows_x86-32_v0.8.0.zip)
-- [Ubuntu 20.04, 64-bit](https://github.com/easyScience/easyDiffractionApp/releases/download/v0.8.0-beta/easyDiffraction_Linux_x86-64_v0.8.0.zip)
+- [Windows 10 and above, 32-bit](https://github.com/easyScience/easyDiffractionApp/releases/download/v0.8.0-beta/easyDiffraction_Windows_x86-32_v0.8.0.zip)
+- [macOS 10.15 and above, 64-bit](https://github.com/easyScience/easyDiffractionApp/releases/download/v0.8.0-beta/easyDiffraction_macOS_x86-64_v0.8.0.zip)
+- [Ubuntu 20.04 and above, 64-bit](https://github.com/easyScience/easyDiffractionApp/releases/download/v0.8.0-beta/easyDiffraction_Linux_x86-64_v0.8.0.zip)
 
 ### Installing
 

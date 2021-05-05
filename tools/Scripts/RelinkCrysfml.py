@@ -44,13 +44,13 @@ def rpath():
     return d[CONFIG.os]
 
 
-def crysfmlRpath():
-    d = {
-        'macos': '/opt/intel//compilers_and_libraries_2020.2.258/mac/compiler/lib',
-        'ubuntu': None,
-        'windows': None
-    }
-    return d[CONFIG.os]
+#def crysfmlRpath():
+#    d = {
+#        'macos': '/opt/intel//compilers_and_libraries_2020.2.258/mac/compiler/lib',
+#        'ubuntu': None,
+#        'windows': None
+#    }
+#    return d[CONFIG.os]
 
 
 def crysfmlSoFile():
@@ -82,9 +82,9 @@ def relinkCrysfml():
         if CONFIG.os == 'macos':
             Functions.run('otool', '-l', crysfmlSoFile())
             Functions.run('otool', '-L', crysfmlSoFile())
-            Functions.run('install_name_tool', '-rpath', crysfmlRpath(), rpath(), crysfmlSoFile())
-            #Functions.run('install_name_tool', '-add_rpath', rpath(), crysfmlSoFile())
-            #Functions.run('install_name_tool', '-add_rpath', pythonLibLocation(), crysfmlSoFile())
+            #Functions.run('install_name_tool', '-rpath', crysfmlRpath(), rpath(), crysfmlSoFile())
+            ##Functions.run('install_name_tool', '-add_rpath', rpath(), crysfmlSoFile())
+            ##Functions.run('install_name_tool', '-add_rpath', pythonLibLocation(), crysfmlSoFile())
             Functions.run('install_name_tool', '-change', crysfmlPythonDylib(), pythonDylib(), crysfmlSoFile())
             Functions.run('otool', '-l', crysfmlSoFile())
             Functions.run('otool', '-L', crysfmlSoFile())
@@ -93,7 +93,7 @@ def relinkCrysfml():
             Functions.run('sudo', 'apt-get', 'install', '-y', 'patchelf')
             Functions.run('sudo', 'apt-get', 'install', '-y', 'chrpath')
             # Python lib
-            Functions.run('chrpath', '-l', crysfmlSoFile())
+            Functions.run('chrpath', '--list', crysfmlSoFile())
             Functions.run('patchelf', '--set-rpath', rpath(), crysfmlSoFile())
             #Functions.run('patchelf', '--replace-needed', crysfmlPythonDylib(), pythonDylib(), crysfmlSoFile())
             # Intel fortran libs

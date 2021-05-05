@@ -73,7 +73,7 @@ def relinkCrysfml():
     Functions.printNeutralMessage(f"pythonLibLocation: {pythonLibLocation()}")
     Functions.printNeutralMessage(f"crysfmlPythonDylib: {crysfmlPythonDylib()}")
     Functions.printNeutralMessage(f"pythonDylib: {pythonDylib()}")
-    Functions.printNeutralMessage(f"crysfmlRpath: {crysfmlRpath()}")
+    #Functions.printNeutralMessage(f"crysfmlRpath: {crysfmlRpath()}")
     Functions.printNeutralMessage(f"rpath: {rpath()}")
     Functions.printNeutralMessage(f"crysfmlSoFile: {crysfmlSoFile()}")
 

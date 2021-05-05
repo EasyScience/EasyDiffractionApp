@@ -27,7 +27,8 @@ def pythonDylib():
 
 def crysfmlPythonDylib():
     d = {
-        'macos': '/Library/Frameworks/Python.framework/Versions/3.7/Python',
+        #'macos': '/Library/Frameworks/Python.framework/Versions/3.7/Python',
+        'macos': '/usr/local/Cellar/python@3.7/3.7.9/Frameworks/Python.framework/Versions/3.7/lib/libpython3.7m.dylib',
         'ubuntu': 'libpython3.7m.so.1.0',
         'windows': None
     }
@@ -87,7 +88,7 @@ def relinkCrysfml():
             Functions.run('install_name_tool', '-change', crysfmlPythonDylib(), pythonDylib(), crysfmlSoFile())
             Functions.run('otool', '-l', crysfmlSoFile())
             Functions.run('otool', '-L', crysfmlSoFile())
-        elif CONFIG.os == 'ubuntu':
+        elif CONFIG.os == '---ubuntu':
             Functions.run('sudo', 'apt-get', 'update', '-y')
             Functions.run('sudo', 'apt-get', 'install', '-y', 'patchelf')
             Functions.run('sudo', 'apt-get', 'install', '-y', 'chrpath')

@@ -10,36 +10,36 @@
 
 **easyDiffraction** allows simulation of diffraction patterns based on a structural model and refinement of its parameters. For refinement, the program uses a number of fitting engines (minimizers).
 
-**easyDiffraction** is similar to crystallographic programs like FullProf, Jana, GSAS, ShelX, etc. However, unlike them, **easyDiffraction** is based on _external_ crystallographic libraries, such as [CrysPy](https://github.com/ikibalin/cryspy), [CrysFML](https://code.ill.fr/scientific-software/crysfml) and [GSAS-II](https://subversion.xray.aps.anl.gov/trac/pyGSAS) to cover different functionality aspects within a single intuitive and user-friendly graphical interface. These libraries are included with the installation so there is no need to download and compile any additional components.
+**easyDiffraction** is similar to crystallographic programs like FullProf, Jana, GSAS, ShelX, etc. Unlike these programs **easyDiffraction** is based on _external_ crystallographic libraries such as [CrysPy](https://github.com/ikibalin/cryspy), [CrysFML](https://code.ill.fr/scientific-software/crysfml) and [GSAS-II](https://subversion.xray.aps.anl.gov/trac/pyGSAS). This allows **easyDiffraction** to cover different functionality aspects within a single, intuitive and user-friendly graphical interface. These libraries are included with the installation so there is no need to download and compile any additional components.
 
 ## Main features
 
 **easyDiffraction** is open source (currently [GPL v3](https://raw.githubusercontent.com/easyScience/easyDiffractionApp/master/LICENSE.md)) and cross-platform, with support for Windows, macOS and Linux (Ubuntu).
 
-The intuitive tabbed interface with built-in step-by-step user guides, video tutorials, as well as a clear workflow help speed up data modelling and analysis.
+The intuitive tabbed interface allows for a clear and defined data modelling and analysis workflow. There are also built-in step-by-step user guides and video tutorials for new users.
 
 Current main features of **easyDiffraction**:
 
 - Support for constant-wavelength 1D unpolarized neutron powder diffraction data.
-- Simulations of diffraction pattern using [CrysPy](https://github.com/ikibalin/cryspy), [CrysFML](https://code.ill.fr/scientific-software/crysfml) and [GSAS-II](https://subversion.xray.aps.anl.gov/trac/pyGSAS).
 - Structure refinement (yet unstable) using [CrysPy](https://github.com/ikibalin/cryspy), [CrysFML](https://code.ill.fr/scientific-software/crysfml) and [GSAS-II](https://subversion.xray.aps.anl.gov/trac/pyGSAS).
-- Multiple minimization engines: [lmfit](https://lmfit.github.io/lmfit-py), [bumps](https://github.com/bumps/bumps) and [DFO-LS](https://github.com/numericalalgorithmsgroup/dfols)
+- Simulations of diffraction pattern using aforementioned libraries.
+- Multiple minimization engines: [lmfit](https://lmfit.github.io/lmfit-py), [bumps](https://github.com/bumps/bumps) and [DFO-LS](https://github.com/numericalalgorithmsgroup/dfols).
 - Crystal structure visualizer and builder.
 - Diffraction pattern viewer, including Bragg peaks and difference curve.
 - Live update of calculations on parameters change.
 - Input files are in [CIF (Crystallographic Information File)](https://www.iucr.org/resources/cif) format.
 - Interactive HTML and standard PDF report generation.
-- Undo/redo both for parameter change and fitting step.
+- Undo/redo for both parameter changes and fitting.
 
 Planned improvements / new functionality for **easyDiffraction**:
 
-- Stable refinement.
-- Constraints.
-- Time-of-Flight data.
-- Polarized neutron data.
-- Magnetic structures.
+- Improved refinement.
+- Parameter constraints during refinement.
+- Loading and simulation of Time-of-Flight data.
+- Support for polarized neutron data.
+- Magnetic structure refinement.
 - Pair distribution function.
-- X-ray data.
+- X-ray data analysis.
 
 ## Getting Started
 

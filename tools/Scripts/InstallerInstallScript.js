@@ -85,13 +85,11 @@ Component.prototype.createOperations = function()
     )
     */
 
-    /*
     component.addOperation(
       "Copy",
       "@TargetDir@/easyDiffraction.desktop",
-      "@HomeDir@/Desktop/easyDiffraction.desktop"
+      "@HomeDir@/.local/share/applications/easyDiffraction.desktop"
     )
-    */
 
     /*
     component.addOperation(

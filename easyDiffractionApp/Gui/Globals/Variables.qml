@@ -52,6 +52,7 @@ QtObject {
     property var summaryPageMainContent
 
     // Application bar tool buttons
+    property var resetStateButton
     property var preferencesButton
 
     // Main content and sidebar buttons
@@ -73,6 +74,7 @@ QtObject {
     property var preferencesOkButton
     property var refinementResultsOkButton
     property var saveConfirmationOkButton
+    property var resetStateOkButton
 
     // Sidebar group boxes
     property var structuralPhasesGroup
@@ -82,6 +84,7 @@ QtObject {
     property var experimentalDataGroup
     property var associatedPhasesGroup
     property var parametersGroup
+    property var calculatorsGroup
     property var exportReportGroup
 
     // Sidebar elements

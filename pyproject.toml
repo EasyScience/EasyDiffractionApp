@@ -28,8 +28,8 @@ easyAppGui = { git = 'https://github.com/easyScience/easyAppGui.git', rev = 'spr
 
 #[tool.poetry.dev-dependencies]
 # PyInstaller
-#pyinstaller = '^4.2'
-pyinstaller = { git = 'https://github.com/pyinstaller/pyinstaller.git', rev = 'develop' }
+pyinstaller = '^4.3'
+#pyinstaller = { git = 'https://github.com/pyinstaller/pyinstaller.git', rev = 'develop' }
 pywin32-ctypes = { version = '^0.2.0', platform = 'win32' }
 pypiwin32 = { version = '^223', platform = 'win32' }
 pefile = { version = '^2019.4.18', platform = 'win32' }
@@ -147,12 +147,12 @@ manual_exclude = [ 'mfc*', 'msvcp*', 'VCRUNTIME*',
                    '*Qt*Scxml*', '*Qt*Sensors*', '*Qt*Sql*', '*Qt*VirtualKeyboard*', '*Qt*Wayland*' ]
 
 [ci.qtifw.setup]
-version = '4.0.1'
+version = '4.1.0'
 https_mirrors = ['download.qt.io', 'ftp.fau.de/qtproject', 'mirrors.dotsrc.org/qtproject']
 base_path = 'official_releases/qt-installer-framework'
-file_name_base = 'QtInstallerFramework-'
-file_name_suffix = { macos = 'mac-x64', ubuntu = 'linux-x64', windows = 'win-x86' }
-file_ext = { macos = '.dmg', ubuntu = '.run', windows = '.exe' }
+file_name_base = 'QtInstallerFramework'
+file_platform = { macos = 'macOS-x86_64', ubuntu = 'linux-x64', windows = 'windows-x86' }
+file_ext = { macos = 'dmg', ubuntu = 'run', windows = 'exe' }
 installation_path = { macOS = '/Users/runner/Qt', Linux = '/home/runner/Qt', Windows = 'C:\Qt' }
 
 [ci.ffmpeg.macos]  # https://evermeet.cx/ffmpeg/ffmpeg-4.3.zip

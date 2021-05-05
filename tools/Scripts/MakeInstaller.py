@@ -13,10 +13,11 @@ import Signatures
 CONFIG = Config.Config()
 
 def qtifwSetupFileName():
+    file_version = CONFIG['ci']['qtifw']['setup']['version']
     file_name_base = CONFIG['ci']['qtifw']['setup']['file_name_base']
-    file_name_suffix = CONFIG['ci']['qtifw']['setup']['file_name_suffix'][CONFIG.os]
+    file_platform = CONFIG['ci']['qtifw']['setup']['file_platform'][CONFIG.os]
     file_ext = CONFIG['ci']['qtifw']['setup']['file_ext'][CONFIG.os]
-    return f'{file_name_base}{file_name_suffix}{file_ext}'
+    return f'{file_name_base}-{file_platform}-{file_version}.{file_ext}'
 
 def qtifwSetupDownloadDest():
     return os.path.join(CONFIG.download_dir, f'{qtifwSetupFileName()}')
@@ -135,7 +136,7 @@ def installerConfigXml():
                 'WizardDefaultHeight': 600,
                 'StyleSheet': config_style,
                 'StartMenuDir': CONFIG.app_name,
-                'TargetDir': CONFIG.installation_dir,
+                'TargetDir': CONFIG.installation_dir_for_qtifw,
                 #'CreateLocalRepository': 'true',
                 #'SaveDefaultRepositories': 'false',
                 #'RepositorySettingsPageVisible': 'false',
@@ -172,6 +173,7 @@ def appPackageXml():
         package_install_script = CONFIG['ci']['scripts']['package_install']
         license_id = CONFIG['tool']['poetry']['license'].replace('-only', '')
         license_name = dephell_licenses.licenses.get_by_id(license_id).name
+        requires_root = 'false'
         raw_xml = Functions.dict2xml({
             'Package': {
                 'DisplayName': CONFIG.app_name,
@@ -182,7 +184,7 @@ def appPackageXml():
                 #'SortingPriority': 100,
                 'Essential': 'true',
                 'ForcedInstallation': 'true',
-                #'RequiresAdminRights': 'true',
+                'RequiresAdminRights': requires_root,
                 'Licenses': {
                     'License': {
                         '@name': license_name,
@@ -308,28 +310,27 @@ def createInstallerSourceDir():
         Functions.copyFile(source=CONFIG.license_file, destination=app_meta_subsubdir_path)
         Functions.moveDir(source=freezed_app_src, destination=app_data_subsubdir_path)
         Functions.copyFile(source=CONFIG.license_file, destination=app_data_subsubdir_path)
+        # package: docs
+        ##docs_subdir_path = os.path.join(packagesDirPath(), CONFIG['ci']['app']['setup']['build']['docs_package_subdir'])
+        ##docs_data_subsubdir_path = os.path.join(docs_subdir_path, CONFIG['ci']['app']['setup']['build']['data_subsubdir'])
+        ##docs_meta_subsubdir_path = os.path.join(docs_subdir_path, CONFIG['ci']['app']['setup']['build']['meta_subsubdir'])
+        ##docs_package_xml_path = os.path.join(docs_meta_subsubdir_path, CONFIG['ci']['app']['setup']['build']['package_xml'])
+        #docs_dir_src = CONFIG['ci']['project']['subdirs']['docs']['src']
+        #docs_dir_dest = CONFIG['ci']['project']['subdirs']['docs']['dest']
+        ##Functions.createDir(docs_subdir_path)
+        ##Functions.createDir(docs_data_subsubdir_path)
+        ##Functions.createDir(docs_meta_subsubdir_path)
+        ##Functions.createFile(path=docs_package_xml_path, content=docsPackageXml())
+        ##Functions.copyDir(source=docs_dir_src, destination=os.path.join(docs_data_subsubdir_path, 'Documentation'))
+        #Functions.copyDir(source=docs_dir_src, destination=os.path.join(app_data_subsubdir_path, docs_dir_dest))
+        # package: examples
+        #examples_dir_src = CONFIG['ci']['project']['subdirs']['examples']['src']
+        #examples_dir_dest = CONFIG['ci']['project']['subdirs']['examples']['dest']
+        #Functions.copyDir(source=examples_dir_src, destination=os.path.join(app_data_subsubdir_path, examples_dir_dest))
         # TODO: change the handling of failure in all methods in Functions.py so they bubble up exceptions
         # TODO: remove this platform conditional once the above is done
         if CONFIG.os == 'windows':
             Functions.copyFile(source=CONFIG.maintenancetool_file, destination=app_data_subsubdir_path)
-
-        # package: docs
-        #docs_subdir_path = os.path.join(packagesDirPath(), CONFIG['ci']['app']['setup']['build']['docs_package_subdir'])
-        #docs_data_subsubdir_path = os.path.join(docs_subdir_path, CONFIG['ci']['app']['setup']['build']['data_subsubdir'])
-        #docs_meta_subsubdir_path = os.path.join(docs_subdir_path, CONFIG['ci']['app']['setup']['build']['meta_subsubdir'])
-        #docs_package_xml_path = os.path.join(docs_meta_subsubdir_path, CONFIG['ci']['app']['setup']['build']['package_xml'])
-        docs_dir_src = CONFIG['ci']['project']['subdirs']['docs']['src']
-        docs_dir_dest = CONFIG['ci']['project']['subdirs']['docs']['dest']
-        #Functions.createDir(docs_subdir_path)
-        #Functions.createDir(docs_data_subsubdir_path)
-        #Functions.createDir(docs_meta_subsubdir_path)
-        #Functions.createFile(path=docs_package_xml_path, content=docsPackageXml())
-        #Functions.copyDir(source=docs_dir_src, destination=os.path.join(docs_data_subsubdir_path, 'Documentation'))
-        Functions.copyDir(source=docs_dir_src, destination=os.path.join(app_data_subsubdir_path, docs_dir_dest))
-        # package: examples
-        examples_dir_src = CONFIG['ci']['project']['subdirs']['examples']['src']
-        examples_dir_dest = CONFIG['ci']['project']['subdirs']['examples']['dest']
-        Functions.copyDir(source=examples_dir_src, destination=os.path.join(app_data_subsubdir_path, examples_dir_dest))
     except Exception as exception:
         Functions.printFailMessage(message, exception)
         sys.exit()

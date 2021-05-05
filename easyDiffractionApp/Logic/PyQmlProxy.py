@@ -1092,6 +1092,9 @@ class PyQmlProxy(QObject):
         return self._background_proxy
 
     def updateChartBackground(self):
+        if self._background_proxy.asObj is None:
+            return
+
         self._plotting_1d_proxy.setBackgroundData(self._background_proxy.asObj.x_sorted_points,
                                                   self._background_proxy.asObj.y_sorted_points)
 
@@ -1175,6 +1178,9 @@ class PyQmlProxy(QObject):
 
             if not par.enabled:
                 continue
+
+            # add experimental dataset name
+            par_path = par_path.replace('Instrument.', f'Instrument.{self.experimentDataAsObj[0]["name"]}.')
 
             if self._parameters_filter_criteria.lower() not in par_path.lower():
                 continue
@@ -1814,6 +1820,8 @@ class PyQmlProxy(QObject):
         self.project_save_filepath = ""
         self.removeExperiment()
         self.removePhase(self._sample.phases[self.currentPhaseIndex].name)
+        self._plotting_1d_proxy.clearBackendState()
+        self._plotting_1d_proxy.clearFrontendState()
         self.resetUndoRedoStack()
         self.stateChanged.emit(False)
 

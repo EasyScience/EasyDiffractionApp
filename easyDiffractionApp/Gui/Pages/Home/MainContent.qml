@@ -124,9 +124,10 @@ Item {
                     Component.onCompleted: ExGlobals.Variables.onlineDocumentationButton = this
                 }
                 EaElements.Button {
-                    enabled: false
-                    text: qsTr("Get in touch online")
-                    onClicked: Qt.openUrlExternally(`${ExGlobals.Constants.appUrl}/issues`)
+                    //text: qsTr("Get in touch online")
+                    //onClicked: Qt.openUrlExternally(`${ExGlobals.Constants.appUrl}/issues`)
+                    text: qsTr("Get in touch on email")
+                    onClicked: Qt.openUrlExternally(`mailto:support@easyDiffraction.org`)
                 }
             }
 

@@ -59,6 +59,7 @@ EaComponents.ApplicationWindow {
             fontIcon: "backspace"
             ToolTip.text: qsTr("Reset to initial state without project, phases and data")
             onClicked: resetStateDialog.open()
+            Component.onCompleted: ExGlobals.Variables.resetStateButton = this
         }
 
     ]
@@ -397,6 +398,7 @@ EaComponents.ApplicationWindow {
                     ExGlobals.Constants.proxy.resetState()
                     resetStateDialog.close()
                 }
+                Component.onCompleted: ExGlobals.Variables.resetStateOkButton = this
             }
         }
     }
@@ -414,9 +416,14 @@ EaComponents.ApplicationWindow {
     onClosing: {
        closeDialog.visible = ExGlobals.Constants.proxy.stateHasChanged
        close.accepted = !ExGlobals.Constants.proxy.stateHasChanged
+       if (close.accepted) {
+           close.accepted = false
+           window.quit()
+       }
     }
 
     Component.onCompleted: {
         ExGlobals.Variables.appBarCentralTabs = appBarCentralTabs
     }
+
 }

@@ -19,7 +19,7 @@ def pythonDylib():
     python_dylib_file = {
         # 'macos': 'Python',
         'macos': 'libpython3.7m.dylib',
-        'ubuntu': 'libpython3.7m.dylib',
+        'ubuntu': 'libpython3.7m.so.1.0',
         'windows': None
     }[CONFIG.os]
     return None if python_dylib_file is None else os.path.join(pythonLibLocation(), python_dylib_file)

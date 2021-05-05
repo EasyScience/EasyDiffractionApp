@@ -125,7 +125,7 @@ class PyQmlProxy(QObject):
         self._plotting_1d_proxy = Plotting1dProxy()
 
         # Plotting 3D
-        self._3d_plotting_libs = ['chemdoodle', 'qtdatavisualization']
+        self._3d_plotting_libs = ['chemdoodle']  # ['chemdoodle', 'qtdatavisualization']
         self._current_3d_plotting_lib = self._3d_plotting_libs[0]
 
         self._show_bonds = True

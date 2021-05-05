@@ -1,6 +1,6 @@
 ## [![CI Build][20]][21] [![Release][30]][31] [![Downloads][70]][71] [![Lines of code][82]][80] [![Total lines][81]][80] [![Files][83]][80] [![License][50]][51]
 
-<img height="60"><img src="https://raw.githubusercontent.com/easyScience/easyDiffractionApp/new_readme/resources/images/ed_logo.svg" height="50">
+<img height="80"><img src="https://raw.githubusercontent.com/easyScience/easyDiffractionApp/new_readme/resources/images/ed_logo.svg" height="65">
 
 **easyDiffraction** is a scientific software for modelling and analysis of diffraction data. Currently, **easyDiffraction** covers classical 1D unpolarized neutron powder diffraction data collected at constant wavelength.
 

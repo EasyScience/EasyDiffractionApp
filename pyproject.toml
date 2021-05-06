@@ -87,10 +87,11 @@ maintenance_file = 'signedmaintenancetool.exe'
 installation_dir_shortcut = { macos = '@ApplicationsDir@', ubuntu = '@HomeDir@', windows = '@ApplicationsDirX86@' }
 
 [ci.app.setup.ftp]
-host = 'download.easydiffraction.org'
+host = 'easydiffraction.org'
 port = 21
 user = 'u652432322.ci'
-remote_subdir = 'download/onlineRepository'
+prefix = 'download'
+repo_subdir = 'onlineRepository'
 
 [ci.app.setup.build]
 # config

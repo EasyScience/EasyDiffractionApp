@@ -92,10 +92,11 @@ def localRepositoryDir():
     repository_dir_suffix = CONFIG['ci']['app']['setup']['repository_dir_suffix']
     return os.path.join(f'{CONFIG.app_name}{repository_dir_suffix}', CONFIG.setup_os)
 
-def remoteRepositoryDir():
-    repo_host = CONFIG['ci']['app']['setup']['ftp']['host']
-    remote_subdir_name = CONFIG['ci']['app']['setup']['ftp']['remote_subdir']
-    return f'http://{repo_host}/{remote_subdir_name}/{CONFIG.setup_os}'
+def onlineRepositoryUrl():
+    host = CONFIG['ci']['app']['setup']['ftp']['host']
+    prefix = CONFIG['ci']['app']['setup']['ftp']['prefix']
+    repo_subdir = CONFIG['ci']['app']['setup']['ftp']['repo_subdir']
+    return f'https://{prefix}.{host}/{repo_subdir}/{CONFIG.setup_os}'
 
 def installerConfigXml():
     try:
@@ -129,7 +130,7 @@ def installerConfigXml():
                 'RemoteRepositories': {
                     'Repository': [
                         {
-                            'Url': remoteRepositoryDir(),
+                            'Url': onlineRepositoryUrl(),
                             'DisplayName': f'{CONFIG.app_name} {CONFIG.setup_os}_{CONFIG.setup_arch} repository',
                             'Enabled': 1,
                         }

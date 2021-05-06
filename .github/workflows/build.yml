@@ -140,6 +140,7 @@ jobs:
           artifacts: "${{ env.DISTRIBUTION_PATH }}/${{ env.APP_NAME }}_*.zip,${{ env.DISTRIBUTION_PATH }}/tutorial_*.mp4"
           tag: ${{ env.BRANCH_NAME }}
           commit: ${{ env.BRANCH_NAME }}
+          bodyFile: "RELEASE.md"
 
       #- name: Upload online app installer to repository via FTP
       #  if: github.event_name == 'push'

@@ -143,14 +143,15 @@ def deploy():
 
     local_repository_dir_name = f'{CONFIG.app_name}{CONFIG.repository_dir_suffix}'
     local_repository_dir_path = os.path.join(CONFIG.dist_dir, local_repository_dir_name, CONFIG.setup_os)
-    online_repository_dir_path = f'{prefix}/{repo_subdir}/{CONFIG.setup_os}'
+    online_repository_subdir_path = f'{prefix}/{repo_subdir}'
+    online_repository_dir_path = f'{online_repository_subdir_path}/{CONFIG.setup_os}'
 
     ftp = ftplib.FTP()
     connect(ftp, host, port)
     login(ftp, user, password)
     removeDir(ftp, online_repository_dir_path)
     makeDir(ftp, online_repository_dir_path)
-    upload(ftp, local_repository_dir_path, online_subdir_name)
+    upload(ftp, local_repository_dir_path, online_repository_subdir_path)
     ftp.quit()
 
 if __name__ == "__main__":

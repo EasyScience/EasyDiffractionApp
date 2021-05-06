@@ -130,8 +130,8 @@ def removeDir(ftp, path):
 
 def deploy():
     branch = sys.argv[1]
-    if branch != 'master' or branch != 'develop' or branch != 'hot_fixes':
-        Functions.printNeutralMessage(f'No deploy needed for branch {branch}')
+    if branch != 'master' and branch != 'develop' and branch != 'hot_fixes':
+        Functions.printNeutralMessage(f'No ftp upload for branch {branch}')
         return
 
     password = sys.argv[2]

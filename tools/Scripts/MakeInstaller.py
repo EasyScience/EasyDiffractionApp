@@ -37,21 +37,6 @@ def urlOk(url):
         Functions.printFailMessage(message, exception)
         return False
 
-def urlOk(url):
-    try:
-        message = f'access url {url}'
-        status_code = requests.head(url, timeout=10).status_code
-        if status_code == 200:
-            Functions.printSuccessMessage(message)
-            return True
-        else:
-            message += f' with status: {status_code}'
-            Functions.printFailMessage(message)
-            return False
-    except Exception as exception:
-        Functions.printFailMessage(message, exception)
-        return False
-
 def qtifwSetupDownloadUrl():
     repos = CONFIG['ci']['qtifw']['setup']['https_mirrors']
     base_path = CONFIG['ci']['qtifw']['setup']['base_path']
@@ -108,8 +93,9 @@ def localRepositoryDir():
     return os.path.join(f'{CONFIG.app_name}{repository_dir_suffix}', CONFIG.setup_os)
 
 def remoteRepositoryDir():
+    repo_host = CONFIG['ci']['app']['setup']['ftp']['host']
     remote_subdir_name = CONFIG['ci']['app']['setup']['ftp']['remote_subdir']
-    return os.path.join(CONFIG.app_name, remote_subdir_name, CONFIG.setup_os)
+    return f'http://{repo_host}/{remote_subdir_name}/{CONFIG.setup_os}'
 
 def installerConfigXml():
     try:
@@ -143,7 +129,7 @@ def installerConfigXml():
                 'RemoteRepositories': {
                     'Repository': [
                         {
-                            'Url': f'http://easyscience.apptimity.com/{remoteRepositoryDir()}',
+                            'Url': remoteRepositoryDir(),
                             'DisplayName': f'{CONFIG.app_name} {CONFIG.setup_os}_{CONFIG.setup_arch} repository',
                             'Enabled': 1,
                         }

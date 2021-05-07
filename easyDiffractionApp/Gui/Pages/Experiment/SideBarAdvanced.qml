@@ -12,7 +12,6 @@ EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
         title: qsTr("Plot settings")
-        collapsed: false
 
         EaElements.CheckBox {
             topPadding: 0

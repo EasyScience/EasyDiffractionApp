@@ -33,8 +33,12 @@ def winToLin(path):
     return path.replace('\\', '/')
 
 def makeDir(ftp, path):
+    if pathExists(ftp, path):
+        Functions.printNeutralMessage(f'Directory exists: {path}')
+        return
     try:
-        message = f'make directory {path}'
+        path = winToLin(path)
+        message = f'create directory {path}'
         ftp.mkd(path)
     except Exception as exception:
         Functions.printFailMessage(message, exception)
@@ -92,7 +96,21 @@ def upload(ftp, source, destination):
     else:
         Functions.printSuccessMessage(message)
 
+def pathExists(ftp, path):
+    try:
+        message = f'find path {path}'
+        ftp.nlst(path)
+    except Exception as exception:
+        Functions.printFailMessage(message, exception)
+        return False
+    else:
+        Functions.printSuccessMessage(message)
+        return True
+
 def removeDir(ftp, path):
+    if not pathExists(ftp, path):
+        Functions.printNeutralMessage(f"Directory doesn't exists: {path}")
+        return
     try:
         path = winToLin(path)
         message = f'remove directory {path}'
@@ -103,37 +121,37 @@ def removeDir(ftp, path):
                 ftp.delete(f'{path}/{name}')
             elif properties['type'] == 'dir':
                 removeDir(ftp, f'{path}/{name}')
-        if ftp.nlst(path):
-            ftp.rmd(path)
-        else:
-            Functions.printNeutralMessage(f"Skip next step: Remove directory {path}. It doesn't exist")
+        ftp.rmd(path)
     except Exception as exception:
-        Functions.printFailMessage(message, exception)
+        Functions.printNeutralMessage(message, exception)
         sys.exit()
     else:
         Functions.printSuccessMessage(message)
 
 def deploy():
     branch = sys.argv[1]
-    #if branch != 'master':
-    #    Functions.printNeutralMessage(f'No deploy needed for branch {branch}')
-    #    return
+    if branch != 'master' and branch != 'develop' and branch != 'hot_fixes':
+        Functions.printNeutralMessage(f'No ftp upload for branch {branch}')
+        return
 
     password = sys.argv[2]
     host = CONFIG['ci']['app']['setup']['ftp']['host']
     port = CONFIG['ci']['app']['setup']['ftp']['port']
     user = CONFIG['ci']['app']['setup']['ftp']['user']
-    remote_subdir_name = CONFIG['ci']['app']['setup']['ftp']['remote_subdir']
+    prefix = CONFIG['ci']['app']['setup']['ftp']['prefix']
+    repo_subdir = CONFIG['ci']['app']['setup']['ftp']['repo_subdir']
 
     local_repository_dir_name = f'{CONFIG.app_name}{CONFIG.repository_dir_suffix}'
     local_repository_dir_path = os.path.join(CONFIG.dist_dir, local_repository_dir_name, CONFIG.setup_os)
-    remote_repository_dir_path = os.path.join(remote_subdir_name, CONFIG.setup_os)
+    online_repository_subdir_path = f'{prefix}/{repo_subdir}'
+    online_repository_dir_path = f'{online_repository_subdir_path}/{CONFIG.setup_os}'
 
     ftp = ftplib.FTP()
     connect(ftp, host, port)
     login(ftp, user, password)
-    removeDir(ftp, remote_repository_dir_path)
-    upload(ftp, local_repository_dir_path, remote_subdir_name)
+    removeDir(ftp, online_repository_dir_path)
+    makeDir(ftp, online_repository_dir_path)
+    upload(ftp, local_repository_dir_path, online_repository_subdir_path)
     ftp.quit()
 
 if __name__ == "__main__":

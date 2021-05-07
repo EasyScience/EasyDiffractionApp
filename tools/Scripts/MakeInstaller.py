@@ -2,10 +2,12 @@ __author__ = "github.com/AndrewSazonov"
 __version__ = '0.0.1'
 
 import os, sys
+import time
 import requests
 import xml.dom.minidom
 import dephell_licenses
 import Functions, Config
+import Signatures
 
 
 CONFIG = Config.Config()
@@ -18,6 +20,21 @@ def qtifwSetupFileName():
 
 def qtifwSetupDownloadDest():
     return os.path.join(CONFIG.download_dir, f'{qtifwSetupFileName()}')
+
+def urlOk(url):
+    try:
+        message = f'access url {url}'
+        status_code = requests.head(url, timeout=10).status_code
+        if status_code == 200:
+            Functions.printSuccessMessage(message)
+            return True
+        else:
+            message += f' with status: {status_code}'
+            Functions.printFailMessage(message)
+            return False
+    except Exception as exception:
+        Functions.printFailMessage(message, exception)
+        return False
 
 def urlOk(url):
     try:
@@ -237,11 +254,31 @@ def installQtInstallerFramework():
             installer=qtifwSetupExe(),
             silent_script=silent_script
         )
+        time.sleep(10)
     except Exception as exception:
         Functions.printFailMessage(message, exception)
         sys.exit()
     else:
         Functions.printSuccessMessage(message)
+
+
+def prepareSignedMaintenanceTool():
+    if CONFIG.setup_os != "Windows":
+        return
+    try:
+        message = 'copy and sign MaintenanceTool'
+        target_dir = CONFIG['ci']['project']['subdirs']['certificates_path']
+        target_file = os.path.join(target_dir, "signedmaintenancetool.exe")
+        # copy MaintenanceTool locally
+        Functions.copyFile(os.path.join(qtifwDirPath(), "bin", "installerbase.exe" ), target_file)
+        Signatures.unzipCerts(zip_pass=sys.argv[2])
+        Signatures.sign_windows(file_to_sign=target_file, cert_pass=sys.argv[1])
+    except Exception as exception:
+        Functions.printFailMessage(message, exception)
+        sys.exit()
+    else:
+        Functions.printSuccessMessage(message)
+
 
 def createInstallerSourceDir():
     try:
@@ -271,6 +308,11 @@ def createInstallerSourceDir():
         Functions.copyFile(source=CONFIG.license_file, destination=app_meta_subsubdir_path)
         Functions.moveDir(source=freezed_app_src, destination=app_data_subsubdir_path)
         Functions.copyFile(source=CONFIG.license_file, destination=app_data_subsubdir_path)
+        # TODO: change the handling of failure in all methods in Functions.py so they bubble up exceptions
+        # TODO: remove this platform conditional once the above is done
+        if CONFIG.os == 'windows':
+            Functions.copyFile(source=CONFIG.maintenancetool_file, destination=app_data_subsubdir_path)
+
         # package: docs
         #docs_subdir_path = os.path.join(packagesDirPath(), CONFIG['ci']['app']['setup']['build']['docs_package_subdir'])
         #docs_data_subsubdir_path = os.path.join(docs_subdir_path, CONFIG['ci']['app']['setup']['build']['data_subsubdir'])
@@ -340,6 +382,7 @@ if __name__ == "__main__":
     downloadQtInstallerFramework()
     osDependentPreparation()
     installQtInstallerFramework()
+    prepareSignedMaintenanceTool()
     createInstallerSourceDir()
     createOnlineRepository()
     createInstaller()

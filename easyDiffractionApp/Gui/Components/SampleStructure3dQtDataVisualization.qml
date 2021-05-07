@@ -7,9 +7,7 @@ import easyAppGui.Elements 1.0 as EaElements
 
 Rectangle {
     color: EaStyle.Colors.contentBackground
-    Behavior on color {
-        EaAnimations.ThemeChange {}
-    }
+    Behavior on color { EaAnimations.ThemeChange {} }
 
     EaElements.Label {
         enabled: false

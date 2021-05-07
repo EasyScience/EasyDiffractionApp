@@ -6,7 +6,7 @@ build-backend = 'poetry.masonry.api'
 
 [tool.poetry]
 name = 'easyDiffraction'
-version = '0.1.0'
+version = '0.8.0'
 description = 'Making diffraction data analysis and modelling easy.'
 license = 'GPL-3.0-only'
 authors = ['Andrew Sazonov', 'Simon Ward']
@@ -19,13 +19,12 @@ packages = [ { include = 'easyDiffractionApp' } ]
 
 [tool.poetry.dependencies]
 python = '^3.7, <3.8'
-vtk = '^8.1.2'
 pyobjc-core = { version = '^7.1', platform = 'darwin' }
 pyobjc-framework-cocoa = { version = '^7.1', platform = 'darwin' }
 # easyScience
-easyDiffractionLib = { git = 'https://github.com/easyScience/easyDiffractionLib.git', rev = 'develop' }
+easyDiffractionLib = { git = 'https://github.com/easyScience/easyDiffractionLib.git', rev = 'sprint12' }
 easyAppLogic = { git = 'https://github.com/easyScience/easyAppLogic.git', rev = 'develop' }
-easyAppGui = { git = 'https://github.com/easyScience/easyAppGui.git', rev = 'develop' }
+easyAppGui = { git = 'https://github.com/easyScience/easyAppGui.git', rev = 'sprint12' }
 
 #[tool.poetry.dev-dependencies]
 # PyInstaller
@@ -41,7 +40,8 @@ dephell_licenses = '^0.1.7'
 ffmpeg-python = '^0.2.0'
 mss = '^6.1.0'
 opencv-python = '^4.5.1'
-googletrans = '^3.0.0'
+#googletrans = "3.1.0a0"
+google-trans-new = "^1.1.9"
 gTTS = '^2.2.2'
 
 [tool.poetry.scripts]
@@ -61,12 +61,14 @@ download = '.ci/download'
 screenshots = '.ci/screenshots'
 build = '.ci/build'
 distribution = '.ci/distribution'
+certificates_path = 'Certificates'
 
 [ci.scripts]
 silent_install = 'SilentInstall.js'
 package_install = 'InstallerInstallScript.js'
 config_control = 'InstallerControlScript.js'
 config_style = 'style.qss'
+certificate_name = 'ESS_cert'
 
 [ci.app.icon]
 dir = ['Gui', 'Resources', 'Logo']
@@ -80,6 +82,7 @@ os = { macos = 'macOS', ubuntu = 'Linux', windows = 'Windows' }  # Should be the
 arch = { macos = 'x86-64', ubuntu = 'x86-64', windows = 'x86-32' }
 file_ext = { macos = '.app', ubuntu = '', windows = '.exe' }
 maintenance_tool_suffix = 'MaintenanceTool'
+maintenance_file = 'signedmaintenancetool.exe'
 installation_dir_shortcut = { macos = '@ApplicationsDir@', ubuntu = '@HomeDir@', windows = '@ApplicationsDirX86@' }
 
 [ci.app.setup.ftp]

@@ -94,8 +94,8 @@ class Fitter(QThread):
     failed = Signal(str)
     finished = Signal(dict)
 
-    def __init__(self, obj, method_name, *args, **kwargs):
-        QThread.__init__(self, None)
+    def __init__(self, parent, obj, method_name, *args, **kwargs):
+        QThread.__init__(self, parent)
         self._obj = obj
         self.method_name = method_name
         self.args = args

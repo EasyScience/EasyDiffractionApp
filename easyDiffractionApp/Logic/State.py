@@ -1,6 +1,7 @@
 # noqa: E501
 import os
 import datetime
+import pathlib
 from typing import Union
 
 from dicttoxml import dicttoxml
@@ -166,49 +167,21 @@ class State(object):
         self._experiment_data_as_xml = dicttoxml(self.experiments, attr_type=True).decode()  # noqa: E501
 
     def addExperimentDataFromXye(self, file_url):
-        def outer1(obj):
-            def inner():
-                obj._experiment_data = self._loadExperimentData(file_url)
-                obj.experimentLoaded(True)
-                obj.experimentSkipped(False)
-                obj.parent.undoRedoChanged.emit()
-                obj.parent.experimentDataAdded.emit()
-            return inner
-
-        def outer2(obj):
-            def inner():
-                obj.experiments.clear()
-                obj.experimentLoaded(False)
-                obj.experimentSkipped(True)
-                obj.parent.undoRedoChanged.emit()
-                obj.experimentDataRemoved.emit()
-            return inner
-
-        borg.stack.push(FunctionStack(self, outer1(self), outer2(self)))
+        self._experiment_data = self._loadExperimentData(file_url)
+        self._data.experiments[0].name = pathlib.Path(file_url).stem
+        self.experiments = [{'name': experiment.name} for experiment in self._data.experiments]
+        self.experimentLoaded(True)
+        self.experimentSkipped(False)
+        self.parent.experimentDataAdded.emit()
+        # borg.stack.push(FunctionStack(self, outer1(self), outer2(self)))
         self.parent.experimentLoadedChanged.emit()
 
     def removeExperiment(self):
-        def outer1(obj):
-            def inner():
-                obj.experiments.clear()
-                obj.experimentDataRemoved.emit()
-                obj.experimentLoaded(False)
-                obj.experimentSkipped(False)
-                obj.parent.undoRedoChanged.emit()
-            return inner
-
-        def outer2(obj):
-            data = self._experiment_data
-
-            def inner():
-                obj._experiment_data = data
-                obj.parent.experimentDataAdded.emit()
-                obj.experimentLoaded(True)
-                obj.experimentSkipped(False)
-                obj.parent.undoRedoChanged.emit()
-            return inner
-
-        borg.stack.push(FunctionStack(self, outer1(self), outer2(self)))
+        self.experiments.clear()
+        self.experimentLoaded(False)
+        self.experimentSkipped(False)
+        self.parent.experimentDataRemoved.emit()
+        # borg.stack.push(FunctionStack(self, outer1(self), outer2(self)))
         self.parent.experimentLoadedChanged.emit()
 
     ####################################################################################################################
@@ -227,6 +200,19 @@ class State(object):
             calculations="Not created",
             modified=datetime.datetime.now().strftime("%d.%m.%Y %H:%M")
         )
+
+    def projectExamplesAsXml(self):
+        model = [
+            {"name": "PbSO4", "description": "neutrons, powder, 1D, D1A@ILL",
+             "path": "../Resources/Examples/PbSO4/project.json"},
+            {"name": "Co2SiO4", "description": "neutrons, powder, 1D, D20@ILL",
+             "path": "../Resources/Examples/Co2SiO4/project.json"},
+            {"name": "Dy3Al5O12", "description": "neutrons, powder, 1D, G41@LLB",
+             "path": "../Resources/Examples/Dy3Al5O12/project.json"}
+        ]
+        xml = dicttoxml(model, attr_type=False)
+        xml = xml.decode()
+        return xml
 
     def projectInfoAsJson(self, json_str):
         self._project_info = json.loads(json_str)
@@ -371,7 +357,7 @@ class State(object):
         sample.parameters.resolution_v = -0.4252
         sample.parameters.resolution_w = 0.3864
         sample.parameters.resolution_x = 0.0
-        sample.parameters.resolution_y = 0.0961
+        sample.parameters.resolution_y = 0.0  # 0.0961
         return sample
 
     def addSampleFromCif(self, cif_url):
@@ -419,7 +405,7 @@ class State(object):
         if self._interface.current_interface_name != 'CrysPy':
             self._interface.generate_sample_binding("filename", self._sample)
         self._sample.phases.name = 'Phases'
-        self._sample.set_background(background_obj)
+        # self._sample.set_background(background_obj)
 
     def currentCrystalSystem(self):
         phases = self._sample.phases

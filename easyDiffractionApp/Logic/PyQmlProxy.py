@@ -1,4 +1,9 @@
 # noqa: E501
+import os
+import sys
+import pathlib
+import datetime
+import re
 import timeit
 from typing import Union
 
@@ -14,11 +19,11 @@ from easyDiffractionApp.Logic.Proxies.Plotting1d import Plotting1dProxy
 from easyDiffractionApp.Logic.Fitter import FitterLogic as FitterLogic
 from easyDiffractionApp.Logic.Stack import StackLogic
 
-
 class PyQmlProxy(QObject):
     # SIGNALS
 
     # Project
+    projectCreatedChanged = Signal()
     projectInfoChanged = Signal()
     stateChanged = Signal(bool)
 
@@ -63,6 +68,7 @@ class PyQmlProxy(QObject):
     simulationParametersChanged = Signal()
 
     fitResultsChanged = Signal()
+    stopFit = Signal()
 
     currentMinimizerChanged = Signal()
     currentMinimizerMethodChanged = Signal()
@@ -131,10 +137,10 @@ class PyQmlProxy(QObject):
 
         self.phaseAdded.connect(self._onPhaseAdded)
         self.phaseAdded.connect(self.phasesEnabled)
-        self.phaseAdded.connect(self.undoRedoChanged)
+        #self.phaseAdded.connect(self.undoRedoChanged)
         self.phaseRemoved.connect(self._onPhaseRemoved)
         self.phaseRemoved.connect(self.phasesEnabled)
-        self.phaseRemoved.connect(self.undoRedoChanged)
+        #self.phaseRemoved.connect(self.undoRedoChanged)
 
         self.currentPhaseChanged.connect(self._onCurrentPhaseChanged)
 
@@ -150,7 +156,7 @@ class PyQmlProxy(QObject):
         self.experimentLoadedChanged.connect(self._onExperimentLoadedChanged)
         self.experimentSkippedChanged.connect(self._onExperimentSkippedChanged)
 
-        self._background_proxy = BackgroundProxy()
+        self._background_proxy = BackgroundProxy(self)
         self._background_proxy.asObjChanged.connect(self._onParametersChanged)
         self._background_proxy.asObjChanged.connect(self.state._sample.set_background)
         self._background_proxy.asObjChanged.connect(self.calculatedDataChanged)
@@ -186,11 +192,11 @@ class PyQmlProxy(QObject):
         # Status info
         self.statusInfoChanged.connect(self._onStatusInfoChanged)
         self.currentCalculatorChanged.connect(self.statusInfoChanged)
-        self.currentCalculatorChanged.connect(self.undoRedoChanged)
+        #self.currentCalculatorChanged.connect(self.undoRedoChanged)
         self.currentMinimizerChanged.connect(self.statusInfoChanged)
-        self.currentMinimizerChanged.connect(self.undoRedoChanged)
+        #self.currentMinimizerChanged.connect(self.undoRedoChanged)
         self.currentMinimizerMethodChanged.connect(self.statusInfoChanged)
-        self.currentMinimizerMethodChanged.connect(self.undoRedoChanged)
+        #self.currentMinimizerMethodChanged.connect(self.undoRedoChanged)
 
         # Multithreading
         self._fitter_thread = None
@@ -210,6 +216,8 @@ class PyQmlProxy(QObject):
         borg.stack.enabled = True
         borg.stack.clear()
         # borg.debug = True
+
+        self._currentProjectPath = os.path.expanduser("~")
 
     ####################################################################################################################
     ####################################################################################################################
@@ -288,9 +296,27 @@ class PyQmlProxy(QObject):
     def projectInfoAsCif(self):
         return self.state.projectInfoAsCif()
 
+    # **** TODO *****
     @Slot(str, str)
     def editProjectInfo(self, key, value):
-        self.state.editProjectInfo(key, value)
+        if key == 'location':
+            self.currentProjectPath = value
+            return
+        else:
+            if self.state._project_info[key] == value:
+                return
+            self.state._project_info[key] = value
+        self.projectInfoChanged.emit()
+
+    @Property(str, notify=projectInfoChanged)
+    def currentProjectPath(self):
+        return self._currentProjectPath
+
+    @currentProjectPath.setter
+    def currentProjectPath(self, new_path):
+        if self._currentProjectPath == new_path:
+            return
+        self._currentProjectPath = new_path
         self.projectInfoChanged.emit()
 
     @Slot()
@@ -384,6 +410,8 @@ class PyQmlProxy(QObject):
         print("***** _onPhaseAdded")
         self.state._onPhaseAdded(self._background_proxy.asObj)
         self.structureParametersChanged.emit()
+        self.projectInfoAsJson['samples'] = self.state._sample.phases[self.currentPhaseIndex].name
+        self.projectInfoChanged.emit()
 
     def _onPhaseRemoved(self):
         print("***** _onPhaseRemoved")
@@ -473,6 +501,32 @@ class PyQmlProxy(QObject):
         print("***** _onCurrentPhaseChanged")
         self.structureViewChanged.emit()
 
+    # **** TODO *****
+
+    @Slot(str)
+    def setCurrentPhaseName(self, name):
+        if self.state._sample.phases[self.currentPhaseIndex].name == name:
+            return
+
+        self.state._sample.phases[self.currentPhaseIndex].name = name
+        self.parametersChanged.emit()
+        self.projectInfoAsJson['samples'] = name
+        self.projectInfoChanged.emit()
+
+    @Property('QVariant', notify=experimentDataChanged)
+    def experimentDataAsObj(self):
+        return [{'name': experiment.name} for experiment in self.state._data.experiments]
+
+    @Slot(str)
+    def setCurrentExperimentDatasetName(self, name):
+        if self.state._data.experiments[0].name == name:
+            return
+
+        self.state._data.experiments[0].name = name
+        self.experimentDataChanged.emit()
+        self.projectInfoAsJson['experiments'] = name
+        self.projectInfoChanged.emit()
+
     ####################################################################################################################
     ####################################################################################################################
     # EXPERIMENT
@@ -513,10 +567,15 @@ class PyQmlProxy(QObject):
     def _onExperimentDataAdded(self):
         print("***** _onExperimentDataAdded")
         self.state._onExperimentDataAdded()
+
         x, y, z = self.state.experimentDataXYZ()
         self._plotting_1d_proxy.setMeasuredData(x, y, z)
-        self._background_proxy.setDefaultPoints()
+        # self._background_proxy.setDefaultPoints()
+        if len(self.state._sample.pattern.backgrounds) == 0:
+            self.backgroundProxy.initializeContainer()
         self.experimentDataChanged.emit()
+        self.projectInfoAsJson['experiments'] = self.state._data.experiments[0].name
+        self.projectInfoChanged.emit()
 
     def _onExperimentDataRemoved(self):
         print("***** _onExperimentDataRemoved")
@@ -628,6 +687,14 @@ class PyQmlProxy(QObject):
     # Background
     ####################################################################################################################
 
+    @property
+    def _background_obj(self):
+        bgs = self.state._sample.pattern.backgrounds
+        itm = None
+        if len(bgs) > 0:
+            itm = bgs[0]
+        return itm
+
     @Property('QVariant', notify=dummySignal)
     def backgroundProxy(self):
         return self._background_proxy
@@ -738,10 +805,17 @@ class PyQmlProxy(QObject):
             self.currentMinimizerMethodChanged.emit()
 
     # Minimizer method
-
+    # **** TODO *****
     @Property('QVariant', notify=currentMinimizerChanged)
     def minimizerMethodNames(self):
-        return self.fitLogic.fitter.available_methods()
+        current_minimizer = self.minimizerNames[self.currentMinimizerIndex]
+        tested_methods = {
+            'lmfit': ['leastsq', 'powell', 'cobyla'],
+            'bumps': ['newton', 'lm'],
+            'DFO_LS': ['leastsq']
+        }
+        #return self.fitter.available_methods()
+        return tested_methods[current_minimizer]
 
     @Property(int, notify=currentMinimizerMethodChanged)
     def currentMinimizerMethodIndex(self):
@@ -810,7 +884,7 @@ class PyQmlProxy(QObject):
 
     ####################################################################################################################
     ####################################################################################################################
-    # STATUS
+    # Report
     ####################################################################################################################
     ####################################################################################################################
 
@@ -853,6 +927,16 @@ class PyQmlProxy(QObject):
 
     ####################################################################################################################
     ####################################################################################################################
+    # Project examples
+    ####################################################################################################################
+    ####################################################################################################################
+
+    @Property(str, notify=dummySignal)
+    def projectExamplesAsXml(self):
+        return self.state.projectExamplesAsXml()
+
+    ####################################################################################################################
+    ####################################################################################################################
     # Screen recorder
     ####################################################################################################################
     ####################################################################################################################
@@ -882,6 +966,12 @@ class PyQmlProxy(QObject):
         self._loadProject()
         self.stateChanged.emit(False)
 
+    @Slot(str)
+    def loadExampleProject(self, filepath):
+        self._loadProjectAs(filepath)
+        self.currentProjectPath = '--- EXAMPLE ---'
+        self.stateChanged.emit(False)
+
     @Property(str, notify=dummySignal)
     def projectFilePath(self):
         return self.state.project_save_filepath
@@ -895,8 +985,8 @@ class PyQmlProxy(QObject):
     def _loadProject(self):
         self.state._loadProject()
 
-    # Undo/Redo stack operations
     ####################################################################################################################
+    # Undo/Redo stack operations
     ####################################################################################################################
 
     @Property(bool, notify=undoRedoChanged)

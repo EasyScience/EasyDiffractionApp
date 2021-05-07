@@ -43,7 +43,7 @@ EaComponents.TableView {
             id: xLabel
             horizontalAlignment: Text.AlignRight
             width: EaStyle.Sizes.fontPixelSize * 11.6
-            headerText: "2theta"
+            headerText: "2θ"
             text: EaLogic.Utils.toFixed(model.x)
             onEditingFinished: editParameterValue(model.xId, text)
         }

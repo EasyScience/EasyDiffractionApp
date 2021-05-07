@@ -14,9 +14,14 @@ EaCharts.BaseBokeh {
 
     plotRanges: ExGlobals.Constants.proxy.plotting1d.analysisPlotRangesObj
 
-    xAxisTitle: qsTr("2theta (deg)")
-    yMainAxisTitle: qsTr("Intensity")
-    yDifferenceAxisTitle: qsTr("Difference")
+    xAxisTitle: "2θ (deg)"
+    yMainAxisTitle: {
+        let title = 'Icalc'
+        if (hasMeasuredData) title = 'Imeas, Icalc'
+        if (hasBackgroundData) title += ', Ibkg'
+        return title
+    }
+    yDifferenceAxisTitle: "Imeas - Icalc"
 
     Component.onCompleted: ExGlobals.Variables.analysisChart = this
 }

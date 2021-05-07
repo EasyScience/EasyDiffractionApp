@@ -25,15 +25,6 @@ EaComponents.TableView {
 
         XmlRole { name: "label"; query: "name/string()" }
         XmlRole { name: "color"; query: "color/string()" }
-
-        onXmlChanged: {
-            if (ExGlobals.Constants.proxy.phasesAsObj.length === 0) {
-//                ExGlobals.Variables.experimentPageEnabled = false
-                ExGlobals.Variables.sampleLoaded = false
-                ExGlobals.Variables.analysisPageEnabled = false
-                ExGlobals.Variables.summaryPageEnabled = false
-            }
-        }
     }
 
     // Table rows
@@ -52,27 +43,13 @@ EaComponents.TableView {
             width: EaStyle.Sizes.fontPixelSize * 27.9
             headerText: "Label"
             text: model.label
-            //onEditingFinished: ExGlobals.Constants.proxy.changePhaseName(text) // use Id
+            onEditingFinished: ExGlobals.Constants.proxy.setCurrentPhaseName(text)
         }
-
-        /*
-        EaComponents.TableViewComboBox {
-            width: 130
-            //displayText: ""
-            //backgroundColor: modelColor
-            foregroundColor: modelColor
-            currentIndex: model.indexOf(modelColor)
-            headerText: "Color"
-            model: ["coral", "darkolivegreen", "steelblue"]
-            onActivated: ExGlobals.Constants.proxy.editPhase(phasesTable.currentIndex,
-                                                             "color",
-                                                             currentText)
-        }
-        */
 
         EaComponents.TableViewLabel {
             headerText: "Color"
-            backgroundColor: model.color ? model.color : "transparent"
+            //backgroundColor: model.color ? model.color : "transparent"
+            backgroundColor: EaStyle.Colors.chartForegrounds[1]
         }
 
         EaComponents.TableViewButton {
@@ -86,7 +63,7 @@ EaComponents.TableView {
     }
 
     onCurrentIndexChanged: {
-        ExGlobals.Constants.proxy.currentPhaseIndex = currentIndex //ExGlobals.Constants.proxy.currentPhaseIndex = currentIndex
+        ExGlobals.Constants.proxy.currentPhaseIndex = currentIndex
     }
 
 }

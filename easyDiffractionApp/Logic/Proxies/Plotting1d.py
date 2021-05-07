@@ -100,6 +100,48 @@ class Plotting1dProxy(QObject):
         self._qtcharts_bragg_data_obj = {}
         self._qtcharts_background_data_obj = {}
 
+    def clearBackendState(self):
+
+        # Ranges
+        self._measured_min_x = 999999
+        self._measured_max_x = -999999
+        self._measured_min_y = 999999
+        self._measured_max_y = -999999
+
+        self._calculated_min_x = 999999
+        self._calculated_max_x = -999999
+        self._calculated_min_y = 999999
+        self._calculated_max_y = -999999
+
+        self._difference_min_y = 0
+        self._difference_max_y = 1
+        self._difference_median_y = 0.5
+
+        self._y_axis_range_extension = 0.1
+
+        # Data containers
+        self._measured_xarray = np.empty(0)
+        self._measured_yarray = np.empty(0)
+        self._measured_syarray = np.empty(0)
+        self._measured_yarray_upper = np.empty(0)
+        self._measured_yarray_lower = np.empty(0)
+
+        self._calculated_xarray = np.empty(0)
+        self._calculated_yarray = np.empty(0)
+
+        self._difference_yarray = np.empty(0)
+        self._difference_yarray_upper = np.empty(0)
+        self._difference_yarray_lower = np.empty(0)
+
+        self._bragg_xarray = np.empty(0)
+        self._bragg_yarray = np.empty(0)
+        self._bragg_harray = np.empty(0)
+        self._bragg_karray = np.empty(0)
+        self._bragg_larray = np.empty(0)
+
+        self._background_xarray = np.empty(0)
+        self._background_yarray = np.empty(0)
+
     def clearFrontendState(self):
 
         # Ranges for GUI
@@ -269,7 +311,6 @@ class Plotting1dProxy(QObject):
         if self._background_xarray.size:
             self._setBokehBackgroundDataObj()
             if self.currentLib == 'qtcharts':
-                print("AAAAAAAAA")
                 self._setQtChartsBackgroundDataObj()
 
     def onCurrentLibChanged(self):

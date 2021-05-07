@@ -12,7 +12,6 @@ EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
         title: qsTr("Calculation")
-        collapsed: false
 
         Row {
             spacing: EaStyle.Sizes.fontPixelSize
@@ -31,12 +30,13 @@ EaComponents.SideBarColumn {
                 Component.onCompleted: ExGlobals.Variables.calculatorSelector = this
             }
         }
+
+        Component.onCompleted: ExGlobals.Variables.calculatorsGroup = this
     }
 
     EaElements.GroupBox {
         title: qsTr("Minimization")
         enabled: ExGlobals.Constants.proxy.experimentLoaded
-        //collapsed: false
 
         Row {
             spacing: EaStyle.Sizes.fontPixelSize
@@ -88,7 +88,6 @@ EaComponents.SideBarColumn {
     /*
     EaElements.GroupBox {
         title: qsTr("Plot settings")
-        //collapsed: false
 
         Row {
             spacing: EaStyle.Sizes.fontPixelSize
@@ -117,7 +116,6 @@ EaComponents.SideBarColumn {
     EaElements.GroupBox {
         title: qsTr("Parameters")
         last: true
-        //collapsed: false
 
         EaElements.CheckBox {
             topPadding: 0

@@ -26,6 +26,7 @@ class Config():
         self.screenshots_dir = os.path.normpath(self.__dict__['ci']['project']['subdirs']['screenshots'])
         self.tutorials_dir = os.path.normpath(self.__dict__['ci']['project']['subdirs']['tutorials'])
         self.installation_dir = self.installationDir()
+        self.installation_dir_for_qtifw = self.installationDirForQtifw()
 
         # Application setup
         self.setup_os = self.__dict__['ci']['app']['setup']['os'][self.os]
@@ -46,17 +47,11 @@ class Config():
         self.license_file = self.__dict__['ci']['project']['license_file']
 
         # Certificates
-        #print(self.__dict__['ci']['scripts']['certificate_name'][Functions.osName()])
-        print(Functions.osName())
-        print(self.__dict__['ci']['project']['subdirs']['certificates_path'])
-        print(self.__dict__['ci']['scripts']['certificate_name'])
         self.certificate_path = os.path.join(self.__dict__['ci']['project']['subdirs']['certificates_path'],
                                              self.__dict__['ci']['scripts']['certificate_name'] + "_" +
                                              Functions.osName()[0:3])
         self.certificate_zip_path = os.path.join(self.__dict__['ci']['project']['subdirs']['certificates_path'],
                                                  'Codesigning.zip')
-        print(self.certificate_path)
-
 
     def __getitem__(self, key):
         return self.__dict__[key]
@@ -81,4 +76,11 @@ class Config():
         }
         dir_shortcut = self.__dict__['ci']['app']['setup']['installation_dir_shortcut'][self.os]
         dir = os.path.join(dirs[self.os][dir_shortcut], self.app_name)
+        return dir
+
+    def installationDirForQtifw(self):
+        dir_shortcut = self.__dict__['ci']['app']['setup']['installation_dir_shortcut'][self.os]
+        if self.os == 'macos' and dir_shortcut == '@ApplicationsDir@':
+            dir_shortcut = '/Applications'  # @ApplicationsDir@ = @ApplicationsDirUser@ [BUG in QTIFW?]
+        dir = os.path.join(dir_shortcut, self.app_name)
         return dir

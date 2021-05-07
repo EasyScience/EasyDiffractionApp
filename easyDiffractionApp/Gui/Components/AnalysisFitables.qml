@@ -147,10 +147,7 @@ EaComponents.TableView {
         if (index < 0 || typeof label === "undefined")
             return ""
 
-        const datasetName = ExGlobals.Constants.proxy.experimentDataAsObj[0].name
-
         // Modify current label
-        label = label.replace("Instrument.", `Instrument.${datasetName}.`)
         label = label.replace(".background.", ".")
         label = label.replace("Uiso.Uiso", "Uiso")
         label = label.replace("fract_", "fract.")
@@ -164,7 +161,6 @@ EaComponents.TableView {
 
         // Modify previous label to list
         let previousLabel = index > 0 ? fitablesModel.get(index - 1).label : ""
-        previousLabel = previousLabel.replace("Instrument.", `Instrument.${datasetName}.`)
         previousLabel = previousLabel.replace(".background.", ".")
         previousLabel = previousLabel.replace("Uiso.Uiso", "Uiso")
         previousLabel = previousLabel.replace("fract_", "fract.")

@@ -297,6 +297,11 @@ def createInstallerSourceDir():
         Functions.copyFile(source=CONFIG.license_file, destination=app_meta_subsubdir_path)
         Functions.moveDir(source=freezed_app_src, destination=app_data_subsubdir_path)
         Functions.copyFile(source=CONFIG.license_file, destination=app_data_subsubdir_path)
+        # TODO: change the handling of failure in all methods in Functions.py so they bubble up exceptions
+        # TODO: remove this platform conditional once the above is done
+        if CONFIG.os == 'windows':
+            Functions.copyFile(source=CONFIG.maintenancetool_file, destination=app_data_subsubdir_path)
+
         # package: docs
         ##docs_subdir_path = os.path.join(packagesDirPath(), CONFIG['ci']['app']['setup']['build']['docs_package_subdir'])
         ##docs_data_subsubdir_path = os.path.join(docs_subdir_path, CONFIG['ci']['app']['setup']['build']['data_subsubdir'])

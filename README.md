@@ -1,6 +1,6 @@
 ## [![CI Build][20]][21] [![Release][30]][31] [![Downloads][70]][71] [![Lines of code][82]][80] [![Total lines][81]][80] [![Files][83]][80] [![License][50]][51]
 
-<img height="80"><img src="https://raw.githubusercontent.com/easyScience/easyDiffractionApp/new_readme/resources/images/ed_logo.svg" height="65">
+<img height="80"><img src="./resources/images/ed_logo.svg" height="65">
 
 **easyDiffraction** is a scientific software for modelling and analysis of diffraction data. Currently, **easyDiffraction** covers classical 1D unpolarized neutron powder diffraction data collected at constant wavelength.
 
@@ -14,7 +14,7 @@
 
 ## Main features
 
-**easyDiffraction** is open source (currently [GPL v3](https://raw.githubusercontent.com/easyScience/easyDiffractionApp/master/LICENSE.md)) and cross-platform, with support for Windows, macOS and Linux (Ubuntu).
+**easyDiffraction** is open source (currently [GPL v3](LICENSE.md)) and cross-platform, with support for Windows, macOS and Linux (Ubuntu).
 
 The intuitive tabbed interface allows for a clear and defined data modelling and analysis workflow. There are also built-in step-by-step user guides and video tutorials for new users.
 
@@ -47,9 +47,9 @@ Planned improvements / new functionality for **easyDiffraction**:
 
 Download the official **easyDiffraction installer v0.8.0-beta** for your operating system:
 
-- [Windows 10 and above, 32-bit](https://github.com/easyScience/easyDiffractionApp/releases/download/v0.8.0-beta.1/easyDiffraction_Windows_x86-32_v0.8.0.zip)
-- [macOS 10.15 and above, 64-bit](https://github.com/easyScience/easyDiffractionApp/releases/download/v0.8.0-beta.1/easyDiffraction_macOS_x86-64_v0.8.0.zip)
-- [Ubuntu 20.04 and above, 64-bit](https://github.com/easyScience/easyDiffractionApp/releases/download/v0.8.0-beta.1/easyDiffraction_Linux_x86-64_v0.8.0.zip)
+- [Windows 10 and above, 32-bit](https://github.com/easyScience/easyDiffractionApp/releases/download/v0.8.0-beta.1/easyDiffraction_Windows_x86-32_v0.8.0-beta.1.zip)
+- [macOS 10.15 and above, 64-bit](https://github.com/easyScience/easyDiffractionApp/releases/download/v0.8.0-beta.1/easyDiffraction_macOS_x86-64_v0.8.0-beta.1.zip)
+- [Ubuntu 20.04 and above, 64-bit](https://github.com/easyScience/easyDiffractionApp/releases/download/v0.8.0-beta.1/easyDiffraction_Linux_x86-64_v0.8.0-beta.1.zip)
 
 ### Installing
 

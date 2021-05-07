@@ -6,7 +6,7 @@ build-backend = 'poetry.masonry.api'
 
 [tool.poetry]
 name = 'easyDiffraction'
-version = '0.8.0'
+version = '0.8.0-beta.1'
 description = 'Making diffraction data analysis and modelling easy.'
 license = 'GPL-3.0-only'
 authors = ['Andrew Sazonov', 'Simon Ward']

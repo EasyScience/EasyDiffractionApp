@@ -144,6 +144,7 @@ def installerConfigXml():
             }
         })
         pretty_xml = xml.dom.minidom.parseString(raw_xml).toprettyxml()
+        print("!!!!1 pretty_xml", pretty_xml)
     except Exception as exception:
         Functions.printFailMessage(message, exception)
         sys.exit()
@@ -154,34 +155,30 @@ def installerConfigXml():
 def appPackageXml():
     try:
         message = f"create app package content"
-        description = CONFIG['tool']['poetry']['description']
-        version = CONFIG['tool']['poetry']['version']
-        release_date = "2020-01-01" #datetime.datetime.strptime(config['release']['date'], "%d %b %Y").strftime("%Y-%m-%d")
-        package_install_script = CONFIG['ci']['scripts']['package_install']
         license_id = CONFIG['tool']['poetry']['license'].replace('-only', '')
         license_name = dephell_licenses.licenses.get_by_id(license_id).name
-        requires_root = 'false'
         raw_xml = Functions.dict2xml({
             'Package': {
                 'DisplayName': CONFIG.app_name,
-                'Description': description,
-                'Version': version,
-                'ReleaseDate': release_date,
+                'Description': CONFIG['tool']['poetry']['description'],
+                'Version': CONFIG.app_version,
+                'ReleaseDate': CONFIG['release']['date_for_qtifw'],
                 'Default': 'true',
                 #'SortingPriority': 100,
                 'Essential': 'true',
                 'ForcedInstallation': 'true',
-                'RequiresAdminRights': requires_root,
+                'RequiresAdminRights': 'false',
                 'Licenses': {
                     'License': {
                         '@name': license_name,
                         '@file': CONFIG.license_file
                     }
                 },
-                'Script': package_install_script,
+                'Script': CONFIG['ci']['scripts']['package_install'],
             }
         })
         pretty_xml = xml.dom.minidom.parseString(raw_xml).toprettyxml()
+        print("!!!!2 pretty_xml", pretty_xml)
     except Exception as exception:
         Functions.printFailMessage(message, exception)
         sys.exit()

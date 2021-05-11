@@ -7,4 +7,8 @@ import Gui.Components 1.0 as ExComponents
 
 ExComponents.ApplicationWindow {
     id: window
+
+    appName: ExGlobals.Constants.appName
+    appVersion: ExGlobals.Constants.appVersion
+    appDate: ExGlobals.Constants.appDate
 }

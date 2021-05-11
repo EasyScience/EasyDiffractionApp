@@ -18,6 +18,7 @@ import utils
 import easyAppGui
 from easyAppLogic.Translate import Translator
 from easyDiffractionApp.Logic.PyQmlProxy import PyQmlProxy
+from easyDiffractionApp.Logic.MaintenanceTool import MaintenanceTool
 
 # Global vars
 CONFIG = utils.conf()
@@ -82,6 +83,9 @@ def main():
     engine.rootContext().setContextProperty('_projectConfig', CONFIG)
     engine.rootContext().setContextProperty('_isTestMode', args.testmode)
     engine.rootContext().setContextProperty('_isSystemThemeDark', darkdetect.isDark())
+
+    # Register types to be instantiated in QML
+    qmlRegisterType(MaintenanceTool, 'MaintenanceTool', 1, 0, 'MaintenanceTool')
 
     # Add paths to search for installed modules
     engine.addImportPath(easyAppGui_path)

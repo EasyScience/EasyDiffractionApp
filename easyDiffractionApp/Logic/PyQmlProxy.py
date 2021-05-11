@@ -1,10 +1,8 @@
 # noqa: E501
-import os
-import sys
-import pathlib
-import datetime
-import re
 import timeit
+
+import json
+
 from typing import Union
 
 from PySide2.QtCore import QObject, Slot, Signal, Property
@@ -18,6 +16,7 @@ from easyDiffractionApp.Logic.Proxies.Background import BackgroundProxy
 from easyDiffractionApp.Logic.Proxies.Plotting1d import Plotting1dProxy
 from easyDiffractionApp.Logic.Fitter import FitterLogic as FitterLogic
 from easyDiffractionApp.Logic.Stack import StackLogic
+
 
 class PyQmlProxy(QObject):
     # SIGNALS
@@ -186,9 +185,6 @@ class PyQmlProxy(QObject):
 
         self.parametersFilterCriteriaChanged.connect(self._onParametersFilterCriteriaChanged)
 
-        # Report
-        self._report = ""
-
         # Status info
         self.statusInfoChanged.connect(self._onStatusInfoChanged)
         self.currentCalculatorChanged.connect(self.statusInfoChanged)
@@ -216,8 +212,6 @@ class PyQmlProxy(QObject):
         borg.stack.enabled = True
         borg.stack.clear()
         # borg.debug = True
-
-        self._currentProjectPath = os.path.expanduser("~")
 
     ####################################################################################################################
     ####################################################################################################################
@@ -299,24 +293,16 @@ class PyQmlProxy(QObject):
     # **** TODO *****
     @Slot(str, str)
     def editProjectInfo(self, key, value):
-        if key == 'location':
-            self.currentProjectPath = value
-            return
-        else:
-            if self.state._project_info[key] == value:
-                return
-            self.state._project_info[key] = value
+        self.state.editProjectInfo(key, value)
         self.projectInfoChanged.emit()
 
     @Property(str, notify=projectInfoChanged)
     def currentProjectPath(self):
-        return self._currentProjectPath
+        return self.state._currentProjectPath
 
     @currentProjectPath.setter
     def currentProjectPath(self, new_path):
-        if self._currentProjectPath == new_path:
-            return
-        self._currentProjectPath = new_path
+        self.state.currentProjectPath(new_path)
         self.projectInfoChanged.emit()
 
     @Slot()
@@ -359,7 +345,7 @@ class PyQmlProxy(QObject):
     @property_stack_deco
     def phasesAsCif(self, phases_as_cif):
         self.state.phasesAsCif(phases_as_cif)
-        self.structureParametersChanged.emit()
+        self.parametersChanged.emit()
 
     def _setPhasesAsObj(self):
         start_time = timeit.default_timer()
@@ -501,30 +487,20 @@ class PyQmlProxy(QObject):
         print("***** _onCurrentPhaseChanged")
         self.structureViewChanged.emit()
 
-    # **** TODO *****
-
     @Slot(str)
     def setCurrentPhaseName(self, name):
-        if self.state._sample.phases[self.currentPhaseIndex].name == name:
-            return
-
-        self.state._sample.phases[self.currentPhaseIndex].name = name
+        self.state.setCurrentPhaseName(name)
         self.parametersChanged.emit()
-        self.projectInfoAsJson['samples'] = name
         self.projectInfoChanged.emit()
 
     @Property('QVariant', notify=experimentDataChanged)
     def experimentDataAsObj(self):
-        return [{'name': experiment.name} for experiment in self.state._data.experiments]
+        return self.state.experimentDataAsObj()
 
     @Slot(str)
     def setCurrentExperimentDatasetName(self, name):
-        if self.state._data.experiments[0].name == name:
-            return
-
-        self.state._data.experiments[0].name = name
+        self.state.setCurrentExperimentDatasetName(name)
         self.experimentDataChanged.emit()
-        self.projectInfoAsJson['experiments'] = name
         self.projectInfoChanged.emit()
 
     ####################################################################################################################
@@ -544,7 +520,7 @@ class PyQmlProxy(QObject):
 
     def _onExperimentDataChanged(self):
         print("***** _onExperimentDataChanged")
-        self._setExperimentDataAsXml()  # ? s
+        self._setExperimentDataAsXml()
         self.stateChanged.emit(True)
 
     ####################################################################################################################
@@ -554,11 +530,15 @@ class PyQmlProxy(QObject):
     @Slot(str)
     def addExperimentDataFromXye(self, file_url):
         self.state.addExperimentDataFromXye(file_url)
+        self.experimentDataAdded.emit()
+        self.experimentLoadedChanged.emit()
 
     @Slot()
     def removeExperiment(self):
         print("+ removeExperiment")
         self.state.removeExperiment()
+        self.experimentDataRemoved.emit()
+        self.experimentLoadedChanged.emit()
 
     def _loadExperimentData(self, file_url):
         print("+ _loadExperimentData")
@@ -566,15 +546,19 @@ class PyQmlProxy(QObject):
 
     def _onExperimentDataAdded(self):
         print("***** _onExperimentDataAdded")
-        self.state._onExperimentDataAdded()
-
-        x, y, z = self.state.experimentDataXYZ()
-        self._plotting_1d_proxy.setMeasuredData(x, y, z)
-        # self._background_proxy.setDefaultPoints()
+        self._plotting_1d_proxy.setMeasuredData(self.state._experiment_data.x,
+                                                self.state._experiment_data.y,
+                                                self.state._experiment_data.e)
+        self.state._experiment_parameters = \
+            self.state._experimentDataParameters(self.state._experiment_data)
+        self.simulationParametersAsObj = \
+            json.dumps(self.state._experiment_parameters)
         if len(self.state._sample.pattern.backgrounds) == 0:
             self.backgroundProxy.initializeContainer()
+
         self.experimentDataChanged.emit()
-        self.projectInfoAsJson['experiments'] = self.state._data.experiments[0].name
+        self.projectInfoAsJson['experiments'] = \
+            self.state._data.experiments[0].name
         self.projectInfoChanged.emit()
 
     def _onExperimentDataRemoved(self):
@@ -689,17 +673,15 @@ class PyQmlProxy(QObject):
 
     @property
     def _background_obj(self):
-        bgs = self.state._sample.pattern.backgrounds
-        itm = None
-        if len(bgs) > 0:
-            itm = bgs[0]
-        return itm
+        return self.state._background_obj()
 
     @Property('QVariant', notify=dummySignal)
     def backgroundProxy(self):
         return self._background_proxy
 
     def updateChartBackground(self):
+        if self._background_proxy.asObj is None:
+            return
         self._plotting_1d_proxy.setBackgroundData(self._background_proxy.asObj.x_sorted_points,
                                                   self._background_proxy.asObj.y_sorted_points)
 
@@ -715,10 +697,10 @@ class PyQmlProxy(QObject):
 
     def _onCalculatedDataChanged(self):
         print("***** _onCalculatedDataChanged")
-        try:
-            self.state._updateCalculatedData()
-        finally:
-            self.calculatedDataUpdated.emit()
+        # try:
+        self.state._updateCalculatedData()
+        # finally:
+        self.calculatedDataUpdated.emit()
 
     ####################################################################################################################
     # Fitables (parameters table from analysis tab & ...)
@@ -805,7 +787,6 @@ class PyQmlProxy(QObject):
             self.currentMinimizerMethodChanged.emit()
 
     # Minimizer method
-    # **** TODO *****
     @Property('QVariant', notify=currentMinimizerChanged)
     def minimizerMethodNames(self):
         current_minimizer = self.minimizerNames[self.currentMinimizerIndex]
@@ -923,7 +904,7 @@ class PyQmlProxy(QObject):
         return self.state.statusModelAsXml(engine_name, minimizer_name)
 
     def _onStatusInfoChanged(self):
-        print("***** _onStatusInfoChanged")
+        pass
 
     ####################################################################################################################
     ####################################################################################################################
@@ -953,22 +934,22 @@ class PyQmlProxy(QObject):
 
     @Slot()
     def saveProject(self):
-        self._saveProject()
+        self.state._saveProject()
         self.stateChanged.emit(False)
 
     @Slot(str)
     def loadProjectAs(self, filepath):
-        self._loadProjectAs(filepath)
+        self.state._loadProjectAs(filepath)
         self.stateChanged.emit(False)
 
     @Slot()
     def loadProject(self):
-        self._loadProject()
+        self.state._loadProject()
         self.stateChanged.emit(False)
 
     @Slot(str)
     def loadExampleProject(self, filepath):
-        self._loadProjectAs(filepath)
+        self.state._loadProjectAs(filepath)
         self.currentProjectPath = '--- EXAMPLE ---'
         self.stateChanged.emit(False)
 
@@ -976,14 +957,22 @@ class PyQmlProxy(QObject):
     def projectFilePath(self):
         return self.state.project_save_filepath
 
-    def _saveProject(self):
-        self.state._saveProject()
+    @Property(bool, notify=projectCreatedChanged)
+    def projectCreated(self):
+        return self.state._project_created
 
-    def _loadProjectAs(self, filepath):
-        self.state._loadProjectAs(filepath)
+    @projectCreated.setter
+    def projectCreated(self, created: bool):
+        if self.state._project_created == created:
+            return
+        self.state._project_created = created
+        self.projectCreatedChanged.emit()
 
-    def _loadProject(self):
-        self.state._loadProject()
+    @Slot()
+    def resetState(self):
+        self.state.resetState()
+        self.resetUndoRedoStack()
+        self.stateChanged.emit(False)
 
     ####################################################################################################################
     # Undo/Redo stack operations

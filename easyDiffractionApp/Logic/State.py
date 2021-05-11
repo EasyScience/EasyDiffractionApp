@@ -30,6 +30,7 @@ class State(object):
         self.project_save_filepath = ""
         self.project_load_filepath = ""
         self._project_info = self._defaultProjectInfo()
+        self._project_created = False
 
         self._experiment_parameters = None
         self._experiment_data_as_xml = ""
@@ -63,6 +64,7 @@ class State(object):
 
         self._data = self._defaultData()
         self._simulation_parameters_as_obj = self._defaultSimulationParameters()
+        self._currentProjectPath = os.path.expanduser("~")
 
     ####################################################################################################################
     ####################################################################################################################
@@ -172,17 +174,14 @@ class State(object):
         self.experiments = [{'name': experiment.name} for experiment in self._data.experiments]
         self.experimentLoaded(True)
         self.experimentSkipped(False)
-        self.parent.experimentDataAdded.emit()
-        # borg.stack.push(FunctionStack(self, outer1(self), outer2(self)))
-        self.parent.experimentLoadedChanged.emit()
 
     def removeExperiment(self):
         self.experiments.clear()
         self.experimentLoaded(False)
         self.experimentSkipped(False)
-        self.parent.experimentDataRemoved.emit()
-        # borg.stack.push(FunctionStack(self, outer1(self), outer2(self)))
-        self.parent.experimentLoadedChanged.emit()
+        # self.parent.experimentDataRemoved.emit()
+        # # borg.stack.push(FunctionStack(self, outer1(self), outer2(self)))
+        # self.parent.experimentLoadedChanged.emit()
 
     ####################################################################################################################
     ####################################################################################################################
@@ -193,11 +192,10 @@ class State(object):
     def _defaultProjectInfo(self):
         return dict(
             name="Example Project",
-            location=os.path.join(os.path.expanduser("~"), "Example Project"),
+            # location=os.path.join(os.path.expanduser("~"), "Example Project"),
             short_description="diffraction, powder, 1D",
             samples="Not loaded",
             experiments="Not loaded",
-            calculations="Not created",
             modified=datetime.datetime.now().strftime("%d.%m.%Y %H:%M")
         )
 
@@ -227,12 +225,21 @@ class State(object):
         return cif_str
 
     def editProjectInfo(self, key, value):
-        if self._project_info[key] == value:
+        if key == 'location':
+            self._currentProjectPath = value
             return
-        self._project_info[key] = value
+        else:
+            if self._project_info[key] == value:
+                return
+            self._project_info[key] = value
+
+    def currentProjectPath(self, new_path):
+        if self._currentProjectPath == new_path:
+            return
+        self._currentProjectPath = new_path
 
     def createProject(self):
-        projectPath = self._project_info['location']
+        projectPath = self._currentProjectPath
         mainCif = os.path.join(projectPath, 'project.cif')
         samplesPath = os.path.join(projectPath, 'samples')
         experimentsPath = os.path.join(projectPath, 'experiments')
@@ -267,34 +274,39 @@ class State(object):
             print("Failed to find project: '{0}'".format(path))
             return
         with open(path, 'r') as xml_file:
-            descr = json.load(xml_file)
+            descr: dict = json.load(xml_file)
 
-        self._phases_as_cif = descr['phases']
-        self._sample.phases = Phases.from_cif_str(self._phases_as_cif)
+        interface_name = descr.get('interface', None)
+        if interface_name is not None:
+            old_interface_name = self._interface.current_interface_name
+            if old_interface_name != interface_name:
+                self._interface.switch(interface_name)
+
+        self._sample = Sample.from_dict(descr['sample'])
+        self._sample.interface = self._interface
+        self._sample._updateInterface()
 
         # send signal to tell the proxy we changed phases
-        self.parent.phaseAdded.emit()
+        self.parent.phasesEnabled.emit()
         self.parent.phasesAsObjChanged.emit()
+        self.parent.structureParametersChanged.emit()
+        self.parent._background_proxy.onAsObjChanged()
 
         # experiment
         if 'experiments' in descr:
             self.experimentLoaded(True)
+            self.experimentSkipped(False)
             self._data.experiments[0].x = np.array(descr['experiments'][0])
             self._data.experiments[0].y = np.array(descr['experiments'][1])
             self._data.experiments[0].e = np.array(descr['experiments'][2])
             self._experiment_data = self._data.experiments[0]
+            self.experiments = [{'name': descr['project_info']['experiments']}]
+            self.setCurrentExperimentDatasetName(descr['project_info']['experiments'])
+
             self.parent.experimentDataAdded.emit()
             self.parent._onParametersChanged()
-            self.parent.experimentLoadedChanged.emit()
+            # self.parent.experimentLoadedChanged.emit()
 
-            # background
-            if 'background' in descr:
-                self.parent._background_proxy.removeAllPoints()
-                bg_x = descr['background'][0]
-                bg_y = descr['background'][1]
-                for i, point in enumerate(bg_x):
-                    bg_point = (point, bg_y[i])
-                    self.parent._background_proxy.addPoint(bg_point)
         else:
             # delete existing experiment
             self.removeExperiment()
@@ -304,32 +316,49 @@ class State(object):
                 self.parent.experimentSkippedChanged.emit()
 
         # project info
-        self.projectInfoAsJson = json.dumps(descr['project_info'])
+        self._project_info = json.dumps(descr['project_info'])
+
+        new_minimizer_settings = descr.get('minimizer', None)
+        if new_minimizer_settings is not None:
+            new_engine = new_minimizer_settings['engine']
+            new_method = new_minimizer_settings['method']
+            new_engine_index = self.parent.minimizerNames.index(new_engine)
+            self.parent.currentMinimizerIndex = new_engine_index
+            new_method_index = self.parent.minimizerMethodNames.index(new_method)
+            self.parent.currentMinimizerMethodIndex = new_method_index
+
+        self.parent.fitLogic.fitter.fit_object = self._sample
+
+        self.parent.resetUndoRedoStack()
+
+        self.parent.projectCreated = True
+
+    def experimentDataAsObj(self):
+        return [{'name': experiment.name} for experiment in self._data.experiments]
 
     def _saveProject(self):
         """
         """
-        projectPath = self.projectInfoAsJson['location']
+        projectPath = self._project_info['location']
         project_save_filepath = os.path.join(projectPath, 'project.json')
-        descr = {}
-        descr['phases'] = self._phases_as_cif
-
-        if self.experiments:
+        descr = {
+            'sample': self._sample.as_dict(skip=['interface'])
+        }
+        if self._data.experiments:
             experiments_x = self._data.experiments[0].x
             experiments_y = self._data.experiments[0].y
             experiments_e = self._data.experiments[0].e
-            descr['experiments'] = [experiments_x, experiments_y, experiments_e]  # noqa: E501
+            descr['experiments'] = [experiments_x, experiments_y, experiments_e]
 
-            bg_x = self._background_proxy.asObj.x_sorted_points
-            bg_y = self._background_proxy.asObj.y_sorted_points
-            descr['background'] = [bg_x, bg_y]
-
-        descr['project_info'] = self._project_info
-        # Reading those is not yet implemented
-        descr['parameters'] = self._parameters_as_obj
-        descr['instrument_parameters'] = self._instrument_parameters_as_obj
         descr['experiment_skipped'] = self._experiment_skipped
+        descr['project_info'] = self._project_info
 
+        descr['interface'] = self._interface.current_interface_name
+
+        descr['minimizer'] = {
+            'engine': self.parent.fitLogic.fitter.current_engine.name,
+            'method': self.parent._current_minimizer_method_name
+        }
         content_json = json.dumps(descr, indent=4, default=self.default)
         path = generalizePath(project_save_filepath)
         createFile(path, content_json)
@@ -341,6 +370,16 @@ class State(object):
             else:
                 return obj.item()
         raise TypeError('Unknown type:', type(obj))
+
+    def resetState(self):
+        self._project_info = self._defaultProjectInfo()
+        self._project_created = False
+        self.parent.projectInfoChanged.emit()
+        self.project_save_filepath = ""
+        self.removeExperiment()
+        self.removePhase(self._sample.phases[self._current_phase_index].name)
+        self.parent._plotting_1d_proxy.clearBackendState()
+        self.parent._plotting_1d_proxy.clearFrontendState()
 
     ####################################################################################################################
     ####################################################################################################################
@@ -362,11 +401,15 @@ class State(object):
 
     def addSampleFromCif(self, cif_url):
         cif_path = generalizePath(cif_url)
-        if borg.stack.enabled:
-            borg.stack.beginMacro(f'Loaded cif: {cif_path}')
+        borg.stack.enabled = False
         self._sample.phases = Phases.from_cif_file(cif_path)
-        if borg.stack.enabled:
-            borg.stack.endMacro()
+        borg.stack.enabled = True
+
+    def setCurrentPhaseName(self, name):
+        if self._sample.phases[self._current_phase_index].name == name:
+            return
+        self._sample.phases[self._current_phase_index].name = name
+        self._project_info['samples'] = name
 
     ####################################################################################################################
     ####################################################################################################################
@@ -386,11 +429,9 @@ class State(object):
         return False
 
     def addDefaultPhase(self):
-        if borg.stack.enabled:
-            borg.stack.beginMacro('Loaded default phase')
+        borg.stack.enabled = False
         self._sample.phases = self._defaultPhase()
-        if borg.stack.enabled:
-            borg.stack.endMacro()
+        borg.stack.enabled = True
 
     def _defaultPhase(self):
         space_group = SpaceGroup.from_pars('P 42/n c m')
@@ -406,6 +447,13 @@ class State(object):
             self._interface.generate_sample_binding("filename", self._sample)
         self._sample.phases.name = 'Phases'
         # self._sample.set_background(background_obj)
+
+    def _background_obj(self):
+        bgs = self._sample.pattern.backgrounds
+        itm = None
+        if len(bgs) > 0:
+            itm = bgs[0]
+        return itm
 
     def currentCrystalSystem(self):
         phases = self._sample.phases
@@ -533,16 +581,26 @@ class State(object):
     # Phase: Atoms
     ####################################################################################################################
     def addDefaultAtom(self):
-        atom = Site.from_pars(label='Label2',
+        index = len(self._sample.phases[0].atoms.atom_labels) + 1
+        label = f'Label{index}'
+        atom = Site.from_pars(label=label,
                               specie='O',
                               fract_x=0.05,
                               fract_y=0.05,
                               fract_z=0.05)
         atom.add_adp('Uiso', Uiso=0.0)
         self._sample.phases[self._current_phase_index].add_atom(atom)
+        self._sample._updateInterface()
 
     def removeAtom(self, atom_label: str):
         del self._sample.phases[self._current_phase_index].atoms[atom_label]
+        self._sample._updateInterface()
+
+    def setCurrentExperimentDatasetName(self, name):
+        if self._data.experiments[0].name == name:
+            return
+        self._data.experiments[0].name = name
+        self._project_info['experiments'] = name
 
     ####################################################################################################################
     # Simulation parameters
@@ -630,6 +688,9 @@ class State(object):
 
             if not par.enabled:
                 continue
+
+            # add experimental dataset name
+            par_path = par_path.replace('Instrument.', f'Instrument.{self.experimentDataAsObj()[0]["name"]}.')
 
             if self._parameters_filter_criteria.lower() not in par_path.lower():  # noqa: E501
                 continue

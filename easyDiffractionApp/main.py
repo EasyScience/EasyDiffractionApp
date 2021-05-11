@@ -7,7 +7,7 @@ import argparse
 # PySide
 from PySide2.QtCore import QUrl
 from PySide2.QtWidgets import QApplication
-from PySide2.QtGui import Qt
+from PySide2.QtGui import Qt, QIcon
 from PySide2.QtQml import QQmlApplicationEngine, qmlRegisterType
 from PySide2.QtWebEngine import QtWebEngine
 from PySide2.QtWebEngineWidgets import QWebEnginePage, QWebEngineView  # to call hook-PySide2.QtWebEngineWidgets.py
@@ -27,6 +27,7 @@ class App(QApplication):
         QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)  # DOESN'T WORK?!, USE SCRIPT INSTEAD
         QApplication.setAttribute(Qt.AA_UseDesktopOpenGL)
         super(App, self).__init__(sys_argv)
+
 
 def main():
     # Arguments
@@ -66,6 +67,7 @@ def main():
     app.setApplicationVersion(CONFIG['tool']['poetry']['version'])
     app.setOrganizationName(CONFIG['tool']['poetry']['name'])
     app.setOrganizationDomain(CONFIG['tool']['poetry']['name'])
+    app.setWindowIcon(QIcon(os.path.join(package_path, 'Gui', 'Resources', 'Logo', 'App.png')))
 
     # QML application engine
     engine = QQmlApplicationEngine()

@@ -35,7 +35,7 @@ class FitterLogic():
 
         args = (x, y)
         kwargs = {"weights": weights, "method": method}
-        self._fitter_thread = Fitter(self.fitter, 'fit', *args, **kwargs)
+        self._fitter_thread = Fitter(self.parent, self.fitter, 'fit', *args, **kwargs)
         self._fitter_thread.finished.connect(self._setFitResults)
         self._fitter_thread.setTerminationEnabled(True)
         self._fitter_thread.failed.connect(self._setFitResultsFailed)

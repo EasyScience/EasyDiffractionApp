@@ -1,3 +1,9 @@
+# Version 0.8.0-beta.2 (12 May 2021)
+
+### Changes
+
+- Implement automatic update and simplify update app manually.
+
 # Version 0.8.0-beta.1 (7 May 2021)
 
 ### Changes

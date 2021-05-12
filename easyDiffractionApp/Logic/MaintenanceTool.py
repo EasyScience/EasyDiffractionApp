@@ -1,6 +1,8 @@
 import os
-import sys
+import pathlib
 import re
+import requests
+import sys
 
 from PySide2.QtCore import QObject, QProcess, Property, Signal, Slot
 from PySide2.QtWidgets import QApplication
@@ -14,9 +16,10 @@ class MaintenanceTool(QObject):
     updateNotFound = Signal()
     updateFailed = Signal()
 
-    webVersionChanged = Signal()
-    errorMessageChanged = Signal()
     silentCheckChanged = Signal()
+    errorMessageChanged = Signal()
+    webVersionChanged = Signal()
+    releaseNotesChanged = Signal()
 
     # INIT
 
@@ -24,13 +27,15 @@ class MaintenanceTool(QObject):
         super().__init__(parent)
 
         # private members
-        self._web_version = ""
-        self._error_message = ""
         self._silent_check = True
+        self._error_message = ""
+        self._web_version = ""
+
+        self._release_notes = ""
 
         self._process = QProcess()
         self._process.setWorkingDirectory(QApplication.applicationDirPath())
-        #self._process.setWorkingDirectory("/Applications/easyDiffraction/MaintenanceTool.app/Contents/MacOS")
+        self._process.setWorkingDirectory("/Applications/easyDiffraction/MaintenanceTool.app/Contents/MacOS")
         self._process.setProgram(MaintenanceTool.exeRelativePath())
 
         # connections
@@ -70,14 +75,6 @@ class MaintenanceTool(QObject):
 
     # PUBLIC PROPERTIES
 
-    @Property(str, notify=webVersionChanged)
-    def webVersion(self):
-        return self._web_version
-
-    @Property(str, notify=errorMessageChanged)
-    def errorMessage(self):
-        return self._error_message
-
     @Property(bool, notify=silentCheckChanged)
     def silentCheck(self):
         return self._silent_check
@@ -89,6 +86,18 @@ class MaintenanceTool(QObject):
 
         self._silent_check = silent_check
         self.silentCheckChanged.emit()
+
+    @Property(str, notify=errorMessageChanged)
+    def errorMessage(self):
+        return self._error_message
+
+    @Property(str, notify=webVersionChanged)
+    def webVersion(self):
+        return self._web_version
+
+    @Property(str, notify=releaseNotesChanged)
+    def releaseNotes(self):
+        return self._release_notes
 
     # PRIVATE METHODS
 
@@ -138,7 +147,11 @@ class MaintenanceTool(QObject):
         # New version is found
         print(f"* MaintenanceTool found component(s) with new version(s): {matches}")
         self._web_version = matches[0]  # TODO: Update this if multiple components are available
+        self._release_notes = self._getReleaseNotes()
         self.webVersionChanged.emit()
+        self.releaseNotesChanged.emit()
+
+        # Trigger frontend dialog opening
         self.updateFound.emit()
 
     def _onErrorOccurred(self, error):
@@ -147,6 +160,38 @@ class MaintenanceTool(QObject):
         self.errorMessageChanged.emit()
         if not self.silentCheck:
             self.updateFailed.emit()
+
+    def _getAppChangelog(self):
+        path = MaintenanceTool.appChangelogPath()
+        try:
+            return pathlib.Path(path).read_text()
+        except Exception as exception:
+            print(f"* Failed to read local file {path} with exception {exception}")
+            return ""
+
+    def _getWebChangelog(self):
+        url = MaintenanceTool.webChangelogUrl()
+        try:
+            result = requests.get(url)
+            if result.ok:
+                return result.text
+            else:
+                print(f"* Failed to read web file {url} with code '{result.status_code}' and reason '{result.reason}'")
+                return ""
+        except Exception as exception:
+            print(f"* Failed to read web file {url} with exception {exception}")
+            return ""
+
+    def _getReleaseNotes(self):
+        app_changelog = self._getAppChangelog()
+        web_changelog = self._getWebChangelog()
+        # remove overlapping part
+        release_notes = web_changelog.replace(app_changelog, "")
+        # TODO: Temporary solution to change default headers size and and empty lines (QML Text.MarkdownText)
+        release_notes = re.sub(r'\n### ', "\n____\n#### ", release_notes)
+        release_notes = re.sub(r'\n# ', "\n____\n____\n### ", release_notes)
+        release_notes = re.sub(r'^# ', "### ", release_notes)
+        return release_notes
 
     # STATIC METHODS
 
@@ -158,3 +203,26 @@ class MaintenanceTool(QObject):
             return "../../../MaintenanceTool.app/Contents/MacOS/MaintenanceTool"
         else:
             return "maintenancetool"
+
+    @staticmethod
+    def appChangelogPath():
+        if sys.platform.startswith('win'):
+            relative_path = "CHANGELOG.md"
+        elif sys.platform.startswith('darwin'):
+            relative_path = "../../../CHANGELOG.md"
+        else:
+            relative_path = "CHANGELOG.md"
+        path = os.path.join(QApplication.applicationDirPath(), relative_path)
+        path = os.path.join("/Applications/easyDiffraction/MaintenanceTool.app/Contents/MacOS", relative_path)
+        return path
+
+    @staticmethod
+    def webChangelogUrl():
+        if sys.platform.startswith('win'):
+            os_dir = "Windows"
+        elif sys.platform.startswith('darwin'):
+            os_dir = "macOS"
+        else:
+            os_dir = "Linux"
+        url = f'https://download.easydiffraction.org/onlineRepository/{os_dir}/CHANGELOG.md'
+        return url

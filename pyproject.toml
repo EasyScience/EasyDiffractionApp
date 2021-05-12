@@ -12,7 +12,7 @@ license = 'GPL-3.0-only'
 authors = ['Andrew Sazonov', 'Simon Ward']
 readme = 'README.md'
 homepage = 'https://github.com/easyScience/easyDiffractionApp'
-repository = 'https://easyscience.apptimity.com/'
+repository = 'https://download.easydiffraction.org/'
 documentation = 'https://github.com/easyScience/easyDiffractionApp'
 include = ['CHANGELOG.md']
 packages = [ { include = 'easyDiffractionApp' } ]
@@ -55,6 +55,7 @@ date_for_qtifw = '2021-05-11' # YYYY-MM-DD, e.g. 2021-05-30
 tag_template = 'v{VERSION}'
 title_template = 'Version {VERSION} ({DATE})'
 description_file = 'RELEASE.md'
+changelog_file = 'CHANGELOG.md'
 
 [ci.project]
 license_file = 'LICENSE.md' # how to combine this with tool.poetry.license???

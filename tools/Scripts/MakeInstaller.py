@@ -144,7 +144,6 @@ def installerConfigXml():
             }
         })
         pretty_xml = xml.dom.minidom.parseString(raw_xml).toprettyxml()
-        print("!!!!1 pretty_xml", pretty_xml)
     except Exception as exception:
         Functions.printFailMessage(message, exception)
         sys.exit()
@@ -178,7 +177,6 @@ def appPackageXml():
             }
         })
         pretty_xml = xml.dom.minidom.parseString(raw_xml).toprettyxml()
-        print("!!!!2 pretty_xml", pretty_xml)
     except Exception as exception:
         Functions.printFailMessage(message, exception)
         sys.exit()
@@ -247,7 +245,6 @@ def installQtInstallerFramework():
     else:
         Functions.printSuccessMessage(message)
 
-
 def prepareSignedMaintenanceTool():
     if CONFIG.setup_os != "Windows":
         return
@@ -264,7 +261,6 @@ def prepareSignedMaintenanceTool():
         sys.exit()
     else:
         Functions.printSuccessMessage(message)
-
 
 def createInstallerSourceDir():
     try:
@@ -292,6 +288,7 @@ def createInstallerSourceDir():
         Functions.createFile(path=app_package_xml_path, content=appPackageXml())
         Functions.copyFile(source=package_install_script_src, destination=app_meta_subsubdir_path)
         Functions.copyFile(source=CONFIG.license_file, destination=app_meta_subsubdir_path)
+        Functions.copyFile(source=CONFIG['release']['changelog_file'], destination=app_meta_subsubdir_path)
         Functions.moveDir(source=freezed_app_src, destination=app_data_subsubdir_path)
         Functions.copyFile(source=CONFIG.license_file, destination=app_data_subsubdir_path)
         # TODO: change the handling of failure in all methods in Functions.py so they bubble up exceptions
@@ -326,25 +323,6 @@ def createInstallerSourceDir():
     else:
         Functions.printSuccessMessage(message)
 
-def createOnlineRepository():
-    try:
-        message = 'create online repository'
-        qtifw_bin_dir_path = os.path.join(qtifwDirPath(), 'bin')
-        qtifw_repogen_path = os.path.join(qtifw_bin_dir_path, 'repogen')
-        repository_dir_path = os.path.join(CONFIG.dist_dir, localRepositoryDir())
-        Functions.run(
-            qtifw_repogen_path,
-            '--verbose',
-            '--update-new-components',
-            '-p', packagesDirPath(),
-            repository_dir_path
-        )
-    except Exception as exception:
-        Functions.printFailMessage(message, exception)
-        sys.exit()
-    else:
-        Functions.printSuccessMessage(message)
-
 def createInstaller():
     try:
         message = 'create installer'
@@ -368,11 +346,43 @@ def createInstaller():
     else:
         Functions.printSuccessMessage(message)
 
+def createOnlineRepositoryLocally():
+    try:
+        message = 'create online repository'
+        qtifw_bin_dir_path = os.path.join(qtifwDirPath(), 'bin')
+        qtifw_repogen_path = os.path.join(qtifw_bin_dir_path, 'repogen')
+        repository_dir_path = os.path.join(CONFIG.dist_dir, localRepositoryDir())
+        Functions.run(
+            qtifw_repogen_path,
+            '--verbose',
+            '--update-new-components',
+            '-p', packagesDirPath(),
+            repository_dir_path
+        )
+    except Exception as exception:
+        Functions.printFailMessage(message, exception)
+        sys.exit()
+    else:
+        Functions.printSuccessMessage(message)
+
+def addFilesToLocalRepository():
+    try:
+        message = 'add files to local repository'
+        repository_dir_path = os.path.join(CONFIG.dist_dir, localRepositoryDir())
+        Functions.copyFile(source=CONFIG['release']['changelog_file'], destination=repository_dir_path)
+    except Exception as exception:
+        Functions.printFailMessage(message, exception)
+        sys.exit()
+    else:
+        Functions.printSuccessMessage(message)
+
+
 if __name__ == "__main__":
     downloadQtInstallerFramework()
     osDependentPreparation()
     installQtInstallerFramework()
     prepareSignedMaintenanceTool()
     createInstallerSourceDir()
-    createOnlineRepository()
     createInstaller()
+    createOnlineRepositoryLocally()
+    addFilesToLocalRepository()

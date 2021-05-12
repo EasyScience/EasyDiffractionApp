@@ -15,7 +15,6 @@ class Config():
 
         # Application
         self.app_version = self.__dict__['tool']['poetry']['version']
-        print("!!!!! self.app_version",self.app_version)
         self.app_name = self.__dict__['tool']['poetry']['name']
         self.app_file_ext = self.__dict__['ci']['app']['setup']['file_ext'][self.os]
         self.app_full_name = f'{self.app_name}{self.app_file_ext}'
@@ -48,10 +47,6 @@ class Config():
         self.release_date = datetime.datetime.strptime(self.__dict__['release']['date_for_qtifw'], "%Y-%m-%d").strftime("%d %b %Y")
         self.release_tag = self.__dict__['release']['tag_template'].replace('{VERSION}', self.app_version)
         self.release_title = self.__dict__['release']['title_template'].replace('{VERSION}', self.app_version).replace('{DATE}', self.release_date)
-        print("!!!!! release_date",self.release_date)
-        print("!!!!! release_tag",self.release_tag)
-        print("!!!!! release_title",self.release_title)
-
 
         # Project
         self.package_name = f'{self.app_name}App'

@@ -180,7 +180,6 @@ class State(object):
         self.experimentLoaded(False)
         self.experimentSkipped(False)
         # self.parent.experimentDataRemoved.emit()
-        # # borg.stack.push(FunctionStack(self, outer1(self), outer2(self)))
         # self.parent.experimentLoadedChanged.emit()
 
     ####################################################################################################################
@@ -192,7 +191,6 @@ class State(object):
     def _defaultProjectInfo(self):
         return dict(
             name="Example Project",
-            # location=os.path.join(os.path.expanduser("~"), "Example Project"),
             short_description="diffraction, powder, 1D",
             samples="Not loaded",
             experiments="Not loaded",
@@ -212,9 +210,6 @@ class State(object):
         xml = xml.decode()
         return xml
 
-    def projectInfoAsJson(self, json_str):
-        self._project_info = json.loads(json_str)
-
     def projectInfoAsCif(self):
         cif_list = []
         for key, value in self._project_info.items():
@@ -223,6 +218,9 @@ class State(object):
             cif_list.append(f'_{key} {value}')
         cif_str = '\n'.join(cif_list)
         return cif_str
+
+    def projectInfoAsJson(self, json_str):
+        self._project_info = json.loads(json_str)
 
     def editProjectInfo(self, key, value):
         if key == 'location':
@@ -250,7 +248,7 @@ class State(object):
             os.makedirs(experimentsPath)
             os.makedirs(calculationsPath)
             with open(mainCif, 'w') as file:
-                file.write(self.projectInfoAsCif)
+                file.write(self.projectInfoAsCif())
         else:
             print(f"ERROR: Directory {projectPath} already exists")
 
@@ -305,7 +303,7 @@ class State(object):
 
             self.parent.experimentDataAdded.emit()
             self.parent._onParametersChanged()
-            # self.parent.experimentLoadedChanged.emit()
+            self.parent.experimentLoadedChanged.emit()
 
         else:
             # delete existing experiment
@@ -316,7 +314,7 @@ class State(object):
                 self.parent.experimentSkippedChanged.emit()
 
         # project info
-        self._project_info = json.dumps(descr['project_info'])
+        self._project_info = descr['project_info']
 
         new_minimizer_settings = descr.get('minimizer', None)
         if new_minimizer_settings is not None:
@@ -328,9 +326,7 @@ class State(object):
             self.parent.currentMinimizerMethodIndex = new_method_index
 
         self.parent.fitLogic.fitter.fit_object = self._sample
-
         self.parent.resetUndoRedoStack()
-
         self.parent.projectCreated = True
 
     def experimentDataAsObj(self):
@@ -378,7 +374,7 @@ class State(object):
         self.project_save_filepath = ""
         self.removeExperiment()
         self.removePhase(self._sample.phases[self._current_phase_index].name)
-        self.parent._plotting_1d_proxy.clearBackendState()
+        # self.parent._plotting_1d_proxy.clearBackendState()
         self.parent._plotting_1d_proxy.clearFrontendState()
 
     ####################################################################################################################

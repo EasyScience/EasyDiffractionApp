@@ -383,6 +383,6 @@ if __name__ == "__main__":
     installQtInstallerFramework()
     prepareSignedMaintenanceTool()
     createInstallerSourceDir()
-    createInstaller()
     createOnlineRepositoryLocally()
     addFilesToLocalRepository()
+    createInstaller()

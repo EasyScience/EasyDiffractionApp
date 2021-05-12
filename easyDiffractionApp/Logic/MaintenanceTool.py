@@ -35,7 +35,7 @@ class MaintenanceTool(QObject):
 
         self._process = QProcess()
         self._process.setWorkingDirectory(QApplication.applicationDirPath())
-        self._process.setWorkingDirectory("/Applications/easyDiffraction/MaintenanceTool.app/Contents/MacOS")
+        #self._process.setWorkingDirectory("/Applications/easyDiffraction/MaintenanceTool.app/Contents/MacOS")
         self._process.setProgram(MaintenanceTool.exeRelativePath())
 
         # connections
@@ -212,7 +212,7 @@ class MaintenanceTool(QObject):
             relative_path = "../../../CHANGELOG.md"
         else:
             relative_path = "CHANGELOG.md"
-        path = os.path.join(QApplication.applicationDirPath(), relative_path)
+        #path = os.path.join(QApplication.applicationDirPath(), relative_path)
         path = os.path.join("/Applications/easyDiffraction/MaintenanceTool.app/Contents/MacOS", relative_path)
         return path
 

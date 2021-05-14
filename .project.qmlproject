@@ -6,7 +6,8 @@ Project {
     // List of module and plugin directories passed to QML runtime
     importPaths: [
         "easyDiffractionApp",
-        "../easyAppGui"
+        "../easyAppGui",
+        "../easyAppLogic",
     ]
 
     // Include .qml files from specified directory and its subdirectories
@@ -16,6 +17,9 @@ Project {
     QmlFiles {
         directory: "../easyAppGui"
     }
+    QmlFiles {
+        directory: "../easyAppLogic"
+    }
 
     // Include .js files from specified directory and its subdirectories
     JavaScriptFiles {
@@ -23,6 +27,9 @@ Project {
     }
     JavaScriptFiles {
         directory: "../easyAppGui"
+    }
+    JavaScriptFiles {
+        directory: "../easyAppLogic"
     }
 
     // Include Module Definition Files (qmldir), as well as .ts and .qrc
@@ -35,6 +42,11 @@ Project {
     Files {
         filter: "qmldir;*.ts;*.qrc"
         directory: "../easyAppGui"
+        recursive: true
+    }
+    Files {
+        filter: "qmldir;*.ts;*.qrc"
+        directory: "../easyAppLogic"
         recursive: true
     }
 }

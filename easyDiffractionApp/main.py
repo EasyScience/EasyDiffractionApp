@@ -87,7 +87,7 @@ def main():
     engine.rootContext().setContextProperty('_isSystemThemeDark', darkdetect.isDark())
 
     # Register types to be instantiated in QML
-    qmlRegisterType(Updater, 'Maintenance', 1, 0, 'Updater')
+    qmlRegisterType(Updater, 'easyAppLogic.Maintenance', 1, 0, 'Updater')
 
     # Add paths to search for installed modules
     engine.addImportPath(easyAppGui_path)

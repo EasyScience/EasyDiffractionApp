@@ -79,6 +79,9 @@ jobs:
       - name: Set up Python dependences
         #if: steps.cache.outputs.cache-hit != 'true'
         run: pip install ${{ env.GIT_INSTALL_URL }}
+        
+      - name: Remove some Python dependencies
+        run: pip uninstall --yes future
 
       - name: Relink CrysFML from default Python dylib
         run: python ${{ env.SCRIPTS_PATH }}/RelinkCrysfml.py

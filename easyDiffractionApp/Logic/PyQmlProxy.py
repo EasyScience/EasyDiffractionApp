@@ -28,7 +28,7 @@ from easyDiffractionLib.interface import InterfaceFactory
 from easyDiffractionLib.Elements.Experiments.Experiment import Pars1D
 from easyDiffractionLib.Elements.Experiments.Pattern import Pattern1D
 
-from easyAppLogic.Utils.Utils import generalizePath
+from easyApp.Utils.Utils import generalizePath
 
 from easyDiffractionApp.Logic.DataStore import DataSet1D, DataStore
 

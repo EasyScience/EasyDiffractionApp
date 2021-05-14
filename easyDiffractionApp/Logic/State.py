@@ -8,7 +8,7 @@ import xmltodict
 from xml.dom.minidom import parseString
 import json
 
-from easyAppLogic.Utils.Utils import generalizePath
+from easyApp.Utils.Utils import generalizePath
 from easyDiffractionApp.Logic.DataStore import DataSet1D, DataStore
 
 

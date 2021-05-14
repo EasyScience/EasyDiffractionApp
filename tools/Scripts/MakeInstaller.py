@@ -323,7 +323,7 @@ def createInstallerSourceDir():
     else:
         Functions.printSuccessMessage(message)
 
-def createInstaller():
+def createOfflineInstaller():
     try:
         message = 'create installer'
         qtifw_bin_dir_path = os.path.join(qtifwDirPath(), 'bin')
@@ -333,7 +333,6 @@ def createInstaller():
         Functions.run(
             qtifw_binarycreator_path,
             '--verbose',
-            #'--online-only',
             '--offline-only',
             '-c', configXmlPath(),
             '-p', packagesDirPath(),
@@ -383,6 +382,6 @@ if __name__ == "__main__":
     installQtInstallerFramework()
     prepareSignedMaintenanceTool()
     createInstallerSourceDir()
+    createOfflineInstaller()
     createOnlineRepositoryLocally()
     addFilesToLocalRepository()
-    createInstaller()

@@ -16,8 +16,8 @@ from PySide2.QtWebEngineWidgets import QWebEnginePage, QWebEngineView  # to call
 # easyScience
 import utils
 import easyApp as easyApp2
-from easyApp.Translate import Translator
-from easyApp.Maintenance import Updater
+from easyApp.Logic.Translate import Translator
+from easyApp.Logic.Maintenance import Updater
 from easyDiffractionApp.Logic.PyQmlProxy import PyQmlProxy
 
 # Global vars
@@ -89,7 +89,7 @@ def main():
     engine.rootContext().setContextProperty('_isSystemThemeDark', darkdetect.isDark())
 
     # Register types to be instantiated in QML
-    qmlRegisterType(Updater, 'easyApp.Maintenance', 1, 0, 'Updater')
+    qmlRegisterType(Updater, 'easyApp.Logic.Maintenance', 1, 0, 'Updater')
 
     # Add paths to search for installed modules
     engine.addImportPath(easyApp_path)

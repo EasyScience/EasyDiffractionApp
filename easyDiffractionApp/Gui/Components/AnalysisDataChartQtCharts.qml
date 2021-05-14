@@ -1,6 +1,6 @@
 import QtQuick 2.13
 
-import easyApp.Charts 1.0 as EaCharts
+import easyApp.Gui.Charts 1.0 as EaCharts
 
 import Gui.Globals 1.0 as ExGlobals
 

@@ -3,8 +3,8 @@ import QtQuick.Controls 2.13
 
 import Gui.Globals 1.0 as ExGlobals
 
-import easyAppGui.Globals 1.0 as EaGlobals
-import easyAppGui.Components 1.0 as EaComponents
+import easyApp.Globals 1.0 as EaGlobals
+import easyApp.Components 1.0 as EaComponents
 
 
 Item {

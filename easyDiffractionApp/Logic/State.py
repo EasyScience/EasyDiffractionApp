@@ -288,7 +288,6 @@ class State(object):
         self.parent.phasesEnabled.emit()
         self.parent.phasesAsObjChanged.emit()
         self.parent.structureParametersChanged.emit()
-        self.parent._background_proxy.onAsObjChanged()
 
         # experiment
         if 'experiments' in descr:
@@ -441,13 +440,6 @@ class State(object):
             self._interface.generate_sample_binding("filename", self._sample)
         self._sample.phases.name = 'Phases'
         # self._sample.set_background(background_obj)
-
-    def _background_obj(self):
-        bgs = self._sample.pattern.backgrounds
-        itm = None
-        if len(bgs) > 0:
-            itm = bgs[0]
-        return itm
 
     def currentCrystalSystem(self):
         phases = self._sample.phases
@@ -730,7 +722,7 @@ class State(object):
                 return
 
             obj.value = new_value
-            self.parent.parametersChanged.emit()
+            self.parent.lc.parametersChanged.emit()
 
     def _parameterObj(self, obj_id: str):
         if not obj_id:

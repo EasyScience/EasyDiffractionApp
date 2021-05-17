@@ -31,7 +31,7 @@ class BackgroundProxy(QObject):
 
     @property
     def _background_as_obj(self):
-        return self.main_proxy._background_obj
+        return self.main_proxy.lc._background_obj
 
     @Property('QVariant', notify=dummySignal)
     def asObj(self):

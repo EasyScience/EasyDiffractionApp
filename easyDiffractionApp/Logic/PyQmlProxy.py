@@ -14,7 +14,7 @@ from easyDiffractionLib.interface import InterfaceFactory
 from easyDiffractionApp.Logic.LogicController import LogicController as lc
 from easyDiffractionApp.Logic.State import State
 
-from easyDiffractionApp.Logic.Proxies.Background import BackgroundProxy
+# from easyDiffractionApp.Logic.Proxies.Background import BackgroundProxy
 
 
 class PyQmlProxy(QObject):
@@ -131,12 +131,6 @@ class PyQmlProxy(QObject):
         self.experimentLoadedChanged.connect(self._onExperimentLoadedChanged)
         self.experimentSkippedChanged.connect(self._onExperimentSkippedChanged)
 
-        self._background_proxy = BackgroundProxy(self)
-        self._background_proxy.asObjChanged.connect(self._onParametersChanged)
-        self._background_proxy.asObjChanged.connect(self.state._sample.set_background)
-        self._background_proxy.asObjChanged.connect(self.calculatedDataChanged)
-        self._background_proxy.asXmlChanged.connect(self.updateChartBackground)
-
         # Analysis
         self.calculatedDataChanged.connect(self._onCalculatedDataChanged)
         self.simulationParametersChanged.connect(self._onSimulationParametersChanged)
@@ -148,16 +142,6 @@ class PyQmlProxy(QObject):
         self.currentMinimizerMethodChanged.connect(self._onCurrentMinimizerMethodChanged)
 
         self.currentCalculatorChanged.connect(self._onCurrentCalculatorChanged)
-
-        # Parameters
-        self.lc.parametersChanged.connect(self._onParametersChanged)
-        self.lc.parametersChanged.connect(self._onCalculatedDataChanged)
-        self.lc.parametersChanged.connect(self._onStructureViewChanged)
-        self.lc.parametersChanged.connect(self._onStructureParametersChanged)
-        self.lc.parametersChanged.connect(self._onPatternParametersChanged)
-        self.lc.parametersChanged.connect(self._onInstrumentParametersChanged)
-        self.lc.parametersChanged.connect(self._background_proxy.onAsObjChanged)
-        self.lc.parametersChanged.connect(self.undoRedoChanged)
 
         self.parametersFilterCriteriaChanged.connect(self._onParametersFilterCriteriaChanged)
 
@@ -366,7 +350,7 @@ class PyQmlProxy(QObject):
 
     def _onPhaseAdded(self):
         print("***** _onPhaseAdded")
-        self.state._onPhaseAdded(self._background_proxy.asObj)
+        self.state._onPhaseAdded(self.lc._background_proxy.asObj)
         self.structureParametersChanged.emit()
         self.projectInfoAsJson['samples'] = self.state._sample.phases[self.currentPhaseIndex].name
         self.projectInfoChanged.emit()
@@ -643,19 +627,9 @@ class PyQmlProxy(QObject):
     # Background
     ####################################################################################################################
 
-    @property
-    def _background_obj(self):
-        return self.state._background_obj()
-
     @Property('QVariant', notify=dummySignal)
     def backgroundProxy(self):
-        return self._background_proxy
-
-    def updateChartBackground(self):
-        if self._background_proxy.asObj is None:
-            return
-        self.lc.chartsLogic._plotting_1d_proxy.setBackgroundData(self._background_proxy.asObj.x_sorted_points,
-                                                  self._background_proxy.asObj.y_sorted_points)
+        return self.lc._background_proxy
 
     ####################################################################################################################
     ####################################################################################################################
@@ -707,7 +681,7 @@ class PyQmlProxy(QObject):
     # Filtering
     @Slot(str)
     def setParametersFilterCriteria(self, new_criteria):
-        self.state.setParametersFilterCriteria()
+        self.state.setParametersFilterCriteria(new_criteria)
         self.parametersFilterCriteriaChanged.emit()
 
     def _onParametersFilterCriteriaChanged(self):
@@ -913,6 +887,7 @@ class PyQmlProxy(QObject):
     @Slot()
     def loadProject(self):
         self.state._loadProject()
+        self.lc._background_proxy.onAsObjChanged()
         self.stateChanged.emit(False)
 
     @Slot(str)

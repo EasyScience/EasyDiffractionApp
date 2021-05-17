@@ -1,7 +1,8 @@
 ### Changes
 
-- Implement automatic update and simplify update app manually.
+- Implemented automatic update of the application and made it easier to update the application manually.
+- Redesigned and expanded the application settings window.
 
 ### Bug Fixes
 
-- Add application window icon on Windows and Linux.
+- Added an icon to the application window on Windows and Linux.

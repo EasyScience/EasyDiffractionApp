@@ -325,7 +325,7 @@ class State(object):
             new_method_index = self.parent.minimizerMethodNames.index(new_method)
             self.parent.currentMinimizerMethodIndex = new_method_index
 
-        self.parent.fitLogic.fitter.fit_object = self._sample
+        self.parent.lc.fitLogic.fitter.fit_object = self._sample
         self.parent.resetUndoRedoStack()
         self.parent.projectCreated = True
 
@@ -352,7 +352,7 @@ class State(object):
         descr['interface'] = self._interface.current_interface_name
 
         descr['minimizer'] = {
-            'engine': self.parent.fitLogic.fitter.current_engine.name,
+            'engine': self.parent.lc.fitLogic.fitter.current_engine.name,
             'method': self.parent._current_minimizer_method_name
         }
         content_json = json.dumps(descr, indent=4, default=self.default)
@@ -664,8 +664,8 @@ class State(object):
         sim.y = self._interface.fit_func(sim.x)    # noqa: E501
         hkl = self._interface.get_hkl()
 
-        self.parent.chartsLogic._plotting_1d_proxy.setCalculatedData(sim.x, sim.y)
-        self.parent.chartsLogic._plotting_1d_proxy.setBraggData(hkl['ttheta'], hkl['h'], hkl['k'], hkl['l'])  # noqa: E501
+        self.parent.lc.chartsLogic._plotting_1d_proxy.setCalculatedData(sim.x, sim.y)
+        self.parent.lc.chartsLogic._plotting_1d_proxy.setBraggData(hkl['ttheta'], hkl['h'], hkl['k'], hkl['l'])  # noqa: E501
 
     ####################################################################################################################
     # Fitables (parameters table from analysis tab & ...)

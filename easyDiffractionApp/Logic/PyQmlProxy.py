@@ -10,12 +10,11 @@ from PySide2.QtCore import QObject, Slot, Signal, Property
 from easyCore import borg
 from easyCore.Utils.UndoRedo import property_stack_deco
 from easyDiffractionLib.interface import InterfaceFactory
+
+from easyDiffractionApp.Logic.LogicController import LogicController as lc
 from easyDiffractionApp.Logic.State import State
 
 from easyDiffractionApp.Logic.Proxies.Background import BackgroundProxy
-from easyDiffractionApp.Logic.Fitter import FitterLogic as FitterLogic
-from easyDiffractionApp.Logic.Stack import StackLogic
-from easyDiffractionApp.Logic.Charts import ChartsLogic
 
 
 class PyQmlProxy(QObject):
@@ -27,7 +26,6 @@ class PyQmlProxy(QObject):
     stateChanged = Signal(bool)
 
     # Fitables
-    parametersChanged = Signal()
     parametersAsObjChanged = Signal()
     parametersAsXmlChanged = Signal()
     parametersFilterCriteriaChanged = Signal()
@@ -36,7 +34,6 @@ class PyQmlProxy(QObject):
     structureParametersChanged = Signal()
     structureViewChanged = Signal()
 
-    phaseAdded = Signal()
     phaseRemoved = Signal()
     phasesAsObjChanged = Signal()
     phasesAsXmlChanged = Signal()
@@ -66,7 +63,7 @@ class PyQmlProxy(QObject):
 
     simulationParametersChanged = Signal()
 
-    fitResultsChanged = Signal()
+    fitResultsChanged = Signal()  # notify
     stopFit = Signal()
 
     currentMinimizerChanged = Signal()
@@ -75,10 +72,7 @@ class PyQmlProxy(QObject):
     currentCalculatorChanged = Signal()
 
     # Plotting
-    showMeasuredSeriesChanged = Signal()
-    showDifferenceChartChanged = Signal()
-    current1dPlottingLibChanged = Signal()
-    current3dPlottingLibChanged = Signal()
+    current3dPlottingLibChanged = Signal()  # notify
 
     htmlExportingFinished = Signal(bool, str)
 
@@ -86,14 +80,12 @@ class PyQmlProxy(QObject):
     statusInfoChanged = Signal()
 
     # Undo Redo
-    undoRedoChanged = Signal()
+    undoRedoChanged = Signal()  # notify
 
     # Misc
     dummySignal = Signal()
 
-    fitFinished = Signal()
-    fitFinishedNotify = Signal()
-    fitResultsChanged = Signal()
+    fitFinishedNotify = Signal()  # notify
     stopFit = Signal()
 
     # METHODS
@@ -110,15 +102,8 @@ class PyQmlProxy(QObject):
         self.state = State(self, interface=self._interface)
         self.stateChanged.connect(self._onStateChanged)
 
-        self.chartsLogic = ChartsLogic(self)
-
-        no_history = [self.parametersChanged]
-        with_history = [self.phaseAdded, self.parametersChanged]
-        self.stackLogic = StackLogic(self, callbacks_no_history=no_history, callbacks_with_history=with_history)
-
-        self.fitLogic = FitterLogic(self, self.state._sample, self._interface.fit_func)
-        self._fit_results = self.fitLogic._defaultFitResults()
-        self.fitFinished.connect(self.fitLogic._onFitFinished)
+        # initialize the logic controller
+        self.lc = lc(self)
 
         # Structure
         self.structureParametersChanged.connect(self._onStructureParametersChanged)
@@ -126,12 +111,11 @@ class PyQmlProxy(QObject):
         self.structureParametersChanged.connect(self._onCalculatedDataChanged)
         self.structureViewChanged.connect(self._onStructureViewChanged)
 
-        self.phaseAdded.connect(self._onPhaseAdded)
-        self.phaseAdded.connect(self.phasesEnabled)
-        #self.phaseAdded.connect(self.undoRedoChanged)
+        self.lc.phaseAdded.connect(self._onPhaseAdded)
+        self.lc.phaseAdded.connect(self.phasesEnabled)
         self.phaseRemoved.connect(self._onPhaseRemoved)
         self.phaseRemoved.connect(self.phasesEnabled)
-        #self.phaseRemoved.connect(self.undoRedoChanged)
+
 
         self.currentPhaseChanged.connect(self._onCurrentPhaseChanged)
 
@@ -159,21 +143,21 @@ class PyQmlProxy(QObject):
         self.simulationParametersChanged.connect(self.undoRedoChanged)
 
         self._current_minimizer_method_index = 0
-        self._current_minimizer_method_name = self.fitLogic.fitter.available_methods()[0]
+        self._current_minimizer_method_name = self.lc.fitLogic.fitter.available_methods()[0]
         self.currentMinimizerChanged.connect(self._onCurrentMinimizerChanged)
         self.currentMinimizerMethodChanged.connect(self._onCurrentMinimizerMethodChanged)
 
         self.currentCalculatorChanged.connect(self._onCurrentCalculatorChanged)
 
         # Parameters
-        self.parametersChanged.connect(self._onParametersChanged)
-        self.parametersChanged.connect(self._onCalculatedDataChanged)
-        self.parametersChanged.connect(self._onStructureViewChanged)
-        self.parametersChanged.connect(self._onStructureParametersChanged)
-        self.parametersChanged.connect(self._onPatternParametersChanged)
-        self.parametersChanged.connect(self._onInstrumentParametersChanged)
-        self.parametersChanged.connect(self._background_proxy.onAsObjChanged)
-        self.parametersChanged.connect(self.undoRedoChanged)
+        self.lc.parametersChanged.connect(self._onParametersChanged)
+        self.lc.parametersChanged.connect(self._onCalculatedDataChanged)
+        self.lc.parametersChanged.connect(self._onStructureViewChanged)
+        self.lc.parametersChanged.connect(self._onStructureParametersChanged)
+        self.lc.parametersChanged.connect(self._onPatternParametersChanged)
+        self.lc.parametersChanged.connect(self._onInstrumentParametersChanged)
+        self.lc.parametersChanged.connect(self._background_proxy.onAsObjChanged)
+        self.lc.parametersChanged.connect(self.undoRedoChanged)
 
         self.parametersFilterCriteriaChanged.connect(self._onParametersFilterCriteriaChanged)
 
@@ -188,7 +172,7 @@ class PyQmlProxy(QObject):
 
         # Multithreading
         self._fitter_thread = None
-        self.stopFit.connect(self.fitLogic.onStopFit)
+        self.stopFit.connect(self.lc.fitLogic.onStopFit)
 
         # Screen recorder
         recorder = None
@@ -215,26 +199,26 @@ class PyQmlProxy(QObject):
 
     @Property('QVariant', notify=dummySignal)
     def plotting1d(self):
-        return self.chartsLogic.plotting1d()
+        return self.lc.chartsLogic.plotting1d()
 
     # 3d plotting
 
     @Property('QVariant', notify=dummySignal)
     def plotting3dLibs(self):
-        return self.chartsLogic.plotting3dLibs()
+        return self.lc.chartsLogic.plotting3dLibs()
 
     @Property('QVariant', notify=current3dPlottingLibChanged)
     def current3dPlottingLib(self):
-        return self.chartsLogic.current3dPlottingLib()
+        return self.lc.chartsLogic.current3dPlottingLib()
 
     @current3dPlottingLib.setter
     @property_stack_deco('Changing 3D library from {old_value} to {new_value}')
     def current3dPlottingLib(self, plotting_lib):
-        self.chartsLogic._current_3d_plotting_lib = plotting_lib
+        self.lc.chartsLogic._current_3d_plotting_lib = plotting_lib
         self.current3dPlottingLibChanged.emit()
 
     def onCurrent3dPlottingLibChanged(self):
-        self.chartsLogic.onCurrent3dPlottingLibChanged()
+        self.lc.chartsLogic.onCurrent3dPlottingLibChanged()
 
     # Structure view
 
@@ -243,11 +227,11 @@ class PyQmlProxy(QObject):
 
     @Property(bool, notify=structureViewChanged)
     def showBonds(self):
-        return self.chartsLogic.showBonds()
+        return self.lc.chartsLogic.showBonds()
 
     @showBonds.setter
     def showBonds(self, show_bonds: bool):
-        self.chartsLogic.setShowBons(show_bonds)
+        self.lc.chartsLogic.setShowBons(show_bonds)
         self.structureViewChanged.emit()
 
     @Property(float, notify=structureViewChanged)
@@ -256,7 +240,7 @@ class PyQmlProxy(QObject):
 
     @bondsMaxDistance.setter
     def bondsMaxDistance(self, max_distance: float):
-        self.chartsLogic.setBondsMaxDistance(max_distance)
+        self.lc.chartsLogic.setBondsMaxDistance(max_distance)
         self.structureViewChanged.emit()
 
     ####################################################################################################################
@@ -333,7 +317,7 @@ class PyQmlProxy(QObject):
     @property_stack_deco
     def phasesAsCif(self, phases_as_cif):
         self.state.phasesAsCif(phases_as_cif)
-        self.parametersChanged.emit()
+        self.lc.parametersChanged.emit()
 
     def _setPhasesAsObj(self):
         start_time = timeit.default_timer()
@@ -367,13 +351,13 @@ class PyQmlProxy(QObject):
     @Slot(str)
     def addSampleFromCif(self, cif_url):
         self.state.addSampleFromCif(cif_url)
-        self.phaseAdded.emit()
+        self.lc.phaseAdded.emit()
 
     @Slot()
     def addDefaultPhase(self):
         print("+ addDefaultPhase")
         self.state.addDefaultPhase()
-        self.phaseAdded.emit()
+        self.lc.phaseAdded.emit()
 
     @Slot(str)
     def removePhase(self, phase_name: str):
@@ -478,7 +462,7 @@ class PyQmlProxy(QObject):
     @Slot(str)
     def setCurrentPhaseName(self, name):
         self.state.setCurrentPhaseName(name)
-        self.parametersChanged.emit()
+        self.lc.parametersChanged.emit()
         self.projectInfoChanged.emit()
 
     @Property('QVariant', notify=experimentDataChanged)
@@ -534,7 +518,7 @@ class PyQmlProxy(QObject):
 
     def _onExperimentDataAdded(self):
         print("***** _onExperimentDataAdded")
-        self.chartsLogic._plotting_1d_proxy.setMeasuredData(self.state._experiment_data.x,
+        self.lc.chartsLogic._plotting_1d_proxy.setMeasuredData(self.state._experiment_data.x,
                                                 self.state._experiment_data.y,
                                                 self.state._experiment_data.e)
         self.state._experiment_parameters = \
@@ -551,7 +535,7 @@ class PyQmlProxy(QObject):
 
     def _onExperimentDataRemoved(self):
         print("***** _onExperimentDataRemoved")
-        self.chartsLogic._plotting_1d_proxy.clearFrontendState()
+        self.lc.chartsLogic._plotting_1d_proxy.clearFrontendState()
         self.experimentDataChanged.emit()
 
     ####################################################################################################################
@@ -670,7 +654,7 @@ class PyQmlProxy(QObject):
     def updateChartBackground(self):
         if self._background_proxy.asObj is None:
             return
-        self.chartsLogic._plotting_1d_proxy.setBackgroundData(self._background_proxy.asObj.x_sorted_points,
+        self.lc.chartsLogic._plotting_1d_proxy.setBackgroundData(self._background_proxy.asObj.x_sorted_points,
                                                   self._background_proxy.asObj.y_sorted_points)
 
     ####################################################################################################################
@@ -744,11 +728,11 @@ class PyQmlProxy(QObject):
 
     @Property('QVariant', notify=dummySignal)
     def minimizerNames(self):
-        return self.fitLogic.fitter.available_engines
+        return self.lc.fitLogic.fitter.available_engines
 
     @Property(int, notify=currentMinimizerChanged)
     def currentMinimizerIndex(self):
-        current_name = self.fitLogic.fitter.current_engine.name
+        current_name = self.lc.fitLogic.fitter.current_engine.name
         return self.minimizerNames.index(current_name)
 
     @currentMinimizerIndex.setter
@@ -757,13 +741,13 @@ class PyQmlProxy(QObject):
         if self.currentMinimizerIndex == new_index:
             return
         new_name = self.minimizerNames[new_index]
-        self.fitLogic.fitter.switch_engine(new_name)
+        self.lc.fitLogic.fitter.switch_engine(new_name)
         self.currentMinimizerChanged.emit()
 
     def _onCurrentMinimizerChanged(self):
         print("***** _onCurrentMinimizerChanged")
         idx = 0
-        minimizer_name = self.fitLogic.fitter.current_engine.name
+        minimizer_name = self.lc.fitLogic.fitter.current_engine.name
         if minimizer_name == 'lmfit':
             idx = self.minimizerMethodNames.index('leastsq')
         elif minimizer_name == 'bumps':
@@ -836,20 +820,16 @@ class PyQmlProxy(QObject):
 
     @Slot()
     def fit(self):
-        self.fitLogic.fit(self.state._data, self._current_minimizer_method_name)
+        self.lc.fitLogic.fit(self.state._data,
+                             self._current_minimizer_method_name)
 
     @Property('QVariant', notify=fitResultsChanged)
     def fitResults(self):
-        return self.fitLogic._fit_results
+        return self.lc.fitLogic._fit_results
 
     @Property(bool, notify=fitFinishedNotify)
     def isFitFinished(self):
-        return self.fitLogic._fit_finished
-
-    @isFitFinished.setter
-    def isFitFinished(self, fit_finished: bool):
-        self.fitLogic.setFitFinished(fit_finished)
-        self.fitFinishedNotify.emit()
+        return self.lc.fitLogic._fit_finished
 
     ####################################################################################################################
     ####################################################################################################################
@@ -881,13 +861,13 @@ class PyQmlProxy(QObject):
 
     @Property('QVariant', notify=statusInfoChanged)
     def statusModelAsObj(self):
-        engine_name = self.fitLogic.fitter.current_engine.name
+        engine_name = self.lc.fitLogic.fitter.current_engine.name
         minimizer_name = self._current_minimizer_method_name
         return self.state.statusModelAsObj(engine_name, minimizer_name)
 
     @Property(str, notify=statusInfoChanged)
     def statusModelAsXml(self):
-        engine_name = self.fitLogic.fitter.current_engine.name
+        engine_name = self.lc.fitLogic.fitter.current_engine.name
         minimizer_name = self._current_minimizer_method_name
         return self.state.statusModelAsXml(engine_name, minimizer_name)
 
@@ -959,7 +939,7 @@ class PyQmlProxy(QObject):
     @Slot()
     def resetState(self):
         self.state.resetState()
-        self.chartsLogic._plotting_1d_proxy.clearFrontendState()
+        self.lc.chartsLogic._plotting_1d_proxy.clearFrontendState()
         self.resetUndoRedoStack()
         self.stateChanged.emit(False)
 
@@ -969,28 +949,28 @@ class PyQmlProxy(QObject):
 
     @Property(bool, notify=undoRedoChanged)
     def canUndo(self) -> bool:
-        return self.stackLogic.canUndo()
+        return self.lc.stackLogic.canUndo()
 
     @Property(bool, notify=undoRedoChanged)
     def canRedo(self) -> bool:
-        return self.stackLogic.canRedo()
+        return self.lc.stackLogic.canRedo()
 
     @Slot()
     def undo(self):
-        self.stackLogic.undo()
+        self.lc.stackLogic.undo()
 
     @Slot()
     def redo(self):
-        self.stackLogic.redo()
+        self.lc.stackLogic.redo()
 
     @Property(str, notify=undoRedoChanged)
     def undoText(self):
-        return self.stackLogic.undoText()
+        return self.lc.stackLogic.undoText()
 
     @Property(str, notify=undoRedoChanged)
     def redoText(self):
-        return self.stackLogic.redoText()
+        return self.lc.stackLogic.redoText()
 
     @Slot()
     def resetUndoRedoStack(self):
-        self.stackLogic.resetUndoRedoStack()
+        self.lc.stackLogic.resetUndoRedoStack()

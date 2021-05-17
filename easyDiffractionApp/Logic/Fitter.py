@@ -1,14 +1,18 @@
-from PySide2.QtCore import Signal, QThread
+from PySide2.QtCore import Signal, QObject, QThread
 
 from easyCore.Fitting.Fitting import Fitter as CoreFitter
 from easyCore import borg
 
 
-class FitterLogic():
+class FitterLogic(QObject):
     """
     Logic related to the fitter setup
     """
+    fitFinished = Signal()
+    fitStarted = Signal()
+
     def __init__(self, parent=None, sample=None, fit_func=""):
+        super().__init__(parent)
         self.fitter = CoreFitter(sample, fit_func)
 
         self.parent = parent
@@ -20,12 +24,13 @@ class FitterLogic():
 
     def fit(self, data, minimizer_name):
         # if running, stop the thread
-        if not self.parent.isFitFinished:
+        if not self._fit_finished:
             self.onStopFit()
             borg.stack.endMacro()  # need this to close the undo stack properly
             return
 
-        self.parent.isFitFinished = False
+        self._fit_finished = False
+        self.fitStarted.emit()
         exp_data = data.experiments[0]
 
         x = exp_data.x
@@ -56,12 +61,14 @@ class FitterLogic():
             "GOF":     float(res.goodness_of_fit),
             "redchi2": float(res.reduced_chi)
         }
-        self.parent.fitResultsChanged.emit()
-        self.parent.isFitFinished = True
-        self.parent.fitFinished.emit()
+        self.finishFitting()
 
     def _setFitResultsFailed(self, res):
-        self.parent.isFitFinished = True
+        self.finishFitting()
+
+    def finishFitting(self):
+        self._fit_finished = True
+        self.fitFinished.emit()
 
     def onStopFit(self):
         """
@@ -77,9 +84,7 @@ class FitterLogic():
         self._fit_results['redchi2'] = None
         self._setFitResultsFailed("Fitting stopped")
 
-    def _onFitFinished(self):
-        self.parent.fitFinishedNotify.emit()
-        self.parent.parametersChanged.emit()
+    # def _onFitFinished(self):
 
     def setFitFinished(self, fit_finished: bool):
         if self._fit_finished == fit_finished:

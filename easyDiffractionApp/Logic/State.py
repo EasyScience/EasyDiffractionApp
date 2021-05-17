@@ -335,7 +335,7 @@ class State(object):
     def _saveProject(self):
         """
         """
-        projectPath = self._project_info['location']
+        projectPath = self.currentProjectPath
         project_save_filepath = os.path.join(projectPath, 'project.json')
         descr = {
             'sample': self._sample.as_dict(skip=['interface'])
@@ -374,8 +374,6 @@ class State(object):
         self.project_save_filepath = ""
         self.removeExperiment()
         self.removePhase(self._sample.phases[self._current_phase_index].name)
-        # self.parent._plotting_1d_proxy.clearBackendState()
-        self.parent._plotting_1d_proxy.clearFrontendState()
 
     ####################################################################################################################
     ####################################################################################################################
@@ -643,7 +641,6 @@ class State(object):
     ####################################################################################################################
     # Calculated data
     ####################################################################################################################
-
     def _updateCalculatedData(self):
         if not self._experiment_loaded and not self._experiment_skipped:
             return
@@ -667,8 +664,8 @@ class State(object):
         sim.y = self._interface.fit_func(sim.x)    # noqa: E501
         hkl = self._interface.get_hkl()
 
-        self.parent._plotting_1d_proxy.setCalculatedData(sim.x, sim.y)
-        self.parent._plotting_1d_proxy.setBraggData(hkl['ttheta'], hkl['h'], hkl['k'], hkl['l'])  # noqa: E501
+        self.parent.chartsLogic._plotting_1d_proxy.setCalculatedData(sim.x, sim.y)
+        self.parent.chartsLogic._plotting_1d_proxy.setBraggData(hkl['ttheta'], hkl['h'], hkl['k'], hkl['l'])  # noqa: E501
 
     ####################################################################################################################
     # Fitables (parameters table from analysis tab & ...)

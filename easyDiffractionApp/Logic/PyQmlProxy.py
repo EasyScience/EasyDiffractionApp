@@ -13,9 +13,9 @@ from easyDiffractionLib.interface import InterfaceFactory
 from easyDiffractionApp.Logic.State import State
 
 from easyDiffractionApp.Logic.Proxies.Background import BackgroundProxy
-from easyDiffractionApp.Logic.Proxies.Plotting1d import Plotting1dProxy
 from easyDiffractionApp.Logic.Fitter import FitterLogic as FitterLogic
 from easyDiffractionApp.Logic.Stack import StackLogic
+from easyDiffractionApp.Logic.Charts import ChartsLogic
 
 
 class PyQmlProxy(QObject):
@@ -104,21 +104,13 @@ class PyQmlProxy(QObject):
         # Main
         self._interface = InterfaceFactory()
 
-        # Plotting 1D
-        self._plotting_1d_proxy = Plotting1dProxy()
-
-        # Plotting 3D
-        self._3d_plotting_libs = ['chemdoodle', 'qtdatavisualization']
-        self._current_3d_plotting_lib = self._3d_plotting_libs[0]
-
-        self._show_bonds = True
-        self._bonds_max_distance = 2.0
-
         self.current3dPlottingLibChanged.connect(self.onCurrent3dPlottingLibChanged)
 
         # Initialize logics
         self.state = State(self, interface=self._interface)
         self.stateChanged.connect(self._onStateChanged)
+
+        self.chartsLogic = ChartsLogic(self)
 
         no_history = [self.parametersChanged]
         with_history = [self.phaseAdded, self.parametersChanged]
@@ -223,26 +215,26 @@ class PyQmlProxy(QObject):
 
     @Property('QVariant', notify=dummySignal)
     def plotting1d(self):
-        return self._plotting_1d_proxy
+        return self.chartsLogic.plotting1d()
 
     # 3d plotting
 
     @Property('QVariant', notify=dummySignal)
     def plotting3dLibs(self):
-        return self._3d_plotting_libs
+        return self.chartsLogic.plotting3dLibs()
 
     @Property('QVariant', notify=current3dPlottingLibChanged)
     def current3dPlottingLib(self):
-        return self._current_3d_plotting_lib
+        return self.chartsLogic.current3dPlottingLib()
 
     @current3dPlottingLib.setter
     @property_stack_deco('Changing 3D library from {old_value} to {new_value}')
     def current3dPlottingLib(self, plotting_lib):
-        self._current_3d_plotting_lib = plotting_lib
+        self.chartsLogic._current_3d_plotting_lib = plotting_lib
         self.current3dPlottingLibChanged.emit()
 
     def onCurrent3dPlottingLibChanged(self):
-        pass
+        self.chartsLogic.onCurrent3dPlottingLibChanged()
 
     # Structure view
 
@@ -251,24 +243,20 @@ class PyQmlProxy(QObject):
 
     @Property(bool, notify=structureViewChanged)
     def showBonds(self):
-        return self._show_bonds
+        return self.chartsLogic.showBonds()
 
     @showBonds.setter
     def showBonds(self, show_bonds: bool):
-        if self._show_bonds == show_bonds:
-            return
-        self._show_bonds = show_bonds
+        self.chartsLogic.setShowBons(show_bonds)
         self.structureViewChanged.emit()
 
     @Property(float, notify=structureViewChanged)
     def bondsMaxDistance(self):
-        return self._bonds_max_distance
+        return self.chartsLogic.bondsMaxDistance()
 
     @bondsMaxDistance.setter
     def bondsMaxDistance(self, max_distance: float):
-        if self._bonds_max_distance == max_distance:
-            return
-        self._bonds_max_distance = max_distance
+        self.chartsLogic.setBondsMaxDistance(max_distance)
         self.structureViewChanged.emit()
 
     ####################################################################################################################
@@ -546,7 +534,7 @@ class PyQmlProxy(QObject):
 
     def _onExperimentDataAdded(self):
         print("***** _onExperimentDataAdded")
-        self._plotting_1d_proxy.setMeasuredData(self.state._experiment_data.x,
+        self.chartsLogic._plotting_1d_proxy.setMeasuredData(self.state._experiment_data.x,
                                                 self.state._experiment_data.y,
                                                 self.state._experiment_data.e)
         self.state._experiment_parameters = \
@@ -563,7 +551,7 @@ class PyQmlProxy(QObject):
 
     def _onExperimentDataRemoved(self):
         print("***** _onExperimentDataRemoved")
-        self._plotting_1d_proxy.clearFrontendState()
+        self.chartsLogic._plotting_1d_proxy.clearFrontendState()
         self.experimentDataChanged.emit()
 
     ####################################################################################################################
@@ -682,7 +670,7 @@ class PyQmlProxy(QObject):
     def updateChartBackground(self):
         if self._background_proxy.asObj is None:
             return
-        self._plotting_1d_proxy.setBackgroundData(self._background_proxy.asObj.x_sorted_points,
+        self.chartsLogic._plotting_1d_proxy.setBackgroundData(self._background_proxy.asObj.x_sorted_points,
                                                   self._background_proxy.asObj.y_sorted_points)
 
     ####################################################################################################################
@@ -971,6 +959,7 @@ class PyQmlProxy(QObject):
     @Slot()
     def resetState(self):
         self.state.resetState()
+        self.chartsLogic._plotting_1d_proxy.clearFrontendState()
         self.resetUndoRedoStack()
         self.stateChanged.emit(False)
 

@@ -170,13 +170,3 @@ base_url = 'https://evermeet.cx/ffmpeg'
 file_name_base = 'ffmpeg-'
 file_ext = '.zip'
 exe = 'ffmpeg'
-
-[ci.cache]
-python_packages_path = "/Users/asazonov/Developing/CrossPlatform/easyScience/easyDiffractionApp/.venv/lib/python3.7/site-packages"
-
-[ci.app.info]
-build_date = "17 May 2021"
-branch_name = ""
-branch_url = "//tree/"
-commit_sha_short = ""
-commit_url = "//commit/"

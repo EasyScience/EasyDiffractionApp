@@ -19,6 +19,8 @@ def conf():
     project_fname = 'pyproject.toml'
     current_path = os.path.dirname(__file__)
     project_fpath = os.path.join(current_path, project_fname)
+    print("***** project_fpath", project_fpath)
+    print("***** project_fcontent", toml.load(project_fpath))
     return toml.load(project_fpath)
 
 def keyPath():

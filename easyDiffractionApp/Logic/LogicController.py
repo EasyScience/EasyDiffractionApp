@@ -1,8 +1,11 @@
+import json
+
 from PySide2.QtCore import QObject, Signal
 
-# from easyDiffractionApp.Logic.State import State
+from easyDiffractionLib.interface import InterfaceFactory
 
 from easyDiffractionApp.Logic.Proxies.Background import BackgroundProxy
+from easyDiffractionApp.Logic.State import State
 from easyDiffractionApp.Logic.Fitter import FitterLogic as FitterLogic
 from easyDiffractionApp.Logic.Stack import StackLogic
 from easyDiffractionApp.Logic.Charts import ChartsLogic
@@ -14,8 +17,9 @@ class LogicController(QObject):
 
     def __init__(self, parent):
         super().__init__(parent)
-        self.parent = parent
+        self.proxy = parent
         self._fit_results = ""
+        self._interface = InterfaceFactory()
 
         self.initialize()
 
@@ -23,7 +27,7 @@ class LogicController(QObject):
         # initialize various logic components
 
         # main logic
-        # self.state = State(self, interface=self._interface)
+        self.state = State(self, interface=self._interface, proxy=self.proxy)
         # self.stateChanged.connect(self._onStateChanged)
 
         # chart logic
@@ -38,35 +42,37 @@ class LogicController(QObject):
 
         # fitter logic
         #####################################################
-        self.fitLogic = FitterLogic(self, self.parent.state._sample,
-                                    self.parent._interface.fit_func)
+        self.fitLogic = FitterLogic(self, self.state._sample,
+                                    self._interface.fit_func)
         self._fit_results = self.fitLogic._defaultFitResults()
         # communication between logic and proxy notifiers
         self.fitLogic.fitFinished.connect(self.onFitFinished)
         self.fitLogic.fitStarted.connect(self.onFitStarted)
 
         # background logic
-        self._background_proxy = BackgroundProxy(self.parent)
-        self._background_proxy.asObjChanged.connect(self.parent._onParametersChanged)
-        self._background_proxy.asObjChanged.connect(self.parent.state._sample.set_background)
-        self._background_proxy.asObjChanged.connect(self.parent.calculatedDataChanged)
+        self._background_proxy = BackgroundProxy(self.proxy)
+        self._background_proxy.asObjChanged.connect(self.proxy._onParametersChanged)
+        self._background_proxy.asObjChanged.connect(self.state._sample.set_background)
+        self._background_proxy.asObjChanged.connect(self.proxy.calculatedDataChanged)
         self._background_proxy.asXmlChanged.connect(self.updateChartBackground)
 
         # parameters slots
-        # Parameters
-        self.parametersChanged.connect(self.parent._onParametersChanged)
-        self.parametersChanged.connect(self.parent._onCalculatedDataChanged)
-        self.parametersChanged.connect(self.parent._onStructureViewChanged)
-        self.parametersChanged.connect(self.parent._onStructureParametersChanged)
-        self.parametersChanged.connect(self.parent._onPatternParametersChanged)
-        self.parametersChanged.connect(self.parent._onInstrumentParametersChanged)
+        self.parametersChanged.connect(self.proxy._onParametersChanged)
+        self.parametersChanged.connect(self.proxy._onCalculatedDataChanged)
+        self.parametersChanged.connect(self.proxy._onStructureViewChanged)
+        self.parametersChanged.connect(self.proxy._onStructureParametersChanged)
+        self.parametersChanged.connect(self.proxy._onPatternParametersChanged)
+        self.parametersChanged.connect(self.proxy._onInstrumentParametersChanged)
         self.parametersChanged.connect(self._background_proxy.onAsObjChanged)
-        self.parametersChanged.connect(self.parent.undoRedoChanged)
+        self.parametersChanged.connect(self.proxy.undoRedoChanged)
+
+###############################################################################
+#  MULTI-STATE UTILITY METHODS
+###############################################################################
 
     @property
     def _background_obj(self):
-        # this will change to self.state._sample... after refactoring State
-        bgs = self.parent.state._sample.pattern.backgrounds
+        bgs = self.state._sample.pattern.backgrounds
         itm = None
         if len(bgs) > 0:
             itm = bgs[0]
@@ -80,9 +86,28 @@ class LogicController(QObject):
                                 self._background_proxy.asObj.y_sorted_points)
 
     def onFitStarted(self):
-        self.parent.fitFinishedNotify.emit()
+        self.proxy.fitFinishedNotify.emit()
 
     def onFitFinished(self):
-        self.parent.fitResultsChanged.emit()
-        self.parent.fitFinishedNotify.emit()
+        self.proxy.fitResultsChanged.emit()
+        self.proxy.fitFinishedNotify.emit()
         self.parametersChanged.emit()
+
+    def _onExperimentDataAdded(self):
+        print("***** _onExperimentDataAdded")
+        self.chartsLogic._plotting_1d_proxy.setMeasuredData(
+                                            self.state._experiment_data.x,
+                                            self.state._experiment_data.y,
+                                            self.state._experiment_data.e)
+        self.state._experiment_parameters = \
+            self.state._experimentDataParameters(self.state._experiment_data)
+
+        self.proxy.simulationParametersAsObj = \
+            json.dumps(self.state._experiment_parameters)
+        if len(self.state._sample.pattern.backgrounds) == 0:
+            self._background_proxy.initializeContainer()
+
+        self.proxy.experimentDataChanged.emit()
+        self.proxy.projectInfoAsJson['experiments'] = \
+            self.state._data.experiments[0].name
+        self.proxy.projectInfoChanged.emit()

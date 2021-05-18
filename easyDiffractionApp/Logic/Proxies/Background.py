@@ -67,7 +67,7 @@ class BackgroundProxy(QObject):
         container = None
         if container_type is None:
             container = self._bg_types[self._default_type]['container']
-        self.main_proxy.state._sample.pattern.backgrounds.append(
+        self.main_proxy.lc.state._sample.pattern.backgrounds.append(
             # TODO we will be the current exp name and use it here.
             container(linked_experiment=experiment_name)
         )

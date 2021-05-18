@@ -23,8 +23,9 @@ from easyDiffractionLib.Elements.Experiments.Pattern import Pattern1D
 class State(object):
     """
     """
-    def __init__(self, parent=None, interface=None):
+    def __init__(self, parent=None, interface=None, proxy=None):
         self.parent = parent
+        self.proxy = proxy
         self._interface = interface
         self._interface_name = interface.current_interface_name
         self.project_save_filepath = ""
@@ -179,8 +180,6 @@ class State(object):
         self.experiments.clear()
         self.experimentLoaded(False)
         self.experimentSkipped(False)
-        # self.parent.experimentDataRemoved.emit()
-        # self.parent.experimentLoadedChanged.emit()
 
     ####################################################################################################################
     ####################################################################################################################
@@ -285,9 +284,9 @@ class State(object):
         self._sample._updateInterface()
 
         # send signal to tell the proxy we changed phases
-        self.parent.phasesEnabled.emit()
-        self.parent.phasesAsObjChanged.emit()
-        self.parent.structureParametersChanged.emit()
+        self.proxy.phasesEnabled.emit()
+        self.proxy.phasesAsObjChanged.emit()
+        self.proxy.structureParametersChanged.emit()
 
         # experiment
         if 'experiments' in descr:
@@ -300,9 +299,10 @@ class State(object):
             self.experiments = [{'name': descr['project_info']['experiments']}]
             self.setCurrentExperimentDatasetName(descr['project_info']['experiments'])
 
-            self.parent.experimentDataAdded.emit()
-            self.parent._onParametersChanged()
-            self.parent.experimentLoadedChanged.emit()
+
+            self.proxy._onExperimentDataAdded()
+            self.proxy._onParametersChanged()
+            self.proxy.experimentLoadedChanged.emit()
 
         else:
             # delete existing experiment
@@ -310,7 +310,7 @@ class State(object):
             self.experimentLoaded(False)
             if descr['experiment_skipped']:
                 self.experimentSkipped(True)
-                self.parent.experimentSkippedChanged.emit()
+                self.proxy.experimentSkippedChanged.emit()
 
         # project info
         self._project_info = descr['project_info']
@@ -319,14 +319,14 @@ class State(object):
         if new_minimizer_settings is not None:
             new_engine = new_minimizer_settings['engine']
             new_method = new_minimizer_settings['method']
-            new_engine_index = self.parent.minimizerNames.index(new_engine)
-            self.parent.currentMinimizerIndex = new_engine_index
-            new_method_index = self.parent.minimizerMethodNames.index(new_method)
-            self.parent.currentMinimizerMethodIndex = new_method_index
+            new_engine_index = self.proxy.minimizerNames.index(new_engine)
+            self.proxy.currentMinimizerIndex = new_engine_index
+            new_method_index = self.proxy.minimizerMethodNames.index(new_method)
+            self.proxy.currentMinimizerMethodIndex = new_method_index
 
-        self.parent.lc.fitLogic.fitter.fit_object = self._sample
-        self.parent.resetUndoRedoStack()
-        self.parent.projectCreated = True
+        self.parent.fitLogic.fitter.fit_object = self._sample
+        self.proxy.resetUndoRedoStack()
+        self.proxy.projectCreated = True
 
     def experimentDataAsObj(self):
         return [{'name': experiment.name} for experiment in self._data.experiments]
@@ -351,8 +351,8 @@ class State(object):
         descr['interface'] = self._interface.current_interface_name
 
         descr['minimizer'] = {
-            'engine': self.parent.lc.fitLogic.fitter.current_engine.name,
-            'method': self.parent._current_minimizer_method_name
+            'engine': self.parent.fitLogic.fitter.current_engine.name,
+            'method': self.proxy._current_minimizer_method_name
         }
         content_json = json.dumps(descr, indent=4, default=self.default)
         path = generalizePath(project_save_filepath)
@@ -369,7 +369,7 @@ class State(object):
     def resetState(self):
         self._project_info = self._defaultProjectInfo()
         self._project_created = False
-        self.parent.projectInfoChanged.emit()
+        self.proxy.projectInfoChanged.emit()
         self.project_save_filepath = ""
         self.removeExperiment()
         self.removePhase(self._sample.phases[self._current_phase_index].name)
@@ -656,8 +656,8 @@ class State(object):
         sim.y = self._interface.fit_func(sim.x)    # noqa: E501
         hkl = self._interface.get_hkl()
 
-        self.parent.lc.chartsLogic._plotting_1d_proxy.setCalculatedData(sim.x, sim.y)
-        self.parent.lc.chartsLogic._plotting_1d_proxy.setBraggData(hkl['ttheta'], hkl['h'], hkl['k'], hkl['l'])  # noqa: E501
+        self.parent.chartsLogic._plotting_1d_proxy.setCalculatedData(sim.x, sim.y)
+        self.parent.chartsLogic._plotting_1d_proxy.setBraggData(hkl['ttheta'], hkl['h'], hkl['k'], hkl['l'])  # noqa: E501
 
     ####################################################################################################################
     # Fitables (parameters table from analysis tab & ...)
@@ -714,15 +714,15 @@ class State(object):
                 return
 
             obj.fixed = not new_value
-            self.parent._onParametersChanged()
-            self.parent.undoRedoChanged.emit()
+            self.proxy._onParametersChanged()
+            self.proxy.undoRedoChanged.emit()
 
         else:
             if obj.raw_value == new_value:
                 return
 
             obj.value = new_value
-            self.parent.lc.parametersChanged.emit()
+            self.parent.parametersChanged.emit()
 
     def _parameterObj(self, obj_id: str):
         if not obj_id:

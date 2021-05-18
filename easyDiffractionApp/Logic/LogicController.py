@@ -53,22 +53,34 @@ class LogicController(QObject):
         self._background_proxy = BackgroundProxy(self.proxy)
         self._background_proxy.asObjChanged.connect(self.proxy._onParametersChanged)
         self._background_proxy.asObjChanged.connect(self.state._sample.set_background)
-        self._background_proxy.asObjChanged.connect(self.proxy.calculatedDataChanged)
+        self._background_proxy.asObjChanged.connect(self.state._updateCalculatedData)
         self._background_proxy.asXmlChanged.connect(self.updateChartBackground)
 
         # parameters slots
         self.parametersChanged.connect(self.proxy._onParametersChanged)
-        self.parametersChanged.connect(self.proxy._onCalculatedDataChanged)
-        self.parametersChanged.connect(self.proxy._onStructureViewChanged)
+        self.parametersChanged.connect(self.state._updateCalculatedData)
+        self.parametersChanged.connect(self.chartsLogic._onStructureViewChanged)
         self.parametersChanged.connect(self.proxy._onStructureParametersChanged)
         self.parametersChanged.connect(self.proxy._onPatternParametersChanged)
         self.parametersChanged.connect(self.proxy._onInstrumentParametersChanged)
         self.parametersChanged.connect(self._background_proxy.onAsObjChanged)
         self.parametersChanged.connect(self.proxy.undoRedoChanged)
 
+        # Screen recorder
+        self._screen_recorder = self.recorder()
+
 ###############################################################################
 #  MULTI-STATE UTILITY METHODS
 ###############################################################################
+
+    def recorder(self):
+        rec = None
+        try:
+            from easyDiffractionApp.Logic.ScreenRecorder import ScreenRecorder
+            rec = ScreenRecorder()
+        except (ImportError, ModuleNotFoundError):
+            print('Screen recording disabled')
+        return rec
 
     @property
     def _background_obj(self):
@@ -111,3 +123,10 @@ class LogicController(QObject):
         self.proxy.projectInfoAsJson['experiments'] = \
             self.state._data.experiments[0].name
         self.proxy.projectInfoChanged.emit()
+
+    def _onPhaseAdded(self):
+        self.state._onPhaseAdded(self._background_proxy.asObj)
+
+    def samplesPresent(self):
+        return len(self.state._sample.phases) > 0
+

@@ -15,75 +15,65 @@ class PyQmlProxy(QObject):
     # SIGNALS
 
     # Project
-    projectCreatedChanged = Signal()
-    projectInfoChanged = Signal()
-    stateChanged = Signal(bool)
+    projectCreatedChanged = Signal()  # notify
+    projectInfoChanged = Signal()  # notify
+    stateChanged = Signal(bool)  # notify
 
     # Fitables
-    parametersAsObjChanged = Signal()
-    parametersAsXmlChanged = Signal()
+    parametersAsObjChanged = Signal()  # notify
+    parametersAsXmlChanged = Signal()  # notify
 
     # Structure
-    structureParametersChanged = Signal()
-    structureViewChanged = Signal()
+    structureParametersChanged = Signal()  # notify
+    structureViewChanged = Signal()  # notify
 
-    phaseRemoved = Signal()
-    phasesAsObjChanged = Signal()
-    phasesAsXmlChanged = Signal()
-    phasesAsCifChanged = Signal()
-    currentPhaseChanged = Signal()
-    phasesEnabled = Signal()
+    phasesAsObjChanged = Signal()  # notify
+    phasesAsXmlChanged = Signal()  # notify
+    phasesAsCifChanged = Signal()  # notify
+    currentPhaseChanged = Signal()  # notify
+    phasesEnabled = Signal()  # notify
 
     # Experiment
-    patternParametersChanged = Signal()
-    patternParametersAsObjChanged = Signal()
+    patternParametersAsObjChanged = Signal()  # notify
 
-    instrumentParametersAsObjChanged = Signal()
-    instrumentParametersAsXmlChanged = Signal()
+    instrumentParametersAsObjChanged = Signal()  # notify
+    instrumentParametersAsXmlChanged = Signal()  # notify
 
     experimentDataChanged = Signal()  # notify
-    experimentDataAsXmlChanged = Signal()
+    experimentDataAsXmlChanged = Signal()  # notify
 
     experimentLoadedChanged = Signal()  # notify
-    experimentSkippedChanged = Signal()
+    experimentSkippedChanged = Signal()  # notify
 
     # Analysis
-    calculatedDataChanged = Signal()
-    calculatedDataUpdated = Signal()
-
-    simulationParametersChanged = Signal()
+    simulationParametersChanged = Signal()  # notify
 
     fitResultsChanged = Signal()  # notify
+    fitFinishedNotify = Signal()  # notify
     stopFit = Signal()
 
-    currentMinimizerChanged = Signal()
-    currentMinimizerMethodChanged = Signal()
-
-    currentCalculatorChanged = Signal()
+    currentMinimizerChanged = Signal()  # notify
+    currentMinimizerMethodChanged = Signal()  # notify
+    currentCalculatorChanged = Signal()  # notify
 
     # Plotting
     current3dPlottingLibChanged = Signal()  # notify
 
-    htmlExportingFinished = Signal(bool, str)
+    htmlExportingFinished = Signal(bool, str)  # notify
 
     # Status info
-    statusInfoChanged = Signal()
+    statusInfoChanged = Signal()  # notify
 
     # Undo Redo
     undoRedoChanged = Signal()  # notify
 
     # Misc
-    dummySignal = Signal()
-
-    fitFinishedNotify = Signal()  # notify
-    stopFit = Signal()
+    dummySignal = Signal()  # notify
 
     # METHODS
 
     def __init__(self, parent=None):
         super().__init__(parent)
-
-        self.current3dPlottingLibChanged.connect(self.onCurrent3dPlottingLibChanged)
 
         # Initialize logics
         self.stateChanged.connect(self._onStateChanged)
@@ -93,28 +83,23 @@ class PyQmlProxy(QObject):
 
         # Structure
         self.structureParametersChanged.connect(self._onStructureParametersChanged)
-        self.structureParametersChanged.connect(self._onStructureViewChanged)
-        self.structureParametersChanged.connect(self._onCalculatedDataChanged)
-        self.structureViewChanged.connect(self._onStructureViewChanged)
+        self.structureParametersChanged.connect(self.lc.chartsLogic._onStructureViewChanged)
+        self.structureParametersChanged.connect(self.lc.state._updateCalculatedData())
+        self.structureViewChanged.connect(self.lc.chartsLogic._onStructureViewChanged)
 
         self.lc.phaseAdded.connect(self._onPhaseAdded)
         self.lc.phaseAdded.connect(self.phasesEnabled)
-        self.phaseRemoved.connect(self._onPhaseRemoved)
-        self.phaseRemoved.connect(self.phasesEnabled)
-
 
         self.currentPhaseChanged.connect(self._onCurrentPhaseChanged)
+        self.current3dPlottingLibChanged.connect(self.onCurrent3dPlottingLibChanged)
 
         # Experiment
-        self.patternParametersChanged.connect(self._onPatternParametersChanged)
-
         self.experimentDataChanged.connect(self._onExperimentDataChanged)
 
         self.experimentLoadedChanged.connect(self._onExperimentLoadedChanged)
         self.experimentSkippedChanged.connect(self._onExperimentSkippedChanged)
 
         # Analysis
-        self.calculatedDataChanged.connect(self._onCalculatedDataChanged)
         self.simulationParametersChanged.connect(self._onSimulationParametersChanged)
         self.simulationParametersChanged.connect(self.undoRedoChanged)
 
@@ -138,15 +123,6 @@ class PyQmlProxy(QObject):
         self._fitter_thread = None
         self.stopFit.connect(self.lc.fitLogic.onStopFit)
 
-        # Screen recorder
-        recorder = None
-        try:
-            from easyDiffractionApp.Logic.ScreenRecorder import ScreenRecorder
-            recorder = ScreenRecorder()
-        except (ImportError, ModuleNotFoundError):
-            print('Screen recording disabled')
-        self._screen_recorder = recorder
-
         # !! THIS SHOULD ALWAYS GO AT THE END !!
         # Start the undo/redo stack
         borg.stack.enabled = True
@@ -166,7 +142,6 @@ class PyQmlProxy(QObject):
         return self.lc.chartsLogic.plotting1d()
 
     # 3d plotting
-
     @Property('QVariant', notify=dummySignal)
     def plotting3dLibs(self):
         return self.lc.chartsLogic.plotting3dLibs()
@@ -185,9 +160,6 @@ class PyQmlProxy(QObject):
         self.lc.chartsLogic.onCurrent3dPlottingLibChanged()
 
     # Structure view
-
-    def _onStructureViewChanged(self):
-        print("***** _onStructureViewChanged")
 
     @Property(bool, notify=structureViewChanged)
     def showBonds(self):
@@ -226,7 +198,6 @@ class PyQmlProxy(QObject):
     def projectInfoAsCif(self):
         return self.lc.state.projectInfoAsCif()
 
-    # **** TODO *****
     @Slot(str, str)
     def editProjectInfo(self, key, value):
         self.lc.state.editProjectInfo(key, value)
@@ -325,22 +296,19 @@ class PyQmlProxy(QObject):
     @Slot(str)
     def removePhase(self, phase_name: str):
         if self.lc.state.removePhase(phase_name):
-            self.phaseRemoved.emit()
+            self.structureParametersChanged.emit()
+            self.phasesEnabled.emit()
 
     def _onPhaseAdded(self):
         print("***** _onPhaseAdded")
-        self.lc.state._onPhaseAdded(self.lc._background_proxy.asObj)
+        self.lc._onPhaseAdded()
         self.structureParametersChanged.emit()
         self.projectInfoAsJson['samples'] = self.lc.state._sample.phases[self.currentPhaseIndex].name
-        self.projectInfoChanged.emit()
-
-    def _onPhaseRemoved(self):
-        print("***** _onPhaseRemoved")
-        self.structureParametersChanged.emit()
+        # self.projectInfoChanged.emit()
 
     @Property(bool, notify=phasesEnabled)
     def samplesPresent(self) -> bool:
-        return len(self.lc.state._sample.phases) > 0
+        return self.lc.samplesPresent()
 
     ####################################################################################################################
     # Phase: Symmetry
@@ -514,17 +482,16 @@ class PyQmlProxy(QObject):
         print("***** _onExperimentLoadedChanged")
         if self.experimentLoaded:
             self._onParametersChanged()
-            # self.instrumentParametersChanged.emit()
             self._onInstrumentParametersChanged()
-            self.patternParametersChanged.emit()
+            self._onPatternParametersChanged()
 
     def _onExperimentSkippedChanged(self):
         print("***** _onExperimentSkippedChanged")
         if self.experimentSkipped:
             self._onParametersChanged()
             self._onInstrumentParametersChanged()
-            self.patternParametersChanged.emit()
-            self.calculatedDataChanged.emit()
+            self._onPatternParametersChanged()
+            self.lc.state._updateCalculatedData()
 
     ####################################################################################################################
     # Simulation parameters
@@ -541,7 +508,7 @@ class PyQmlProxy(QObject):
 
     def _onSimulationParametersChanged(self):
         print("***** _onSimulationParametersChanged")
-        self.calculatedDataChanged.emit()
+        self.lc.state._updateCalculatedData()
 
     ####################################################################################################################
     # Pattern parameters (scale, zero_shift, backgrounds)
@@ -604,16 +571,6 @@ class PyQmlProxy(QObject):
     ####################################################################################################################
     ####################################################################################################################
 
-    ####################################################################################################################
-    # Calculated data
-    ####################################################################################################################
-
-    def _onCalculatedDataChanged(self):
-        print("***** _onCalculatedDataChanged")
-        # try:
-        self.lc.state._updateCalculatedData()
-        # finally:
-        self.calculatedDataUpdated.emit()
 
     ####################################################################################################################
     # Fitables (parameters table from analysis tab & ...)
@@ -750,7 +707,8 @@ class PyQmlProxy(QObject):
     def _onCurrentCalculatorChanged(self):
         print("***** _onCurrentCalculatorChanged")
         self.lc.state._onCurrentCalculatorChanged()
-        self.calculatedDataChanged.emit()
+        self._onCalculatedDataChanged()
+        # self.calculatedDataChanged.emit()
 
     ####################################################################################################################
     # Fitting
@@ -830,7 +788,7 @@ class PyQmlProxy(QObject):
 
     @Property('QVariant', notify=dummySignal)
     def screenRecorder(self):
-        return self._screen_recorder
+        return self.lc._screen_recorder
 
     ####################################################################################################################
     ####################################################################################################################

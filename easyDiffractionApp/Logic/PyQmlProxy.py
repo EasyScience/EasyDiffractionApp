@@ -107,8 +107,6 @@ class PyQmlProxy(QObject):
         self.currentMinimizerChanged.connect(self._onCurrentMinimizerChanged)
         self.currentMinimizerMethodChanged.connect(self._onCurrentMinimizerMethodChanged)
 
-        self.currentCalculatorChanged.connect(self._onCurrentCalculatorChanged)
-
         # Status info
         self.statusInfoChanged.connect(self._onStatusInfoChanged)
         self.currentCalculatorChanged.connect(self.statusInfoChanged)
@@ -671,13 +669,9 @@ class PyQmlProxy(QObject):
     @property_stack_deco('Calculation engine change')
     def currentCalculatorIndex(self, new_index: int):
         if self.lc.setCurrentCalculatorIndex(new_index):
-            self.currentCalculatorChanged.emit()
-
-    def _onCurrentCalculatorChanged(self):
-        print("***** _onCurrentCalculatorChanged")
-        self.lc.state._onCurrentCalculatorChanged()
-        self.lc.state._updateCalculatedData()
-        # self.calculatedDataChanged.emit()
+            print("***** _onCurrentCalculatorChanged")
+            self.lc.state._onCurrentCalculatorChanged()
+            self.lc.state._updateCalculatedData()
 
     ####################################################################################################################
     # Fitting

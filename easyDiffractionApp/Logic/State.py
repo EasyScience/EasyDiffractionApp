@@ -439,6 +439,7 @@ class State(object):
         if self._interface.current_interface_name != 'CrysPy':
             self._interface.generate_sample_binding("filename", self._sample)
         self._sample.phases.name = 'Phases'
+        self._project_info['samples'] = self._sample.phases[self._current_phase_index].name  # noqa: E501
         # self._sample.set_background(background_obj)
 
     def currentCrystalSystem(self):
@@ -780,6 +781,12 @@ class State(object):
             success = False
 
         return success
+
+    def setProjectCreated(self, created: bool):
+        if self._project_created == created:
+            return False
+        self._project_created = created
+        return True
 
     ####################################################################################################################
     # Calculator

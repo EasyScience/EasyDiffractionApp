@@ -85,6 +85,7 @@ class PyQmlProxy(QObject):
         self.structureParametersChanged.connect(self._onStructureParametersChanged)
         self.structureParametersChanged.connect(self.lc.chartsLogic._onStructureViewChanged)
         self.structureParametersChanged.connect(self.lc.state._updateCalculatedData())
+
         self.structureViewChanged.connect(self.lc.chartsLogic._onStructureViewChanged)
 
         self.lc.phaseAdded.connect(self._onPhaseAdded)
@@ -103,8 +104,6 @@ class PyQmlProxy(QObject):
         self.simulationParametersChanged.connect(self._onSimulationParametersChanged)
         self.simulationParametersChanged.connect(self.undoRedoChanged)
 
-        self._current_minimizer_method_index = 0
-        self._current_minimizer_method_name = self.lc.fitLogic.fitter.available_methods()[0]
         self.currentMinimizerChanged.connect(self._onCurrentMinimizerChanged)
         self.currentMinimizerMethodChanged.connect(self._onCurrentMinimizerMethodChanged)
 
@@ -302,9 +301,9 @@ class PyQmlProxy(QObject):
     def _onPhaseAdded(self):
         print("***** _onPhaseAdded")
         self.lc._onPhaseAdded()
+        self.phasesEnabled.emit()
         self.structureParametersChanged.emit()
-        self.projectInfoAsJson['samples'] = self.lc.state._sample.phases[self.currentPhaseIndex].name
-        # self.projectInfoChanged.emit()
+        self.projectInfoChanged.emit()
 
     @Property(bool, notify=phasesEnabled)
     def samplesPresent(self) -> bool:
@@ -327,6 +326,7 @@ class PyQmlProxy(QObject):
     @currentCrystalSystem.setter
     def currentCrystalSystem(self, new_system: str):
         self.lc.state.setCurrentCrystalSystem(new_system)
+        self.structureParametersChanged.emit()
 
     @Property('QVariant', notify=structureParametersChanged)
     def formattedSpaceGroupList(self):
@@ -339,6 +339,7 @@ class PyQmlProxy(QObject):
     @currentSpaceGroup.setter
     def currentSpaceGroup(self, new_idx: int):
         self.lc.state.currentSpaceGroup(new_idx)
+        self.structureParametersChanged.emit()
 
     @Property('QVariant', notify=structureParametersChanged)
     def formattedSpaceGroupSettingList(self):
@@ -351,9 +352,6 @@ class PyQmlProxy(QObject):
     @currentSpaceGroupSetting.setter
     def currentSpaceGroupSetting(self, new_number: int):
         self.lc.state.setCurrentSpaceGroupSetting(new_number)
-
-    def _setCurrentSpaceGroup(self, new_name: str):
-        self.lc.state._setCurrentSpaceGroup(new_name)
         self.structureParametersChanged.emit()
 
     ####################################################################################################################
@@ -607,14 +605,13 @@ class PyQmlProxy(QObject):
     def setParametersFilterCriteria(self, new_criteria):
         self.lc.state.setParametersFilterCriteria(new_criteria)
         self._onParametersChanged()
-        # self.parametersFilterCriteriaChanged.emit()
 
     ####################################################################################################################
     # Any parameter
     ####################################################################################################################
 
     @Slot(str, 'QVariant')
-    def editParameter(self, obj_id: str, new_value: Union[bool, float, str]):  # covers both parameter and descriptor
+    def editParameter(self, obj_id: str, new_value: Union[bool, float, str]):
         self.lc.state.editParameter(obj_id, new_value)
 
     ####################################################################################################################
@@ -627,56 +624,32 @@ class PyQmlProxy(QObject):
 
     @Property(int, notify=currentMinimizerChanged)
     def currentMinimizerIndex(self):
-        current_name = self.lc.fitLogic.fitter.current_engine.name
-        return self.minimizerNames.index(current_name)
+        return self.lc.fitLogic.currentMinimizerIndex()
 
     @currentMinimizerIndex.setter
     @property_stack_deco('Minimizer change')
     def currentMinimizerIndex(self, new_index: int):
-        if self.currentMinimizerIndex == new_index:
-            return
-        new_name = self.minimizerNames[new_index]
-        self.lc.fitLogic.fitter.switch_engine(new_name)
+        self.lc.fitLogic.setCurrentMinimizerIndex(new_index)
         self.currentMinimizerChanged.emit()
 
     def _onCurrentMinimizerChanged(self):
         print("***** _onCurrentMinimizerChanged")
-        idx = 0
-        minimizer_name = self.lc.fitLogic.fitter.current_engine.name
-        if minimizer_name == 'lmfit':
-            idx = self.minimizerMethodNames.index('leastsq')
-        elif minimizer_name == 'bumps':
-            idx = self.minimizerMethodNames.index('lm')
-        if -1 < idx != self._current_minimizer_method_index:
-            # Bypass the property as it would be added to the stack.
-            self._current_minimizer_method_index = idx
-            self._current_minimizer_method_name = self.minimizerMethodNames[idx]
+        if self.lc.fitLogic.onCurrentMinimizerChanged():
             self.currentMinimizerMethodChanged.emit()
 
     # Minimizer method
     @Property('QVariant', notify=currentMinimizerChanged)
     def minimizerMethodNames(self):
-        current_minimizer = self.minimizerNames[self.currentMinimizerIndex]
-        tested_methods = {
-            'lmfit': ['leastsq', 'powell', 'cobyla'],
-            'bumps': ['newton', 'lm'],
-            'DFO_LS': ['leastsq']
-        }
-        #return self.fitter.available_methods()
-        return tested_methods[current_minimizer]
+        return self.lc.fitLogic.minimizerMethodNames()
 
     @Property(int, notify=currentMinimizerMethodChanged)
     def currentMinimizerMethodIndex(self):
-        return self._current_minimizer_method_index
+        return self.lc.fitLogic._current_minimizer_method_index
 
     @currentMinimizerMethodIndex.setter
     @property_stack_deco('Minimizer method change')
     def currentMinimizerMethodIndex(self, new_index: int):
-        if self._current_minimizer_method_index == new_index:
-            return
-
-        self._current_minimizer_method_index = new_index
-        self._current_minimizer_method_name = self.minimizerMethodNames[new_index]
+        self.lc.fitLogic.currentMinimizerMethodIndex(new_index)
         self.currentMinimizerMethodChanged.emit()
 
     def _onCurrentMinimizerMethodChanged(self):
@@ -692,22 +665,18 @@ class PyQmlProxy(QObject):
 
     @Property(int, notify=currentCalculatorChanged)
     def currentCalculatorIndex(self):
-        return self.calculatorNames.index(self.lc._interface.current_interface_name)
+        return self.lc.currentCalculatorIndex()
 
     @currentCalculatorIndex.setter
     @property_stack_deco('Calculation engine change')
     def currentCalculatorIndex(self, new_index: int):
-        if self.currentCalculatorIndex == new_index:
-            return
-
-        new_name = self.calculatorNames[new_index]
-        self.lc._interface.switch(new_name)
-        self.currentCalculatorChanged.emit()
+        if self.lc.setCurrentCalculatorIndex(new_index):
+            self.currentCalculatorChanged.emit()
 
     def _onCurrentCalculatorChanged(self):
         print("***** _onCurrentCalculatorChanged")
         self.lc.state._onCurrentCalculatorChanged()
-        self._onCalculatedDataChanged()
+        self.lc.state._updateCalculatedData()
         # self.calculatedDataChanged.emit()
 
     ####################################################################################################################
@@ -717,7 +686,7 @@ class PyQmlProxy(QObject):
     @Slot()
     def fit(self):
         self.lc.fitLogic.fit(self.lc.state._data,
-                             self._current_minimizer_method_name)
+                             self.lc.fitLogic._current_minimizer_method_name)
 
     @Property('QVariant', notify=fitResultsChanged)
     def fitResults(self):
@@ -757,15 +726,11 @@ class PyQmlProxy(QObject):
 
     @Property('QVariant', notify=statusInfoChanged)
     def statusModelAsObj(self):
-        engine_name = self.lc.fitLogic.fitter.current_engine.name
-        minimizer_name = self._current_minimizer_method_name
-        return self.lc.state.statusModelAsObj(engine_name, minimizer_name)
+        return self.lc.statusModelAsObj()
 
     @Property(str, notify=statusInfoChanged)
     def statusModelAsXml(self):
-        engine_name = self.lc.fitLogic.fitter.current_engine.name
-        minimizer_name = self._current_minimizer_method_name
-        return self.lc.state.statusModelAsXml(engine_name, minimizer_name)
+        return self.lc.statusModelAsXml()
 
     def _onStatusInfoChanged(self):
         pass
@@ -828,10 +793,8 @@ class PyQmlProxy(QObject):
 
     @projectCreated.setter
     def projectCreated(self, created: bool):
-        if self.lc.state._project_created == created:
-            return
-        self.lc.state._project_created = created
-        self.projectCreatedChanged.emit()
+        if self.lc.state.setProjectCreated(created):
+            self.projectCreatedChanged.emit()
 
     @Slot()
     def resetState(self):

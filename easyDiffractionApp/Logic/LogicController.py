@@ -130,3 +130,22 @@ class LogicController(QObject):
     def samplesPresent(self):
         return len(self.state._sample.phases) > 0
 
+    def currentCalculatorIndex(self):
+        return self._interface.available_interfaces.index(self._interface.current_interface_name)
+
+    def setCurrentCalculatorIndex(self, new_index: int):
+        if self.currentCalculatorIndex == new_index:
+            return False
+        new_name = self._interface.available_interfaces[new_index]
+        self._interface.switch(new_name)
+        return True
+
+    def statusModelAsObj(self):
+        engine_name = self.fitLogic.fitter.current_engine.name
+        minimizer_name = self.fitLogic._current_minimizer_method_name
+        return self.state.statusModelAsObj(engine_name, minimizer_name)
+
+    def statusModelAsXml(self):
+        engine_name = self.fitLogic.fitter.current_engine.name
+        minimizer_name = self.fitLogic._current_minimizer_method_name
+        return self.state.statusModelAsXml(engine_name, minimizer_name)

@@ -22,6 +22,9 @@ class FitterLogic(QObject):
         self._fit_finished = True
         self._fit_results = self._defaultFitResults()
 
+        self._current_minimizer_method_index = 0
+        self._current_minimizer_method_name = self.fitter.available_methods()[0]  # noqa: E501
+
     def fit(self, data, minimizer_name):
         # if running, stop the thread
         if not self._fit_finished:
@@ -40,7 +43,7 @@ class FitterLogic(QObject):
 
         args = (x, y)
         kwargs = {"weights": weights, "method": method}
-        self._fitter_thread = Fitter(self.parent, self.fitter, 'fit', *args, **kwargs)
+        self._fitter_thread = Fitter(self.parent, self.fitter, 'fit', *args, **kwargs)  # noqa: E501
         self._fitter_thread.finished.connect(self._setFitResults)
         self._fitter_thread.setTerminationEnabled(True)
         self._fitter_thread.failed.connect(self._setFitResultsFailed)
@@ -91,6 +94,46 @@ class FitterLogic(QObject):
             return
         self._fit_finished = fit_finished
 
+    def currentMinimizerIndex(self):
+        current_name = self.fitter.current_engine.name
+        index = self.fitter.available_engines.index(current_name)
+        return index
+
+    def setCurrentMinimizerIndex(self, new_index: int):
+        if self.currentMinimizerIndex() == new_index:
+            return
+        new_name = self.fitter.available_engines[new_index]
+        self.fitter.switch_engine(new_name)
+
+    def onCurrentMinimizerChanged(self):
+        idx = 0
+        minimizer_name = self.fitter.current_engine.name
+        if minimizer_name == 'lmfit':
+            idx = self.minimizerMethodNames().index('leastsq')
+        elif minimizer_name == 'bumps':
+            idx = self.minimizerMethodNames().index('lm')
+        if -1 < idx != self._current_minimizer_method_index:
+            # Bypass the property as it would be added to the stack.
+            self._current_minimizer_method_index = idx
+            self._current_minimizer_method_name = self.minimizerMethodNames()[idx]  # noqa: E501
+            return True
+        return False
+
+    def minimizerMethodNames(self):
+        current_minimizer = self.fitter.available_engines[self.currentMinimizerIndex()]  # noqa: E501
+        tested_methods = {
+            'lmfit': ['leastsq', 'powell', 'cobyla'],
+            'bumps': ['newton', 'lm'],
+            'DFO_LS': ['leastsq']
+        }
+        return tested_methods[current_minimizer]
+
+    def currentMinimizerMethodIndex(self, new_index: int):
+        if self._current_minimizer_method_index == new_index:
+            return
+
+        self._current_minimizer_method_index = new_index
+        self._current_minimizer_method_name = self.minimizerMethodNames()[new_index]  # noqa: E501
 
 class Fitter(QThread):
     """

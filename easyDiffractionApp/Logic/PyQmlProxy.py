@@ -676,7 +676,10 @@ class PyQmlProxy(QObject):
 
         settings = self._spaceGroupSettingList()
         current_setting = phases[self.currentPhaseIndex].spacegroup.space_group_HM_name.raw_value
-        current_number = settings.index(current_setting)
+        if current_setting in settings:
+            current_number = settings.index(current_setting)
+        else:
+            current_number = settings.index(phases[self.currentPhaseIndex].spacegroup.hermann_mauguin)
         return current_number
 
     @currentSpaceGroupSetting.setter

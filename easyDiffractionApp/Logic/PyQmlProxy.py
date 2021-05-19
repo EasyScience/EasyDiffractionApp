@@ -5,9 +5,7 @@ from typing import Union
 
 from PySide2.QtCore import QObject, Slot, Signal, Property
 
-from easyCore import borg
 from easyCore.Utils.UndoRedo import property_stack_deco
-
 from easyDiffractionApp.Logic.LogicController import LogicController
 
 
@@ -15,60 +13,60 @@ class PyQmlProxy(QObject):
     # SIGNALS
 
     # Project
-    projectCreatedChanged = Signal()  # notify
-    projectInfoChanged = Signal()  # notify
-    stateChanged = Signal(bool)  # notify
+    projectCreatedChanged = Signal()
+    projectInfoChanged = Signal()
+    stateChanged = Signal(bool)
 
     # Fitables
-    parametersAsObjChanged = Signal()  # notify
-    parametersAsXmlChanged = Signal()  # notify
+    parametersAsObjChanged = Signal()
+    parametersAsXmlChanged = Signal()
 
     # Structure
-    structureParametersChanged = Signal()  # notify
-    structureViewChanged = Signal()  # notify
+    structureParametersChanged = Signal()
+    structureViewChanged = Signal()
 
-    phasesAsObjChanged = Signal()  # notify
-    phasesAsXmlChanged = Signal()  # notify
-    phasesAsCifChanged = Signal()  # notify
-    currentPhaseChanged = Signal()  # notify
-    phasesEnabled = Signal()  # notify
+    phasesAsObjChanged = Signal()
+    phasesAsXmlChanged = Signal()
+    phasesAsCifChanged = Signal()
+    currentPhaseChanged = Signal()
+    phasesEnabled = Signal()
 
     # Experiment
-    patternParametersAsObjChanged = Signal()  # notify
+    patternParametersAsObjChanged = Signal()
 
-    instrumentParametersAsObjChanged = Signal()  # notify
-    instrumentParametersAsXmlChanged = Signal()  # notify
+    instrumentParametersAsObjChanged = Signal()
+    instrumentParametersAsXmlChanged = Signal()
 
-    experimentDataChanged = Signal()  # notify
-    experimentDataAsXmlChanged = Signal()  # notify
+    experimentDataChanged = Signal()
+    experimentDataAsXmlChanged = Signal()
 
-    experimentLoadedChanged = Signal()  # notify
-    experimentSkippedChanged = Signal()  # notify
+    experimentLoadedChanged = Signal()
+    experimentSkippedChanged = Signal()
 
     # Analysis
-    simulationParametersChanged = Signal()  # notify
+    simulationParametersChanged = Signal()
 
-    fitResultsChanged = Signal()  # notify
-    fitFinishedNotify = Signal()  # notify
+    fitResultsChanged = Signal()
+    fitFinishedNotify = Signal()
     stopFit = Signal()
 
-    currentMinimizerChanged = Signal()  # notify
-    currentMinimizerMethodChanged = Signal()  # notify
-    currentCalculatorChanged = Signal()  # notify
+    currentMinimizerChanged = Signal()
+    currentMinimizerMethodChanged = Signal()
+    currentCalculatorChanged = Signal()
 
     # Plotting
-    current3dPlottingLibChanged = Signal()  # notify
+    current3dPlottingLibChanged = Signal()
 
-    htmlExportingFinished = Signal(bool, str)  # notify
+    htmlExportingFinished = Signal(bool, str)
 
     # Status info
-    statusInfoChanged = Signal()  # notify
+    statusInfoChanged = Signal()
 
     # Undo Redo
-    undoRedoChanged = Signal()  # notify
+    undoRedoChanged = Signal()
 
     # Misc
-    dummySignal = Signal()  # notify
+    dummySignal = Signal()
 
     # METHODS
 
@@ -117,14 +115,10 @@ class PyQmlProxy(QObject):
         #self.currentMinimizerMethodChanged.connect(self.undoRedoChanged)
 
         # Multithreading
-        self._fitter_thread = None
         self.stopFit.connect(self.lc.fitLogic.onStopFit)
 
-        # !! THIS SHOULD ALWAYS GO AT THE END !!
-        # Start the undo/redo stack
-        borg.stack.enabled = True
-        borg.stack.clear()
-        # borg.debug = True
+        # start the undo/redo stack
+        self.lc.initializeBorg()
 
     ####################################################################################################################
     ####################################################################################################################
@@ -701,7 +695,7 @@ class PyQmlProxy(QObject):
         """
         Keep the QML generated HTML report for saving
         """
-        self.lc.state._report = report
+        self.lc.state.setReport(report)
 
     @Slot(str)
     def saveReport(self, filepath):
@@ -757,7 +751,7 @@ class PyQmlProxy(QObject):
 
     @Slot()
     def saveProject(self):
-        self.lc.state._saveProject()
+        self.lc.state.saveProject()
         self.stateChanged.emit(False)
 
     @Slot(str)
@@ -793,9 +787,11 @@ class PyQmlProxy(QObject):
     @Slot()
     def resetState(self):
         self.lc.state.resetState()
+        self.lc.chartsLogic._plotting_1d_proxy.clearBackendState()
         self.lc.chartsLogic._plotting_1d_proxy.clearFrontendState()
         self.resetUndoRedoStack()
         self.stateChanged.emit(False)
+        pass
 
     ####################################################################################################################
     # Undo/Redo stack operations
@@ -828,3 +824,5 @@ class PyQmlProxy(QObject):
     @Slot()
     def resetUndoRedoStack(self):
         self.lc.stackLogic.resetUndoRedoStack()
+        self.undoRedoChanged.emit()
+

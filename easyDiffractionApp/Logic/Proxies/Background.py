@@ -16,9 +16,9 @@ class BackgroundProxy(QObject):
     asXmlChanged = Signal()
     dummySignal = Signal()
 
-    def __init__(self, main_proxy, parent=None):
+    def __init__(self, parent):
         super().__init__(parent)
-        self.main_proxy = main_proxy
+        self.parent = parent
         self._background_as_xml = ""
         self.asObjChanged.connect(self.onAsObjChanged)
         self._bg_types = {
@@ -31,7 +31,7 @@ class BackgroundProxy(QObject):
 
     @property
     def _background_as_obj(self):
-        return self.main_proxy.lc._background_obj
+        return self.parent._background_obj
 
     @Property('QVariant', notify=dummySignal)
     def asObj(self):
@@ -67,7 +67,7 @@ class BackgroundProxy(QObject):
         container = None
         if container_type is None:
             container = self._bg_types[self._default_type]['container']
-        self.main_proxy.lc.state._sample.pattern.backgrounds.append(
+        self.parent.state._sample.pattern.backgrounds.append(
             # TODO we will be the current exp name and use it here.
             container(linked_experiment=experiment_name)
         )

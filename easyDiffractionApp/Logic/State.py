@@ -9,7 +9,6 @@ import json
 
 from easyCore import np, borg
 from easyCore.Symmetry.tools import SpacegroupInfo
-from easyCore.Utils.UndoRedo import FunctionStack
 from easyCore.Utils.classTools import generatePath
 
 from easyDiffractionLib.sample import Sample
@@ -64,7 +63,7 @@ class State(object):
         self._parameters_filter_criteria = ""
 
         self._data = self._defaultData()
-        self._simulation_parameters_as_obj = self._defaultSimulationParameters()
+        self._simulation_parameters_as_obj = self._defaultSimulationParameters()  # noqa: E501
         self._currentProjectPath = os.path.expanduser("~")
 
     ####################################################################################################################
@@ -331,7 +330,7 @@ class State(object):
     def experimentDataAsObj(self):
         return [{'name': experiment.name} for experiment in self._data.experiments]
 
-    def _saveProject(self):
+    def saveProject(self):
         """
         """
         projectPath = self.currentProjectPath
@@ -368,11 +367,11 @@ class State(object):
 
     def resetState(self):
         self._project_info = self._defaultProjectInfo()
-        self._project_created = False
+        self.proxy.projectCreated = False
         self.proxy.projectInfoChanged.emit()
         self.project_save_filepath = ""
-        self.removeExperiment()
-        self.removePhase(self._sample.phases[self._current_phase_index].name)
+        self.proxy.removeExperiment()
+        self.proxy.removePhase(self._sample.phases[self._current_phase_index].name)
 
     ####################################################################################################################
     ####################################################################################################################
@@ -381,7 +380,9 @@ class State(object):
     ####################################################################################################################
 
     def _defaultSample(self):
-        sample = Sample(parameters=Pars1D.default(), pattern=Pattern1D.default(), interface=self._interface)  # noqa: E501
+        sample = Sample(parameters=Pars1D.default(),
+                        pattern=Pattern1D.default(),
+                        interface=self._interface)
         sample.pattern.zero_shift = 0.0
         sample.pattern.scale = 1.0
         sample.parameters.wavelength = 1.912
@@ -654,10 +655,10 @@ class State(object):
             num_points = int((x_max - x_min) / x_step + 1)
             sim.x = np.linspace(x_min, x_max, num_points)
 
-        sim.y = self._interface.fit_func(sim.x)    # noqa: E501
+        sim.y = self._interface.fit_func(sim.x)
         hkl = self._interface.get_hkl()
 
-        self.parent.chartsLogic._plotting_1d_proxy.setCalculatedData(sim.x, sim.y)
+        self.parent.chartsLogic._plotting_1d_proxy.setCalculatedData(sim.x, sim.y)  # noqa: E501
         self.parent.chartsLogic._plotting_1d_proxy.setBraggData(hkl['ttheta'], hkl['h'], hkl['k'], hkl['l'])  # noqa: E501
 
     ####################################################################################################################

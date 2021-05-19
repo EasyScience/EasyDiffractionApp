@@ -3,6 +3,7 @@ import sys
 import pathlib
 import platform
 import argparse
+import darkdetect
 
 # PySide
 from PySide2.QtCore import QUrl
@@ -82,6 +83,7 @@ def main():
     engine.rootContext().setContextProperty('_translator', translator)
     engine.rootContext().setContextProperty('_projectConfig', CONFIG)
     engine.rootContext().setContextProperty('_isTestMode', args.testmode)
+    engine.rootContext().setContextProperty('_isSystemThemeDark', darkdetect.isDark())
 
     # Add paths to search for installed modules
     engine.addImportPath(easyAppGui_path)

@@ -36,7 +36,7 @@ class LogicController(QObject):
         # stack logic
         no_history = [self.parametersChanged]
         with_history = [self.phaseAdded, self.parametersChanged]
-        self.stackLogic = StackLogic(self,
+        self.stackLogic = StackLogic(self.proxy,
                                      callbacks_no_history=no_history,
                                      callbacks_with_history=with_history)
 
@@ -50,7 +50,7 @@ class LogicController(QObject):
         self.fitLogic.fitStarted.connect(self.onFitStarted)
 
         # background logic
-        self._background_proxy = BackgroundProxy(self.proxy)
+        self._background_proxy = BackgroundProxy(self)
         self._background_proxy.asObjChanged.connect(self.proxy._onParametersChanged)
         self._background_proxy.asObjChanged.connect(self.state._sample.set_background)
         self._background_proxy.asObjChanged.connect(self.state._updateCalculatedData)
@@ -68,6 +68,9 @@ class LogicController(QObject):
 
         # Screen recorder
         self._screen_recorder = self.recorder()
+
+    def initializeBorg(self):
+        self.stackLogic.initializeBorg()
 
 ###############################################################################
 #  MULTI-STATE UTILITY METHODS

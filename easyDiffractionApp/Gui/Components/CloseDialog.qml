@@ -20,13 +20,13 @@ EaElements.Dialog {
             text: qsTr("Save and exit")
             onClicked: {
                 ExGlobals.Constants.proxy.saveProject()
-                Qt.quit()
+                window.quit()
             }
         }
 
         EaElements.Button {
             text: qsTr("Exit without saving")
-            onClicked: Qt.quit()
+            onClicked: window.quit()
         }
     }
 }

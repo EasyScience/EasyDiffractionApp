@@ -117,12 +117,24 @@ EaElements.RemoteController {
     function runAppInterfaceTutorial() {
         print("* run app interface tutorial")
 
+        const was_user_guides_checked = ExGlobals.Variables.enableUserGuidesCheckBox.checked
+        const was_tool_tips_checked = ExGlobals.Variables.enableToolTipsCheckBox.checked
+
         beforeRunTutorial()
 
-        // General
+        // App preferences
+        if (!was_tool_tips_checked || !was_user_guides_checked) {
         rc.mouseClick(ExGlobals.Variables.preferencesButton)
+            if (!was_tool_tips_checked) {
+                rc.mouseClick(ExGlobals.Variables.enableToolTipsCheckBox)
+                rc.wait(500)
+            }
+            if (!was_user_guides_checked) {
         rc.mouseClick(ExGlobals.Variables.enableUserGuidesCheckBox)
+                rc.wait(500)
+            }
         rc.mouseClick(ExGlobals.Variables.preferencesOkButton)
+        }
 
         // Home page
         playPageUserGuides(EaGlobals.Variables.HomePageIndex)
@@ -147,7 +159,21 @@ EaElements.RemoteController {
 
         // Summary page
         playPageUserGuides(EaGlobals.Variables.SummaryPageIndex)
+        if (!was_user_guides_checked) {
         rc.mouseClick(ExGlobals.Variables.userGuidesLastDisableButton)
+            rc.wait(500)
+        }
+
+        // Restore app preferences
+        if (!was_tool_tips_checked) {
+            rc.mouseClick(ExGlobals.Variables.preferencesButton)
+            rc.mouseClick(ExGlobals.Variables.enableToolTipsCheckBox)
+            rc.mouseClick(ExGlobals.Variables.preferencesOkButton)
+        }
+
+        // Reset app state
+        rc.mouseClick(ExGlobals.Variables.resetStateButton)
+        rc.mouseClick(ExGlobals.Variables.resetStateOkButton)
 
         afterRunTutorial()
     }
@@ -155,6 +181,7 @@ EaElements.RemoteController {
     function runDataSimulationTutorial() {
         print("* run data simulation tutorial")
 
+        const was_user_guides_checked = ExGlobals.Variables.enableUserGuidesCheckBox.checked
         const was_tool_tips_checked = ExGlobals.Variables.enableToolTipsCheckBox.checked
         let x_pos = undefined
         let y_pos = undefined
@@ -172,6 +199,11 @@ EaElements.RemoteController {
 
         if (!was_tool_tips_checked) {
             rc.mouseClick(ExGlobals.Variables.enableToolTipsCheckBox)
+            rc.wait(500)
+        }
+
+        if (was_user_guides_checked) {
+            rc.mouseClick(ExGlobals.Variables.enableUserGuidesCheckBox)
             rc.wait(500)
         }
 
@@ -245,6 +277,7 @@ EaElements.RemoteController {
         rc.wait(1000)
         rc.say("In the advanced controls, you can choose between different calculation engines.")
         rc.mouseClick(ExGlobals.Variables.analysisAdvancedControlsTabButton)
+        rc.mouseClick(ExGlobals.Variables.calculatorsGroup, 15)
         // CFML
         rc.mouseClick(ExGlobals.Variables.calculatorSelector)
         x_pos = undefined
@@ -285,7 +318,17 @@ EaElements.RemoteController {
             rc.wait(500)
         }
 
+        if (was_user_guides_checked) {
+            rc.mouseClick(ExGlobals.Variables.enableUserGuidesCheckBox)
+            rc.wait(500)
+        }
+
         rc.mouseClick(ExGlobals.Variables.preferencesOkButton)
+
+        // Reset app state
+
+        rc.mouseClick(ExGlobals.Variables.resetStateButton)
+        rc.mouseClick(ExGlobals.Variables.resetStateOkButton)
 
         afterRunTutorial()
     }
@@ -295,10 +338,18 @@ EaElements.RemoteController {
 
         isPreparationToFitDone = false
 
+        const was_user_guides_checked = ExGlobals.Variables.enableUserGuidesCheckBox.checked
         let x_pos = undefined
         let y_pos = EaStyle.Sizes.comboBoxHeight * 2.5
 
         beforeRunTutorial()
+
+        // App preferences
+        if (was_user_guides_checked) {
+            rc.mouseClick(ExGlobals.Variables.preferencesButton)
+            rc.mouseClick(ExGlobals.Variables.enableUserGuidesCheckBox)
+            rc.mouseClick(ExGlobals.Variables.preferencesOkButton)
+        }
 
         // Home Tab
         rc.mouseClick(ExGlobals.Variables.startButton)
@@ -342,8 +393,13 @@ EaElements.RemoteController {
         rc.mouseClick(ExGlobals.Variables.summaryTabButton)
 
         // Summary page
-        rc.mouseClick(ExGlobals.Variables.exportReportButton)
-        rc.mouseClick(ExGlobals.Variables.saveConfirmationOkButton)
+        //rc.mouseClick(ExGlobals.Variables.exportReportButton)
+        //rc.mouseClick(ExGlobals.Variables.saveConfirmationOkButton)
+
+        // Reset app state
+        rc.wait(1000)
+        rc.mouseClick(ExGlobals.Variables.resetStateButton)
+        rc.mouseClick(ExGlobals.Variables.resetStateOkButton)
 
         afterRunTutorial()
     }

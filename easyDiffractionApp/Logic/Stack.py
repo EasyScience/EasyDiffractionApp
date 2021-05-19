@@ -5,11 +5,21 @@ from easyDiffractionLib import Phases, Phase
 
 
 class StackLogic():
-    def __init__(self, parent, callbacks_no_history=None, callbacks_with_history=None):
-
-        self.parent = parent
+    """
+    Logic for Undo/Redo stack-related operations.
+    """
+    def __init__(self, proxy,
+                 callbacks_no_history=None,
+                 callbacks_with_history=None):
+        self.proxy = proxy
         self.callbacks_no_history = callbacks_no_history
         self.callbacks_with_history = callbacks_with_history
+
+    def initializeBorg(self):
+        # Start the undo/redo stack
+        borg.stack.enabled = True
+        borg.stack.clear()
+        # borg.debug = True
 
     def canUndo(self) -> bool:
         return borg.stack.canUndo()
@@ -30,7 +40,7 @@ class StackLogic():
                     callback = self.callbacks_with_history
                 else:
                     callback = self.callbacks_no_history
-            elif element is self:
+            elif element is self.proxy:
                 # This is a property of the proxy.
                 # I.e. minimizer, minimizer method, name or something boring.
                 # Signals should be sent by triggering the set method.

@@ -9,6 +9,7 @@ import requests
 import shutil
 from distutils import dir_util
 
+
 # FUNCTIONS
 
 def coloredText(message='', style='1', background_color='49m', text_color='39'):
@@ -16,6 +17,7 @@ def coloredText(message='', style='1', background_color='49m', text_color='39'):
     escape = '\033['
     reset = '0m'
     return f'{escape}{style};{text_color};{background_color}{message}{escape}{reset}'
+
 
 def printFailMessage(message, exception=None):
     bright_red = '31'
@@ -26,11 +28,13 @@ def printFailMessage(message, exception=None):
     report = coloredText(message=extended_message, text_color=bright_red)
     print(report)
 
+
 def printSuccessMessage(message):
     bright_green = '32'
     extended_message = f'+ Succeeded to {message}'
     report = coloredText(message=extended_message, text_color=bright_green)
     print(report)
+
 
 def printNeutralMessage(message):
     bright_blue = '34'
@@ -38,13 +42,16 @@ def printNeutralMessage(message):
     report = coloredText(message=extended_message, text_color=bright_blue)
     print(report)
 
+
 def run(*args):
     subprocess.run(
         args,
         capture_output=False,
-        universal_newlines=True,    # converts the output to a string instead of a byte array.
-        #check=True                  # forces the Python method to throw an exception if the underlying process encounters errors
+        universal_newlines=True,  # converts the output to a string instead of a byte array.
+        # check=True                  # forces the Python method to throw an exception if the underlying process
+        # encounters errors
     )
+
 
 def downloadFile(url, destination):
     if os.path.exists(destination):
@@ -60,6 +67,7 @@ def downloadFile(url, destination):
     else:
         printSuccessMessage(message)
 
+
 def attachDmg(file):
     try:
         message = f'attach {file}'
@@ -70,22 +78,25 @@ def attachDmg(file):
     else:
         printSuccessMessage(message)
 
-def installSilently(installer, silent_script):
+
+def installSilently(installer, silent_script, sudo=False):
     try:
         message = f'run installer {installer}'
-        run(
-            installer,
-            '--verbose',
-            '--script', silent_script,
-            )
+        args = [installer, '--verbose', '--script', silent_script]
+        if sudo:
+            args = ['sudo', *args]
+
+        run(*args)
     except Exception as exception:
         printFailMessage(message, exception)
         sys.exit()
     else:
         printSuccessMessage(message)
 
+
 def config():
     return toml.load(os.path.join(os.getcwd(), 'pyproject.toml'))
+
 
 def osName():
     platform = sys.platform
@@ -99,6 +110,7 @@ def osName():
         print("- Unsupported platform '{0}'".format(platform))
         return None
 
+
 def environmentVariable(name, default=None):
     value = os.getenv(name)
     if value is not None:
@@ -106,6 +118,7 @@ def environmentVariable(name, default=None):
     else:
         printNeutralMessage(f'Environment variable {name} is not found, using default value {default}')
         return default
+
 
 def setEnvironmentVariable(name, value):
     try:
@@ -117,6 +130,7 @@ def setEnvironmentVariable(name, value):
     else:
         printSuccessMessage(message)
 
+
 def addReadPermission(file):
     try:
         message = f'add read permissions to {file}'
@@ -126,6 +140,7 @@ def addReadPermission(file):
         sys.exit()
     else:
         printSuccessMessage(message)
+
 
 def createFile(path, content):
     if os.path.exists(path):
@@ -141,6 +156,7 @@ def createFile(path, content):
     else:
         printSuccessMessage(message)
 
+
 def copyFile(source, destination):
     path = os.path.join(destination, os.path.basename(source))
     if os.path.exists(path):
@@ -155,6 +171,7 @@ def copyFile(source, destination):
     else:
         printSuccessMessage(message)
 
+
 def removeFile(path):
     if not os.path.exists(path):
         printNeutralMessage(f'File does not exist {path}')
@@ -168,6 +185,7 @@ def removeFile(path):
     else:
         printSuccessMessage(message)
 
+
 def createDir(path):
     if os.path.exists(path):
         printNeutralMessage(f'Directory already exists {path}')
@@ -180,6 +198,7 @@ def createDir(path):
         sys.exit()
     else:
         printSuccessMessage(message)
+
 
 def copyDir(source, destination):
     path = os.path.join(destination, os.path.basename(source))
@@ -195,6 +214,7 @@ def copyDir(source, destination):
     else:
         printSuccessMessage(message)
 
+
 def moveDir(source, destination):
     path = os.path.join(destination, os.path.basename(source))
     if os.path.exists(path):
@@ -209,12 +229,13 @@ def moveDir(source, destination):
     else:
         printSuccessMessage(message)
 
+
 def dict2xml(d, root_node=None, add_xml_version=True):
-    wrap          = False if root_node is None or isinstance(d, list) else True
-    root          = 'root' if root_node is None else root_node
-    xml           = ''
-    attr          = ''
-    children      = []
+    wrap = False if root_node is None or isinstance(d, list) else True
+    root = 'root' if root_node is None else root_node
+    xml = ''
+    attr = ''
+    children = []
 
     if add_xml_version:
         xml += '<?xml version="1.0" ?>'
@@ -249,6 +270,7 @@ def dict2xml(d, root_node=None, add_xml_version=True):
 
     return xml
 
+
 def unzip(archive_path, destination_dir):
     try:
         message = f'unzip {archive_path} to {destination_dir}'
@@ -259,6 +281,7 @@ def unzip(archive_path, destination_dir):
         sys.exit()
     else:
         printSuccessMessage(message)
+
 
 def zip(source, destination):
     # https://thispointer.com/python-how-to-create-a-zip-archive-from-multiple-files-or-directory/
@@ -292,13 +315,14 @@ def zip(source, destination):
                         arcpath = os.path.join(rootdirname, parentpath)
                         zf.write(filepath, arcpath)
             else:
-                printFailMessage(message + ": It is a special file (socket, FIFO, device file)" )
+                printFailMessage(message + ": It is a special file (socket, FIFO, device file)")
                 sys.exit()
     except Exception as exception:
         printFailMessage(message, exception)
         sys.exit()
     else:
         printSuccessMessage(message)
+
 
 def artifactsFileSuffix(branch_name):
     if branch_name != 'master':

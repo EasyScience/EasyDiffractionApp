@@ -6,7 +6,7 @@ jobs:
   build:
     if: "!contains(github.event.head_commit.message, '[ci skip]')"
 
-    timeout-minutes: 35
+    timeout-minutes: 40
 
     runs-on: ${{ matrix.os }}
 
@@ -26,10 +26,10 @@ jobs:
       - name: Set up non-Python dependences (Linux)
         if: runner.os == 'Linux'
         run: |
-          sudo apt-get install libgfortran4
           sudo apt-get install libxcb-xinerama0
           sudo apt-get install libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xfixes0
           sudo apt-get install libpulse-mainloop-glib0
+        # sudo apt-get install libgfortran4
         # echo "QT_DEBUG_PLUGINS=1" >> $GITHUB_ENV
 
       - name: Set up Python environment
@@ -89,7 +89,7 @@ jobs:
       - name: Create offline and online app installers from freezed app bundle
         run: python ${{ env.SCRIPTS_PATH }}/MakeInstaller.py ${{ secrets.BINARY_SIGN_WIN }} ${{ secrets.CERT_ZIP_PASS }}
 
-      - name: Sign the installer on platforms which support it
+      - name: Sign the installer
         run: python ${{ env.SCRIPTS_PATH }}/Signatures.py ${{ secrets.BINARY_SIGN_WIN }} ${{ secrets.CERT_ZIP_PASS }}
 
       - name: Set up screen recording dependencies (macOS)
@@ -111,10 +111,15 @@ jobs:
           Set-DisplayResolution -Width 1920 -Height 1080 -Force
           Get-DisplayResolution
 
+      - name: Make dir for .desktop file (Linux)
+        if: runner.os == 'Linux'
+        run: mkdir -p ~/.local/share/applications/
+
       - name: Install app
         run: python ${{ env.SCRIPTS_PATH }}/InstallApp.py
 
       - name: Run app in testmode, record screen and quit
+        if: runner.os != 'Windows'
         run: python ${{ env.SCRIPTS_PATH }}/RunApp.py --testmode
 
       - name: Rename test videos
@@ -135,6 +140,7 @@ jobs:
           artifacts: "${{ env.DISTRIBUTION_PATH }}/${{ env.APP_NAME }}_*.zip,${{ env.DISTRIBUTION_PATH }}/tutorial_*.mp4"
           tag: ${{ env.BRANCH_NAME }}
           commit: ${{ env.BRANCH_NAME }}
+          bodyFile: "RELEASE.md"
 
       - name: Upload online app installer to repository via FTP
         if: github.event_name == 'push'

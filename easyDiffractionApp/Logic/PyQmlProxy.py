@@ -825,4 +825,3 @@ class PyQmlProxy(QObject):
     def resetUndoRedoStack(self):
         self.lc.stackLogic.resetUndoRedoStack()
         self.undoRedoChanged.emit()
-

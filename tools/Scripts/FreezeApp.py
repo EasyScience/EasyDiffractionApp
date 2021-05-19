@@ -37,6 +37,9 @@ def addedData():
             {'from': easyAppGui.__path__[0], 'to': 'easyAppGui'},
             {'from': 'utils.py', 'to': '.'},
             {'from': 'pyproject.toml', 'to': '.'}]
+    if CONFIG.os == 'ubuntu':
+        import libsLinux
+        data.append({'from': f'{libsLinux.__path__[0]}/lib/libgfortran.so.4', 'to': '.'})        
     extras = CONFIG['ci']['pyinstaller']['missing_other_libraries'][CONFIG.os]
     if extras:
         for extra_file in extras:

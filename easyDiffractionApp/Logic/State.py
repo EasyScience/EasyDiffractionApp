@@ -19,7 +19,7 @@ from easyDiffractionLib.Elements.Experiments.Experiment import Pars1D
 from easyDiffractionLib.Elements.Experiments.Pattern import Pattern1D
 
 
-class State(object):
+class StateLogic(object):
     """
     """
     def __init__(self, parent=None, interface=None, proxy=None):

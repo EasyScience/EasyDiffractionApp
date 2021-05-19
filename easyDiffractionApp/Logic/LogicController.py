@@ -5,7 +5,7 @@ from PySide2.QtCore import QObject, Signal
 from easyDiffractionLib.interface import InterfaceFactory
 
 from easyDiffractionApp.Logic.Proxies.Background import BackgroundProxy
-from easyDiffractionApp.Logic.State import State
+from easyDiffractionApp.Logic.State import StateLogic
 from easyDiffractionApp.Logic.Fitter import FitterLogic as FitterLogic
 from easyDiffractionApp.Logic.Stack import StackLogic
 from easyDiffractionApp.Logic.Charts import ChartsLogic
@@ -27,8 +27,9 @@ class LogicController(QObject):
         # initialize various logic components
 
         # main logic
-        self.state = State(self, interface=self._interface, proxy=self.proxy)
-        # self.stateChanged.connect(self._onStateChanged)
+        self.state = StateLogic(self,
+                                interface=self._interface,
+                                proxy=self.proxy)
 
         # chart logic
         self.chartsLogic = ChartsLogic(self)

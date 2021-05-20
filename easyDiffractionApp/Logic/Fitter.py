@@ -10,6 +10,7 @@ class FitterLogic(QObject):
     """
     fitFinished = Signal()
     fitStarted = Signal()
+    currentMinimizerChanged = Signal()
 
     def __init__(self, parent=None, sample=None, fit_func=""):
         super().__init__(parent)
@@ -104,6 +105,7 @@ class FitterLogic(QObject):
             return
         new_name = self.fitter.available_engines[new_index]
         self.fitter.switch_engine(new_name)
+        self.currentMinimizerChanged.emit()
 
     def onCurrentMinimizerChanged(self):
         idx = 0
@@ -116,8 +118,8 @@ class FitterLogic(QObject):
             # Bypass the property as it would be added to the stack.
             self._current_minimizer_method_index = idx
             self._current_minimizer_method_name = self.minimizerMethodNames()[idx]  # noqa: E501
-            return True
-        return False
+            self.currentMinimizerChanged.emit()
+        return
 
     def minimizerMethodNames(self):
         current_minimizer = self.fitter.available_engines[self.currentMinimizerIndex()]  # noqa: E501

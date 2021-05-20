@@ -286,9 +286,7 @@ class PyQmlProxy(QObject):
 
     @Slot(str)
     def removePhase(self, phase_name: str):
-        if self.lc.state.removePhase(phase_name):
-            self.structureParametersChanged.emit()
-            self.phasesEnabled.emit()
+        self.lc.removePhase(phase_name)
 
     def _onPhaseAdded(self):
         print("***** _onPhaseAdded")
@@ -622,12 +620,10 @@ class PyQmlProxy(QObject):
     @property_stack_deco('Minimizer change')
     def currentMinimizerIndex(self, new_index: int):
         self.lc.fitLogic.setCurrentMinimizerIndex(new_index)
-        self.currentMinimizerChanged.emit()
 
     def _onCurrentMinimizerChanged(self):
         print("***** _onCurrentMinimizerChanged")
-        if self.lc.fitLogic.onCurrentMinimizerChanged():
-            self.currentMinimizerMethodChanged.emit()
+        self.lc.fitLogic.onCurrentMinimizerChanged()
 
     # Minimizer method
     @Property('QVariant', notify=currentMinimizerChanged)
@@ -641,8 +637,7 @@ class PyQmlProxy(QObject):
     @currentMinimizerMethodIndex.setter
     @property_stack_deco('Minimizer method change')
     def currentMinimizerMethodIndex(self, new_index: int):
-        self.lc.fitLogic.currentMinimizerMethodIndex(new_index)
-        self.currentMinimizerMethodChanged.emit()
+        self.lc.currentMinimizerMethodIndex(new_index)
 
     def _onCurrentMinimizerMethodChanged(self):
         print("***** _onCurrentMinimizerMethodChanged")
@@ -791,7 +786,6 @@ class PyQmlProxy(QObject):
         self.lc.chartsLogic._plotting_1d_proxy.clearFrontendState()
         self.resetUndoRedoStack()
         self.stateChanged.emit(False)
-        pass
 
     ####################################################################################################################
     # Undo/Redo stack operations
@@ -825,4 +819,3 @@ class PyQmlProxy(QObject):
     def resetUndoRedoStack(self):
         self.lc.stackLogic.resetUndoRedoStack()
         self.undoRedoChanged.emit()
-

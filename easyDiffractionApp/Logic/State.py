@@ -7,6 +7,8 @@ from typing import Union
 from dicttoxml import dicttoxml
 import json
 
+from PySide2.QtCore import Signal, QObject
+
 from easyCore import np, borg
 from easyCore.Symmetry.tools import SpacegroupInfo
 from easyCore.Utils.classTools import generatePath
@@ -19,12 +21,28 @@ from easyDiffractionLib.Elements.Experiments.Experiment import Pars1D
 from easyDiffractionLib.Elements.Experiments.Pattern import Pattern1D
 
 
-class StateLogic(object):
+class StateLogic(QObject):
     """
     """
-    def __init__(self, parent=None, interface=None, proxy=None):
+    projectCreatedChanged = Signal()
+    simulationParametersChanged = Signal()
+    undoRedoChanged = Signal()
+    parametersChanged = Signal()
+    experimentLoadedChanged = Signal()
+    experimentSkippedChanged = Signal()
+    phasesEnabled = Signal()
+    phasesAsObjChanged = Signal()
+    structureParametersChanged = Signal()
+    projectInfoChanged = Signal()
+    experimentDataAdded = Signal()
+    removePhaseSignal = Signal(str)
+    resetUndoRedoStack = Signal()
+    currentMinimizerIndex = Signal(int)
+    currentMinimizerMethodIndex = Signal(int)
+
+    def __init__(self, parent=None, interface=None):
+        super().__init__(parent)
         self.parent = parent
-        self.proxy = proxy
         self._interface = interface
         self._interface_name = interface.current_interface_name
         self.project_save_filepath = ""
@@ -146,7 +164,7 @@ class StateLogic(object):
 
     def _onExperimentDataAdded(self):
         self._experiment_parameters = self._experimentDataParameters(self._experiment_data)  # noqa: E501
-        self.simulationParametersAsObj = json.dumps(self._experiment_parameters)  # noqa: E501
+        self.simulationParametersAsObj(json.dumps(self._experiment_parameters))  # noqa: E501
         self.experiments = [self._defaultExperiment()]
 
     def experimentDataXYZ(self):
@@ -283,9 +301,9 @@ class StateLogic(object):
         self._sample._updateInterface()
 
         # send signal to tell the proxy we changed phases
-        self.proxy.phasesEnabled.emit()
-        self.proxy.phasesAsObjChanged.emit()
-        self.proxy.structureParametersChanged.emit()
+        self.phasesEnabled.emit()
+        self.phasesAsObjChanged.emit()
+        self.structureParametersChanged.emit()
 
         # experiment
         if 'experiments' in descr:
@@ -298,10 +316,10 @@ class StateLogic(object):
             self.experiments = [{'name': descr['project_info']['experiments']}]
             self.setCurrentExperimentDatasetName(descr['project_info']['experiments'])
 
-
-            self.proxy._onExperimentDataAdded()
-            self.proxy._onParametersChanged()
-            self.proxy.experimentLoadedChanged.emit()
+            # send signal to tell the proxy we changed experiment
+            self.experimentDataAdded.emit()
+            self.parametersChanged.emit()
+            self.experimentLoadedChanged.emit()
 
         else:
             # delete existing experiment
@@ -309,7 +327,7 @@ class StateLogic(object):
             self.experimentLoaded(False)
             if descr['experiment_skipped']:
                 self.experimentSkipped(True)
-                self.proxy.experimentSkippedChanged.emit()
+                self.experimentSkippedChanged.emit()
 
         # project info
         self._project_info = descr['project_info']
@@ -318,14 +336,14 @@ class StateLogic(object):
         if new_minimizer_settings is not None:
             new_engine = new_minimizer_settings['engine']
             new_method = new_minimizer_settings['method']
-            new_engine_index = self.proxy.minimizerNames.index(new_engine)
-            self.proxy.currentMinimizerIndex = new_engine_index
-            new_method_index = self.proxy.minimizerMethodNames.index(new_method)
-            self.proxy.currentMinimizerMethodIndex = new_method_index
+            new_engine_index = self.parent.minimizerNames().index(new_engine)
+            self.currentMinimizerIndex.emit(new_engine_index)
+            new_method_index = self.parent.minimizerMethodNames().index(new_method)
+            self.currentMinimizerMethodIndex.emit(new_method_index)
 
         self.parent.fitLogic.fitter.fit_object = self._sample
-        self.proxy.resetUndoRedoStack()
-        self.proxy.projectCreated = True
+        self.resetUndoRedoStack.emit()
+        self.setProjectCreated(True)
 
     def experimentDataAsObj(self):
         return [{'name': experiment.name} for experiment in self._data.experiments]
@@ -333,7 +351,7 @@ class StateLogic(object):
     def saveProject(self):
         """
         """
-        projectPath = self.currentProjectPath
+        projectPath = self._currentProjectPath
         project_save_filepath = os.path.join(projectPath, 'project.json')
         descr = {
             'sample': self._sample.as_dict(skip=['interface'])
@@ -351,7 +369,7 @@ class StateLogic(object):
 
         descr['minimizer'] = {
             'engine': self.parent.fitLogic.fitter.current_engine.name,
-            'method': self.proxy._current_minimizer_method_name
+            'method': self.parent.currentMinimizerMethodName()
         }
         content_json = json.dumps(descr, indent=4, default=self.default)
         path = generalizePath(project_save_filepath)
@@ -367,11 +385,11 @@ class StateLogic(object):
 
     def resetState(self):
         self._project_info = self._defaultProjectInfo()
-        self.proxy.projectCreated = False
-        self.proxy.projectInfoChanged.emit()
+        self.setProjectCreated(False)
+        self.projectInfoChanged.emit()
         self.project_save_filepath = ""
-        self.proxy.removeExperiment()
-        self.proxy.removePhase(self._sample.phases[self._current_phase_index].name)
+        self.removeExperiment()
+        self.removePhaseSignal.emit(self._sample.phases[self._current_phase_index].name)
 
     ####################################################################################################################
     ####################################################################################################################
@@ -599,6 +617,7 @@ class StateLogic(object):
             return
 
         self._simulation_parameters_as_obj = json.loads(json_str)
+        self.simulationParametersChanged.emit()
 
     def _defaultPatternParameters(self):
         return {
@@ -716,8 +735,8 @@ class StateLogic(object):
                 return
 
             obj.fixed = not new_value
-            self.proxy._onParametersChanged()
-            self.proxy.undoRedoChanged.emit()
+            self.parametersChanged.emit()
+            self.undoRedoChanged.emit()
 
         else:
             if obj.raw_value == new_value:
@@ -785,9 +804,10 @@ class StateLogic(object):
 
     def setProjectCreated(self, created: bool):
         if self._project_created == created:
-            return False
+            return
         self._project_created = created
-        return True
+        self.projectCreatedChanged.emit()
+
 
     ####################################################################################################################
     # Calculator

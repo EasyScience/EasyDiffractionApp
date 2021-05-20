@@ -22,14 +22,14 @@ class LogicController(QObject):
         self._interface = InterfaceFactory()
 
         self.initialize()
+        self.mapSignals()
 
     def initialize(self):
         # initialize various logic components
 
         # main logic
         self.state = StateLogic(self,
-                                interface=self._interface,
-                                proxy=self.proxy)
+                                interface=self._interface)
 
         # chart logic
         self.chartsLogic = ChartsLogic(self)
@@ -69,6 +69,29 @@ class LogicController(QObject):
 
         # Screen recorder
         self._screen_recorder = self.recorder()
+
+    def mapSignals(self):
+        """
+        Map signals from logics to proxy
+        Needed so logics don't call emit directly on proxy signals
+        """
+        self.state.projectCreatedChanged.connect(self.proxy.projectCreatedChanged)
+        self.state.undoRedoChanged.connect(self.proxy.undoRedoChanged)
+        self.state.parametersChanged.connect(self.proxy._onParametersChanged)
+        self.state.experimentLoadedChanged.connect(self.proxy.experimentLoadedChanged)
+        self.state.experimentSkippedChanged.connect(self.proxy.experimentSkippedChanged)
+        self.state.phasesEnabled.connect(self.proxy.phasesEnabled)
+        self.state.phasesAsObjChanged.connect(self.proxy.phasesAsObjChanged)
+        self.state.structureParametersChanged.connect(self.proxy.structureParametersChanged)
+        self.state.projectInfoChanged.connect(self.proxy.projectInfoChanged)
+        self.state.experimentDataAdded.connect(self._onExperimentDataAdded)
+        self.state.undoRedoChanged.connect(self.proxy.undoRedoChanged)
+        self.state.resetUndoRedoStack.connect(self.proxy.resetUndoRedoStack)
+        self.state.removePhaseSignal.connect(self.removePhase)
+        self.state.currentMinimizerIndex.connect(self.fitLogic.currentMinimizerIndex)
+        self.state.currentMinimizerMethodIndex.connect(self.currentMinimizerMethodIndex)
+
+        self.fitLogic.currentMinimizerChanged.connect(self.proxy.currentMinimizerChanged)
 
     def initializeBorg(self):
         self.stackLogic.initializeBorg()
@@ -120,6 +143,9 @@ class LogicController(QObject):
 
         self.proxy.simulationParametersAsObj = \
             json.dumps(self.state._experiment_parameters)
+
+        # self.state.simulationParametersAsObj(json.dumps(self.state._experiment_parameters))
+
         if len(self.state._sample.pattern.backgrounds) == 0:
             self._background_proxy.initializeContainer()
 
@@ -131,11 +157,26 @@ class LogicController(QObject):
     def _onPhaseAdded(self):
         self.state._onPhaseAdded(self._background_proxy.asObj)
 
+    def removePhase(self, phase_name: str):
+        if self.state.removePhase(phase_name):
+            self.proxy.structureParametersChanged.emit()
+            self.proxy.phasesEnabled.emit()
+
     def samplesPresent(self):
         return len(self.state._sample.phases) > 0
 
+    def minimizerNames(self):
+        return self.fitLogic.fitter.available_engines
+
+    def minimizerMethodNames(self):
+        return self.fitLogic.minimizerMethodNames()
+
     def currentCalculatorIndex(self):
         return self._interface.available_interfaces.index(self._interface.current_interface_name)
+
+    def currentMinimizerMethodIndex(self, new_index: int):
+        self.fitLogic.currentMinimizerMethodIndex(new_index)
+        self.proxy.currentMinimizerMethodChanged.emit()
 
     def setCurrentCalculatorIndex(self, new_index: int):
         if self.currentCalculatorIndex == new_index:
@@ -143,6 +184,9 @@ class LogicController(QObject):
         new_name = self._interface.available_interfaces[new_index]
         self._interface.switch(new_name)
         return True
+
+    def currentMinimizerMethodName(self):
+        return self.fitLogic._current_minimizer_method_name
 
     def statusModelAsObj(self):
         engine_name = self.fitLogic.fitter.current_engine.name

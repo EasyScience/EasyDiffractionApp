@@ -124,16 +124,16 @@ EaElements.RemoteController {
 
         // App preferences
         if (!was_tool_tips_checked || !was_user_guides_checked) {
-        rc.mouseClick(ExGlobals.Variables.preferencesButton)
+            rc.mouseClick(ExGlobals.Variables.preferencesButton)
             if (!was_tool_tips_checked) {
                 rc.mouseClick(ExGlobals.Variables.enableToolTipsCheckBox)
                 rc.wait(500)
             }
             if (!was_user_guides_checked) {
-        rc.mouseClick(ExGlobals.Variables.enableUserGuidesCheckBox)
+                rc.mouseClick(ExGlobals.Variables.enableUserGuidesCheckBox)
                 rc.wait(500)
             }
-        rc.mouseClick(ExGlobals.Variables.preferencesOkButton)
+            rc.mouseClick(ExGlobals.Variables.preferencesOkButton)
         }
 
         // Home page
@@ -160,7 +160,7 @@ EaElements.RemoteController {
         // Summary page
         playPageUserGuides(EaGlobals.Variables.SummaryPageIndex)
         if (!was_user_guides_checked) {
-        rc.mouseClick(ExGlobals.Variables.userGuidesLastDisableButton)
+            rc.mouseClick(ExGlobals.Variables.userGuidesLastDisableButton)
             rc.wait(500)
         }
 

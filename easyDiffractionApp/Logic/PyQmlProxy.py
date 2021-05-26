@@ -371,8 +371,8 @@ class PyQmlProxy(QObject):
 
     @currentPhaseIndex.setter
     def currentPhaseIndex(self, new_index: int):
-        self.lc.state.currentPhaseIndex(new_index)
-        self.currentPhaseChanged.emit()
+        if self.lc.state.currentPhaseIndex(new_index):
+            self.currentPhaseChanged.emit()
 
     def _onCurrentPhaseChanged(self):
         print("***** _onCurrentPhaseChanged")

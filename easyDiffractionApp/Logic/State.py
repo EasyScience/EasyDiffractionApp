@@ -431,8 +431,9 @@ class StateLogic(QObject):
 
     def currentPhaseIndex(self, new_index: int):
         if self._current_phase_index == new_index or new_index == -1:
-            return
+            return False
         self._current_phase_index = new_index
+        return True
 
     def removePhase(self, phase_name: str):
         if phase_name in self._sample.phases.phase_names:

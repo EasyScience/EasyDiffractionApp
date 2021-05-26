@@ -1,4 +1,5 @@
 # noqa: E501
+import os
 import timeit
 
 from typing import Union
@@ -115,7 +116,7 @@ class PyQmlProxy(QObject):
         #self.currentMinimizerMethodChanged.connect(self.undoRedoChanged)
 
         # Multithreading
-        self.stopFit.connect(self.lc.fitLogic.onStopFit)
+        # self.stopFit.connect(self.lc.fitLogic.onStopFit)
 
         # start the undo/redo stack
         self.lc.initializeBorg()
@@ -669,8 +670,13 @@ class PyQmlProxy(QObject):
 
     @Slot()
     def fit(self):
-        self.lc.fitLogic.fit(self.lc.state._data,
-                             self.lc.fitLogic._current_minimizer_method_name)
+        print(">>> FITTING WITH Threading library")
+        self.lc.fitLogic.startFitting(self.lc.state._data,
+                                      self.lc.fitLogic._current_minimizer_method_name)
+
+        # print(">>> FITTING WITH QThreads library")
+        # self.lc.fitLogic.fit(self.lc.state._data,
+        #                     self.lc.fitLogic._current_minimizer_method_name)
 
     @Property('QVariant', notify=fitResultsChanged)
     def fitResults(self):

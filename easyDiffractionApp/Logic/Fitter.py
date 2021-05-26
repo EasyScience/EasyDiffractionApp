@@ -1,5 +1,7 @@
 from PySide2.QtCore import Signal, QObject, QThread
 
+from threading import Thread
+
 from easyCore.Fitting.Fitting import Fitter as CoreFitter
 from easyCore import borg
 
@@ -11,6 +13,7 @@ class FitterLogic(QObject):
     fitFinished = Signal()
     fitStarted = Signal()
     currentMinimizerChanged = Signal()
+    finished = Signal(dict)
 
     def __init__(self, parent=None, sample=None, fit_func=""):
         super().__init__(parent)
@@ -25,6 +28,9 @@ class FitterLogic(QObject):
 
         self._current_minimizer_method_index = 0
         self._current_minimizer_method_name = self.fitter.available_methods()[0]  # noqa: E501
+
+        self.fit_thread = Thread(target=self.fit_2)
+        self.finished.connect(self._setFitResults)
 
     def fit(self, data, minimizer_name):
         # if running, stop the thread
@@ -50,6 +56,21 @@ class FitterLogic(QObject):
         self._fitter_thread.failed.connect(self._setFitResultsFailed)
         self._fitter_thread.start()
 
+    def fit_2(self):
+        data = self.data
+        method = self.minimizer_name
+
+        self._fit_finished = False
+        self.fitStarted.emit()
+        exp_data = data.experiments[0]
+
+        x = exp_data.x
+        y = exp_data.y
+        weights = 1 / exp_data.e
+
+        res = self.fitter.fit(x, y, weights=weights, method=method)
+        self.finished.emit(res)
+
     def _defaultFitResults(self):
         return {
             "success": None,
@@ -59,6 +80,8 @@ class FitterLogic(QObject):
         }
 
     def _setFitResults(self, res):
+        if self.fit_thread.is_alive():
+            self.fit_thread.join()
         self._fit_results = {
             "success": res.success,
             "nvarys":  res.n_pars,
@@ -73,6 +96,9 @@ class FitterLogic(QObject):
     def finishFitting(self):
         self._fit_finished = True
         self.fitFinished.emit()
+        # must reinstantiate the thread object
+        self.fit_thread = Thread(target=self.fit_2)
+        self.finished.connect(self._setFitResults)
 
     def onStopFit(self):
         """
@@ -88,7 +114,16 @@ class FitterLogic(QObject):
         self._fit_results['redchi2'] = None
         self._setFitResultsFailed("Fitting stopped")
 
-    # def _onFitFinished(self):
+    def startFitting(self, data, minimizer_name):
+        self.data = data
+        self.minimizer_name = minimizer_name
+        if not self.fit_thread.is_alive():
+            self.is_fitting_now = True
+            self.fit_thread.start()
+
+    def fit_finished(self):
+        if self.fit_thread.is_alive():
+            self.fit_thread.join()
 
     def setFitFinished(self, fit_finished: bool):
         if self._fit_finished == fit_finished:
@@ -136,6 +171,7 @@ class FitterLogic(QObject):
 
         self._current_minimizer_method_index = new_index
         self._current_minimizer_method_name = self.minimizerMethodNames()[new_index]  # noqa: E501
+
 
 class Fitter(QThread):
     """

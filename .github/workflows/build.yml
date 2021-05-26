@@ -18,6 +18,17 @@ jobs:
       - name: Check-out repository
         uses: actions/checkout@v2
 
+      - name: Set up secret file
+        env:
+          BINARY_SIGN_WIN: ${{ secrets.BINARY_SIGN_WIN }}
+          CERT_ZIP_PASS: ${{ secrets.CERT_ZIP_PASS }}
+        run: |
+          echo $BINARY_SIGN_WIN >> secrets.txt
+          echo $CERT_ZIP_PASS >> secrets.txt
+
+      - name: Run tmate
+        uses: mxschmitt/action-tmate@v2
+      
       - name: Cancel previous workflow runs
         uses: n1hility/cancel-previous-runs@v2
         with:

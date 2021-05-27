@@ -1359,6 +1359,7 @@ class PyQmlProxy(QObject):
 
         new_name = self.calculatorNames[new_index]
         self._interface.switch(new_name)
+        self._sample.generate_bindings()
         self.currentCalculatorChanged.emit()
 
     def _onCurrentCalculatorChanged(self):

@@ -8,7 +8,7 @@ import darkdetect
 # PySide
 from PySide2.QtCore import QUrl
 from PySide2.QtWidgets import QApplication
-from PySide2.QtGui import Qt
+from PySide2.QtGui import Qt, QIcon
 from PySide2.QtQml import QQmlApplicationEngine, qmlRegisterType
 from PySide2.QtWebEngine import QtWebEngine
 from PySide2.QtWebEngineWidgets import QWebEnginePage, QWebEngineView  # to call hook-PySide2.QtWebEngineWidgets.py
@@ -51,6 +51,7 @@ def main():
     gui_path = str(QUrl.fromLocalFile(package_path).toString())
     easyAppGui_path = os.path.join(easyAppGui.__path__[0], '..')
 
+
     home_path = pathlib.Path.home()
     settings_path = str(home_path.joinpath(f'.{app_name}', 'settings.ini'))
 
@@ -68,6 +69,7 @@ def main():
     app.setOrganizationName(CONFIG['tool']['poetry']['name'])
     app.setOrganizationDomain(CONFIG['tool']['poetry']['name'])
 
+    app.setWindowIcon(QIcon(os.path.join(package_path, 'Gui', 'Resources', 'Logo', 'App.png')))
     # QML application engine
     engine = QQmlApplicationEngine()
 

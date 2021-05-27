@@ -98,7 +98,6 @@ class FitterLogic(QObject):
         self.fitFinished.emit()
         # must reinstantiate the thread object
         self.fit_thread = Thread(target=self.fit_2)
-        self.finished.connect(self._setFitResults)
 
     def onStopFit(self):
         """
@@ -120,10 +119,6 @@ class FitterLogic(QObject):
         if not self.fit_thread.is_alive():
             self.is_fitting_now = True
             self.fit_thread.start()
-
-    def fit_finished(self):
-        if self.fit_thread.is_alive():
-            self.fit_thread.join()
 
     def setFitFinished(self, fit_finished: bool):
         if self._fit_finished == fit_finished:

@@ -96,7 +96,8 @@ def onlineRepositoryUrl():
     host = CONFIG['ci']['app']['setup']['ftp']['host']
     prefix = CONFIG['ci']['app']['setup']['ftp']['prefix']
     repo_subdir = CONFIG['ci']['app']['setup']['ftp']['repo_subdir']
-    return f'https://{prefix}.{host}/{repo_subdir}/{CONFIG.setup_os}'
+    #return f'https://{prefix}.{host}/{repo_subdir}/{CONFIG.setup_os}'
+    return f'ftp://u652432322.repo:easyDiffraction123@download.easydiffraction.org/{CONFIG.setup_os}'
 
 def installerConfigXml():
     try:

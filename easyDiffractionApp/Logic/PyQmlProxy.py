@@ -670,13 +670,10 @@ class PyQmlProxy(QObject):
 
     @Slot()
     def fit(self):
-        print(">>> FITTING WITH Threading library")
-        self.lc.fitLogic.startFitting(self.lc.state._data,
-                                      self.lc.fitLogic._current_minimizer_method_name)
-
-        # print(">>> FITTING WITH QThreads library")
-        # self.lc.fitLogic.fit(self.lc.state._data,
-        #                     self.lc.fitLogic._current_minimizer_method_name)
+        # Currently using python threads from the `threading` module,
+        # since QThreads don't seem to properly work under macos
+        self.lc.fitLogic.fit(self.lc.state._data,
+                             self.lc.fitLogic._current_minimizer_method_name)
 
     @Property('QVariant', notify=fitResultsChanged)
     def fitResults(self):

@@ -14,7 +14,7 @@ from easyCore.Symmetry.tools import SpacegroupInfo
 from easyCore.Utils.classTools import generatePath
 
 from easyDiffractionLib.sample import Sample
-from easyAppLogic.Utils.Utils import generalizePath
+from easyApp.Logic.Utils.Utils import generalizePath
 from easyDiffractionApp.Logic.DataStore import DataSet1D, DataStore
 from easyDiffractionLib import Phases, Phase, Lattice, Site, SpaceGroup
 from easyDiffractionLib.Elements.Experiments.Experiment import Pars1D
@@ -300,7 +300,6 @@ class StateLogic(QObject):
 
         self._sample = Sample.from_dict(descr['sample'])
         self._sample.interface = self._interface
-        self._sample._updateInterface()
 
         # send signal to tell the proxy we changed phases
         self.phasesEnabled.emit()
@@ -496,7 +495,7 @@ class StateLogic(QObject):
         self._sample.phases = Phases.from_cif_str(phases_as_cif)
 
     def _setPhasesAsObj(self):
-        self._phases_as_obj = self._sample.phases.as_dict()['data']
+        self._phases_as_obj = self._sample.phases.as_dict(skip=['interface'])['data']
 
     def _setPhasesAsXml(self):
         self._phases_as_xml = dicttoxml(self._phases_as_obj, attr_type=True).decode()  # noqa: E501
@@ -599,11 +598,9 @@ class StateLogic(QObject):
                               fract_z=0.05)
         atom.add_adp('Uiso', Uiso=0.0)
         self._sample.phases[self._current_phase_index].add_atom(atom)
-        self._sample._updateInterface()
 
     def removeAtom(self, atom_label: str):
         del self._sample.phases[self._current_phase_index].atoms[atom_label]
-        self._sample._updateInterface()
 
     def setCurrentExperimentDatasetName(self, name):
         if self._data.experiments[0].name == name:
@@ -629,7 +626,7 @@ class StateLogic(QObject):
         }
 
     def _setPatternParametersAsObj(self):
-        parameters = self._sample.pattern.as_dict()
+        parameters = self._sample.pattern.as_dict(skip=['interface'])
         self._pattern_parameters_as_obj = parameters
 
     ####################################################################################################################
@@ -647,7 +644,8 @@ class StateLogic(QObject):
         }
 
     def _setInstrumentParametersAsObj(self):
-        parameters = self._sample.parameters.as_dict()
+        # parameters = self._sample.parameters.as_dict()
+        parameters = self._sample.parameters.as_dict(skip=['interface'])
         self._instrument_parameters_as_obj = parameters
 
     def _setInstrumentParametersAsXml(self):
@@ -820,7 +818,6 @@ class StateLogic(QObject):
         data = self._data.simulations
         data = data[0]
         data.name = f'{self._interface.current_interface_name} engine'
-        self._sample._updateInterface()
 
 
 # utilities. Should probably be moved away from here

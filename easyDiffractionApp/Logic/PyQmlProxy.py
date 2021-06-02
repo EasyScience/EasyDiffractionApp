@@ -84,6 +84,9 @@ class PyQmlProxy(QObject):
         # initialize the logic controller
         self.lc = LogicController(self)
 
+        # initialize the logic controller
+        self.lc = LogicController(self)
+
         # Structure
         self.structureParametersChanged.connect(self._onStructureParametersChanged)
         # self.structureParametersChanged.connect(self.lc.chartsLogic._onStructureViewChanged)
@@ -112,11 +115,8 @@ class PyQmlProxy(QObject):
         # Status info
         self.statusInfoChanged.connect(self._onStatusInfoChanged)
         self.currentCalculatorChanged.connect(self.statusInfoChanged)
-        #self.currentCalculatorChanged.connect(self.undoRedoChanged)
         self.currentMinimizerChanged.connect(self.statusInfoChanged)
-        #self.currentMinimizerChanged.connect(self.undoRedoChanged)
         self.currentMinimizerMethodChanged.connect(self.statusInfoChanged)
-        #self.currentMinimizerMethodChanged.connect(self.undoRedoChanged)
 
         # Multithreading
         # self.stopFit.connect(self.lc.fitLogic.onStopFit)
@@ -131,7 +131,6 @@ class PyQmlProxy(QObject):
     ####################################################################################################################
 
     # 1d plotting
-
     @Property('QVariant', notify=dummySignal)
     def plotting1d(self):
         return self._plotting_1d_proxy
@@ -139,11 +138,6 @@ class PyQmlProxy(QObject):
     @Property('QVariant', notify=dummySignal)
     def plotting3d(self):
         return self._plotting_3d_proxy
-
-    # # 3d plotting
-    # @Property('QVariant', notify=dummySignal)
-    # def plotting3dLibs(self):
-    #     return self.lc.chartsLogic.plotting3dLibs()
 
     ####################################################################################################################
     ####################################################################################################################
@@ -416,7 +410,7 @@ class PyQmlProxy(QObject):
 
     def _onExperimentDataRemoved(self):
         print("***** _onExperimentDataRemoved")
-        self._plotting_1d_proxy.clearFrontendState()
+        self.lc.chartsLogic._plotting_1d_proxy.clearFrontendState()
         self.experimentDataChanged.emit()
 
     ####################################################################################################################

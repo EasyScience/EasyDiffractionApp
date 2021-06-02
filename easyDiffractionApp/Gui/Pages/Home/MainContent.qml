@@ -1,10 +1,10 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 
-import easyAppGui.Style 1.0 as EaStyle
-import easyAppGui.Globals 1.0 as EaGlobals
-import easyAppGui.Elements 1.0 as EaElements
-import easyAppGui.Components 1.0 as EaComponents
+import easyApp.Gui.Style 1.0 as EaStyle
+import easyApp.Gui.Globals 1.0 as EaGlobals
+import easyApp.Gui.Elements 1.0 as EaElements
+import easyApp.Gui.Components 1.0 as EaComponents
 
 import Gui.Globals 1.0 as ExGlobals
 import Gui.Components 1.0 as ExComponents
@@ -120,14 +120,14 @@ Item {
                 }
                 EaElements.Button {
                     text: qsTr("Online documentation")
-                    onClicked: Qt.openUrlExternally("https://github.com/easyScience/easyDiffractionApp")  // ExGlobals.Constants.appUrl
+                    onClicked: Qt.openUrlExternally(ExGlobals.Constants.appUrl)
                     Component.onCompleted: ExGlobals.Variables.onlineDocumentationButton = this
                 }
                 EaElements.Button {
-                    //text: qsTr("Get in touch online")
-                    //onClicked: Qt.openUrlExternally(`${ExGlobals.Constants.appUrl}/issues`)
-                    text: qsTr("Get in touch on email")
-                    onClicked: Qt.openUrlExternally(`mailto:support@easyDiffraction.org`)
+                    text: qsTr("Get in touch online")
+                    onClicked: Qt.openUrlExternally(`${ExGlobals.Constants.appUrl}/index.html#contact`)
+                    //text: qsTr("Get in touch on email")
+                    //onClicked: Qt.openUrlExternally(`mailto:support@easyDiffraction.org`)
                 }
             }
 

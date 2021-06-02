@@ -15,13 +15,13 @@ jobs:
         os: [macos-10.15, ubuntu-20.04, windows-2019]
 
     steps:
-      - name: Check-out repository
-        uses: actions/checkout@v2
-
       - name: Cancel previous workflow runs
         uses: n1hility/cancel-previous-runs@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check-out repository
+        uses: actions/checkout@v2
 
       - name: Set up non-Python dependences (Linux)
         if: runner.os == 'Linux'

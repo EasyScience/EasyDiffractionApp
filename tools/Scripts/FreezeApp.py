@@ -6,7 +6,7 @@ import importlib
 import glob
 import PySide2, shiboken2
 import cryspy
-import easyCore, easyDiffractionLib, easyAppGui, easyAppLogic
+import easyCore, easyDiffractionLib, easyApp
 import Functions, Config
 from PyInstaller.__main__ import run as pyInstallerMain
 
@@ -33,13 +33,12 @@ def addedData():
             {'from': cryspy.__path__[0], 'to': 'cryspy'},
             {'from': easyCore.__path__[0], 'to': 'easyCore'},
             {'from': easyDiffractionLib.__path__[0], 'to': 'easyDiffractionLib'},
-            {'from': easyAppLogic.__path__[0], 'to': 'easyAppLogic'},
-            {'from': easyAppGui.__path__[0], 'to': 'easyAppGui'},
+            {'from': easyApp.__path__[0], 'to': 'easyApp'},
             {'from': 'utils.py', 'to': '.'},
             {'from': 'pyproject.toml', 'to': '.'}]
     if CONFIG.os == 'ubuntu':
         import libsLinux
-        data.append({'from': f'{libsLinux.__path__[0]}/lib/libgfortran.so.4', 'to': '.'})        
+        data.append({'from': f'{libsLinux.__path__[0]}/lib/libgfortran.so.4', 'to': '.'})
     extras = CONFIG['ci']['pyinstaller']['missing_other_libraries'][CONFIG.os]
     if extras:
         for extra_file in extras:

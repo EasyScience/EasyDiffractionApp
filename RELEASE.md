@@ -1,16 +1,10 @@
 ### Changes
 
-- CrysFML and CrysPy simulations now show Bragg peaks.
-- Updated and extended user tutorials.
-- Contact email more prominently displayed.
-- More detailed `README.md` file for the project.
-- Updated module dependencies.
-- Updated application installer.
+- Implemented automatic update of the application and made it easier to update the application manually.
+- Redesigned and expanded the application settings window.
+- Implemented a file-less interface with the CrysPy calculator. 
+- Fitting calculations do not block the GUI on MacOS anymore (implemented threading).
 
 ### Bug Fixes
 
-- CrysFML and GSAS-II binding on Linux have been fixed.
-- Now project reset clears the experimental data correctly.
-- When an example is loaded, the summary save path is corrected.
-- Broken links in the About box have been updated.
-- Minor text fixes.
+- Added an icon to the application window on Windows and Linux.

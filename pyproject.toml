@@ -11,9 +11,9 @@ description = 'Making diffraction data analysis and modelling easy.'
 license = 'GPL-3.0-only'
 authors = ['Andrew Sazonov', 'Simon Ward']
 readme = 'README.md'
-homepage = 'https://github.com/easyScience/easyDiffractionApp'
+homepage = 'https://easydiffraction.org'
 repository = 'https://download.easydiffraction.org/'
-documentation = 'https://github.com/easyScience/easyDiffractionApp'
+documentation = 'https://easydiffraction.org'
 include = ['CHANGELOG.md']
 packages = [ { include = 'easyDiffractionApp' } ]
 

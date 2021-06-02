@@ -120,14 +120,14 @@ Item {
                 }
                 EaElements.Button {
                     text: qsTr("Online documentation")
-                    onClicked: Qt.openUrlExternally("https://github.com/easyScience/easyDiffractionApp")  // ExGlobals.Constants.appUrl
+                    onClicked: Qt.openUrlExternally(ExGlobals.Constants.appUrl)
                     Component.onCompleted: ExGlobals.Variables.onlineDocumentationButton = this
                 }
                 EaElements.Button {
-                    //text: qsTr("Get in touch online")
-                    //onClicked: Qt.openUrlExternally(`${ExGlobals.Constants.appUrl}/issues`)
-                    text: qsTr("Get in touch on email")
-                    onClicked: Qt.openUrlExternally(`mailto:support@easyDiffraction.org`)
+                    text: qsTr("Get in touch online")
+                    onClicked: Qt.openUrlExternally(`${ExGlobals.Constants.appUrl}/index.html#contact`)
+                    //text: qsTr("Get in touch on email")
+                    //onClicked: Qt.openUrlExternally(`mailto:support@easyDiffraction.org`)
                 }
             }
 

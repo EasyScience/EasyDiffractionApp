@@ -71,7 +71,7 @@ class Config():
                 '@ApplicationsDirUser@': str(pathlib.Path.home().joinpath('Applications'))
             },
             'ubuntu': {
-                '@HomeDir@': '~',
+                '@HomeDir@': str(pathlib.Path.home()),
                 '@ApplicationsDir@': '/opt'
             },
             'windows': {

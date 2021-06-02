@@ -69,9 +69,9 @@ class FitterLogic(QObject):
         # must reinstantiate the thread object
         self.fit_thread = Thread(target=self.fit_threading)
 
-    def fit(self, data, minimizer_name):
+    def fit(self, data):
         self.data = data
-        self.minimizer_name = minimizer_name
+        self.minimizer_name = self._current_minimizer_method_name
         if not self.fit_thread.is_alive():
             self.is_fitting_now = True
             self.fit_thread.start()

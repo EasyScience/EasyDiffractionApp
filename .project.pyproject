@@ -7,6 +7,6 @@
     "easyDiffractionApp/Logic/DisplayModels/DataModels.py",
     "easyDiffractionApp/Logic/DisplayModels/StatusModel.py",
 
-    "../easyAppLogic/easyAppLogic/Translate.py"
+    "../easyApp/easyApp/Translate.py"
     ]
 }

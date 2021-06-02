@@ -1,12 +1,12 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 
-import easyAppGui.Style 1.0 as EaStyle
+import easyApp.Gui.Style 1.0 as EaStyle
 import Gui.Globals 1.0 as ExGlobals
 
-import easyAppGui.Globals 1.0 as EaGlobals
-import easyAppGui.Elements 1.0 as EaElements
-import easyAppGui.Components 1.0 as EaComponents
+import easyApp.Gui.Globals 1.0 as EaGlobals
+import easyApp.Gui.Elements 1.0 as EaElements
+import easyApp.Gui.Components 1.0 as EaComponents
 
 
 EaElements.RemoteController {
@@ -36,9 +36,9 @@ EaElements.RemoteController {
         interval: 1000
         onTriggered: {
             startScreenRecording()
-            runDataFittingTutorial()
-            //runDataSimulationTutorial()
-            //stopScreenRecording()
+            //runDataFittingTutorial()
+            runDataSimulationTutorial()
+            stopScreenRecording()
         }
     }
 

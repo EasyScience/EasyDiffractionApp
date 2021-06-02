@@ -1,19 +1,25 @@
 function Component()
 {
-  if (installer.isInstaller())
-  {
-    installer.setDefaultPageVisible(QInstaller.ComponentSelection, false); // works for Installer, but not for Updater !?
-    installer.installationStarted.connect(this, Component.prototype.onInstallationStarted);
-  }
+  //console.log("* isInstaller:", installer.isInstaller())
+  //console.log("* isUninstaller:", installer.isUninstaller())
+  //console.log("* isUpdater:", installer.isUpdater())
+  //console.log("* isPackageManager:", installer.isPackageManager())
+
+  //if (installer.isInstaller() || installer.isUpdater())
+  //{
+    installer.setDefaultPageVisible(QInstaller.ComponentSelection, false)
+    installer.installationStarted.connect(this, Component.prototype.onInstallationStarted)
+  //}
   //installer.setDefaultPageVisible(QInstaller.LicenseCheck, false)
 }
 
 Component.prototype.onInstallationStarted = function()
 {
     if (component.updateRequested() || component.installationRequested()) {
-        if (installer.value("os") == "win")
-            component.installerbaseBinaryPath = "@TargetDir@/signedmaintenancetool.exe";
-        installer.setInstallerBaseBinary(component.installerbaseBinaryPath);
+        if (installer.value("os") == "win") {
+            component.installerbaseBinaryPath = "@TargetDir@/signedmaintenancetool.exe"
+        }
+        installer.setInstallerBaseBinary(component.installerbaseBinaryPath)
     }
 }
 

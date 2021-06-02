@@ -8,7 +8,9 @@ from PySide2.QtCore import QObject, Slot, Signal, Property
 
 from easyCore.Utils.UndoRedo import property_stack_deco
 from easyDiffractionApp.Logic.LogicController import LogicController
-
+from easyDiffractionApp.Logic.Proxies.Plotting1d import Plotting1dProxy
+from easyDiffractionApp.Logic.Proxies.Plotting3d import Plotting3dProxy
+from easyDiffractionApp.Logic.Proxies.Background import BackgroundProxy
 
 class PyQmlProxy(QObject):
     # SIGNALS
@@ -55,9 +57,6 @@ class PyQmlProxy(QObject):
     currentMinimizerMethodChanged = Signal()
     currentCalculatorChanged = Signal()
 
-    # Plotting
-    current3dPlottingLibChanged = Signal()
-
     htmlExportingFinished = Signal(bool, str)
 
     # Status info
@@ -77,21 +76,25 @@ class PyQmlProxy(QObject):
         # Initialize logics
         self.stateChanged.connect(self._onStateChanged)
 
+        ################## proxies #################
+        self._plotting_1d_proxy = Plotting1dProxy()
+        self._plotting_3d_proxy = Plotting3dProxy()
+        self._background_proxy = BackgroundProxy(self)
+
         # initialize the logic controller
         self.lc = LogicController(self)
 
         # Structure
         self.structureParametersChanged.connect(self._onStructureParametersChanged)
-        self.structureParametersChanged.connect(self.lc.chartsLogic._onStructureViewChanged)
+        # self.structureParametersChanged.connect(self.lc.chartsLogic._onStructureViewChanged)
         self.structureParametersChanged.connect(self.lc.state._updateCalculatedData())
 
-        self.structureViewChanged.connect(self.lc.chartsLogic._onStructureViewChanged)
+        # self.structureViewChanged.connect(self.lc.chartsLogic._onStructureViewChanged)
 
         self.lc.phaseAdded.connect(self._onPhaseAdded)
         self.lc.phaseAdded.connect(self.phasesEnabled)
 
         self.currentPhaseChanged.connect(self._onCurrentPhaseChanged)
-        self.current3dPlottingLibChanged.connect(self.onCurrent3dPlottingLibChanged)
 
         # Experiment
         self.experimentDataChanged.connect(self._onExperimentDataChanged)
@@ -131,45 +134,16 @@ class PyQmlProxy(QObject):
 
     @Property('QVariant', notify=dummySignal)
     def plotting1d(self):
-        return self.lc.chartsLogic.plotting1d()
+        return self._plotting_1d_proxy
 
-    # 3d plotting
     @Property('QVariant', notify=dummySignal)
-    def plotting3dLibs(self):
-        return self.lc.chartsLogic.plotting3dLibs()
+    def plotting3d(self):
+        return self._plotting_3d_proxy
 
-    @Property('QVariant', notify=current3dPlottingLibChanged)
-    def current3dPlottingLib(self):
-        return self.lc.chartsLogic.current3dPlottingLib()
-
-    @current3dPlottingLib.setter
-    @property_stack_deco('Changing 3D library from {old_value} to {new_value}')
-    def current3dPlottingLib(self, plotting_lib):
-        self.lc.chartsLogic._current_3d_plotting_lib = plotting_lib
-        self.current3dPlottingLibChanged.emit()
-
-    def onCurrent3dPlottingLibChanged(self):
-        self.lc.chartsLogic.onCurrent3dPlottingLibChanged()
-
-    # Structure view
-
-    @Property(bool, notify=structureViewChanged)
-    def showBonds(self):
-        return self.lc.chartsLogic.showBonds()
-
-    @showBonds.setter
-    def showBonds(self, show_bonds: bool):
-        self.lc.chartsLogic.setShowBons(show_bonds)
-        self.structureViewChanged.emit()
-
-    @Property(float, notify=structureViewChanged)
-    def bondsMaxDistance(self):
-        return self.chartsLogic.bondsMaxDistance()
-
-    @bondsMaxDistance.setter
-    def bondsMaxDistance(self, max_distance: float):
-        self.lc.chartsLogic.setBondsMaxDistance(max_distance)
-        self.structureViewChanged.emit()
+    # # 3d plotting
+    # @Property('QVariant', notify=dummySignal)
+    # def plotting3dLibs(self):
+    #     return self.lc.chartsLogic.plotting3dLibs()
 
     ####################################################################################################################
     ####################################################################################################################
@@ -442,7 +416,7 @@ class PyQmlProxy(QObject):
 
     def _onExperimentDataRemoved(self):
         print("***** _onExperimentDataRemoved")
-        self.lc.chartsLogic._plotting_1d_proxy.clearFrontendState()
+        self._plotting_1d_proxy.clearFrontendState()
         self.experimentDataChanged.emit()
 
     ####################################################################################################################
@@ -552,7 +526,7 @@ class PyQmlProxy(QObject):
 
     @Property('QVariant', notify=dummySignal)
     def backgroundProxy(self):
-        return self.lc._background_proxy
+        return self._background_proxy
 
     ####################################################################################################################
     ####################################################################################################################
@@ -760,7 +734,7 @@ class PyQmlProxy(QObject):
     @Slot()
     def loadProject(self):
         self.lc.state._loadProject()
-        self.lc._background_proxy.onAsObjChanged()
+        self._background_proxy.onAsObjChanged()
         self.stateChanged.emit(False)
 
     @Slot(str)
@@ -785,8 +759,8 @@ class PyQmlProxy(QObject):
     @Slot()
     def resetState(self):
         self.lc.state.resetState()
-        self.lc.chartsLogic._plotting_1d_proxy.clearBackendState()
-        self.lc.chartsLogic._plotting_1d_proxy.clearFrontendState()
+        self._plotting_1d_proxy.clearBackendState()
+        self._plotting_1d_proxy.clearFrontendState()
         self.resetUndoRedoStack()
         self.stateChanged.emit(False)
 

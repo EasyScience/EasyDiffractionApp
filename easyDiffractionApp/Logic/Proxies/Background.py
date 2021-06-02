@@ -31,7 +31,7 @@ class BackgroundProxy(QObject):
 
     @property
     def _background_as_obj(self):
-        return self.parent._background_obj
+        return self.parent.lc._background_obj
 
     @Property('QVariant', notify=dummySignal)
     def asObj(self):
@@ -67,7 +67,7 @@ class BackgroundProxy(QObject):
         container = None
         if container_type is None:
             container = self._bg_types[self._default_type]['container']
-        self.parent.state._sample.pattern.backgrounds.append(
+        self.parent.lc.state._sample.pattern.backgrounds.append(
             # TODO we will be the current exp name and use it here.
             container(linked_experiment=experiment_name)
         )

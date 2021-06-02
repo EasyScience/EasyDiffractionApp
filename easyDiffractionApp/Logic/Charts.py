@@ -1,12 +1,7 @@
-from easyDiffractionApp.Logic.Proxies.Plotting1d import Plotting1dProxy
-
-
 class ChartsLogic():
     def __init__(self, parent):
 
         self.parent = parent
-        # Plotting 1D
-        self._plotting_1d_proxy = Plotting1dProxy()
 
         # Plotting 3D
         self._3d_plotting_libs = ['chemdoodle', 'qtdatavisualization']
@@ -15,11 +10,7 @@ class ChartsLogic():
         self._show_bonds = True
         self._bonds_max_distance = 2.0
 
-    def plotting1d(self):
-        return self._plotting_1d_proxy
-
     # 3d plotting
-
     def plotting3dLibs(self):
         return self._3d_plotting_libs
 
@@ -28,11 +19,6 @@ class ChartsLogic():
 
     def onCurrent3dPlottingLibChanged(self):
         pass
-
-    # Structure view
-
-    def _onStructureViewChanged(self):
-        print("***** _onStructureViewChanged")
 
     def showBonds(self):
         return self._show_bonds

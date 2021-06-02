@@ -4,7 +4,6 @@ from PySide2.QtCore import QObject, Signal
 
 from easyDiffractionLib.interface import InterfaceFactory
 
-from easyDiffractionApp.Logic.Proxies.Background import BackgroundProxy
 from easyDiffractionApp.Logic.State import StateLogic
 from easyDiffractionApp.Logic.Fitter import FitterLogic as FitterLogic
 from easyDiffractionApp.Logic.Stack import StackLogic
@@ -51,7 +50,7 @@ class LogicController(QObject):
         self.fitLogic.fitStarted.connect(self.onFitStarted)
 
         # background logic
-        self._background_proxy = BackgroundProxy(self)
+        self._background_proxy = self.proxy._background_proxy
         self._background_proxy.asObjChanged.connect(self.proxy._onParametersChanged)
         self._background_proxy.asObjChanged.connect(self.state._sample.set_background)
         self._background_proxy.asObjChanged.connect(self.state._updateCalculatedData)
@@ -60,7 +59,7 @@ class LogicController(QObject):
         # parameters slots
         self.parametersChanged.connect(self.proxy._onParametersChanged)
         self.parametersChanged.connect(self.state._updateCalculatedData)
-        self.parametersChanged.connect(self.chartsLogic._onStructureViewChanged)
+        # self.parametersChanged.connect(self.chartsLogic._onStructureViewChanged)
         self.parametersChanged.connect(self.proxy._onStructureParametersChanged)
         self.parametersChanged.connect(self.proxy._onPatternParametersChanged)
         self.parametersChanged.connect(self.proxy._onInstrumentParametersChanged)
@@ -92,6 +91,9 @@ class LogicController(QObject):
         self.state.currentMinimizerMethodIndex.connect(self.currentMinimizerMethodIndex)
 
         self.fitLogic.currentMinimizerChanged.connect(self.proxy.currentMinimizerChanged)
+        self.state.plotCalculatedDataSignal.connect(self.plotCalculatedData)
+        self.state.plotBraggDataSignal.connect(self.plotBraggData)
+
 
     def initializeBorg(self):
         self.stackLogic.initializeBorg()
@@ -120,7 +122,7 @@ class LogicController(QObject):
     def updateChartBackground(self):
         if self._background_proxy.asObj is None:
             return
-        self.chartsLogic._plotting_1d_proxy.setBackgroundData(
+        self.proxy._plotting_1d_proxy.setBackgroundData(
                                 self._background_proxy.asObj.x_sorted_points,
                                 self._background_proxy.asObj.y_sorted_points)
 
@@ -134,7 +136,7 @@ class LogicController(QObject):
 
     def _onExperimentDataAdded(self):
         print("***** _onExperimentDataAdded")
-        self.chartsLogic._plotting_1d_proxy.setMeasuredData(
+        self.proxy._plotting_1d_proxy.setMeasuredData(
                                             self.state._experiment_data.x,
                                             self.state._experiment_data.y,
                                             self.state._experiment_data.e)
@@ -197,3 +199,9 @@ class LogicController(QObject):
         engine_name = self.fitLogic.fitter.current_engine.name
         minimizer_name = self.fitLogic._current_minimizer_method_name
         return self.state.statusModelAsXml(engine_name, minimizer_name)
+
+    def plotCalculatedData(self, data):
+        self.proxy._plotting_1d_proxy.setCalculatedData(data[0], data[1])
+
+    def plotBraggData(self, data):
+        self.proxy._plotting_1d_proxy.setBraggData(data[0], data[1], data[2], data[3])  # noqa: E501

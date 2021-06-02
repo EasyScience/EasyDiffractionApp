@@ -39,6 +39,8 @@ class StateLogic(QObject):
     resetUndoRedoStack = Signal()
     currentMinimizerIndex = Signal(int)
     currentMinimizerMethodIndex = Signal(int)
+    plotCalculatedDataSignal = Signal(tuple)
+    plotBraggDataSignal = Signal(tuple)
 
     def __init__(self, parent=None, interface=None):
         super().__init__(parent)
@@ -678,8 +680,8 @@ class StateLogic(QObject):
         sim.y = self._interface.fit_func(sim.x)
         hkl = self._interface.get_hkl()
 
-        self.parent.chartsLogic._plotting_1d_proxy.setCalculatedData(sim.x, sim.y)  # noqa: E501
-        self.parent.chartsLogic._plotting_1d_proxy.setBraggData(hkl['ttheta'], hkl['h'], hkl['k'], hkl['l'])  # noqa: E501
+        self.plotCalculatedDataSignal.emit((sim.x, sim.y))
+        self.plotBraggDataSignal.emit((hkl['ttheta'], hkl['h'], hkl['k'], hkl['l']))  # noqa: E501
 
     ####################################################################################################################
     # Fitables (parameters table from analysis tab & ...)

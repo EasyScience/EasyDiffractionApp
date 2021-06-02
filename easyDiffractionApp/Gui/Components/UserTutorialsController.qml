@@ -193,9 +193,11 @@ EaElements.RemoteController {
         rc.say("Application preferences can be accessed quickly from the application toolbar.")
         rc.mouseClick(ExGlobals.Variables.preferencesButton)
 
+        rc.mouseClick(ExGlobals.Variables.appearanceTab)
         rc.mouseClick(ExGlobals.Variables.themeSelector)
         y_pos = !EaStyle.Colors.isDarkTheme ? EaStyle.Sizes.comboBoxHeight * 1.5 : undefined
         rc.mouseClick(ExGlobals.Variables.themeSelector, x_pos, y_pos)
+        rc.mouseClick(ExGlobals.Variables.promptsTab)
 
         if (!was_tool_tips_checked) {
             rc.mouseClick(ExGlobals.Variables.enableToolTipsCheckBox)
@@ -309,9 +311,11 @@ EaElements.RemoteController {
 
         rc.mouseClick(ExGlobals.Variables.preferencesButton)
 
+        rc.mouseClick(ExGlobals.Variables.appearanceTab)
         rc.mouseClick(ExGlobals.Variables.themeSelector)
         y_pos = !EaStyle.Colors.isDarkTheme ? EaStyle.Sizes.comboBoxHeight * 1.5 : undefined
         rc.mouseClick(ExGlobals.Variables.themeSelector, x_pos, y_pos)
+        rc.mouseClick(ExGlobals.Variables.promptsTab)
 
         if (!was_tool_tips_checked) {
             rc.mouseClick(ExGlobals.Variables.enableToolTipsCheckBox)

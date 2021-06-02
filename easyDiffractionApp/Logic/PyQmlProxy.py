@@ -28,7 +28,7 @@ from easyDiffractionLib.interface import InterfaceFactory
 from easyDiffractionLib.Elements.Experiments.Experiment import Pars1D
 from easyDiffractionLib.Elements.Experiments.Pattern import Pattern1D
 
-from easyAppLogic.Utils.Utils import generalizePath
+from easyApp.Logic.Utils.Utils import generalizePath
 
 from easyDiffractionApp.Logic.DataStore import DataSet1D, DataStore
 
@@ -486,7 +486,7 @@ class PyQmlProxy(QObject):
 
     def _setPhasesAsObj(self):
         start_time = timeit.default_timer()
-        self._phases_as_obj = self._sample.phases.as_dict()['data']
+        self._phases_as_obj = self._sample.phases.as_dict(skip=['interface'])['data']
         # print("+ _setPhasesAsObj: {0:.3f} s".format(timeit.default_timer() - start_time))
         self.phasesAsObjChanged.emit()
 
@@ -562,6 +562,7 @@ class PyQmlProxy(QObject):
         atom.add_adp('Uiso', Uiso=0.0)
         phase = Phase('Dichlorine', spacegroup=space_group, cell=cell)
         phase.add_atom(atom)
+
         return phase
 
     def _onPhaseAdded(self):
@@ -675,7 +676,10 @@ class PyQmlProxy(QObject):
 
         settings = self._spaceGroupSettingList()
         current_setting = phases[self.currentPhaseIndex].spacegroup.space_group_HM_name.raw_value
-        current_number = settings.index(current_setting)
+        if current_setting in settings:
+            current_number = settings.index(current_setting)
+        else:
+            current_number = settings.index(phases[self.currentPhaseIndex].spacegroup.hermann_mauguin)
         return current_number
 
     @currentSpaceGroupSetting.setter
@@ -719,15 +723,13 @@ class PyQmlProxy(QObject):
                                   fract_z=0.05)
             atom.add_adp('Uiso', Uiso=0.0)
             self._sample.phases[self.currentPhaseIndex].add_atom(atom)
-            self._sample._updateInterface()
             self.structureParametersChanged.emit()
         except AttributeError:
             print("Error: failed to add atom")
 
     @Slot(str)
     def removeAtom(self, atom_label: str):
-        del self._sample.phases[self.currentPhaseIndex].atoms[atom_label]
-        self._sample._updateInterface()
+        self._sample.phases[self.currentPhaseIndex].remove_atom(atom_label)
         self.structureParametersChanged.emit()
 
     ####################################################################################################################
@@ -1025,7 +1027,7 @@ class PyQmlProxy(QObject):
 
     def _setPatternParametersAsObj(self):
         start_time = timeit.default_timer()
-        parameters = self._sample.pattern.as_dict()
+        parameters = self._sample.pattern.as_dict(skip=['interface'])
         self._pattern_parameters_as_obj = parameters
         print("+ _setPatternParametersAsObj: {0:.3f} s".format(timeit.default_timer() - start_time))
         self.patternParametersAsObjChanged.emit()
@@ -1058,7 +1060,7 @@ class PyQmlProxy(QObject):
 
     def _setInstrumentParametersAsObj(self):
         start_time = timeit.default_timer()
-        parameters = self._sample.parameters.as_dict()
+        parameters = self._sample.parameters.as_dict(skip=['interface'])
         self._instrument_parameters_as_obj = parameters
         print("+ _setInstrumentParametersAsObj: {0:.3f} s".format(timeit.default_timer() - start_time))
         self.instrumentParametersAsObjChanged.emit()
@@ -1180,7 +1182,8 @@ class PyQmlProxy(QObject):
                 continue
 
             # add experimental dataset name
-            par_path = par_path.replace('Instrument.', f'Instrument.{self.experimentDataAsObj[0]["name"]}.')
+            par_path = par_path.replace('Pars1D.', f'Instrument.{self.experimentDataAsObj[0]["name"]}.')
+            par_path = par_path.replace('Pattern1D.', f'Instrument.{self.experimentDataAsObj[0]["name"]}.')
 
             if self._parameters_filter_criteria.lower() not in par_path.lower():
                 continue
@@ -1357,6 +1360,7 @@ class PyQmlProxy(QObject):
 
         new_name = self.calculatorNames[new_index]
         self._interface.switch(new_name)
+        self._sample.generate_bindings()
         self.currentCalculatorChanged.emit()
 
     def _onCurrentCalculatorChanged(self):
@@ -1364,7 +1368,7 @@ class PyQmlProxy(QObject):
         data = self._data.simulations
         data = data[0]  # THIS IS WHERE WE WOULD LOOK UP CURRENT EXP INDEX
         data.name = f'{self._interface.current_interface_name} engine'
-        self._sample._updateInterface()
+        # self._sample._updateInterface()
         self.calculatedDataChanged.emit()
 
     ####################################################################################################################
@@ -1650,7 +1654,6 @@ class PyQmlProxy(QObject):
 
         self._sample = Sample.from_dict(descr['sample'])
         self._sample.interface = self._interface
-        self._sample._updateInterface()
 
         # send signal to tell the proxy we changed phases
         self.phasesEnabled.emit()

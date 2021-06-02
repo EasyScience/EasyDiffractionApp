@@ -96,7 +96,8 @@ def onlineRepositoryUrl():
     host = CONFIG['ci']['app']['setup']['ftp']['host']
     prefix = CONFIG['ci']['app']['setup']['ftp']['prefix']
     repo_subdir = CONFIG['ci']['app']['setup']['ftp']['repo_subdir']
-    return f'https://{prefix}.{host}/{repo_subdir}/{CONFIG.setup_os}'
+    #return f'https://{prefix}.{host}/{repo_subdir}/{CONFIG.setup_os}'
+    return f'ftp://u652432322.repo:easyDiffraction123@download.easydiffraction.org/{CONFIG.setup_os}'
 
 def installerConfigXml():
     try:
@@ -154,31 +155,26 @@ def installerConfigXml():
 def appPackageXml():
     try:
         message = f"create app package content"
-        description = CONFIG['tool']['poetry']['description']
-        version = CONFIG['tool']['poetry']['version']
-        release_date = "2020-01-01" #datetime.datetime.strptime(config['release']['date'], "%d %b %Y").strftime("%Y-%m-%d")
-        package_install_script = CONFIG['ci']['scripts']['package_install']
         license_id = CONFIG['tool']['poetry']['license'].replace('-only', '')
         license_name = dephell_licenses.licenses.get_by_id(license_id).name
-        requires_root = 'false'
         raw_xml = Functions.dict2xml({
             'Package': {
                 'DisplayName': CONFIG.app_name,
-                'Description': description,
-                'Version': version,
-                'ReleaseDate': release_date,
+                'Description': CONFIG['tool']['poetry']['description'],
+                'Version': CONFIG.app_version,
+                'ReleaseDate': CONFIG['release']['date_for_qtifw'],
                 'Default': 'true',
                 #'SortingPriority': 100,
                 'Essential': 'true',
                 'ForcedInstallation': 'true',
-                'RequiresAdminRights': requires_root,
+                'RequiresAdminRights': 'false',
                 'Licenses': {
                     'License': {
                         '@name': license_name,
                         '@file': CONFIG.license_file
                     }
                 },
-                'Script': package_install_script,
+                'Script': CONFIG['ci']['scripts']['package_install'],
             }
         })
         pretty_xml = xml.dom.minidom.parseString(raw_xml).toprettyxml()
@@ -250,7 +246,6 @@ def installQtInstallerFramework():
     else:
         Functions.printSuccessMessage(message)
 
-
 def prepareSignedMaintenanceTool():
     if CONFIG.setup_os != "Windows":
         return
@@ -267,7 +262,6 @@ def prepareSignedMaintenanceTool():
         sys.exit()
     else:
         Functions.printSuccessMessage(message)
-
 
 def createInstallerSourceDir():
     try:
@@ -295,8 +289,10 @@ def createInstallerSourceDir():
         Functions.createFile(path=app_package_xml_path, content=appPackageXml())
         Functions.copyFile(source=package_install_script_src, destination=app_meta_subsubdir_path)
         Functions.copyFile(source=CONFIG.license_file, destination=app_meta_subsubdir_path)
+        Functions.copyFile(source=CONFIG['release']['changelog_file'], destination=app_meta_subsubdir_path)
         Functions.moveDir(source=freezed_app_src, destination=app_data_subsubdir_path)
         Functions.copyFile(source=CONFIG.license_file, destination=app_data_subsubdir_path)
+        Functions.copyFile(source=CONFIG['release']['changelog_file'], destination=app_data_subsubdir_path)
         # TODO: change the handling of failure in all methods in Functions.py so they bubble up exceptions
         # TODO: remove this platform conditional once the above is done
         if CONFIG.os == 'windows':
@@ -329,7 +325,29 @@ def createInstallerSourceDir():
     else:
         Functions.printSuccessMessage(message)
 
-def createOnlineRepository():
+def createOfflineInstaller():
+    try:
+        message = 'create installer'
+        qtifw_bin_dir_path = os.path.join(qtifwDirPath(), 'bin')
+        qtifw_binarycreator_path = os.path.join(qtifw_bin_dir_path, 'binarycreator')
+        qtifw_installerbase_path = os.path.join(qtifw_bin_dir_path, 'installerbase')
+        setup_exe_path = os.path.join(CONFIG.dist_dir, CONFIG.setup_name)
+        Functions.run(
+            qtifw_binarycreator_path,
+            '--verbose',
+            '--offline-only',
+            '-c', configXmlPath(),
+            '-p', packagesDirPath(),
+            '-t', qtifw_installerbase_path,
+            setup_exe_path
+        )
+    except Exception as exception:
+        Functions.printFailMessage(message, exception)
+        sys.exit()
+    else:
+        Functions.printSuccessMessage(message)
+
+def createOnlineRepositoryLocally():
     try:
         message = 'create online repository'
         qtifw_bin_dir_path = os.path.join(qtifwDirPath(), 'bin')
@@ -348,28 +366,17 @@ def createOnlineRepository():
     else:
         Functions.printSuccessMessage(message)
 
-def createInstaller():
+def addFilesToLocalRepository():
     try:
-        message = 'create installer'
-        qtifw_bin_dir_path = os.path.join(qtifwDirPath(), 'bin')
-        qtifw_binarycreator_path = os.path.join(qtifw_bin_dir_path, 'binarycreator')
-        qtifw_installerbase_path = os.path.join(qtifw_bin_dir_path, 'installerbase')
-        setup_exe_path = os.path.join(CONFIG.dist_dir, CONFIG.setup_name)
-        Functions.run(
-            qtifw_binarycreator_path,
-            '--verbose',
-            #'--online-only',
-            '--offline-only',
-            '-c', configXmlPath(),
-            '-p', packagesDirPath(),
-            '-t', qtifw_installerbase_path,
-            setup_exe_path
-        )
+        message = 'add files to local repository'
+        repository_dir_path = os.path.join(CONFIG.dist_dir, localRepositoryDir())
+        Functions.copyFile(source=CONFIG['release']['changelog_file'], destination=repository_dir_path)
     except Exception as exception:
         Functions.printFailMessage(message, exception)
         sys.exit()
     else:
         Functions.printSuccessMessage(message)
+
 
 if __name__ == "__main__":
     downloadQtInstallerFramework()
@@ -377,5 +384,6 @@ if __name__ == "__main__":
     installQtInstallerFramework()
     prepareSignedMaintenanceTool()
     createInstallerSourceDir()
-    createOnlineRepository()
-    createInstaller()
+    createOfflineInstaller()
+    createOnlineRepositoryLocally()
+    addFilesToLocalRepository()

@@ -15,8 +15,9 @@ from PySide2.QtWebEngineWidgets import QWebEnginePage, QWebEngineView  # to call
 
 # easyScience
 import utils
-import easyAppGui
-from easyAppLogic.Translate import Translator
+import easyApp as easyApp2
+from easyApp.Logic.Translate import Translator
+from easyApp.Logic.Maintenance import Updater
 from easyDiffractionApp.Logic.PyQmlProxy import PyQmlProxy
 
 # Global vars
@@ -39,7 +40,7 @@ def main():
                     help='run the application in test mode: run the tutorial, record a video and exit the application')
     args = parser.parse_args()
     if args.logtofile:
-        import easyAppLogic.Logging
+        import easyApp.Logging
 
     # Paths
     app_name = CONFIG['tool']['poetry']['name']
@@ -50,7 +51,9 @@ def main():
 
     main_qml_path = QUrl.fromLocalFile(os.path.join(package_path, 'Gui', 'main.qml'))
     gui_path = str(QUrl.fromLocalFile(package_path).toString())
-    easyAppGui_path = os.path.join(easyAppGui.__path__[0], '..')
+    app_icon_path = os.path.join(package_path, 'Gui', 'Resources', 'Logo', 'App.png')
+    easyApp_path = os.path.join(easyApp2.__path__[0], '..')
+
 
     home_path = pathlib.Path.home()
     settings_path = str(home_path.joinpath(f'.{app_name}', 'settings.ini'))
@@ -68,8 +71,9 @@ def main():
     app.setApplicationVersion(CONFIG['tool']['poetry']['version'])
     app.setOrganizationName(CONFIG['tool']['poetry']['name'])
     app.setOrganizationDomain(CONFIG['tool']['poetry']['name'])
-    app.setWindowIcon(QIcon(os.path.join(package_path, 'Gui', 'Resources', 'Logo', 'App.png')))
+    app.setWindowIcon(QIcon(app_icon_path))
 
+    app.setWindowIcon(QIcon(os.path.join(package_path, 'Gui', 'Resources', 'Logo', 'App.png')))
     # QML application engine
     engine = QQmlApplicationEngine()
 
@@ -85,8 +89,11 @@ def main():
     engine.rootContext().setContextProperty('_isTestMode', args.testmode)
     engine.rootContext().setContextProperty('_isSystemThemeDark', darkdetect.isDark())
 
+    # Register types to be instantiated in QML
+    qmlRegisterType(Updater, 'easyApp.Logic.Maintenance', 1, 0, 'Updater')
+
     # Add paths to search for installed modules
-    engine.addImportPath(easyAppGui_path)
+    engine.addImportPath(easyApp_path)
     engine.addImportPath(gui_path)
 
     # Load the root QML file

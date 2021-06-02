@@ -187,7 +187,7 @@
                                     "@class": "Specie",
                                     "@version": "0.0.1",
                                     "specie": {
-                                        "@module": "easyCore.Elements.peridic_table",
+                                        "@module": "easyCore.Elements.periodic_table",
                                         "@class": "Species",
                                         "element": "Dy",
                                         "oxidation_state": 3.0
@@ -328,7 +328,7 @@
                                     "@class": "Specie",
                                     "@version": "0.0.1",
                                     "specie": {
-                                        "@module": "easyCore.Elements.peridic_table",
+                                        "@module": "easyCore.Elements.periodic_table",
                                         "@class": "Species",
                                         "element": "Al",
                                         "oxidation_state": 3.0
@@ -469,7 +469,7 @@
                                     "@class": "Specie",
                                     "@version": "0.0.1",
                                     "specie": {
-                                        "@module": "easyCore.Elements.peridic_table",
+                                        "@module": "easyCore.Elements.periodic_table",
                                         "@class": "Species",
                                         "element": "Al",
                                         "oxidation_state": 3.0
@@ -610,7 +610,7 @@
                                     "@class": "Specie",
                                     "@version": "0.0.1",
                                     "specie": {
-                                        "@module": "easyCore.Elements.peridic_table",
+                                        "@module": "easyCore.Elements.periodic_table",
                                         "@class": "Species",
                                         "element": "O",
                                         "oxidation_state": -2.0

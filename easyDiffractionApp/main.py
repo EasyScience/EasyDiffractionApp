@@ -30,6 +30,7 @@ class App(QApplication):
         QApplication.setAttribute(Qt.AA_UseDesktopOpenGL)
         super(App, self).__init__(sys_argv)
 
+
 def main():
     # Arguments
     parser = argparse.ArgumentParser()

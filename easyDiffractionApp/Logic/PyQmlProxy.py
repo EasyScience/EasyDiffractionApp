@@ -664,6 +664,7 @@ class PyQmlProxy(QObject):
             print("***** _onCurrentCalculatorChanged")
             self.lc.state._onCurrentCalculatorChanged()
             self.lc.state._updateCalculatedData()
+            self.currentCalculatorChanged.emit()
 
     ####################################################################################################################
     # Fitting

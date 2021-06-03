@@ -695,7 +695,9 @@ class StateLogic(QObject):
                 continue
 
             # add experimental dataset name
-            par_path = par_path.replace('Instrument.', f'Instrument.{self.experimentDataAsObj()[0]["name"]}.')
+            par_path = par_path.replace('Pars1D.', f'Instrument.{self.experimentDataAsObj()[0]["name"]}.')
+            par_path = par_path.replace('Pattern1D.', f'Instrument.{self.experimentDataAsObj()[0]["name"]}.')
+            # par_path = par_path.replace('Instrument.', f'Instrument.{self.experimentDataAsObj()[0]["name"]}.')
 
             if self._parameters_filter_criteria.lower() not in par_path.lower():  # noqa: E501
                 continue

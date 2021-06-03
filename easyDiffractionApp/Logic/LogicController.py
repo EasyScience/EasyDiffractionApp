@@ -182,7 +182,7 @@ class LogicController(QObject):
         if self.currentCalculatorIndex == new_index:
             return False
         new_name = self._interface.available_interfaces[new_index]
-        self._interface.switch(new_name)
+        self.state._sample.switch_interface(new_name)
         return True
 
     def currentMinimizerMethodName(self):

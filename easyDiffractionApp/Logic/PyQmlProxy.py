@@ -771,6 +771,7 @@ class PyQmlProxy(QObject):
     @Slot(str)
     def loadExampleProject(self, filepath):
         self.lc.state._loadProjectAs(filepath)
+        self.lc._background_proxy.onAsObjChanged()
         self.currentProjectPath = '--- EXAMPLE ---'
         self.stateChanged.emit(False)
 

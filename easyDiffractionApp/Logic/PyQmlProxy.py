@@ -238,15 +238,15 @@ class PyQmlProxy(QObject):
     def phasesAsCif(self):
         return self.lc.state._phases_as_cif
 
-    @Property(str, notify=phasesAsCifChanged)
-    def phasesAsExtendedCif(self):
-        return self.lc.state.phasesAsExtendedCif()
-
     @phasesAsCif.setter
     @property_stack_deco
     def phasesAsCif(self, phases_as_cif):
         self.lc.state.phasesAsCif(phases_as_cif)
         self.lc.parametersChanged.emit()
+
+    @Property(str, notify=phasesAsCifChanged)
+    def phasesAsExtendedCif(self):
+        return self.lc.state.phasesAsExtendedCif()
 
     def _setPhasesAsObj(self):
         start_time = timeit.default_timer()

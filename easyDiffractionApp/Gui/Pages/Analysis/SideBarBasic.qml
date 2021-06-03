@@ -185,10 +185,9 @@ EaComponents.SideBarColumn {
             // temporarily disabled
             // enabled: ExGlobals.Constants.proxy.experimentLoaded
             enabled: ExGlobals.Constants.proxy.experimentLoaded && ExGlobals.Constants.proxy.isFitFinished
-            fontIcon: ExGlobals.Constants.proxy.isFitFinished ? "play-circle" : "pause-circle"
+            fontIcon: ExGlobals.Constants.proxy.isFitFinished ? "play-circle" : "stop-circle"
             // temporarily modified
-            // text: ExGlobals.Constants.proxy.isFitFinished ? qsTr("Start fitting") : qsTr("Stop fitting")
-            text: ExGlobals.Constants.proxy.isFitFinished ? qsTr("Start fitting") : qsTr("Fitting in progress")
+            text: ExGlobals.Constants.proxy.isFitFinished ? qsTr("Start fitting") : qsTr("Stop fitting")
             onClicked: ExGlobals.Constants.proxy.fit()
             Component.onCompleted: ExGlobals.Variables.startFittingButton = this
         }

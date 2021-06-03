@@ -14,19 +14,21 @@ EaComponents.SideBarColumn {
         title: qsTr("Calculation")
 
         Row {
-            spacing: EaStyle.Sizes.fontPixelSize
+            spacing: minimizerRow.spacing
 
             // Minimizer
             EaComponents.TableViewLabel{
                 horizontalAlignment: Text.AlignRight
-                width: EaStyle.Sizes.fontPixelSize * 5.0
+                width: minimizerLabel.width
                 text: qsTr("Engine:")
             }
             EaElements.ComboBox {
                 width: minimizerSelector.width
+
                 model: ExGlobals.Constants.proxy.calculatorNames
                 currentIndex: ExGlobals.Constants.proxy.currentCalculatorIndex
                 onCurrentIndexChanged: ExGlobals.Constants.proxy.currentCalculatorIndex = currentIndex
+
                 Component.onCompleted: ExGlobals.Variables.calculatorSelector = this
             }
         }
@@ -39,6 +41,8 @@ EaComponents.SideBarColumn {
         enabled: ExGlobals.Constants.proxy.experimentLoaded
 
         Row {
+            id: minimizerRow
+
             spacing: EaStyle.Sizes.fontPixelSize
 
             // Minimizer
@@ -46,13 +50,13 @@ EaComponents.SideBarColumn {
                 id: minimizerLabel
 
                 horizontalAlignment: Text.AlignRight
-                width: EaStyle.Sizes.fontPixelSize * 5.0
+                width: EaStyle.Sizes.fontPixelSize * 4.5
                 text: qsTr("Minimizer:")
             }
             EaElements.ComboBox {
                 id: minimizerSelector
 
-                width: (EaStyle.Sizes.sideBarContentWidth - minimizerLabel.width * 2 - EaStyle.Sizes.fontPixelSize * 4) / 2
+                width: (EaStyle.Sizes.sideBarContentWidth - minimizerLabel.width * 2 - minimizerRow.spacing * 3) / 2
 
                 model: ExGlobals.Constants.proxy.minimizerNames
                 currentIndex: ExGlobals.Constants.proxy.currentMinimizerIndex
@@ -61,9 +65,6 @@ EaComponents.SideBarColumn {
                     ExGlobals.Constants.proxy.currentMinimizerIndex = currentIndex
                 }
             }
-
-            // Spacer
-            Item {}
 
             // Method
             EaComponents.TableViewLabel{

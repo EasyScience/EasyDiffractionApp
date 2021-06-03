@@ -650,7 +650,8 @@ class PyQmlProxy(QObject):
 
     @Property('QVariant', notify=dummySignal)
     def calculatorNames(self):
-        return self.lc._interface.available_interfaces
+        names = [f'{name} (experimental)' if name in ['CrysFML', 'GSASII'] else name for name in self.lc._interface.available_interfaces]
+        return names
 
     @Property(int, notify=currentCalculatorChanged)
     def currentCalculatorIndex(self):

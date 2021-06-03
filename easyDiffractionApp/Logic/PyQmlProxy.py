@@ -214,7 +214,10 @@ class PyQmlProxy(QObject):
 
     @stateHasChanged.setter
     def stateHasChanged(self, changed: bool):
+        if self.lc.state._state_changed == changed:
+            return
         self.lc.state.stateHasChanged(changed)
+        self.stateChanged.emit(changed)  # TODO: Move to State.py
 
     def _onStateChanged(self, changed=True):
         self.stateHasChanged = changed
@@ -664,7 +667,7 @@ class PyQmlProxy(QObject):
             print("***** _onCurrentCalculatorChanged")
             self.lc.state._onCurrentCalculatorChanged()
             self.lc.state._updateCalculatedData()
-            self.currentCalculatorChanged.emit()
+            self.currentCalculatorChanged.emit()  # TODO: Move to State.py
 
     ####################################################################################################################
     # Fitting

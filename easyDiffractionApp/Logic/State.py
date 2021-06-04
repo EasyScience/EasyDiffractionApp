@@ -442,7 +442,7 @@ class StateLogic(QObject):
 
     def addDefaultPhase(self):
         borg.stack.enabled = False
-        self._sample.phases = self._defaultPhase()
+        self._sample.phases.append(self._defaultPhase())
         borg.stack.enabled = True
 
     def _defaultPhase(self):

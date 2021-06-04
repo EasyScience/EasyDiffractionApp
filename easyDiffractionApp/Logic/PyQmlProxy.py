@@ -794,6 +794,7 @@ class PyQmlProxy(QObject):
         self.lc.chartsLogic._plotting_1d_proxy.clearBackendState()
         self.lc.chartsLogic._plotting_1d_proxy.clearFrontendState()
         self.resetUndoRedoStack()
+        self.experimentDataChanged.emit()
         self.stateChanged.emit(False)
 
     ####################################################################################################################

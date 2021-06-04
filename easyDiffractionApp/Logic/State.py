@@ -101,7 +101,7 @@ class StateLogic(QObject):
 
         data.append(
             DataSet1D(
-                name='D1A@ILL data',
+                name='PND',
                 x=x_data, y=np.zeros_like(x_data),
                 x_label='2theta (deg)', y_label='Intensity',
                 data_type='experiment'
@@ -401,7 +401,7 @@ class StateLogic(QObject):
                         pattern=Pattern1D.default(),
                         interface=self._interface)
         sample.pattern.zero_shift = 0.0
-        sample.pattern.scale = 1.0
+        sample.pattern.scale = 100.0
         sample.parameters.wavelength = 1.912
         sample.parameters.resolution_u = 0.1447
         sample.parameters.resolution_v = -0.4252

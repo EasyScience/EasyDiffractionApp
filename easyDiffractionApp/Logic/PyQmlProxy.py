@@ -578,7 +578,6 @@ class PyQmlProxy(QObject):
 
     def _setParametersAsObj(self):
         start_time = timeit.default_timer()
-
         self.lc.state._setParametersAsObj()
         print("+ _setParametersAsObj: {0:.3f} s".format(timeit.default_timer() - start_time))
         self.parametersAsObjChanged.emit()
@@ -827,6 +826,5 @@ class PyQmlProxy(QObject):
 
     @Slot()
     def resetUndoRedoStack(self):
-
         self.lc.stackLogic.resetUndoRedoStack()
         self.undoRedoChanged.emit()

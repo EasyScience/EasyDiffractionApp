@@ -24,7 +24,7 @@ Item {
 
             source: ExGlobals.Constants.appLogo
             anchors.horizontalCenter: parent.horizontalCenter
-            width: EaStyle.Sizes.fontPixelSize * 6
+            width: EaStyle.Sizes.fontPixelSize * 5
             fillMode: Image.PreserveAspectFit
             antialiasing: true
             opacity: 0
@@ -35,7 +35,7 @@ Item {
         Row {
             id: appName
 
-            property var fontFamily: EaStyle.Fonts.secondCondensedFontFamily
+            property var fontFamily: EaStyle.Fonts.thirdFontFamily
             property var fontPixelSize: EaStyle.Sizes.fontPixelSize * 4
 
             anchors.horizontalCenter: parent.horizontalCenter
@@ -44,12 +44,13 @@ Item {
             EaElements.Label {
                 font.family: parent.fontFamily
                 font.pixelSize: parent.fontPixelSize
-                font.weight: Font.ExtraLight
+                font.weight: Font.Light
                 text: ExGlobals.Constants.appPrefixName
             }
             EaElements.Label {
                 font.family: parent.fontFamily
                 font.pixelSize: parent.fontPixelSize
+                font.weight: Font.DemiBold
                 text: ExGlobals.Constants.appSuffixName
             }
         }

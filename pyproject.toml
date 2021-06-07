@@ -50,7 +50,7 @@ easyDiffraction = 'easyDiffractionApp.main:main'
 # CUSTOM CONFIG
 
 [release]
-date_for_qtifw = '2021-06-03' # YYYY-MM-DD, e.g. 2021-05-30
+date_for_qtifw = '2021-06-07' # YYYY-MM-DD, e.g. 2021-05-30
 tag_template = 'v{VERSION}'
 title_template = 'Version {VERSION} ({DATE})'
 description_file = 'RELEASE.md'

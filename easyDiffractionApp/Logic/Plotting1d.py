@@ -483,4 +483,3 @@ class Plotting1dLogic(QObject):
         xarray = Plotting1dLogic.aroundX(xarray)
         yarray = Plotting1dLogic.aroundY(yarray)
         return [QPointF(x, y) for x, y in zip(xarray, yarray)]
-

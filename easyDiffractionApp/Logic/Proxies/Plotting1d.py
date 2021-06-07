@@ -1,11 +1,9 @@
 __author__ = 'github.com/andrewsazonov'
 __version__ = '0.0.1'
 
-from PySide2.QtCore import QObject, Qt, QPointF, Signal, Slot, Property
-from PySide2.QtGui import QImage, QBrush
-from PySide2.QtQml import QJSValue
-from PySide2.QtCharts import QtCharts
+from PySide2.QtCore import QObject, Signal, Slot, Property
 from easyDiffractionApp.Logic.Plotting1d import Plotting1dLogic
+
 
 class Plotting1dProxy(QObject):
     """
@@ -40,7 +38,7 @@ class Plotting1dProxy(QObject):
         # connect logic signal to proxy signal
         self.logic.currentLibChanged.connect(self.currentLibChanged)
 
-       # Ranges
+        # Ranges
         self.logic.experimentPlotRangesObjChanged.connect(self.experimentPlotRangesObjChanged)
         self.logic.analysisPlotRangesObjChanged.connect(self.analysisPlotRangesObjChanged)
 
@@ -57,7 +55,7 @@ class Plotting1dProxy(QObject):
         self.logic.qtchartsBraggDataObjChanged.connect(self.qtchartsBraggDataObjChanged)
         self.logic.qtchartsBackgroundDataObjChanged.connect(self.qtchartsBackgroundDataObjChanged)
 
-     # Libs for GUI
+    # Libs for GUI
     @Property('QVariant', notify=dummySignal)
     def libs(self):
         return self.logic._libs
@@ -124,8 +122,7 @@ class Plotting1dProxy(QObject):
     @Slot('QVariant', 'QVariant')
     def lineSeriesCustomReplace(self, line_series, points):
         self.logic.lineSeriesCustomReplace(line_series, points)
- 
+
     @Slot(int, str, result='QBrush')
     def verticalLine(self, size, color):
         return self.logic.verticalLine(size, color)
-

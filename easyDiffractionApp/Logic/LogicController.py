@@ -51,9 +51,9 @@ class LogicController(QObject):
 
         # background logic
         self._background_proxy = self.proxy._background_proxy
-        self._background_proxy.asObjChanged.connect(self.proxy._onParametersChanged)
-        self._background_proxy.asObjChanged.connect(self.state._sample.set_background)
-        self._background_proxy.asObjChanged.connect(self.state._updateCalculatedData)
+        self._background_proxy.logic.asObjChanged.connect(self.proxy._onParametersChanged)
+        self._background_proxy.logic.asObjChanged.connect(self.state._sample.set_background)
+        self._background_proxy.logic.asObjChanged.connect(self.state._updateCalculatedData)
         self._background_proxy.asXmlChanged.connect(self.updateChartBackground)
 
         # parameters slots
@@ -63,7 +63,7 @@ class LogicController(QObject):
         self.parametersChanged.connect(self.proxy._onStructureParametersChanged)
         self.parametersChanged.connect(self.proxy._onPatternParametersChanged)
         self.parametersChanged.connect(self.proxy._onInstrumentParametersChanged)
-        self.parametersChanged.connect(self._background_proxy.onAsObjChanged)
+        self.parametersChanged.connect(self._background_proxy.logic.onAsObjChanged)
         self.parametersChanged.connect(self.proxy.undoRedoChanged)
 
         # Screen recorder

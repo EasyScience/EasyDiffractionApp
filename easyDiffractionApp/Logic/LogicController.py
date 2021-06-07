@@ -7,7 +7,7 @@ from easyDiffractionLib.interface import InterfaceFactory
 from easyDiffractionApp.Logic.State import StateLogic
 from easyDiffractionApp.Logic.Fitter import FitterLogic as FitterLogic
 from easyDiffractionApp.Logic.Stack import StackLogic
-from easyDiffractionApp.Logic.Charts import ChartsLogic
+from easyDiffractionApp.Logic.Plotting3d import Plotting3dLogic
 
 
 class LogicController(QObject):
@@ -31,7 +31,7 @@ class LogicController(QObject):
                                 interface=self._interface)
 
         # chart logic
-        self.chartsLogic = ChartsLogic(self)
+        self.plotting3d = Plotting3dLogic(self)
 
         # stack logic
         no_history = [self.parametersChanged]
@@ -122,7 +122,7 @@ class LogicController(QObject):
     def updateChartBackground(self):
         if self._background_proxy.asObj is None:
             return
-        self.proxy._plotting_1d_proxy.setBackgroundData(
+        self.proxy._plotting_1d_proxy.logic.setBackgroundData(
                                 self._background_proxy.asObj.x_sorted_points,
                                 self._background_proxy.asObj.y_sorted_points)
 
@@ -136,7 +136,7 @@ class LogicController(QObject):
 
     def _onExperimentDataAdded(self):
         print("***** _onExperimentDataAdded")
-        self.proxy._plotting_1d_proxy.setMeasuredData(
+        self.proxy._plotting_1d_proxy.logic.setMeasuredData(
                                             self.state._experiment_data.x,
                                             self.state._experiment_data.y,
                                             self.state._experiment_data.e)
@@ -201,7 +201,7 @@ class LogicController(QObject):
         return self.state.statusModelAsXml(engine_name, minimizer_name)
 
     def plotCalculatedData(self, data):
-        self.proxy._plotting_1d_proxy.setCalculatedData(data[0], data[1])
+        self.proxy._plotting_1d_proxy.logic.setCalculatedData(data[0], data[1])
 
     def plotBraggData(self, data):
-        self.proxy._plotting_1d_proxy.setBraggData(data[0], data[1], data[2], data[3])  # noqa: E501
+        self.proxy._plotting_1d_proxy.logic.setBraggData(data[0], data[1], data[2], data[3])  # noqa: E501

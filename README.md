@@ -62,6 +62,10 @@ In the **Finder**, locate the **easyDiffraction installer app**, then _control-c
 
 Run **MaintenanceTool** from the **easyDiffraction** installation directory, select _Remove all components_ and follow the instructions.
 
+### Common Issues
+
+- On Linux based system there can be the following error on startup: `Failed to create OpenGL context for format QSurfaceFormat`. This is due to a system OpenGL driver problem. Please re-install your graphics card drivers.
+
 ## Get in touch
 
 For general questions or comments, please contact us at [support@easydiffraction.org](mailto:support@easydiffraction.org).

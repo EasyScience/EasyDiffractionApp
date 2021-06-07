@@ -6,14 +6,14 @@ build-backend = 'poetry.masonry.api'
 
 [tool.poetry]
 name = 'easyDiffraction'
-version = '0.8.0-beta.1'
+version = '0.8.1-beta'
 description = 'Making diffraction data analysis and modelling easy.'
 license = 'GPL-3.0-only'
 authors = ['Andrew Sazonov', 'Simon Ward']
 readme = 'README.md'
-homepage = 'https://github.com/easyScience/easyDiffractionApp'
-repository = 'https://easyscience.apptimity.com/'
-documentation = 'https://github.com/easyScience/easyDiffractionApp'
+homepage = 'https://easydiffraction.org'
+repository = 'https://download.easydiffraction.org/'
+documentation = 'https://easydiffraction.org'
 include = ['CHANGELOG.md']
 packages = [ { include = 'easyDiffractionApp' } ]
 
@@ -23,14 +23,13 @@ darkdetect = '^0.3.1'
 pyobjc-core = { version = '^7.1', platform = 'darwin' }
 pyobjc-framework-cocoa = { version = '^7.1', platform = 'darwin' }
 # easyScience
-easyDiffractionLib = { git = 'https://github.com/easyScience/easyDiffractionLib.git', rev = 'sprint12' }
-easyAppLogic = { git = 'https://github.com/easyScience/easyAppLogic.git', rev = 'develop' }
-easyAppGui = { git = 'https://github.com/easyScience/easyAppGui.git', rev = 'sprint12' }
+easyDiffractionLib = { git = 'https://github.com/easyScience/easyDiffractionLib.git', rev = 'sprint13' }
+easyApp = { git = 'https://github.com/easyScience/easyApp.git', rev = 'develop' }
 
 #[tool.poetry.dev-dependencies]
 # PyInstaller
-pyinstaller = '^4.3'
-#pyinstaller = { git = 'https://github.com/pyinstaller/pyinstaller.git', rev = 'develop' }
+#pyinstaller = '^4.3'
+pyinstaller = { git = 'https://github.com/pyinstaller/pyinstaller.git', rev = 'develop' }
 pywin32-ctypes = { version = '^0.2.0', platform = 'win32' }
 pypiwin32 = { version = '^223', platform = 'win32' }
 pefile = { version = '^2019.4.18', platform = 'win32' }
@@ -40,8 +39,8 @@ requests = '^2.25.1'
 dephell_licenses = '^0.1.7'
 ffmpeg-python = '^0.2.0'
 mss = '^6.1.0'
-opencv-python = '^4.5.1'
-#googletrans = "3.1.0a0"
+#opencv-python = '^4.5.1'
+opencv-python = '4.5.1.48'
 google-trans-new = "^1.1.9"
 gTTS = '^2.2.2'
 
@@ -49,6 +48,13 @@ gTTS = '^2.2.2'
 easyDiffraction = 'easyDiffractionApp.main:main'
 
 # CUSTOM CONFIG
+
+[release]
+date_for_qtifw = '2021-06-07' # YYYY-MM-DD, e.g. 2021-05-30
+tag_template = 'v{VERSION}'
+title_template = 'Version {VERSION} ({DATE})'
+description_file = 'RELEASE.md'
+changelog_file = 'CHANGELOG.md'
 
 [ci.project]
 license_file = 'LICENSE.md' # how to combine this with tool.poetry.license???

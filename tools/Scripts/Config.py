@@ -3,6 +3,7 @@ __version__ = '0.0.1'
 
 import os, sys
 import pathlib
+import datetime
 import Functions
 
 
@@ -41,6 +42,11 @@ class Config():
 
         # Application repository
         self.repository_dir_suffix = self.__dict__['ci']['app']['setup']['repository_dir_suffix']
+
+        # Release
+        self.release_date = datetime.datetime.strptime(self.__dict__['release']['date_for_qtifw'], "%Y-%m-%d").strftime("%d %b %Y")
+        self.release_tag = self.__dict__['release']['tag_template'].replace('{VERSION}', self.app_version)
+        self.release_title = self.__dict__['release']['title_template'].replace('{VERSION}', self.app_version).replace('{DATE}', self.release_date)
 
         # Project
         self.package_name = f'{self.app_name}App'
@@ -84,3 +90,6 @@ class Config():
             dir_shortcut = '/Applications'  # @ApplicationsDir@ = @ApplicationsDirUser@ [BUG in QTIFW?]
         dir = os.path.join(dir_shortcut, self.app_name)
         return dir
+
+if __name__ == "__main__":
+    Config()

@@ -10,9 +10,10 @@ class BackgroundLogic(QObject):
     asObjChanged = Signal('QVariant')
     asXmlChanged = Signal()
 
-    def __init__(self, parent):
+    def __init__(self, parent, sample=None):
         super().__init__(parent)
         self.parent = parent
+        self._sample = sample
         self._background_as_xml = ""
         self.asObjChanged.connect(self.onAsObjChanged)
         self._bg_types = {
@@ -64,7 +65,7 @@ class BackgroundLogic(QObject):
         container = None
         if container_type is None:
             container = self._bg_types[self._default_type]['container']
-        self.parent.lc.state._sample.pattern.backgrounds.append(
+        self._sample.pattern.backgrounds.append(
             # TODO we will be the current exp name and use it here.
             container(linked_experiment=experiment_name)
         )

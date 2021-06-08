@@ -3,16 +3,17 @@ from PySide2.QtCore import Signal, QObject, QThread
 from threading import Thread
 
 from easyCore.Fitting.Fitting import Fitter as CoreFitter
-from easyCore import borg
+# from easyCore import borg
 
 
-class FitterLogic(QObject):
+class FittingLogic(QObject):
     """
     Logic related to the fitter setup
     """
     fitFinished = Signal()
     fitStarted = Signal()
     currentMinimizerChanged = Signal()
+    currentMinimizerMethodChanged = Signal()
     finished = Signal(dict)
 
     def __init__(self, parent=None, sample=None, fit_func=""):
@@ -31,6 +32,7 @@ class FitterLogic(QObject):
 
         self.fit_thread = Thread(target=self.fit_threading)
         self.finished.connect(self._setFitResults)
+        self.fitFinished.emit()
 
     def fit_threading(self):
         data = self.data
@@ -148,7 +150,7 @@ class FitterLogic(QObject):
             # Bypass the property as it would be added to the stack.
             self._current_minimizer_method_index = idx
             self._current_minimizer_method_name = self.minimizerMethodNames()[idx]  # noqa: E501
-            self.currentMinimizerChanged.emit()
+            self.currentMinimizerMethodChanged.emit()
         return
 
     def minimizerMethodNames(self):
@@ -166,6 +168,7 @@ class FitterLogic(QObject):
 
         self._current_minimizer_method_index = new_index
         self._current_minimizer_method_name = self.minimizerMethodNames()[new_index]  # noqa: E501
+        self.currentMinimizerMethodChanged.emit()
 
 
 class Fitter(QThread):

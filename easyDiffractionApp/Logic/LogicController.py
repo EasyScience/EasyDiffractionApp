@@ -2,10 +2,10 @@ import json
 
 from PySide2.QtCore import QObject, Signal
 
-from easyDiffractionLib.interface import InterfaceFactory
+# from easyDiffractionLib.interface import InterfaceFactory
 
-from easyDiffractionApp.Logic.State import StateLogic
-from easyDiffractionApp.Logic.Fitter import FitterLogic as FitterLogic
+# from easyDiffractionApp.Logic.State import StateLogic
+# from easyDiffractionApp.Logic.Fitter import FitterLogic as FitterLogic
 from easyDiffractionApp.Logic.Stack import StackLogic
 from easyDiffractionApp.Logic.Plotting3d import Plotting3dLogic
 
@@ -14,11 +14,14 @@ class LogicController(QObject):
     parametersChanged = Signal()
     phaseAdded = Signal()
 
-    def __init__(self, parent):
+    def __init__(self, parent, state=None, interface=None):
         super().__init__(parent)
         self.proxy = parent
         self._fit_results = ""
-        self._interface = InterfaceFactory()
+        # self._interface = InterfaceFactory()
+        # temporary kludge
+        self.state = state
+        self._interface = interface
 
         self.initialize()
         self.mapSignals()
@@ -27,8 +30,8 @@ class LogicController(QObject):
         # initialize various logic components
 
         # main logic
-        self.state = StateLogic(self,
-                                interface=self._interface)
+        #self.state = StateLogic(self,
+        #                        interface=self._interface)
 
         # chart logic
         self.plotting3d = Plotting3dLogic(self)
@@ -42,12 +45,13 @@ class LogicController(QObject):
 
         # fitter logic
         #####################################################
-        self.fitLogic = FitterLogic(self, self.state._sample,
-                                    self._interface.fit_func)
-        self._fit_results = self.fitLogic._defaultFitResults()
+        #self.fitLogic = FittingLogic(self, self.state._sample,
+        #                            self._interface.fit_func)
+        self._fitting_proxy = self.proxy._fitting_proxy
+        # self._fit_results = self.fitLogic._defaultFitResults()
         # communication between logic and proxy notifiers
-        self.fitLogic.fitFinished.connect(self.onFitFinished)
-        self.fitLogic.fitStarted.connect(self.onFitStarted)
+        self._fitting_proxy.fitResultsChanged.connect(self.onFitFinished)
+        # self.fitLogic.fitStarted.connect(self.onFitStarted)
 
         # background logic
         self._background_proxy = self.proxy._background_proxy
@@ -87,10 +91,10 @@ class LogicController(QObject):
         self.state.undoRedoChanged.connect(self.proxy.undoRedoChanged)
         self.state.resetUndoRedoStack.connect(self.proxy.resetUndoRedoStack)
         self.state.removePhaseSignal.connect(self.removePhase)
-        self.state.currentMinimizerIndex.connect(self.fitLogic.currentMinimizerIndex)
-        self.state.currentMinimizerMethodIndex.connect(self.currentMinimizerMethodIndex)
+        self.state.currentMinimizerIndex.connect(self._fitting_proxy.logic.setCurrentMinimizerIndex)
+        self.state.currentMinimizerMethodIndex.connect(self._fitting_proxy.logic.currentMinimizerMethodIndex)
 
-        self.fitLogic.currentMinimizerChanged.connect(self.proxy.currentMinimizerChanged)
+        # self._fitting_proxy.logic.currentMinimizerChanged.connect(self.proxy.currentMinimizerChanged)
         self.state.plotCalculatedDataSignal.connect(self.plotCalculatedData)
         self.state.plotBraggDataSignal.connect(self.plotBraggData)
 
@@ -126,12 +130,12 @@ class LogicController(QObject):
                                 self._background_proxy.asObj.x_sorted_points,
                                 self._background_proxy.asObj.y_sorted_points)
 
-    def onFitStarted(self):
-        self.proxy.fitFinishedNotify.emit()
+    # def onFitStarted(self):
+    #     self.proxy.fitFinishedNotify.emit()
 
     def onFitFinished(self):
-        self.proxy.fitResultsChanged.emit()
-        self.proxy.fitFinishedNotify.emit()
+    #     self.proxy.fitResultsChanged.emit()
+    #     self.proxy.fitFinishedNotify.emit()
         self.parametersChanged.emit()
 
     def _onExperimentDataAdded(self):
@@ -149,7 +153,7 @@ class LogicController(QObject):
         # self.state.simulationParametersAsObj(json.dumps(self.state._experiment_parameters))
 
         if len(self.state._sample.pattern.backgrounds) == 0:
-            self._background_proxy.initializeContainer()
+            self._background_proxy.logic.initializeContainer()
 
         self.proxy.experimentDataChanged.emit()
         self.proxy.projectInfoAsJson['experiments'] = \
@@ -167,18 +171,18 @@ class LogicController(QObject):
     def samplesPresent(self):
         return len(self.state._sample.phases) > 0
 
-    def minimizerNames(self):
-        return self.fitLogic.fitter.available_engines
+    # def minimizerNames(self):
+    #     return self._fitting_proxy.logic.fitter.available_engines
 
-    def minimizerMethodNames(self):
-        return self.fitLogic.minimizerMethodNames()
+    # def minimizerMethodNames(self):
+    #     return self._fitting_proxy.logic.minimizerMethodNames()
 
     def currentCalculatorIndex(self):
         return self._interface.available_interfaces.index(self._interface.current_interface_name)
 
     def currentMinimizerMethodIndex(self, new_index: int):
-        self.fitLogic.currentMinimizerMethodIndex(new_index)
-        self.proxy.currentMinimizerMethodChanged.emit()
+        self._fitting_proxy.logic.currentMinimizerMethodIndex(new_index)
+        self.proxy._fitting_proxy.currentMinimizerMethodChanged.emit()
 
     def setCurrentCalculatorIndex(self, new_index: int):
         if self.currentCalculatorIndex == new_index:
@@ -188,16 +192,16 @@ class LogicController(QObject):
         return True
 
     def currentMinimizerMethodName(self):
-        return self.fitLogic._current_minimizer_method_name
+        return self._fitting_proxy.logic._current_minimizer_method_name
 
     def statusModelAsObj(self):
-        engine_name = self.fitLogic.fitter.current_engine.name
-        minimizer_name = self.fitLogic._current_minimizer_method_name
+        engine_name = self._fitting_proxy.logic.fitter.current_engine.name
+        minimizer_name = self._fitting_proxy.logic._current_minimizer_method_name
         return self.state.statusModelAsObj(engine_name, minimizer_name)
 
     def statusModelAsXml(self):
-        engine_name = self.fitLogic.fitter.current_engine.name
-        minimizer_name = self.fitLogic._current_minimizer_method_name
+        engine_name = self._fitting_proxy.logic.fitter.current_engine.name
+        minimizer_name = self._fitting_proxy.logic._current_minimizer_method_name
         return self.state.statusModelAsXml(engine_name, minimizer_name)
 
     def plotCalculatedData(self, data):

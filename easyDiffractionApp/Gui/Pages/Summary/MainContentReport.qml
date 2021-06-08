@@ -14,7 +14,7 @@ import Gui.Globals 1.0 as ExGlobals
 Item {
     id: container
 
-    property bool isFitting: typeof ExGlobals.Constants.proxy.fitResults.redchi2 !== 'undefined'
+    property bool isFitting: typeof ExGlobals.Constants.proxy.fitting.fitResults.redchi2 !== 'undefined'
     property bool hasPhases: Object.keys(ExGlobals.Constants.proxy.phasesAsObj).length !== 0
     property string htmlBackground: EaStyle.Colors.contentBackground
     property int chartWidth: 520

@@ -11,6 +11,8 @@ from easyDiffractionApp.Logic.LogicController import LogicController
 from easyDiffractionApp.Logic.Proxies.Plotting1d import Plotting1dProxy
 from easyDiffractionApp.Logic.Proxies.Plotting3d import Plotting3dProxy
 from easyDiffractionApp.Logic.Proxies.Background import BackgroundProxy
+from easyDiffractionApp.Logic.Proxies.Fitting import FittingProxy
+
 
 class PyQmlProxy(QObject):
     # SIGNALS
@@ -53,8 +55,8 @@ class PyQmlProxy(QObject):
     fitFinishedNotify = Signal()
     stopFit = Signal()
 
-    currentMinimizerChanged = Signal()
-    currentMinimizerMethodChanged = Signal()
+    # currentMinimizerChanged = Signal()
+    # currentMinimizerMethodChanged = Signal()
     currentCalculatorChanged = Signal()
 
     htmlExportingFinished = Signal(bool, str)
@@ -76,18 +78,25 @@ class PyQmlProxy(QObject):
         # Initialize logics
         self.stateChanged.connect(self._onStateChanged)
 
+        # temporary assignment
+        from easyDiffractionApp.Logic.State import StateLogic
+        from easyDiffractionLib.interface import InterfaceFactory
+        interface = InterfaceFactory()
+        self.state = StateLogic(self, interface=interface)
+
         ################## proxies #################
+        self._fitting_proxy = FittingProxy(self, sample=self.state._sample,
+                                           fit_func=interface.fit_func,
+                                           data=self.state._data)
         self._plotting_1d_proxy = Plotting1dProxy()
         self._plotting_3d_proxy = Plotting3dProxy()
-        self._background_proxy = BackgroundProxy(self)
+        self._background_proxy = BackgroundProxy(self,
+                                                 sample=self.state._sample)
 
         # initialize the logic controller
-        self.lc = LogicController(self)
+        self.lc = LogicController(self, state=self.state, interface=interface)
 
-        # initialize the logic controller
-        self.lc = LogicController(self)
-
-        # Structure
+         # Structure
         self.structureParametersChanged.connect(self._onStructureParametersChanged)
         # self.structureParametersChanged.connect(self.lc.chartsLogic._onStructureViewChanged)
         self.structureParametersChanged.connect(self.lc.state._updateCalculatedData())
@@ -109,24 +118,21 @@ class PyQmlProxy(QObject):
         self.simulationParametersChanged.connect(self._onSimulationParametersChanged)
         self.simulationParametersChanged.connect(self.undoRedoChanged)
 
-        self.currentMinimizerChanged.connect(self._onCurrentMinimizerChanged)
-        self.currentMinimizerMethodChanged.connect(self._onCurrentMinimizerMethodChanged)
+        # self.currentMinimizerChanged.connect(self._onCurrentMinimizerChanged)
+        # self.currentMinimizerMethodChanged.connect(self._onCurrentMinimizerMethodChanged)
 
         # Status info
         self.statusInfoChanged.connect(self._onStatusInfoChanged)
         self.currentCalculatorChanged.connect(self.statusInfoChanged)
-        self.currentMinimizerChanged.connect(self.statusInfoChanged)
-        self.currentMinimizerMethodChanged.connect(self.statusInfoChanged)
-
-        # Multithreading
-        # self.stopFit.connect(self.lc.fitLogic.onStopFit)
+        self._fitting_proxy.currentMinimizerChanged.connect(self.statusInfoChanged)
+        self._fitting_proxy.currentMinimizerMethodChanged.connect(self.statusInfoChanged)
 
         # start the undo/redo stack
         self.lc.initializeBorg()
 
     ####################################################################################################################
     ####################################################################################################################
-    # Charts
+    # Proxies
     ####################################################################################################################
     ####################################################################################################################
 
@@ -135,9 +141,20 @@ class PyQmlProxy(QObject):
     def plotting1d(self):
         return self._plotting_1d_proxy
 
+    # 3d plotting
     @Property('QVariant', notify=dummySignal)
     def plotting3d(self):
         return self._plotting_3d_proxy
+
+    # background
+    @Property('QVariant', notify=dummySignal)
+    def background(self):
+        return self._background_proxy
+
+    # fitting
+    @Property('QVariant', notify=dummySignal)
+    def fitting(self):
+        return self._fitting_proxy
 
     ####################################################################################################################
     ####################################################################################################################
@@ -575,44 +592,6 @@ class PyQmlProxy(QObject):
         self.lc.state.editParameter(obj_id, new_value)
 
     ####################################################################################################################
-    # Minimizer
-    ####################################################################################################################
-
-    @Property('QVariant', notify=dummySignal)
-    def minimizerNames(self):
-        return self.lc.fitLogic.fitter.available_engines
-
-    @Property(int, notify=currentMinimizerChanged)
-    def currentMinimizerIndex(self):
-        return self.lc.fitLogic.currentMinimizerIndex()
-
-    @currentMinimizerIndex.setter
-    @property_stack_deco('Minimizer change')
-    def currentMinimizerIndex(self, new_index: int):
-        self.lc.fitLogic.setCurrentMinimizerIndex(new_index)
-
-    def _onCurrentMinimizerChanged(self):
-        print("***** _onCurrentMinimizerChanged")
-        self.lc.fitLogic.onCurrentMinimizerChanged()
-
-    # Minimizer method
-    @Property('QVariant', notify=currentMinimizerChanged)
-    def minimizerMethodNames(self):
-        return self.lc.fitLogic.minimizerMethodNames()
-
-    @Property(int, notify=currentMinimizerMethodChanged)
-    def currentMinimizerMethodIndex(self):
-        return self.lc.fitLogic._current_minimizer_method_index
-
-    @currentMinimizerMethodIndex.setter
-    @property_stack_deco('Minimizer method change')
-    def currentMinimizerMethodIndex(self, new_index: int):
-        self.lc.currentMinimizerMethodIndex(new_index)
-
-    def _onCurrentMinimizerMethodChanged(self):
-        print("***** _onCurrentMinimizerMethodChanged")
-
-    ####################################################################################################################
     # Calculator
     ####################################################################################################################
 
@@ -631,24 +610,6 @@ class PyQmlProxy(QObject):
             print("***** _onCurrentCalculatorChanged")
             self.lc.state._onCurrentCalculatorChanged()
             self.lc.state._updateCalculatedData()
-
-    ####################################################################################################################
-    # Fitting
-    ####################################################################################################################
-
-    @Slot()
-    def fit(self):
-        # Currently using python threads from the `threading` module,
-        # since QThreads don't seem to properly work under macos
-        self.lc.fitLogic.fit(self.lc.state._data)
-
-    @Property('QVariant', notify=fitResultsChanged)
-    def fitResults(self):
-        return self.lc.fitLogic._fit_results
-
-    @Property(bool, notify=fitFinishedNotify)
-    def isFitFinished(self):
-        return self.lc.fitLogic._fit_finished
 
     ####################################################################################################################
     ####################################################################################################################
@@ -753,9 +714,10 @@ class PyQmlProxy(QObject):
     @Slot()
     def resetState(self):
         self.lc.state.resetState()
-        self._plotting_1d_proxy.clearBackendState()
-        self._plotting_1d_proxy.clearFrontendState()
+        self._plotting_1d_proxy.logic.clearBackendState()
+        self._plotting_1d_proxy.logic.clearFrontendState()
         self.resetUndoRedoStack()
+        self.experimentSkippedChanged.emit()
         self.stateChanged.emit(False)
 
     ####################################################################################################################

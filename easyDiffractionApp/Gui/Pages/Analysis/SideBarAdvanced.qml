@@ -54,11 +54,11 @@ EaComponents.SideBarColumn {
 
                 width: (EaStyle.Sizes.sideBarContentWidth - minimizerLabel.width * 2 - EaStyle.Sizes.fontPixelSize * 4) / 2
 
-                model: ExGlobals.Constants.proxy.minimizerNames
-                currentIndex: ExGlobals.Constants.proxy.currentMinimizerIndex
+                model: ExGlobals.Constants.proxy.fitting.minimizerNames
+                currentIndex: ExGlobals.Constants.proxy.fitting.currentMinimizerIndex
 
                 onCurrentIndexChanged: {
-                    ExGlobals.Constants.proxy.currentMinimizerIndex = currentIndex
+                    ExGlobals.Constants.proxy.fitting.currentMinimizerIndex = currentIndex
                 }
             }
 
@@ -75,10 +75,10 @@ EaComponents.SideBarColumn {
                 id: methodSelector
 
                 width: minimizerSelector.width
-                model: ExGlobals.Constants.proxy.minimizerMethodNames
-                currentIndex: ExGlobals.Constants.proxy.currentMinimizerMethodIndex
+                model: ExGlobals.Constants.proxy.fitting.minimizerMethodNames
+                currentIndex: ExGlobals.Constants.proxy.fitting.currentMinimizerMethodIndex
                 onCurrentIndexChanged: {
-                    ExGlobals.Constants.proxy.currentMinimizerMethodIndex = currentIndex
+                    ExGlobals.Constants.proxy.fitting.currentMinimizerMethodIndex = currentIndex
                 }
             }
         }

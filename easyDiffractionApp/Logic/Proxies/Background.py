@@ -11,10 +11,11 @@ class BackgroundProxy(QObject):
     asXmlChanged = Signal()
     dummySignal = Signal()
 
-    def __init__(self, parent):
+    def __init__(self, parent, sample=None):
         super().__init__(parent)
         self.parent = parent
-        self.logic = BackgroundLogic(self)
+        self.sample = sample
+        self.logic = BackgroundLogic(self, sample=sample)
         self.logic.asXmlChanged.connect(self.asXmlChanged)
 
     @property

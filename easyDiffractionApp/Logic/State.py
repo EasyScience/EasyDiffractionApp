@@ -103,7 +103,7 @@ class StateLogic(QObject):
 
         data.append(
             DataSet1D(
-                name='D1A@ILL data',
+                name='PND',
                 x=x_data, y=np.zeros_like(x_data),
                 x_label='2theta (deg)', y_label='Intensity',
                 data_type='experiment'
@@ -179,11 +179,13 @@ class StateLogic(QObject):
         if self._experiment_loaded == loaded:
             return
         self._experiment_loaded = loaded
+        self.experimentLoadedChanged.emit()
 
     def experimentSkipped(self, skipped: bool):
         if self._experiment_skipped == skipped:
             return
         self._experiment_skipped = skipped
+        self.experimentSkippedChanged.emit()
 
     def _setExperimentDataAsXml(self):
         self._experiment_data_as_xml = dicttoxml(self.experiments, attr_type=True).decode()  # noqa: E501
@@ -337,12 +339,13 @@ class StateLogic(QObject):
         if new_minimizer_settings is not None:
             new_engine = new_minimizer_settings['engine']
             new_method = new_minimizer_settings['method']
-            new_engine_index = self.parent.minimizerNames().index(new_engine)
+            new_engine_index = self.parent._fitting_proxy.minimizerNames.index(new_engine)
             self.currentMinimizerIndex.emit(new_engine_index)
-            new_method_index = self.parent.minimizerMethodNames().index(new_method)
+            new_method_index = self.parent._fitting_proxy.minimizerMethodNames.index(new_method)
             self.currentMinimizerMethodIndex.emit(new_method_index)
 
-        self.parent.fitLogic.fitter.fit_object = self._sample
+        # this assignment below is awful. TODO
+        self.parent._fitting_proxy.logic.fitter.fit_object = self._sample
         self.resetUndoRedoStack.emit()
         self.setProjectCreated(True)
 
@@ -403,7 +406,7 @@ class StateLogic(QObject):
                         pattern=Pattern1D.default(),
                         interface=self._interface)
         sample.pattern.zero_shift = 0.0
-        sample.pattern.scale = 1.0
+        sample.pattern.scale = 100.0
         sample.parameters.wavelength = 1.912
         sample.parameters.resolution_u = 0.1447
         sample.parameters.resolution_v = -0.4252
@@ -444,7 +447,7 @@ class StateLogic(QObject):
 
     def addDefaultPhase(self):
         borg.stack.enabled = False
-        self._sample.phases = self._defaultPhase()
+        self._sample.phases.append(self._defaultPhase())
         borg.stack.enabled = True
 
     def _defaultPhase(self):
@@ -808,7 +811,6 @@ class StateLogic(QObject):
             return
         self._project_created = created
         self.projectCreatedChanged.emit()
-
 
     ####################################################################################################################
     # Calculator

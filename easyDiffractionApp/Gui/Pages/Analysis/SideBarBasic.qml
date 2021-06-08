@@ -184,12 +184,12 @@ EaComponents.SideBarColumn {
             wide: true
             // temporarily disabled
             // enabled: ExGlobals.Constants.proxy.experimentLoaded
-            enabled: ExGlobals.Constants.proxy.experimentLoaded && ExGlobals.Constants.proxy.isFitFinished
-            fontIcon: ExGlobals.Constants.proxy.isFitFinished ? "play-circle" : "pause-circle"
+            enabled: ExGlobals.Constants.proxy.experimentLoaded && ExGlobals.Constants.proxy.fitting.isFitFinished
+            fontIcon: ExGlobals.Constants.proxy.fitting.isFitFinished ? "play-circle" : "pause-circle"
             // temporarily modified
-            // text: ExGlobals.Constants.proxy.isFitFinished ? qsTr("Start fitting") : qsTr("Stop fitting")
-            text: ExGlobals.Constants.proxy.isFitFinished ? qsTr("Start fitting") : qsTr("Fitting in progress")
-            onClicked: ExGlobals.Constants.proxy.fit()
+            // text: ExGlobals.Constants.proxy.fitting.isFitFinished ? qsTr("Start fitting") : qsTr("Stop fitting")
+            text: ExGlobals.Constants.proxy.fitting.isFitFinished ? qsTr("Start fitting") : qsTr("Fitting in progress")
+            onClicked: ExGlobals.Constants.proxy.fitting.fit()
             Component.onCompleted: ExGlobals.Variables.startFittingButton = this
         }
 
@@ -198,8 +198,8 @@ EaComponents.SideBarColumn {
 
     // Init results dialog
     ExComponents.ResultsDialog {
-        visible: typeof ExGlobals.Constants.proxy.fitResults.success !== 'undefined' &&
-                 ExGlobals.Constants.proxy.isFitFinished
+        visible: typeof ExGlobals.Constants.proxy.fitting.fitResults.success !== 'undefined' &&
+                 ExGlobals.Constants.proxy.fitting.isFitFinished
     }
 
     // Logic

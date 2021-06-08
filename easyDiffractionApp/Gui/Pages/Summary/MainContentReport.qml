@@ -2,11 +2,11 @@ import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtWebEngine 1.10
 
-import easyAppGui.Style 1.0 as EaStyle
-import easyAppGui.Animations 1.0 as EaAnimations
-import easyAppGui.Elements 1.0 as EaElements
-import easyAppGui.Components 1.0 as EaComponents
-import easyAppGui.Logic 1.0 as EaLogic
+import easyApp.Gui.Style 1.0 as EaStyle
+import easyApp.Gui.Animations 1.0 as EaAnimations
+import easyApp.Gui.Elements 1.0 as EaElements
+import easyApp.Gui.Components 1.0 as EaComponents
+import easyApp.Gui.Logic 1.0 as EaLogic
 
 import Gui.Logic 1.0 as ExLogic
 import Gui.Globals 1.0 as ExGlobals
@@ -487,8 +487,8 @@ Item {
                   `<b>Analysis:</b> <a href="${ExGlobals.Constants.appUrl}">${ExGlobals.Constants.appName} v${ExGlobals.Constants.appVersion}</a><br>`,
                   `<b>Structure chart:</b> <a href="${ExGlobals.Variables.chemDoodleStructureChart.info.url}"> ChemDoodle Web Components v${ExGlobals.Variables.chemDoodleStructureChart.info.version}</a><br>`,
                   `<b>Data chart:</b> <a href="${dataChartLibUrl}"> BokehJS v${dataChartLibVersion}</a><br>`,
-                  `<b>Calculation engine:</b> <a href="">${ExGlobals.Constants.proxy.statusModelAsObj.calculation}</a><br>`,
-                  isFitting ? `<b>Minimization:</b> <a href="">${ExGlobals.Constants.proxy.statusModelAsObj.minimization}</a><br>` : '',
+                  `<b>Calculation engine:</b> ${ExGlobals.Constants.proxy.statusModelAsObj.calculation}<br>`,
+                  isFitting ? `<b>Minimization:</b> ${ExGlobals.Constants.proxy.statusModelAsObj.minimization}<br>` : '',
                   '</div>'
               ]
         return list.join('\n')

@@ -1,10 +1,10 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 
-import easyAppGui.Style 1.0 as EaStyle
-import easyAppGui.Globals 1.0 as EaGlobals
-import easyAppGui.Elements 1.0 as EaElements
-import easyAppGui.Components 1.0 as EaComponents
+import easyApp.Gui.Style 1.0 as EaStyle
+import easyApp.Gui.Globals 1.0 as EaGlobals
+import easyApp.Gui.Elements 1.0 as EaElements
+import easyApp.Gui.Components 1.0 as EaComponents
 
 import Gui.Globals 1.0 as ExGlobals
 import Gui.Components 1.0 as ExComponents
@@ -24,7 +24,7 @@ Item {
 
             source: ExGlobals.Constants.appLogo
             anchors.horizontalCenter: parent.horizontalCenter
-            width: EaStyle.Sizes.fontPixelSize * 6
+            width: EaStyle.Sizes.fontPixelSize * 5
             fillMode: Image.PreserveAspectFit
             antialiasing: true
             opacity: 0
@@ -35,7 +35,7 @@ Item {
         Row {
             id: appName
 
-            property var fontFamily: EaStyle.Fonts.secondCondensedFontFamily
+            property var fontFamily: EaStyle.Fonts.thirdFontFamily
             property var fontPixelSize: EaStyle.Sizes.fontPixelSize * 4
 
             anchors.horizontalCenter: parent.horizontalCenter
@@ -44,12 +44,13 @@ Item {
             EaElements.Label {
                 font.family: parent.fontFamily
                 font.pixelSize: parent.fontPixelSize
-                font.weight: Font.ExtraLight
+                font.weight: Font.Light
                 text: ExGlobals.Constants.appPrefixName
             }
             EaElements.Label {
                 font.family: parent.fontFamily
                 font.pixelSize: parent.fontPixelSize
+                font.weight: Font.DemiBold
                 text: ExGlobals.Constants.appSuffixName
             }
         }
@@ -124,10 +125,10 @@ Item {
                     Component.onCompleted: ExGlobals.Variables.onlineDocumentationButton = this
                 }
                 EaElements.Button {
-                    //text: qsTr("Get in touch online")
-                    //onClicked: Qt.openUrlExternally(`${ExGlobals.Constants.appUrl}/issues`)
-                    text: qsTr("Get in touch on email")
-                    onClicked: Qt.openUrlExternally(`mailto:support@easyDiffraction.org`)
+                    text: qsTr("Get in touch online")
+                    onClicked: Qt.openUrlExternally(`${ExGlobals.Constants.appUrl}/index.html#contact`)
+                    //text: qsTr("Get in touch on email")
+                    //onClicked: Qt.openUrlExternally(`mailto:support@easyDiffraction.org`)
                 }
             }
 

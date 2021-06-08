@@ -14,6 +14,7 @@ class FitterLogic(QObject):
     fitStarted = Signal()
     currentMinimizerChanged = Signal()
     finished = Signal(dict)
+    failed = Signal(str)
 
     def __init__(self, parent=None, sample=None, fit_func=""):
         super().__init__(parent)
@@ -30,7 +31,8 @@ class FitterLogic(QObject):
         self._current_minimizer_method_name = self.fitter.available_methods()[0]  # noqa: E501
 
         self.fit_thread = Thread(target=self.fit_threading)
-        self.finished.connect(self._setFitResults)
+        self.finished.connect(self.onSuccess)
+        self.failed.connect(self.onFailed)
 
     def fit_threading(self):
         data = self.data
@@ -44,7 +46,12 @@ class FitterLogic(QObject):
         y = exp_data.y
         weights = 1 / exp_data.e
 
-        res = self.fitter.fit(x, y, weights=weights, method=method)
+        try:
+            res = self.fitter.fit(x, y, weights=weights, method=method)
+        except Exception as ex:
+            # print("Fitting failed with:\n {}".format(str(ex)))
+            self.failed.emit(str(ex))
+            return
         self.finished.emit(res)
 
     def _defaultFitResults(self):
@@ -55,7 +62,7 @@ class FitterLogic(QObject):
             "redchi2": None
         }
 
-    def _setFitResults(self, res):
+    def onSuccess(self, res):
         if self.fit_thread.is_alive():
             self.fit_thread.join()
         self._fit_results = {
@@ -64,6 +71,16 @@ class FitterLogic(QObject):
             "GOF":     float(res.goodness_of_fit),
             "redchi2": float(res.reduced_chi)
         }
+        self.setFitResults()
+
+    def onFailed(self, ex):
+        if self.fit_thread.is_alive():
+            self.fit_thread.join()
+        self._fit_results = self._defaultFitResults()
+        self._fit_results['success'] = 'Failure'  # not None but a string
+        self.setFitResults()
+
+    def setFitResults(self):
         self._fit_finished = True
         self.fitFinished.emit()
         # must reinstantiate the thread object

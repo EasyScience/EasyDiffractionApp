@@ -339,13 +339,17 @@ class StateLogic(QObject):
         if new_minimizer_settings is not None:
             new_engine = new_minimizer_settings['engine']
             new_method = new_minimizer_settings['method']
-            new_engine_index = self.parent._fitting_proxy.minimizerNames.index(new_engine)
+            # new_engine_index = self.parent._fitting_proxy.minimizerNames.index(new_engine)
+            new_engine_index = self.parent.l_fitting.fitter.available_engines.index(new_engine)
             self.currentMinimizerIndex.emit(new_engine_index)
-            new_method_index = self.parent._fitting_proxy.minimizerMethodNames.index(new_method)
+            # new_method_index = self.parent._fitting_proxy.minimizerMethodNames.index(new_method)
+            new_method_index = self.parent.l_fitting.minimizerMethodNames().index(new_method)
             self.currentMinimizerMethodIndex.emit(new_method_index)
 
         # this assignment below is awful. TODO
-        self.parent._fitting_proxy.logic.fitter.fit_object = self._sample
+        # self.parent._fitting_proxy.logic.fitter.fit_object = self._sample
+        self.parent.l_fitting.fitter.fit_object = self._sample
+
         self.resetUndoRedoStack.emit()
         self.setProjectCreated(True)
 
@@ -372,8 +376,10 @@ class StateLogic(QObject):
         descr['interface'] = self._interface.current_interface_name
 
         descr['minimizer'] = {
-            'engine': self.parent.fitLogic.fitter.current_engine.name,
-            'method': self.parent.currentMinimizerMethodName()
+            # 'engine': self.parent.fitLogic.fitter.current_engine.name,
+            # 'method': self.parent.currentMinimizerMethodName()
+            'engine': self.parent.l_fitting.fitter.current_engine.name,
+            'method': self.parent.l_fitting._current_minimizer_method_name
         }
         content_json = json.dumps(descr, indent=4, default=self.default)
         path = generalizePath(project_save_filepath)
@@ -460,8 +466,8 @@ class StateLogic(QObject):
         return phase
 
     def _onPhaseAdded(self, background_obj):
-        if self._interface.current_interface_name != 'CrysPy':
-            self._interface.generate_sample_binding("filename", self._sample)
+        #if self._interface.current_interface_name != 'CrysPy':
+        #    self._interface.generate_sample_binding("filename", self._sample)
         self._sample.phases.name = 'Phases'
         self._project_info['samples'] = self._sample.phases[self._current_phase_index].name  # noqa: E501
         # self._sample.set_background(background_obj)
@@ -661,7 +667,6 @@ class StateLogic(QObject):
     def _updateCalculatedData(self):
         if not self._experiment_loaded and not self._experiment_skipped:
             return
-
         self._sample.output_index = self._current_phase_index
 
         #  THIS IS WHERE WE WOULD LOOK UP CURRENT EXP INDEX

@@ -247,13 +247,13 @@ EaComponents.SideBarColumn {
             EaElements.SideBarButton {
                 fontIcon: "plus-circle"
                 text: qsTr("Append new point")
-                onClicked: ExGlobals.Constants.proxy.backgroundProxy.addPoint()
+                onClicked: ExGlobals.Constants.proxy.background.addPoint()
             }
 
             EaElements.SideBarButton {
                 fontIcon: "undo-alt"
                 text: qsTr("Reset to default points")
-                onClicked: ExGlobals.Constants.proxy.backgroundProxy.setDefaultPoints()
+                onClicked: ExGlobals.Constants.proxy.background.setDefaultPoints()
             }
         }
     }

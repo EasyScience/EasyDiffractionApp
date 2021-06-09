@@ -1,5 +1,4 @@
 from PySide2.QtCore import QObject, Signal, Slot, Property
-from easyDiffractionApp.Logic.Fitting import FittingLogic
 from easyCore.Utils.UndoRedo import property_stack_deco
 
 
@@ -12,23 +11,25 @@ class FittingProxy(QObject):
     dummySignal = Signal()
     currentMinimizerChanged = Signal()
     currentMinimizerMethodChanged = Signal()
+    currentCalculatorChanged = Signal()
 
-    def __init__(self, parent=None, sample=None, fit_func="", data=None):
+    def __init__(self, parent=None, logic=None):
         super().__init__(parent)
 
-        self.logic = FittingLogic(self, sample, fit_func)
-        self._data = data
+        self.logic = logic.l_fitting
         self.logic.fitStarted.connect(self.fitFinishedNotify)
         self.logic.fitFinished.connect(self.fitFinishedNotify)
         self.logic.fitFinished.connect(self.fitResultsChanged)
         self.logic.currentMinimizerChanged.connect(self.currentMinimizerChanged)
         self.logic.currentMinimizerMethodChanged.connect(self.currentMinimizerMethodChanged)
+        self.logic.currentCalculatorChanged.connect(self.currentCalculatorChanged)
 
     @Slot()
     def fit(self):
         # Currently using python threads from the `threading` module,
         # since QThreads don't seem to properly work under macos
-        self.logic.fit(self._data)
+        # self.logic.fit(self._data)
+        self.logic.fit()
 
     @Property('QVariant', notify=fitResultsChanged)
     def fitResults(self):
@@ -55,9 +56,9 @@ class FittingProxy(QObject):
     def currentMinimizerIndex(self, new_index: int):
         self.logic.setCurrentMinimizerIndex(new_index)
 
-    def _onCurrentMinimizerChanged(self):
-        print("***** _onCurrentMinimizerChanged")
-        self.logic.onCurrentMinimizerChanged()
+    # def _onCurrentMinimizerChanged(self):
+    #     print("***** _onCurrentMinimizerChanged")
+    #     self.logic.onCurrentMinimizerChanged()
 
     # Minimizer method
     @Property('QVariant', notify=currentMinimizerChanged)
@@ -75,3 +76,20 @@ class FittingProxy(QObject):
 
     def _onCurrentMinimizerMethodChanged(self):
         print("***** _onCurrentMinimizerMethodChanged")
+
+    ####################################################################################################################
+    # Calculator
+    ####################################################################################################################
+
+    @Property('QVariant', notify=dummySignal)
+    def calculatorNames(self):
+        return self.logic.calculatorNames()
+
+    @Property(int, notify=currentCalculatorChanged)
+    def currentCalculatorIndex(self):
+        return self.logic.currentCalculatorIndex()
+
+    @currentCalculatorIndex.setter
+    @property_stack_deco('Calculation engine change')
+    def currentCalculatorIndex(self, new_index: int):
+        self.logic.setCurrentCalculatorIndex(new_index)

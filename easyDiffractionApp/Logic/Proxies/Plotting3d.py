@@ -1,6 +1,6 @@
 from PySide2.QtCore import QObject, Signal, Property
 
-from easyDiffractionApp.Logic.Plotting3d import Plotting3dLogic
+# from easyDiffractionApp.Logic.Plotting3d import Plotting3dLogic
 from easyCore.Utils.UndoRedo import property_stack_deco
 
 class Plotting3dProxy(QObject):
@@ -8,10 +8,10 @@ class Plotting3dProxy(QObject):
     current3dPlottingLibChanged = Signal()
     structureViewChanged = Signal()
 
-    def __init__(self):
+    def __init__(self, logic=None):
         super().__init__()
         # self.parent = parent
-        self.logic = Plotting3dLogic(self)
+        self.logic = logic.l_plotting3d
         self.current3dPlottingLibChanged.connect(self.onCurrent3dPlottingLibChanged)
 
     @Property('QVariant', notify=current3dPlottingLibChanged)

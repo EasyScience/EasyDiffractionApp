@@ -3,29 +3,21 @@ __version__ = '0.0.1'
 
 from PySide2.QtCore import QObject, Property, Signal, Slot
 
-from easyDiffractionApp.Logic.Background import BackgroundLogic
-
 
 class BackgroundProxy(QObject):
 
     asXmlChanged = Signal()
     dummySignal = Signal()
 
-    def __init__(self, parent, sample=None):
+    def __init__(self, parent, logic=None):
         super().__init__(parent)
         self.parent = parent
-        self.sample = sample
-        self.logic = BackgroundLogic(self, sample=sample)
+        self.logic = logic.l_background
         self.logic.asXmlChanged.connect(self.asXmlChanged)
-
-    @property
-    def _background_as_obj(self):
-        # this query needs to go to logic, communicating with LC
-        return self.parent.lc._background_obj
 
     @Property('QVariant', notify=dummySignal)
     def asObj(self):
-        return self._background_as_obj
+        return self.logic._background_as_obj
 
     @Property(str, notify=asXmlChanged)
     def asXml(self):

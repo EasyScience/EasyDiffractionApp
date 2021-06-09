@@ -27,7 +27,7 @@ EaComponents.SideBarColumn {
                 onClicked: EaGlobals.Variables.showProjectDescriptionDialog = true
                 Component.onCompleted: {
                     ExGlobals.Variables.createProjectButton = this
-                    ExGlobals.Constants.proxy.resetUndoRedoStack()
+                    ExGlobals.Constants.proxy.stack.resetUndoRedoStack()
                 }
             }
 
@@ -38,7 +38,7 @@ EaComponents.SideBarColumn {
                 onClicked: ExGlobals.Variables.samplePageEnabled = true
                 Component.onCompleted: {
                     ExGlobals.Variables.continueWithoutProjectButton = this
-                    ExGlobals.Constants.proxy.resetUndoRedoStack()
+                    ExGlobals.Constants.proxy.stack.resetUndoRedoStack()
                 }
             }
 

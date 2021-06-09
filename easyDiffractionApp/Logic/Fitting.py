@@ -3,7 +3,6 @@ from PySide2.QtCore import Signal, QObject, QThread
 from threading import Thread
 
 from easyCore.Fitting.Fitting import Fitter as CoreFitter
-# from easyCore import borg
 
 
 class FittingLogic(QObject):
@@ -14,13 +13,16 @@ class FittingLogic(QObject):
     fitStarted = Signal()
     currentMinimizerChanged = Signal()
     currentMinimizerMethodChanged = Signal()
+    currentCalculatorChanged = Signal()
     finished = Signal(dict)
 
-    def __init__(self, parent=None, sample=None, fit_func=""):
+    def __init__(self, parent=None, state=None, interface=None):
         super().__init__(parent)
-        self.fitter = CoreFitter(sample, fit_func)
 
         self.parent = parent
+        self.interface = interface
+        self.state = state
+        self.fitter = CoreFitter(self.state._sample, self.interface.fit_func)
 
         # Multithreading
         # self._fitter_thread = None
@@ -29,6 +31,7 @@ class FittingLogic(QObject):
 
         self._current_minimizer_method_index = 0
         self._current_minimizer_method_name = self.fitter.available_methods()[0]  # noqa: E501
+        self.currentMinimizerChanged.connect(self.onCurrentMinimizerChanged)
 
         self.fit_thread = Thread(target=self.fit_threading)
         self.finished.connect(self._setFitResults)
@@ -71,8 +74,9 @@ class FittingLogic(QObject):
         # must reinstantiate the thread object
         self.fit_thread = Thread(target=self.fit_threading)
 
-    def fit(self, data):
-        self.data = data
+    # def fit(self, data):
+    def fit(self):
+        self.data = self.state._data
         self.minimizer_name = self._current_minimizer_method_name
         if not self.fit_thread.is_alive():
             self.is_fitting_now = True
@@ -169,6 +173,27 @@ class FittingLogic(QObject):
         self._current_minimizer_method_index = new_index
         self._current_minimizer_method_name = self.minimizerMethodNames()[new_index]  # noqa: E501
         self.currentMinimizerMethodChanged.emit()
+
+    ####################################################################################################################
+    # Calculator
+    ####################################################################################################################
+
+    def calculatorNames(self):
+        return self.interface.available_interfaces
+
+    def currentCalculatorIndex(self):
+        return self.interface.available_interfaces.index(self.interface.current_interface_name)
+
+    def setCurrentCalculatorIndex(self, new_index: int):
+        if self.currentCalculatorIndex == new_index:
+            return
+        new_name = self.interface.available_interfaces[new_index]
+        self.interface.switch(new_name)
+        self.currentCalculatorChanged.emit()
+        self.parent.resetFactory()    
+        print("***** _onCurrentCalculatorChanged")
+        self.state._onCurrentCalculatorChanged()
+        self.state._updateCalculatedData()
 
 
 class Fitter(QThread):

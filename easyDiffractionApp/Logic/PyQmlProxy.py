@@ -12,6 +12,7 @@ from easyDiffractionApp.Logic.Proxies.Plotting1d import Plotting1dProxy
 from easyDiffractionApp.Logic.Proxies.Plotting3d import Plotting3dProxy
 from easyDiffractionApp.Logic.Proxies.Background import BackgroundProxy
 from easyDiffractionApp.Logic.Proxies.Fitting import FittingProxy
+from easyDiffractionApp.Logic.Proxies.Stack import StackProxy
 
 
 class PyQmlProxy(QObject):
@@ -78,27 +79,31 @@ class PyQmlProxy(QObject):
         # Initialize logics
         self.stateChanged.connect(self._onStateChanged)
 
-        # temporary assignment
-        from easyDiffractionApp.Logic.State import StateLogic
-        from easyDiffractionLib.interface import InterfaceFactory
-        interface = InterfaceFactory()
-        self.state = StateLogic(self, interface=interface)
+        from easyDiffractionApp.Logic.LogicController import LogicController2
+        self.lc2 = LogicController2(self)
+
+        self.state = self.lc2.l_state  # temp hack
 
         ################## proxies #################
-        self._fitting_proxy = FittingProxy(self, sample=self.state._sample,
-                                           fit_func=interface.fit_func,
-                                           data=self.state._data)
-        self._plotting_1d_proxy = Plotting1dProxy()
-        self._plotting_3d_proxy = Plotting3dProxy()
-        self._background_proxy = BackgroundProxy(self,
-                                                 sample=self.state._sample)
+        self._fitting_proxy = FittingProxy(self, self.lc2)
+        self._plotting_1d_proxy = Plotting1dProxy(logic=self.lc2)
+        self._plotting_3d_proxy = Plotting3dProxy(logic=self.lc2)
+        self._background_proxy = BackgroundProxy(self, logic=self.lc2)
+        self._stack_proxy = StackProxy(self, logic=self.lc2)
 
-        # initialize the logic controller
+
+        # initialize the logic controller - soon to be redundant!
+        interface = self.lc2.interface
         self.lc = LogicController(self, state=self.state, interface=interface)
+
+        ####################################################################################################################
+        ####################################################################################################################
+        # SIGNALS
+        ####################################################################################################################
+        ####################################################################################################################
 
          # Structure
         self.structureParametersChanged.connect(self._onStructureParametersChanged)
-        # self.structureParametersChanged.connect(self.lc.chartsLogic._onStructureViewChanged)
         self.structureParametersChanged.connect(self.lc.state._updateCalculatedData())
 
         # self.structureViewChanged.connect(self.lc.chartsLogic._onStructureViewChanged)
@@ -116,7 +121,7 @@ class PyQmlProxy(QObject):
 
         # Analysis
         self.simulationParametersChanged.connect(self._onSimulationParametersChanged)
-        self.simulationParametersChanged.connect(self.undoRedoChanged)
+        self.simulationParametersChanged.connect(self._stack_proxy.undoRedoChanged)
 
         # self.currentMinimizerChanged.connect(self._onCurrentMinimizerChanged)
         # self.currentMinimizerMethodChanged.connect(self._onCurrentMinimizerMethodChanged)
@@ -128,7 +133,7 @@ class PyQmlProxy(QObject):
         self._fitting_proxy.currentMinimizerMethodChanged.connect(self.statusInfoChanged)
 
         # start the undo/redo stack
-        self.lc.initializeBorg()
+        self.lc2.initializeBorg()
 
     ####################################################################################################################
     ####################################################################################################################
@@ -155,6 +160,11 @@ class PyQmlProxy(QObject):
     @Property('QVariant', notify=dummySignal)
     def fitting(self):
         return self._fitting_proxy
+
+    # stack
+    @Property('QVariant', notify=dummySignal)
+    def stack(self):
+        return self._stack_proxy
 
     ####################################################################################################################
     ####################################################################################################################
@@ -535,10 +545,6 @@ class PyQmlProxy(QObject):
     # Background
     ####################################################################################################################
 
-    @Property('QVariant', notify=dummySignal)
-    def backgroundProxy(self):
-        return self._background_proxy
-
     ####################################################################################################################
     ####################################################################################################################
     # ANALYSIS
@@ -590,26 +596,6 @@ class PyQmlProxy(QObject):
     @Slot(str, 'QVariant')
     def editParameter(self, obj_id: str, new_value: Union[bool, float, str]):
         self.lc.state.editParameter(obj_id, new_value)
-
-    ####################################################################################################################
-    # Calculator
-    ####################################################################################################################
-
-    @Property('QVariant', notify=dummySignal)
-    def calculatorNames(self):
-        return self.lc._interface.available_interfaces
-
-    @Property(int, notify=currentCalculatorChanged)
-    def currentCalculatorIndex(self):
-        return self.lc.currentCalculatorIndex()
-
-    @currentCalculatorIndex.setter
-    @property_stack_deco('Calculation engine change')
-    def currentCalculatorIndex(self, new_index: int):
-        if self.lc.setCurrentCalculatorIndex(new_index):
-            print("***** _onCurrentCalculatorChanged")
-            self.lc.state._onCurrentCalculatorChanged()
-            self.lc.state._updateCalculatedData()
 
     ####################################################################################################################
     ####################################################################################################################
@@ -724,32 +710,32 @@ class PyQmlProxy(QObject):
     # Undo/Redo stack operations
     ####################################################################################################################
 
-    @Property(bool, notify=undoRedoChanged)
-    def canUndo(self) -> bool:
-        return self.lc.stackLogic.canUndo()
+    # @Property(bool, notify=undoRedoChanged)
+    # def canUndo(self) -> bool:
+    #     return self.lc.stackLogic.canUndo()
 
-    @Property(bool, notify=undoRedoChanged)
-    def canRedo(self) -> bool:
-        return self.lc.stackLogic.canRedo()
+    # @Property(bool, notify=undoRedoChanged)
+    # def canRedo(self) -> bool:
+    #     return self.lc.stackLogic.canRedo()
 
-    @Slot()
-    def undo(self):
-        self.lc.stackLogic.undo()
+    # @Slot()
+    # def undo(self):
+    #     self.lc.stackLogic.undo()
 
-    @Slot()
-    def redo(self):
-        self.lc.stackLogic.redo()
+    # @Slot()
+    # def redo(self):
+    #     self.lc.stackLogic.redo()
 
-    @Property(str, notify=undoRedoChanged)
-    def undoText(self):
-        return self.lc.stackLogic.undoText()
+    # @Property(str, notify=undoRedoChanged)
+    # def undoText(self):
+    #     return self.lc.stackLogic.undoText()
 
-    @Property(str, notify=undoRedoChanged)
-    def redoText(self):
-        return self.lc.stackLogic.redoText()
+    # @Property(str, notify=undoRedoChanged)
+    # def redoText(self):
+    #     return self.lc.stackLogic.redoText()
 
-    @Slot()
-    def resetUndoRedoStack(self):
+    # @Slot()
+    # def resetUndoRedoStack(self):
 
-        self.lc.stackLogic.resetUndoRedoStack()
-        self.undoRedoChanged.emit()
+    #     self.lc.stackLogic.resetUndoRedoStack()
+    #     self.undoRedoChanged.emit()

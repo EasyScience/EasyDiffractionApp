@@ -32,9 +32,10 @@ class Plotting1dProxy(QObject):
     qtchartsBraggDataObjChanged = Signal()
     qtchartsBackgroundDataObjChanged = Signal()
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, logic=None):
         super().__init__(parent)
-        self.logic = Plotting1dLogic(self)
+        # self.logic = Plotting1dLogic(self)
+        self.logic = logic.l_plotting1d
         # connect logic signal to proxy signal
         self.logic.currentLibChanged.connect(self.currentLibChanged)
 

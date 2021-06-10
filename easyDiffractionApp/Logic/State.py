@@ -177,11 +177,13 @@ class StateLogic(QObject):
         if self._experiment_loaded == loaded:
             return
         self._experiment_loaded = loaded
+        self.experimentLoadedChanged.emit()
 
     def experimentSkipped(self, skipped: bool):
         if self._experiment_skipped == skipped:
             return
         self._experiment_skipped = skipped
+        self.experimentSkippedChanged.emit()
 
     def _setExperimentDataAsXml(self):
         self._experiment_data_as_xml = dicttoxml(self.experiments, attr_type=True).decode()  # noqa: E501

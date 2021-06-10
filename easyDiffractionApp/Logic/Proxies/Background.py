@@ -87,18 +87,18 @@ class BackgroundProxy(QObject):
         self.asObjChanged.emit(self._background_as_obj)
 
     @Slot(str)
-    def removePoint(self, point_name: str):
+    def removePoint(self, point_name: str, quietly: bool = False):
         print(f"+ removeBackgroundPoint for point_name: {point_name}")
         point_names = self._background_as_obj.names
         point_index = point_names.index(point_name)
         del self._background_as_obj[point_index]
-
-        self.asObjChanged.emit(self._background_as_obj)
+        if not quietly:
+            self.asObjChanged.emit(self._background_as_obj)
 
     def removeAllPoints(self):
         for point_name in self._background_as_obj.names:
-            self.removePoint(point_name)
-        #self.asObjChanged.emit(self._background_as_obj)
+            self.removePoint(point_name, quietly=True)
+        self.asObjChanged.emit(self._background_as_obj)
 
     def onAsObjChanged(self):
         print(f"***** onAsObjChanged")

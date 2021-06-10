@@ -11,8 +11,8 @@ Controller.prototype.IntroductionPageCallback = function()
     {
       var msg = ""
       msg += "<p>Welcome to the easyDiffraction Setup Wizard.</p>"
-      msg += "<p>easyDiffraction is a scientific software for modelling and analysis of the neutron diffraction data.</p>"
-      msg += "<p>For more details, visit <a href=\"https://easyDiffraction.org\">https://easyDiffraction.org</a></p>"
+      msg += "<p>easydiffraction is a scientific software for modelling and analysis of diffraction data.</p>"
+      msg += "<p>For more details, please visit <a href=\"https://easydiffraction.org\">https://easydiffraction.org</a></p>"
       page.MessageLabel.setText(msg)
     }
     if (installer.isUninstaller())

@@ -790,6 +790,7 @@ class PyQmlProxy(QObject):
     @Slot()
     def resetState(self):
         self.lc.state.resetState()
+        self.lc._background_proxy.removeAllPoints()
         self.lc.chartsLogic._plotting_1d_proxy.clearBackendState()
         self.lc.chartsLogic._plotting_1d_proxy.clearFrontendState()
         self.resetUndoRedoStack()

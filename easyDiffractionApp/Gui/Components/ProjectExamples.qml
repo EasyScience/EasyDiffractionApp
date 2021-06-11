@@ -72,7 +72,7 @@ EaComponents.TableView {
 
             onClicked: {
                 const fileUrl = Qt.resolvedUrl(model.path)
-                ExGlobals.Constants.proxy.loadExampleProject(fileUrl)
+                ExGlobals.Constants.proxy.project.loadExampleProject(fileUrl)
 
                 ExGlobals.Variables.samplePageEnabled = true
                 ExGlobals.Variables.experimentPageEnabled = true

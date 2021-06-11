@@ -81,7 +81,7 @@ Item {
 
         Component.onCompleted: {
             ExGlobals.Variables.reportWebView = this
-            ExGlobals.Constants.proxy.htmlExportingFinished.connect(htmlExportingFinished)
+            ExGlobals.Constants.proxy.project.htmlExportingFinished.connect(htmlExportingFinished)
         }
     }
 
@@ -135,7 +135,7 @@ Item {
 
     onHtmlChanged: {
         //print(html)
-        ExGlobals.Constants.proxy.setReport(html)
+        ExGlobals.Constants.proxy.project.setReport(html)
         webView.loadHtml(html)
     }
 
@@ -464,12 +464,12 @@ Item {
     property string projectSection: {
         if (!hasPhases)
             return ''
-        const projectDescription = ExGlobals.Constants.proxy.projectInfoAsJson.short_description
+        const projectDescription = ExGlobals.Constants.proxy.project.projectInfoAsJson.short_description
         const phaseName = ExGlobals.Constants.proxy.phasesAsObj[0].name
         const datasetName = ExGlobals.Constants.proxy.experimentDataAsObj[0].name
-        const modifiedDate = ExGlobals.Constants.proxy.projectInfoAsJson.modified
+        const modifiedDate = ExGlobals.Constants.proxy.project.projectInfoAsJson.modified
         const list = [
-                `<h1>${ExGlobals.Constants.proxy.projectInfoAsJson.name}</h1>`,
+                `<h1>${ExGlobals.Constants.proxy.project.projectInfoAsJson.name}</h1>`,
                 '<p>',
                 `<b>Short description:</b> ${projectDescription}<br>`,
                 `<b>Structural phases:</b> ${phaseName}<br>`,

@@ -13,15 +13,11 @@ from easyDiffractionApp.Logic.Proxies.Plotting3d import Plotting3dProxy
 from easyDiffractionApp.Logic.Proxies.Background import BackgroundProxy
 from easyDiffractionApp.Logic.Proxies.Fitting import FittingProxy
 from easyDiffractionApp.Logic.Proxies.Stack import StackProxy
+from easyDiffractionApp.Logic.Proxies.Project import ProjectProxy
 
 
 class PyQmlProxy(QObject):
     # SIGNALS
-
-    # Project
-    projectCreatedChanged = Signal()
-    projectInfoChanged = Signal()
-    stateChanged = Signal(bool)
 
     # Fitables
     parametersAsObjChanged = Signal()
@@ -52,15 +48,7 @@ class PyQmlProxy(QObject):
     # Analysis
     simulationParametersChanged = Signal()
 
-    fitResultsChanged = Signal()
-    fitFinishedNotify = Signal()
-    stopFit = Signal()
-
-    # currentMinimizerChanged = Signal()
-    # currentMinimizerMethodChanged = Signal()
     currentCalculatorChanged = Signal()
-
-    htmlExportingFinished = Signal(bool, str)
 
     # Status info
     statusInfoChanged = Signal()
@@ -77,8 +65,6 @@ class PyQmlProxy(QObject):
         super().__init__(parent)
 
         # Initialize logics
-        self.stateChanged.connect(self._onStateChanged)
-
         from easyDiffractionApp.Logic.LogicController import LogicController2
         self.lc2 = LogicController2(self)
 
@@ -90,6 +76,7 @@ class PyQmlProxy(QObject):
         self._plotting_3d_proxy = Plotting3dProxy(logic=self.lc2)
         self._background_proxy = BackgroundProxy(self, logic=self.lc2)
         self._stack_proxy = StackProxy(self, logic=self.lc2)
+        self._project_proxy = ProjectProxy(self, logic=self.lc2)
 
 
         # initialize the logic controller - soon to be redundant!
@@ -104,12 +91,10 @@ class PyQmlProxy(QObject):
 
          # Structure
         self.structureParametersChanged.connect(self._onStructureParametersChanged)
-        self.structureParametersChanged.connect(self.lc.state._updateCalculatedData())
+        self.structureParametersChanged.connect(self.lc2.l_state._updateCalculatedData())
 
-        # self.structureViewChanged.connect(self.lc.chartsLogic._onStructureViewChanged)
-
-        self.lc.phaseAdded.connect(self._onPhaseAdded)
-        self.lc.phaseAdded.connect(self.phasesEnabled)
+        self.lc2.phaseAdded.connect(self._onPhaseAdded)
+        self.lc2.phaseAdded.connect(self.phasesEnabled)
 
         self.currentPhaseChanged.connect(self._onCurrentPhaseChanged)
 
@@ -166,53 +151,10 @@ class PyQmlProxy(QObject):
     def stack(self):
         return self._stack_proxy
 
-    ####################################################################################################################
-    ####################################################################################################################
-    # PROJECT
-    ####################################################################################################################
-    ####################################################################################################################
-
-    @Property('QVariant', notify=projectInfoChanged)
-    def projectInfoAsJson(self):
-        return self.lc.state._project_info
-
-    @projectInfoAsJson.setter
-    def projectInfoAsJson(self, json_str):
-        self.lc.state.projectInfoAsJson(json_str)
-        self.projectInfoChanged.emit()
-
-    @Property(str, notify=projectInfoChanged)
-    def projectInfoAsCif(self):
-        return self.lc.state.projectInfoAsCif()
-
-    @Slot(str, str)
-    def editProjectInfo(self, key, value):
-        self.lc.state.editProjectInfo(key, value)
-        self.projectInfoChanged.emit()
-
-    @Property(str, notify=projectInfoChanged)
-    def currentProjectPath(self):
-        return self.lc.state._currentProjectPath
-
-    @currentProjectPath.setter
-    def currentProjectPath(self, new_path):
-        self.lc.state.currentProjectPath(new_path)
-        self.projectInfoChanged.emit()
-
-    @Slot()
-    def createProject(self):
-        self.lc.state.createProject()
-
-    @Property(bool, notify=stateChanged)
-    def stateHasChanged(self):
-        return self.lc.state._state_changed
-
-    @stateHasChanged.setter
-    def stateHasChanged(self, changed: bool):
-        self.lc.state.stateHasChanged(changed)
-
-    def _onStateChanged(self, changed=True):
-        self.stateHasChanged = changed
+    # project
+    @Property('QVariant', notify=dummySignal)
+    def project(self):
+        return self._project_proxy
 
     ####################################################################################################################
     # Phase models (list, xml, cif)
@@ -220,41 +162,41 @@ class PyQmlProxy(QObject):
 
     @Property('QVariant', notify=phasesAsObjChanged)
     def phasesAsObj(self):
-        return self.lc.state._phases_as_obj
+        return self.lc2.l_state._phases_as_obj
 
     @Property(str, notify=phasesAsXmlChanged)
     def phasesAsXml(self):
-        return self.lc.state._phases_as_xml
+        return self.lc2.l_state._phases_as_xml
 
     @Property(str, notify=phasesAsCifChanged)
     def phasesAsCif(self):
-        return self.lc.state._phases_as_cif
+        return self.lc2.l_state._phases_as_cif
 
     @Property(str, notify=phasesAsCifChanged)
     def phasesAsExtendedCif(self):
-        return self.lc.state.phasesAsExtendedCif()
+        return self.lc2.l_state.phasesAsExtendedCif()
 
     @phasesAsCif.setter
     @property_stack_deco
     def phasesAsCif(self, phases_as_cif):
-        self.lc.state.phasesAsCif(phases_as_cif)
-        self.lc.parametersChanged.emit()
+        self.lc2.l_state.phasesAsCif(phases_as_cif)
+        self.lc2.parametersChanged.emit()
 
     def _setPhasesAsObj(self):
         start_time = timeit.default_timer()
-        self.lc.state._setPhasesAsObj()
+        self.lc2.l_state._setPhasesAsObj()
         print("+ _setPhasesAsObj: {0:.3f} s".format(timeit.default_timer() - start_time))
         self.phasesAsObjChanged.emit()
 
     def _setPhasesAsXml(self):
         start_time = timeit.default_timer()
-        self.lc.state._setPhasesAsXml()
+        self.lc2.l_state._setPhasesAsXml()
         print("+ _setPhasesAsXml: {0:.3f} s".format(timeit.default_timer() - start_time))
         self.phasesAsXmlChanged.emit()
 
     def _setPhasesAsCif(self):
         start_time = timeit.default_timer()
-        self.lc.state._setPhasesAsCif()
+        self.lc2.l_state._setPhasesAsCif()
         print("+ _setPhasesAsCif: {0:.3f} s".format(timeit.default_timer() - start_time))
         self.phasesAsCifChanged.emit()
 
@@ -263,7 +205,7 @@ class PyQmlProxy(QObject):
         self._setPhasesAsObj()  # 0.025 s
         self._setPhasesAsXml()  # 0.065 s
         self._setPhasesAsCif()  # 0.010 s
-        self.stateChanged.emit(True)
+        self._project_proxy.stateChanged.emit(True)
 
     ####################################################################################################################
     # Phase: Add / Remove
@@ -271,29 +213,29 @@ class PyQmlProxy(QObject):
 
     @Slot(str)
     def addSampleFromCif(self, cif_url):
-        self.lc.state.addSampleFromCif(cif_url)
-        self.lc.phaseAdded.emit()
+        self.lc2.l_state.addSampleFromCif(cif_url)
+        self.lc2.phaseAdded.emit()
 
     @Slot()
     def addDefaultPhase(self):
         print("+ addDefaultPhase")
-        self.lc.state.addDefaultPhase()
-        self.lc.phaseAdded.emit()
+        self.lc2.l_state.addDefaultPhase()
+        self.lc2.phaseAdded.emit()
 
     @Slot(str)
     def removePhase(self, phase_name: str):
-        self.lc.removePhase(phase_name)
+        self.lc2.removePhase(phase_name)
 
     def _onPhaseAdded(self):
         print("***** _onPhaseAdded")
-        self.lc._onPhaseAdded()
+        self.lc2._onPhaseAdded()
         self.phasesEnabled.emit()
         self.structureParametersChanged.emit()
-        self.projectInfoChanged.emit()
+        self._project_proxy.projectInfoChanged.emit()
 
     @Property(bool, notify=phasesEnabled)
     def samplesPresent(self) -> bool:
-        return self.lc.samplesPresent()
+        return self.lc2.samplesPresent()
 
     ####################################################################################################################
     # Phase: Symmetry
@@ -303,41 +245,41 @@ class PyQmlProxy(QObject):
 
     @Property('QVariant', notify=structureParametersChanged)
     def crystalSystemList(self):
-        return self.lc.state.crystalSystemList()
+        return self.lc2.l_state.crystalSystemList()
 
     @Property(str, notify=structureParametersChanged)
     def currentCrystalSystem(self):
-        return self.lc.state.currentCrystalSystem()
+        return self.lc2.l_state.currentCrystalSystem()
 
     @currentCrystalSystem.setter
     def currentCrystalSystem(self, new_system: str):
-        self.lc.state.setCurrentCrystalSystem(new_system)
+        self.lc2.l_state.setCurrentCrystalSystem(new_system)
         self.structureParametersChanged.emit()
 
     @Property('QVariant', notify=structureParametersChanged)
     def formattedSpaceGroupList(self):
-        return self.lc.state.formattedSpaceGroupList()
+        return self.lc2.l_state.formattedSpaceGroupList()
 
     @Property(int, notify=structureParametersChanged)
     def currentSpaceGroup(self):
-        return self.lc.state.getCurrentSpaceGroup()
+        return self.lc2.l_state.getCurrentSpaceGroup()
 
     @currentSpaceGroup.setter
     def currentSpaceGroup(self, new_idx: int):
-        self.lc.state.currentSpaceGroup(new_idx)
+        self.lc2.l_state.currentSpaceGroup(new_idx)
         self.structureParametersChanged.emit()
 
     @Property('QVariant', notify=structureParametersChanged)
     def formattedSpaceGroupSettingList(self):
-        return self.lc.state.formattedSpaceGroupSettingList()
+        return self.lc2.l_state.formattedSpaceGroupSettingList()
 
     @Property(int, notify=structureParametersChanged)
     def currentSpaceGroupSetting(self):
-        return self.lc.state.currentSpaceGroupSetting()
+        return self.lc2.l_state.currentSpaceGroupSetting()
 
     @currentSpaceGroupSetting.setter
     def currentSpaceGroupSetting(self, new_number: int):
-        self.lc.state.setCurrentSpaceGroupSetting(new_number)
+        self.lc2.l_state.setCurrentSpaceGroupSetting(new_number)
         self.structureParametersChanged.emit()
 
     ####################################################################################################################
@@ -347,14 +289,14 @@ class PyQmlProxy(QObject):
     @Slot()
     def addDefaultAtom(self):
         try:
-            self.lc.state.addDefaultAtom()
+            self.lc2.l_state.addDefaultAtom()
             self.structureParametersChanged.emit()
         except AttributeError:
             print("Error: failed to add atom")
 
     @Slot(str)
     def removeAtom(self, atom_label: str):
-        self.lc.state.removeAtom(atom_label)
+        self.lc2.l_state.removeAtom(atom_label)
         self.structureParametersChanged.emit()
 
     ####################################################################################################################
@@ -363,11 +305,11 @@ class PyQmlProxy(QObject):
 
     @Property(int, notify=currentPhaseChanged)
     def currentPhaseIndex(self):
-        return self.lc.state._current_phase_index
+        return self.lc2.l_state._current_phase_index
 
     @currentPhaseIndex.setter
     def currentPhaseIndex(self, new_index: int):
-        if self.lc.state.currentPhaseIndex(new_index):
+        if self.lc2.l_state.currentPhaseIndex(new_index):
             self.currentPhaseChanged.emit()
 
     def _onCurrentPhaseChanged(self):
@@ -376,19 +318,19 @@ class PyQmlProxy(QObject):
 
     @Slot(str)
     def setCurrentPhaseName(self, name):
-        self.lc.state.setCurrentPhaseName(name)
-        self.lc.parametersChanged.emit()
-        self.projectInfoChanged.emit()
+        self.lc2.l_state.setCurrentPhaseName(name)
+        self.lc2.parametersChanged.emit()
+        self._project_proxy.projectInfoChanged.emit()
 
     @Property('QVariant', notify=experimentDataChanged)
     def experimentDataAsObj(self):
-        return self.lc.state.experimentDataAsObj()
+        return self.lc2.l_state.experimentDataAsObj()
 
     @Slot(str)
     def setCurrentExperimentDatasetName(self, name):
-        self.lc.state.setCurrentExperimentDatasetName(name)
+        self.lc2.l_state.setCurrentExperimentDatasetName(name)
         self.experimentDataChanged.emit()
-        self.projectInfoChanged.emit()
+        self._project_proxy.projectInfoChanged.emit()
 
     ####################################################################################################################
     ####################################################################################################################
@@ -398,17 +340,17 @@ class PyQmlProxy(QObject):
 
     @Property(str, notify=experimentDataAsXmlChanged)
     def experimentDataAsXml(self):
-        return self.lc.state._experiment_data_as_xml
+        return self.lc2.l_state._experiment_data_as_xml
 
     def _setExperimentDataAsXml(self):
         print("+ _setExperimentDataAsXml")
-        self.lc.state._setExperimentDataAsXml()
+        self.lc2.l_state._setExperimentDataAsXml()
         self.experimentDataAsXmlChanged.emit()
 
     def _onExperimentDataChanged(self):
         print("***** _onExperimentDataChanged")
         self._setExperimentDataAsXml()
-        self.stateChanged.emit(True)
+        self._project_proxy.stateChanged.emit(True)
 
     ####################################################################################################################
     # Experiment data: Add / Remove
@@ -416,28 +358,28 @@ class PyQmlProxy(QObject):
 
     @Slot(str)
     def addExperimentDataFromXye(self, file_url):
-        self.lc.state.addExperimentDataFromXye(file_url)
+        self.lc2.l_state.addExperimentDataFromXye(file_url)
         self._onExperimentDataAdded()
         self.experimentLoadedChanged.emit()
 
     @Slot()
     def removeExperiment(self):
         print("+ removeExperiment")
-        self.lc.state.removeExperiment()
+        self.lc2.l_state.removeExperiment()
         self._onExperimentDataRemoved()
         self.experimentLoadedChanged.emit()
 
     def _loadExperimentData(self, file_url):
         print("+ _loadExperimentData")
-        return self.lc.state._loadExperimentData(file_url)
+        return self.lc2.l_state._loadExperimentData(file_url)
 
     def _onExperimentDataAdded(self):
         print("***** _onExperimentDataAdded")
-        self.lc._onExperimentDataAdded()
+        self.lc2._onExperimentDataAdded()
 
     def _onExperimentDataRemoved(self):
         print("***** _onExperimentDataRemoved")
-        self.lc.chartsLogic._plotting_1d_proxy.clearFrontendState()
+        self.lc2.chartsLogic._plotting_1d_proxy.clearFrontendState()
         self.experimentDataChanged.emit()
 
     ####################################################################################################################
@@ -446,20 +388,20 @@ class PyQmlProxy(QObject):
 
     @Property(bool, notify=experimentLoadedChanged)
     def experimentLoaded(self):
-        return self.lc.state._experiment_loaded
+        return self.lc2.l_state._experiment_loaded
 
     @experimentLoaded.setter
     def experimentLoaded(self, loaded: bool):
-        self.lc.state.experimentLoaded(loaded)
+        self.lc2.l_state.experimentLoaded(loaded)
         self.experimentLoadedChanged.emit()
 
     @Property(bool, notify=experimentSkippedChanged)
     def experimentSkipped(self):
-        return self.lc.state._experiment_skipped
+        return self.lc2.l_state._experiment_skipped
 
     @experimentSkipped.setter
     def experimentSkipped(self, skipped: bool):
-        self.lc.state.experimentSkipped(skipped)
+        self.lc2.l_state.experimentSkipped(skipped)
         self.experimentSkippedChanged.emit()
 
     def _onExperimentLoadedChanged(self):
@@ -475,7 +417,7 @@ class PyQmlProxy(QObject):
             self._onParametersChanged()
             self._onInstrumentParametersChanged()
             self._onPatternParametersChanged()
-            self.lc.state._updateCalculatedData()
+            self.lc2.l_state._updateCalculatedData()
 
     ####################################################################################################################
     # Simulation parameters
@@ -483,16 +425,16 @@ class PyQmlProxy(QObject):
 
     @Property('QVariant', notify=simulationParametersChanged)
     def simulationParametersAsObj(self):
-        return self.lc.state._simulation_parameters_as_obj
+        return self.lc2.l_state._simulation_parameters_as_obj
 
     @simulationParametersAsObj.setter
     def simulationParametersAsObj(self, json_str):
-        self.lc.state.simulationParametersAsObj(json_str)
+        self.lc2.l_state.simulationParametersAsObj(json_str)
         self.simulationParametersChanged.emit()
 
     def _onSimulationParametersChanged(self):
         print("***** _onSimulationParametersChanged")
-        self.lc.state._updateCalculatedData()
+        self.lc2.l_state._updateCalculatedData()
 
     ####################################################################################################################
     # Pattern parameters (scale, zero_shift, backgrounds)
@@ -500,11 +442,11 @@ class PyQmlProxy(QObject):
 
     @Property('QVariant', notify=patternParametersAsObjChanged)
     def patternParametersAsObj(self):
-        return self.lc.state._pattern_parameters_as_obj
+        return self.lc2.l_state._pattern_parameters_as_obj
 
     def _setPatternParametersAsObj(self):
         start_time = timeit.default_timer()
-        self.lc.state._setPatternParametersAsObj()
+        self.lc2.l_state._setPatternParametersAsObj()
         print("+ _setPatternParametersAsObj: {0:.3f} s".format(timeit.default_timer() - start_time))
         self.patternParametersAsObjChanged.emit()
 
@@ -518,21 +460,21 @@ class PyQmlProxy(QObject):
 
     @Property('QVariant', notify=instrumentParametersAsObjChanged)
     def instrumentParametersAsObj(self):
-        return self.lc.state._instrument_parameters_as_obj
+        return self.lc2.l_state._instrument_parameters_as_obj
 
     @Property(str, notify=instrumentParametersAsXmlChanged)
     def instrumentParametersAsXml(self):
-        return self.lc.state._instrument_parameters_as_xml
+        return self.lc2.l_state._instrument_parameters_as_xml
 
     def _setInstrumentParametersAsObj(self):
         start_time = timeit.default_timer()
-        self.lc.state._setInstrumentParametersAsObj()
+        self.lc2.l_state._setInstrumentParametersAsObj()
         print("+ _setInstrumentParametersAsObj: {0:.3f} s".format(timeit.default_timer() - start_time))
         self.instrumentParametersAsObjChanged.emit()
 
     def _setInstrumentParametersAsXml(self):
         start_time = timeit.default_timer()
-        self.lc.state._setInstrumentParametersAsXml()
+        self.lc2.l_state._setInstrumentParametersAsXml()
         print("+ _setInstrumentParametersAsXml: {0:.3f} s".format(timeit.default_timer() - start_time))
         self.instrumentParametersAsXmlChanged.emit()
 
@@ -540,10 +482,6 @@ class PyQmlProxy(QObject):
         print("***** _onInstrumentParametersChanged")
         self._setInstrumentParametersAsObj()
         self._setInstrumentParametersAsXml()
-
-    ####################################################################################################################
-    # Background
-    ####################################################################################################################
 
     ####################################################################################################################
     ####################################################################################################################
@@ -558,22 +496,22 @@ class PyQmlProxy(QObject):
 
     @Property('QVariant', notify=parametersAsObjChanged)
     def parametersAsObj(self):
-        return self.lc.state._parameters_as_obj
+        return self.lc2.l_state._parameters_as_obj
 
     @Property(str, notify=parametersAsXmlChanged)
     def parametersAsXml(self):
-        return self.lc.state._parameters_as_xml
+        return self.lc2.l_state._parameters_as_xml
 
     def _setParametersAsObj(self):
         start_time = timeit.default_timer()
 
-        self.lc.state._setParametersAsObj()
+        self.lc2.l_state._setParametersAsObj()
         print("+ _setParametersAsObj: {0:.3f} s".format(timeit.default_timer() - start_time))
         self.parametersAsObjChanged.emit()
 
     def _setParametersAsXml(self):
         start_time = timeit.default_timer()
-        self.lc.state._setParametersAsXml()
+        self.lc2.l_state._setParametersAsXml()
         print("+ _setParametersAsXml: {0:.3f} s".format(timeit.default_timer() - start_time))
         self.parametersAsXmlChanged.emit()
 
@@ -581,12 +519,12 @@ class PyQmlProxy(QObject):
         print("***** _onParametersChanged")
         self._setParametersAsObj()
         self._setParametersAsXml()
-        self.stateChanged.emit(True)
+        self._project_proxy.stateChanged.emit(True)
 
     # Filtering
     @Slot(str)
     def setParametersFilterCriteria(self, new_criteria):
-        self.lc.state.setParametersFilterCriteria(new_criteria)
+        self.lc2.l_state.setParametersFilterCriteria(new_criteria)
         self._onParametersChanged()
 
     ####################################################################################################################
@@ -595,29 +533,7 @@ class PyQmlProxy(QObject):
 
     @Slot(str, 'QVariant')
     def editParameter(self, obj_id: str, new_value: Union[bool, float, str]):
-        self.lc.state.editParameter(obj_id, new_value)
-
-    ####################################################################################################################
-    ####################################################################################################################
-    # Report
-    ####################################################################################################################
-    ####################################################################################################################
-
-    @Slot(str)
-    def setReport(self, report):
-        """
-        Keep the QML generated HTML report for saving
-        """
-        self.lc.state.setReport(report)
-
-    @Slot(str)
-    def saveReport(self, filepath):
-        """
-        Save the generated report to the specified file
-        Currently only html
-        """
-        success = self.lc.state.saveReport(filepath)
-        self.htmlExportingFinished.emit(success, filepath)
+        self.lc2.l_state.editParameter(obj_id, new_value)
 
     ####################################################################################################################
     ####################################################################################################################
@@ -627,11 +543,11 @@ class PyQmlProxy(QObject):
 
     @Property('QVariant', notify=statusInfoChanged)
     def statusModelAsObj(self):
-        return self.lc.statusModelAsObj()
+        return self.lc2.statusModelAsObj()
 
     @Property(str, notify=statusInfoChanged)
     def statusModelAsXml(self):
-        return self.lc.statusModelAsXml()
+        return self.lc2.statusModelAsXml()
 
     def _onStatusInfoChanged(self):
         pass
@@ -644,7 +560,7 @@ class PyQmlProxy(QObject):
 
     @Property(str, notify=dummySignal)
     def projectExamplesAsXml(self):
-        return self.lc.state.projectExamplesAsXml()
+        return self.lc2.l_project.projectExamplesAsXml()
 
     ####################################################################################################################
     ####################################################################################################################
@@ -654,88 +570,4 @@ class PyQmlProxy(QObject):
 
     @Property('QVariant', notify=dummySignal)
     def screenRecorder(self):
-        return self.lc._screen_recorder
-
-    ####################################################################################################################
-    ####################################################################################################################
-    # State save/load
-    ####################################################################################################################
-    ####################################################################################################################
-
-    @Slot()
-    def saveProject(self):
-        self.lc.state.saveProject()
-        self.stateChanged.emit(False)
-
-    @Slot(str)
-    def loadProjectAs(self, filepath):
-        self.lc.state._loadProjectAs(filepath)
-        self.stateChanged.emit(False)
-
-    @Slot()
-    def loadProject(self):
-        self.lc.state._loadProject()
-        self._background_proxy.onAsObjChanged()
-        self.stateChanged.emit(False)
-
-    @Slot(str)
-    def loadExampleProject(self, filepath):
-        self.lc.state._loadProjectAs(filepath)
-        self.currentProjectPath = '--- EXAMPLE ---'
-        self.stateChanged.emit(False)
-
-    @Property(str, notify=dummySignal)
-    def projectFilePath(self):
-        return self.lc.state.project_save_filepath
-
-    @Property(bool, notify=projectCreatedChanged)
-    def projectCreated(self):
-        return self.lc.state._project_created
-
-    @projectCreated.setter
-    def projectCreated(self, created: bool):
-        if self.lc.state.setProjectCreated(created):
-            self.projectCreatedChanged.emit()
-
-    @Slot()
-    def resetState(self):
-        self.lc.state.resetState()
-        self._plotting_1d_proxy.logic.clearBackendState()
-        self._plotting_1d_proxy.logic.clearFrontendState()
-        self.resetUndoRedoStack()
-        self.experimentSkippedChanged.emit()
-        self.stateChanged.emit(False)
-
-    ####################################################################################################################
-    # Undo/Redo stack operations
-    ####################################################################################################################
-
-    # @Property(bool, notify=undoRedoChanged)
-    # def canUndo(self) -> bool:
-    #     return self.lc.stackLogic.canUndo()
-
-    # @Property(bool, notify=undoRedoChanged)
-    # def canRedo(self) -> bool:
-    #     return self.lc.stackLogic.canRedo()
-
-    # @Slot()
-    # def undo(self):
-    #     self.lc.stackLogic.undo()
-
-    # @Slot()
-    # def redo(self):
-    #     self.lc.stackLogic.redo()
-
-    # @Property(str, notify=undoRedoChanged)
-    # def undoText(self):
-    #     return self.lc.stackLogic.undoText()
-
-    # @Property(str, notify=undoRedoChanged)
-    # def redoText(self):
-    #     return self.lc.stackLogic.redoText()
-
-    # @Slot()
-    # def resetUndoRedoStack(self):
-
-    #     self.lc.stackLogic.resetUndoRedoStack()
-    #     self.undoRedoChanged.emit()
+        return self.lc2._screen_recorder

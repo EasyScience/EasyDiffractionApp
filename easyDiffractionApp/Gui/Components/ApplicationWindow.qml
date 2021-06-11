@@ -29,12 +29,12 @@ EaComponents.ApplicationWindow {
     appBarLeftButtons: [
 
         EaElements.ToolButton {
-            enabled: ExGlobals.Constants.proxy.stateHasChanged &&
-                     ExGlobals.Constants.proxy.currentProjectPath !== '--- EXAMPLE ---'
+            enabled: ExGlobals.Constants.proxy.project.stateHasChanged &&
+                     ExGlobals.Constants.proxy.project.currentProjectPath !== '--- EXAMPLE ---'
             highlighted: true
             fontIcon: "save"
             ToolTip.text: qsTr("Save current state of the project")
-            onClicked:  ExGlobals.Constants.proxy.saveProject()
+            onClicked:  ExGlobals.Constants.proxy.project.saveProject()
         },
 
         EaElements.ToolButton {
@@ -52,7 +52,7 @@ EaComponents.ApplicationWindow {
         },
 
         EaElements.ToolButton {
-            enabled: ExGlobals.Constants.proxy.projectCreated ||
+            enabled: ExGlobals.Constants.proxy.project.projectCreated ||
                      ExGlobals.Constants.proxy.samplesPresent ||
                      ExGlobals.Constants.proxy.experimentSkipped ||
                      ExGlobals.Constants.proxy.experimentLoaded
@@ -168,7 +168,7 @@ EaComponents.ApplicationWindow {
 
         // Project page
         EaComponents.ContentPage {
-            defaultInfo: ExGlobals.Constants.proxy.projectCreated ?
+            defaultInfo: ExGlobals.Constants.proxy.project.projectCreated ?
                              "" :
                              qsTr("No Project Created/Opened")
 
@@ -364,7 +364,7 @@ EaComponents.ApplicationWindow {
     // Application dialogs (invisible at the beginning)
     ExProjectPage.ProjectDescriptionDialog {
         onAccepted: {
-            ExGlobals.Constants.proxy.projectCreated = true
+            ExGlobals.Constants.proxy.project.projectCreated = true
             ExGlobals.Variables.samplePageEnabled = true
         }
     }
@@ -395,7 +395,7 @@ EaComponents.ApplicationWindow {
                     EaGlobals.Variables.appBarCurrentIndex = 0
                     ExGlobals.Variables.projectPageEnabled = false
                     ExGlobals.Variables.samplePageEnabled = false
-                    ExGlobals.Constants.proxy.resetState()
+                    ExGlobals.Constants.proxy.project.resetState()
                     resetStateDialog.close()
                 }
                 Component.onCompleted: ExGlobals.Variables.resetStateOkButton = this

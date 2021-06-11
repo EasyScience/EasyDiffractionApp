@@ -36,7 +36,7 @@ EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
         title: qsTr("Minimization")
-        enabled: ExGlobals.Constants.proxy.experimentLoaded
+        enabled: ExGlobals.Constants.proxy.experiment.experimentLoaded
 
         Row {
             spacing: EaStyle.Sizes.fontPixelSize

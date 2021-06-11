@@ -67,7 +67,6 @@ class LogicController(QObject):
         self.parametersChanged.connect(self.proxy._onPatternParametersChanged)
         self.parametersChanged.connect(self.proxy._onInstrumentParametersChanged)
         self.parametersChanged.connect(self.l_background.onAsObjChanged)
-        # self.parametersChanged.connect(self.proxy.undoRedoChanged)
         self.parametersChanged.connect(self.l_stack.undoRedoChanged)
 
         self.l_state.plotCalculatedDataSignal.connect(self.plotCalculatedData)
@@ -75,8 +74,6 @@ class LogicController(QObject):
         self.l_state.undoRedoChanged.connect(self.l_stack.undoRedoChanged)
         self.l_state.parametersChanged.connect(self.parametersChanged)
         self.l_state.updateProjectInfo.connect(self.l_project.updateProjectInfo)
-        # self.l_state.experimentLoadedChanged.connect(self.proxy.experimentLoadedChanged)
-        # self.l_state.experimentSkippedChanged.connect(self.proxy.experimentSkippedChanged)
 
     def resetFactory(self):
         self.interface = InterfaceFactory()
@@ -108,26 +105,24 @@ class LogicController(QObject):
 
     def samplesPresent(self):
         result = len(self.l_state._sample.phases) > 0
-        print(">> samplesPresent: {}".format(str(result)))
         return result
-        # return len(self.l_state._sample.phases) > 0
 
     def _onExperimentDataAdded(self):
         print("***** _onExperimentDataAdded")
         self.l_plotting1d.setMeasuredData(
-                                          self.l_state._experiment_data.x,
-                                          self.l_state._experiment_data.y,
-                                          self.l_state._experiment_data.e)
-        self.l_state._experiment_parameters = \
-            self.l_state._experimentDataParameters(self.l_state._experiment_data)
+                                          self.l_experiment._experiment_data.x,
+                                          self.l_experiment._experiment_data.y,
+                                          self.l_experiment._experiment_data.e)
+        self.l_experiment._experiment_parameters = \
+            self.l_experiment._experimentDataParameters(self.l_experiment._experiment_data)
 
         self.proxy.simulationParametersAsObj = \
-            json.dumps(self.l_state._experiment_parameters)
+            json.dumps(self.l_experiment._experiment_parameters)
 
         if len(self.l_state._sample.pattern.backgrounds) == 0:
             self.l_background.initializeContainer()
 
-        self.proxy.experimentDataChanged.emit()
+        self.l_experiment.experimentDataChanged.emit()
         self.l_project._project_info['experiments'] = \
             self.l_state._data.experiments[0].name
 

@@ -18,6 +18,7 @@ class ExperimentProxy(QObject):
         self.logic = logic.l_experiment
         self.logic.experimentLoadedChanged.connect(self.experimentLoadedChanged)
         self.logic.experimentSkippedChanged.connect(self.experimentSkippedChanged)
+        self.logic.experimentDataChanged.connect(self.experimentDataChanged)
 
     @Property('QVariant', notify=experimentDataChanged)
     def experimentDataAsObj(self):

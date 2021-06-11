@@ -15,6 +15,7 @@ class ExperimentLogic(QObject):
     """
     experimentLoadedChanged = Signal()
     experimentSkippedChanged = Signal()
+    experimentDataChanged = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -77,7 +78,7 @@ class ExperimentLogic(QObject):
         self.experimentSkippedChanged.emit()
 
     def experimentDataAsObj(self):
-        return [{'name': experiment.name} for experiment in self._data.experiments]
+        return [{'name': experiment.name} for experiment in self.state._data.experiments]
 
     def _setExperimentDataAsXml(self):
         self._experiment_data_as_xml = dicttoxml(self.experiments, attr_type=True).decode()  # noqa: E501
@@ -85,7 +86,7 @@ class ExperimentLogic(QObject):
     def addExperimentDataFromXye(self, file_url):
         self._experiment_data = self._loadExperimentData(file_url)
         self.state._data.experiments[0].name = pathlib.Path(file_url).stem
-        self.experiments = [{'name': experiment.name} for experiment in self._data.experiments]
+        self.experiments = [{'name': experiment.name} for experiment in self.state._data.experiments]
         self.experimentLoaded(True)
         self.experimentSkipped(False)
 
@@ -99,3 +100,10 @@ class ExperimentLogic(QObject):
 
     def _onExperimentLoadedChanged(self):
         self.state._onPatternParametersChanged()
+
+    def setCurrentExperimentDatasetName(self, name):
+        self.state.setCurrentExperimentDatasetName(name)
+
+    def _onExperimentDataAdded(self):
+        # needed for proxy -> LC communication
+        self.parent._onExperimentDataAdded()

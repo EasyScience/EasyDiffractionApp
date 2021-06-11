@@ -466,7 +466,7 @@ Item {
             return ''
         const projectDescription = ExGlobals.Constants.proxy.project.projectInfoAsJson.short_description
         const phaseName = ExGlobals.Constants.proxy.phasesAsObj[0].name
-        const datasetName = ExGlobals.Constants.proxy.experimentDataAsObj[0].name
+        const datasetName = ExGlobals.Constants.proxy.experiment.experimentDataAsObj[0].name
         const modifiedDate = ExGlobals.Constants.proxy.project.projectInfoAsJson.modified
         const list = [
                 `<h1>${ExGlobals.Constants.proxy.project.projectInfoAsJson.name}</h1>`,

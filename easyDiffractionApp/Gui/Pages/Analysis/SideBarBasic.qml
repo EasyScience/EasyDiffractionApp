@@ -109,7 +109,7 @@ EaComponents.SideBarColumn {
                             return []
                         }
                         const phaseName = ExGlobals.Constants.proxy.phasesAsObj[0].name
-                        const datasetName = ExGlobals.Constants.proxy.experimentDataAsObj[0].name
+                        const datasetName = ExGlobals.Constants.proxy.experiment.experimentDataAsObj[0].name
                         let m = [
                                 { value: "", text: qsTr("All names") },
                                 { value: `.${phaseName}.`, text: formatFilterText("gem", "", phaseName) },
@@ -184,7 +184,7 @@ EaComponents.SideBarColumn {
             wide: true
             // temporarily disabled
             // enabled: ExGlobals.Constants.proxy.experimentLoaded
-            enabled: ExGlobals.Constants.proxy.experimentLoaded && ExGlobals.Constants.proxy.fitting.isFitFinished
+            enabled: ExGlobals.Constants.proxy.experiment.experimentLoaded && ExGlobals.Constants.proxy.fitting.isFitFinished
             fontIcon: ExGlobals.Constants.proxy.fitting.isFitFinished ? "play-circle" : "pause-circle"
             // temporarily modified
             // text: ExGlobals.Constants.proxy.fitting.isFitFinished ? qsTr("Start fitting") : qsTr("Stop fitting")

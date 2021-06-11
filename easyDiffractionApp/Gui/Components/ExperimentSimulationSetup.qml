@@ -19,7 +19,7 @@ Row {
     }
     EaElements.Parameter {
         id: xMin
-        enabled: !ExGlobals.Constants.proxy.experimentLoaded
+        enabled: !ExGlobals.Constants.proxy.experiment.experimentLoaded
         width: textFieldWidth()
         units: "deg"
         text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.simulationParametersAsObj.x_min, 3)
@@ -34,7 +34,7 @@ Row {
     }
     EaElements.Parameter {
         id: xMax
-        enabled: !ExGlobals.Constants.proxy.experimentLoaded
+        enabled: !ExGlobals.Constants.proxy.experiment.experimentLoaded
         width: textFieldWidth()
         units: "deg"
         text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.simulationParametersAsObj.x_max, 3)
@@ -49,7 +49,7 @@ Row {
     }
     EaElements.Parameter {
         id: xStep
-        enabled: !ExGlobals.Constants.proxy.experimentLoaded
+        enabled: !ExGlobals.Constants.proxy.experiment.experimentLoaded
         width: textFieldWidth()
         units: "deg"
         text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.simulationParametersAsObj.x_step, 3)

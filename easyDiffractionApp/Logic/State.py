@@ -24,21 +24,11 @@ from easyDiffractionLib.Elements.Experiments.Pattern import Pattern1D
 class StateLogic(QObject):
     """
     """
-    # projectCreatedChanged = Signal()
     simulationParametersChanged = Signal()
     undoRedoChanged = Signal()
     parametersChanged = Signal()
     experimentLoadedChanged = Signal()
     experimentSkippedChanged = Signal()
-    phasesEnabled = Signal()
-    phasesAsObjChanged = Signal()
-    # structureParametersChanged = Signal()
-    # projectInfoChanged = Signal()
-    experimentDataAdded = Signal()
-    removePhaseSignal = Signal(str)
-    resetUndoRedoStack = Signal()
-    currentMinimizerIndex = Signal(int)
-    currentMinimizerMethodIndex = Signal(int)
     plotCalculatedDataSignal = Signal(tuple)
     plotBraggDataSignal = Signal(tuple)
     updateProjectInfo = Signal(tuple)
@@ -48,10 +38,6 @@ class StateLogic(QObject):
         self.parent = parent
         self._interface = interface
         self._interface_name = interface.current_interface_name
-        # self.project_save_filepath = ""
-        # self.project_load_filepath = ""
-        # self._project_info = self._defaultProjectInfo()
-        # self._project_created = False
 
         self._experiment_parameters = None
         self._experiment_data_as_xml = ""
@@ -165,10 +151,10 @@ class StateLogic(QObject):
         }
         return parameters
 
-    def _onExperimentDataAdded(self):
-        self._experiment_parameters = self._experimentDataParameters(self._experiment_data)  # noqa: E501
-        self.simulationParametersAsObj(json.dumps(self._experiment_parameters))  # noqa: E501
-        self.experiments = [self._defaultExperiment()]
+    # def _onExperimentDataAdded(self):
+    #     self._experiment_parameters = self._experimentDataParameters(self._experiment_data)  # noqa: E501
+    #     self.simulationParametersAsObj(json.dumps(self._experiment_parameters))  # noqa: E501
+    #     self.experiments = [self._defaultExperiment()]
 
     def experimentDataXYZ(self):
         return (self._experiment_data.x, self._experiment_data.y, self._experiment_data.e)  # noqa: E501
@@ -594,42 +580,6 @@ class StateLogic(QObject):
         xml = dicttoxml(model, attr_type=False)
         xml = xml.decode()
         return xml
-
-    ####################################################################################################################
-    ####################################################################################################################
-    # Reporting
-    ####################################################################################################################
-    ####################################################################################################################
-
-    # def setReport(self, report):
-    #     """
-    #     Keep the QML generated HTML report for saving
-    #     """
-    #     self._report = report
-
-    # def saveReport(self, filepath):
-    #     """
-    #     Save the generated report to the specified file
-    #     Currently only html
-    #     """
-    #     try:
-    #         with open(filepath, 'w', encoding='utf-8') as f:
-    #             f.write(self._report)
-    #         success = True
-    #     except IOError:
-    #         success = False
-
-    #     return success
-
-    # def setProjectCreated(self, created: bool):
-    #     if self._project_created == created:
-    #         return
-    #     self._project_created = created
-    #     self.projectCreatedChanged.emit()
-
-    ####################################################################################################################
-    # Calculator
-    ####################################################################################################################
 
     def _onCurrentCalculatorChanged(self):
         data = self._data.simulations

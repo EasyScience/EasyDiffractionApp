@@ -190,7 +190,7 @@ class FittingLogic(QObject):
         new_name = self.interface.available_interfaces[new_index]
         self.interface.switch(new_name)
         self.currentCalculatorChanged.emit()
-        self.parent.resetFactory()    
+        # self.parent.resetFactory()
         print("***** _onCurrentCalculatorChanged")
         self.state._onCurrentCalculatorChanged()
         self.state._updateCalculatedData()

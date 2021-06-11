@@ -414,8 +414,8 @@ EaComponents.ApplicationWindow {
     ////////
 
     onClosing: {
-       closeDialog.visible = ExGlobals.Constants.proxy.stateHasChanged
-       close.accepted = !ExGlobals.Constants.proxy.stateHasChanged
+       closeDialog.visible = ExGlobals.Constants.proxy.project.stateHasChanged
+       close.accepted = !ExGlobals.Constants.proxy.project.stateHasChanged
        if (close.accepted) {
            close.accepted = false
            window.quit()

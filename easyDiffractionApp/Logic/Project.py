@@ -144,14 +144,6 @@ class ProjectLogic(QObject):
         else:
             print(f"ERROR: Directory {projectPath} already exists")
 
-    # def resetState(self):
-    #     # self._project_info = self._defaultProjectInfo()
-    #     self.setProjectCreated(False)
-    #     self.projectInfoChanged.emit()
-    #     self.project_save_filepath = ""
-    #     self.removeExperiment()
-    #     self.removePhaseSignal.emit(self._sample.phases[self._current_phase_index].name)
-
     def stateHasChanged(self, changed: bool):
         if self._state_changed == changed:
             return
@@ -180,8 +172,8 @@ class ProjectLogic(QObject):
             if old_interface_name != interface_name:
                 self._interface.switch(interface_name)
 
-        self._sample = Sample.from_dict(descr['sample'])
-        self._sample.interface = self._interface
+        self.parent.l_state._sample = Sample.from_dict(descr['sample'])
+        self.parent.l_state._sample.interface = self._interface
 
         # send signal to tell the proxy we changed phases
         self.phasesEnabled.emit()
@@ -225,7 +217,7 @@ class ProjectLogic(QObject):
             new_method_index = self.parent.l_fitting.minimizerMethodNames().index(new_method)
             self.parent.l_fitting.currentMinimizerMethodIndex(new_method_index)
 
-        self.parent.l_fitting.fitter.fit_object = self._sample
+        self.parent.l_fitting.fitter.fit_object = self.parent.l_state._sample
         self.parent.l_stack.resetUndoRedoStack()
         self.setProjectCreated(True)
 

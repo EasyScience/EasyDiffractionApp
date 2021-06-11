@@ -11,7 +11,7 @@ class StackProxy(QObject):
         self.parent = parent
         self.logic = logic.l_stack
         self.logic.undoRedoChanged.connect(self.undoRedoChanged)
-   
+
     @Property(bool, notify=undoRedoChanged)
     def canUndo(self) -> bool:
         return self.logic.canUndo()

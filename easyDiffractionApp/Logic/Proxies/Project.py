@@ -1,7 +1,5 @@
 from PySide2.QtCore import QObject, Signal, Slot, Property
 
-from easyDiffractionApp.Logic.Project import ProjectLogic
-
 
 class ProjectProxy(QObject):
     projectCreatedChanged = Signal()

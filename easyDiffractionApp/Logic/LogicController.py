@@ -3,7 +3,8 @@ import json
 from PySide2.QtCore import QObject, Signal
 
 from easyDiffractionApp.Logic.Background import BackgroundLogic
-from easyDiffractionApp.Logic.Fitting import FittingLogic as FittingLogic
+from easyDiffractionApp.Logic.Experiment import ExperimentLogic
+from easyDiffractionApp.Logic.Fitting import FittingLogic
 from easyDiffractionApp.Logic.Plotting1d import Plotting1dLogic
 from easyDiffractionApp.Logic.Plotting3d import Plotting3dLogic
 from easyDiffractionApp.Logic.Project import ProjectLogic
@@ -28,6 +29,7 @@ class LogicController(QObject):
 
     def initializeLogics(self):
         self.l_state = StateLogic(self, interface=self.interface)
+        self.l_experiment = ExperimentLogic(self)
         self.l_fitting = FittingLogic(self, state=self.l_state, interface=self.interface)
         self.l_plotting1d = Plotting1dLogic(self)
         self.l_plotting3d = Plotting3dLogic(self)
@@ -57,7 +59,7 @@ class LogicController(QObject):
         self.l_project.structureParametersChanged.connect(self.proxy.structureParametersChanged)
         self.l_project.removePhaseSignal.connect(self.removePhase)
         self.l_project.parametersChanged.connect(self.parametersChanged)
-        self.l_project.experimentLoadedChanged.connect(self.proxy.experimentLoadedChanged)
+        self.l_project.experimentLoadedChanged.connect(self.l_experiment.experimentLoadedChanged)
 
         self.parametersChanged.connect(self.proxy._onParametersChanged)
         self.parametersChanged.connect(self.l_state._updateCalculatedData)
@@ -73,8 +75,8 @@ class LogicController(QObject):
         self.l_state.undoRedoChanged.connect(self.l_stack.undoRedoChanged)
         self.l_state.parametersChanged.connect(self.parametersChanged)
         self.l_state.updateProjectInfo.connect(self.l_project.updateProjectInfo)
-        self.l_state.experimentLoadedChanged.connect(self.proxy.experimentLoadedChanged)
-        self.l_state.experimentSkippedChanged.connect(self.proxy.experimentSkippedChanged)
+        # self.l_state.experimentLoadedChanged.connect(self.proxy.experimentLoadedChanged)
+        # self.l_state.experimentSkippedChanged.connect(self.proxy.experimentSkippedChanged)
 
     def resetFactory(self):
         self.interface = InterfaceFactory()

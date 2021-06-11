@@ -26,7 +26,6 @@ class ProjectLogic(QObject):
     experimentDataAdded = Signal()
     parametersChanged = Signal()
     experimentLoadedChanged = Signal()
-    
 
     def __init__(self, parent=None , interface=None):
         super().__init__(parent)

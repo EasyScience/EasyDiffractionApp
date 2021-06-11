@@ -1,7 +1,6 @@
 # noqa: E501
 import os
 import datetime
-import pathlib
 from typing import Union
 
 from dicttoxml import dicttoxml
@@ -27,8 +26,7 @@ class StateLogic(QObject):
     simulationParametersChanged = Signal()
     undoRedoChanged = Signal()
     parametersChanged = Signal()
-    experimentLoadedChanged = Signal()
-    experimentSkippedChanged = Signal()
+
     plotCalculatedDataSignal = Signal(tuple)
     plotBraggDataSignal = Signal(tuple)
     updateProjectInfo = Signal(tuple)
@@ -38,14 +36,6 @@ class StateLogic(QObject):
         self.parent = parent
         self._interface = interface
         self._interface_name = interface.current_interface_name
-
-        self._experiment_parameters = None
-        self._experiment_data_as_xml = ""
-        self.experiment_data = None
-        self._experiment_data = None
-        self._experiment_loaded = False
-        self._experiment_skipped = False
-        self.experiments = self._defaultExperiments()
 
         self._parameters = None
         self._instrument_parameters = None
@@ -121,76 +111,76 @@ class StateLogic(QObject):
             "x_step": 0.1
         }
 
-    ####################################################################################################################
-    ####################################################################################################################
-    # experiment
-    ####################################################################################################################
-    ####################################################################################################################
+    # ####################################################################################################################
+    # ####################################################################################################################
+    # # experiment
+    # ####################################################################################################################
+    # ####################################################################################################################
 
-    def _defaultExperiment(self):
-        return {
-            "label": "D1A@ILL",
-            "color": "#00a3e3"
-        }
+    # def _defaultExperiment(self):
+    #     return {
+    #         "label": "D1A@ILL",
+    #         "color": "#00a3e3"
+    #     }
 
-    def _loadExperimentData(self, file_url):
-        print("+ _loadExperimentData")
-        file_path = generalizePath(file_url)
-        data = self._data.experiments[0]
-        data.x, data.y, data.e = np.loadtxt(file_path, unpack=True)
-        return data
+    # def _loadExperimentData(self, file_url):
+    #     print("+ _loadExperimentData")
+    #     file_path = generalizePath(file_url)
+    #     data = self._data.experiments[0]
+    #     data.x, data.y, data.e = np.loadtxt(file_path, unpack=True)
+    #     return data
 
-    def _experimentDataParameters(self, data):
-        x_min = data.x[0]
-        x_max = data.x[-1]
-        x_step = (x_max - x_min) / (len(data.x) - 1)
-        parameters = {
-            "x_min":  x_min,
-            "x_max":  x_max,
-            "x_step": x_step
-        }
-        return parameters
+    # def _experimentDataParameters(self, data):
+    #     x_min = data.x[0]
+    #     x_max = data.x[-1]
+    #     x_step = (x_max - x_min) / (len(data.x) - 1)
+    #     parameters = {
+    #         "x_min":  x_min,
+    #         "x_max":  x_max,
+    #         "x_step": x_step
+    #     }
+    #     return parameters
 
-    # def _onExperimentDataAdded(self):
-    #     self._experiment_parameters = self._experimentDataParameters(self._experiment_data)  # noqa: E501
-    #     self.simulationParametersAsObj(json.dumps(self._experiment_parameters))  # noqa: E501
-    #     self.experiments = [self._defaultExperiment()]
+    # # def _onExperimentDataAdded(self):
+    # #     self._experiment_parameters = self._experimentDataParameters(self._experiment_data)  # noqa: E501
+    # #     self.simulationParametersAsObj(json.dumps(self._experiment_parameters))  # noqa: E501
+    # #     self.experiments = [self._defaultExperiment()]
 
-    def experimentDataXYZ(self):
-        return (self._experiment_data.x, self._experiment_data.y, self._experiment_data.e)  # noqa: E501
+    # def experimentDataXYZ(self):
+    #     return (self._experiment_data.x, self._experiment_data.y, self._experiment_data.e)  # noqa: E501
 
-    def _defaultExperiments(self):
-        return []
+    # def _defaultExperiments(self):
+    #     return []
 
-    def experimentLoaded(self, loaded: bool):
-        if self._experiment_loaded == loaded:
-            return
-        self._experiment_loaded = loaded
-        self.experimentLoadedChanged.emit()
+    # def experimentLoaded(self, loaded: bool):
+    #     if self._experiment_loaded == loaded:
+    #         return
+    #     self._experiment_loaded = loaded
+    #     self.experimentLoadedChanged.emit()
 
-    def experimentSkipped(self, skipped: bool):
-        if self._experiment_skipped == skipped:
-            return
-        self._experiment_skipped = skipped
-        self.experimentSkippedChanged.emit()
+    # def experimentSkipped(self, skipped: bool):
+    #     if self._experiment_skipped == skipped:
+    #         return
+    #     self._experiment_skipped = skipped
+    #     self.experimentSkippedChanged.emit()
 
-    def experimentDataAsObj(self):
-        return [{'name': experiment.name} for experiment in self._data.experiments]
+    # def experimentDataAsObj(self):
+    #     return [{'name': experiment.name} for experiment in self._data.experiments]
 
-    def _setExperimentDataAsXml(self):
-        self._experiment_data_as_xml = dicttoxml(self.experiments, attr_type=True).decode()  # noqa: E501
+    # def _setExperimentDataAsXml(self):
+    #     self._experiment_data_as_xml = dicttoxml(self.experiments, attr_type=True).decode()  # noqa: E501
 
-    def addExperimentDataFromXye(self, file_url):
-        self._experiment_data = self._loadExperimentData(file_url)
-        self._data.experiments[0].name = pathlib.Path(file_url).stem
-        self.experiments = [{'name': experiment.name} for experiment in self._data.experiments]
-        self.experimentLoaded(True)
-        self.experimentSkipped(False)
+    # def addExperimentDataFromXye(self, file_url):
+    #     self._experiment_data = self._loadExperimentData(file_url)
+    #     self._data.experiments[0].name = pathlib.Path(file_url).stem
+    #     self.experiments = [{'name': experiment.name} for experiment in self._data.experiments]
+    #     self.experimentLoaded(True)
+    #     self.experimentSkipped(False)
 
-    def removeExperiment(self):
-        self.experiments.clear()
-        self.experimentLoaded(False)
-        self.experimentSkipped(False)
+    # def removeExperiment(self):
+    #     self.experiments.clear()
+    #     self.experimentLoaded(False)
+    #     self.experimentSkipped(False)
 
     ####################################################################################################################
     ####################################################################################################################

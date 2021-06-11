@@ -1,5 +1,4 @@
 # noqa: E501
-import os
 import timeit
 
 from typing import Union
@@ -7,13 +6,15 @@ from typing import Union
 from PySide2.QtCore import QObject, Slot, Signal, Property
 
 from easyCore.Utils.UndoRedo import property_stack_deco
+
 from easyDiffractionApp.Logic.LogicController import LogicController
+from easyDiffractionApp.Logic.Proxies.Background import BackgroundProxy
+from easyDiffractionApp.Logic.Proxies.Experiment import ExperimentProxy
+from easyDiffractionApp.Logic.Proxies.Fitting import FittingProxy
 from easyDiffractionApp.Logic.Proxies.Plotting1d import Plotting1dProxy
 from easyDiffractionApp.Logic.Proxies.Plotting3d import Plotting3dProxy
-from easyDiffractionApp.Logic.Proxies.Background import BackgroundProxy
-from easyDiffractionApp.Logic.Proxies.Fitting import FittingProxy
-from easyDiffractionApp.Logic.Proxies.Stack import StackProxy
 from easyDiffractionApp.Logic.Proxies.Project import ProjectProxy
+from easyDiffractionApp.Logic.Proxies.Stack import StackProxy
 
 
 class PyQmlProxy(QObject):
@@ -39,11 +40,11 @@ class PyQmlProxy(QObject):
     instrumentParametersAsObjChanged = Signal()
     instrumentParametersAsXmlChanged = Signal()
 
-    experimentDataChanged = Signal()
-    experimentDataAsXmlChanged = Signal()
+    # experimentDataChanged = Signal()
+    # experimentDataAsXmlChanged = Signal()
 
-    experimentLoadedChanged = Signal()
-    experimentSkippedChanged = Signal()
+    # experimentLoadedChanged = Signal()
+    # experimentSkippedChanged = Signal()
 
     # Analysis
     simulationParametersChanged = Signal()
@@ -74,6 +75,7 @@ class PyQmlProxy(QObject):
         self._background_proxy = BackgroundProxy(self, logic=self.lc)
         self._stack_proxy = StackProxy(self, logic=self.lc)
         self._project_proxy = ProjectProxy(self, logic=self.lc)
+        self._experiment_proxy = ExperimentProxy(self, logic=self.lc)
 
 
         ####################################################################################################################
@@ -82,7 +84,7 @@ class PyQmlProxy(QObject):
         ####################################################################################################################
         ####################################################################################################################
 
-         # Structure
+        # Structure
         self.structureParametersChanged.connect(self._onStructureParametersChanged)
         self.structureParametersChanged.connect(self.lc.l_state._updateCalculatedData())
 
@@ -92,10 +94,10 @@ class PyQmlProxy(QObject):
         self.currentPhaseChanged.connect(self._onCurrentPhaseChanged)
 
         # Experiment
-        self.experimentDataChanged.connect(self._onExperimentDataChanged)
+        # self.experimentDataChanged.connect(self._onExperimentDataChanged)
 
-        self.experimentLoadedChanged.connect(self._onExperimentLoadedChanged)
-        self.experimentSkippedChanged.connect(self._onExperimentSkippedChanged)
+        # self.experimentLoadedChanged.connect(self._onExperimentLoadedChanged)
+        # self.experimentSkippedChanged.connect(self._onExperimentSkippedChanged)
 
         # Analysis
         self.simulationParametersChanged.connect(self._onSimulationParametersChanged)
@@ -131,20 +133,26 @@ class PyQmlProxy(QObject):
     def background(self):
         return self._background_proxy
 
+    # experiment
+    @Property('QVariant', notify=dummySignal)
+    def experiment(self):
+        return self._experiment_proxy
+
     # fitting
     @Property('QVariant', notify=dummySignal)
     def fitting(self):
         return self._fitting_proxy
+
+    # project
+    @Property('QVariant', notify=dummySignal)
+    def project(self):
+        return self._project_proxy
 
     # stack
     @Property('QVariant', notify=dummySignal)
     def stack(self):
         return self._stack_proxy
 
-    # project
-    @Property('QVariant', notify=dummySignal)
-    def project(self):
-        return self._project_proxy
 
     ####################################################################################################################
     # Phase models (list, xml, cif)
@@ -312,102 +320,102 @@ class PyQmlProxy(QObject):
         self.lc.parametersChanged.emit()
         self._project_proxy.projectInfoChanged.emit()
 
-    @Property('QVariant', notify=experimentDataChanged)
-    def experimentDataAsObj(self):
-        return self.lc.l_state.experimentDataAsObj()
+    # @Property('QVariant', notify=experimentDataChanged)
+    # def experimentDataAsObj(self):
+    #     return self.lc.l_state.experimentDataAsObj()
 
-    @Slot(str)
-    def setCurrentExperimentDatasetName(self, name):
-        self.lc.l_state.setCurrentExperimentDatasetName(name)
-        self.experimentDataChanged.emit()
-        self._project_proxy.projectInfoChanged.emit()
+    # @Slot(str)
+    # def setCurrentExperimentDatasetName(self, name):
+    #     self.lc.l_state.setCurrentExperimentDatasetName(name)
+    #     self.experimentDataChanged.emit()
+    #     self._project_proxy.projectInfoChanged.emit()
 
-    ####################################################################################################################
-    ####################################################################################################################
-    # EXPERIMENT
-    ####################################################################################################################
-    ####################################################################################################################
+    # ####################################################################################################################
+    # ####################################################################################################################
+    # # EXPERIMENT
+    # ####################################################################################################################
+    # ####################################################################################################################
 
-    @Property(str, notify=experimentDataAsXmlChanged)
-    def experimentDataAsXml(self):
-        return self.lc.l_state._experiment_data_as_xml
+    # @Property(str, notify=experimentDataAsXmlChanged)
+    # def experimentDataAsXml(self):
+    #     return self.lc.l_state._experiment_data_as_xml
 
-    def _setExperimentDataAsXml(self):
-        print("+ _setExperimentDataAsXml")
-        self.lc.l_state._setExperimentDataAsXml()
-        self.experimentDataAsXmlChanged.emit()
+    # def _setExperimentDataAsXml(self):
+    #     print("+ _setExperimentDataAsXml")
+    #     self.lc.l_state._setExperimentDataAsXml()
+    #     self.experimentDataAsXmlChanged.emit()
 
-    def _onExperimentDataChanged(self):
-        print("***** _onExperimentDataChanged")
-        self._setExperimentDataAsXml()
-        self._project_proxy.stateChanged.emit(True)
+    # def _onExperimentDataChanged(self):
+    #     print("***** _onExperimentDataChanged")
+    #     self._setExperimentDataAsXml()
+    #     self._project_proxy.stateChanged.emit(True)
 
-    ####################################################################################################################
-    # Experiment data: Add / Remove
-    ####################################################################################################################
+    # ####################################################################################################################
+    # # Experiment data: Add / Remove
+    # ####################################################################################################################
 
-    @Slot(str)
-    def addExperimentDataFromXye(self, file_url):
-        self.lc.l_state.addExperimentDataFromXye(file_url)
-        self.lc._onExperimentDataAdded()
-        self.experimentLoadedChanged.emit()
-
-    @Slot()
-    def removeExperiment(self):
-        print("+ removeExperiment")
-        self.lc.l_state.removeExperiment()
-        self._onExperimentDataRemoved()
-        self.experimentLoadedChanged.emit()
-
-    def _loadExperimentData(self, file_url):
-        print("+ _loadExperimentData")
-        return self.lc.l_state._loadExperimentData(file_url)
-
-    # def _onExperimentDataAdded(self):
-    #     print("***** _onExperimentDataAdded")
+    # @Slot(str)
+    # def addExperimentDataFromXye(self, file_url):
+    #     self.lc.l_state.addExperimentDataFromXye(file_url)
     #     self.lc._onExperimentDataAdded()
+    #     self.experimentLoadedChanged.emit()
 
-    def _onExperimentDataRemoved(self):
-        print("***** _onExperimentDataRemoved")
-        self.lc.chartsLogic._plotting_1d_proxy.clearFrontendState()
-        self.experimentDataChanged.emit()
+    # @Slot()
+    # def removeExperiment(self):
+    #     print("+ removeExperiment")
+    #     self.lc.l_state.removeExperiment()
+    #     self._onExperimentDataRemoved()
+    #     self.experimentLoadedChanged.emit()
 
-    ####################################################################################################################
-    # Experiment loaded and skipped flags
-    ####################################################################################################################
+    # def _loadExperimentData(self, file_url):
+    #     print("+ _loadExperimentData")
+    #     return self.lc.l_state._loadExperimentData(file_url)
 
-    @Property(bool, notify=experimentLoadedChanged)
-    def experimentLoaded(self):
-        return self.lc.l_state._experiment_loaded
+    # # def _onExperimentDataAdded(self):
+    # #     print("***** _onExperimentDataAdded")
+    # #     self.lc._onExperimentDataAdded()
 
-    @experimentLoaded.setter
-    def experimentLoaded(self, loaded: bool):
-        self.lc.l_state.experimentLoaded(loaded)
-        self.experimentLoadedChanged.emit()
+    # def _onExperimentDataRemoved(self):
+    #     print("***** _onExperimentDataRemoved")
+    #     self.lc.chartsLogic._plotting_1d_proxy.clearFrontendState()
+    #     self.experimentDataChanged.emit()
 
-    @Property(bool, notify=experimentSkippedChanged)
-    def experimentSkipped(self):
-        return self.lc.l_state._experiment_skipped
+    # ####################################################################################################################
+    # # Experiment loaded and skipped flags
+    # ####################################################################################################################
 
-    @experimentSkipped.setter
-    def experimentSkipped(self, skipped: bool):
-        self.lc.l_state.experimentSkipped(skipped)
-        self.experimentSkippedChanged.emit()
+    # @Property(bool, notify=experimentLoadedChanged)
+    # def experimentLoaded(self):
+    #     return self.lc.l_state._experiment_loaded
 
-    def _onExperimentLoadedChanged(self):
-        print("***** _onExperimentLoadedChanged")
-        if self.experimentLoaded:
-            self._onParametersChanged()
-            self._onInstrumentParametersChanged()
-            self._onPatternParametersChanged()
+    # @experimentLoaded.setter
+    # def experimentLoaded(self, loaded: bool):
+    #     self.lc.l_state.experimentLoaded(loaded)
+    #     self.experimentLoadedChanged.emit()
 
-    def _onExperimentSkippedChanged(self):
-        print("***** _onExperimentSkippedChanged")
-        if self.experimentSkipped:
-            self._onParametersChanged()
-            self._onInstrumentParametersChanged()
-            self._onPatternParametersChanged()
-            self.lc.l_state._updateCalculatedData()
+    # @Property(bool, notify=experimentSkippedChanged)
+    # def experimentSkipped(self):
+    #     return self.lc.l_state._experiment_skipped
+
+    # @experimentSkipped.setter
+    # def experimentSkipped(self, skipped: bool):
+    #     self.lc.l_state.experimentSkipped(skipped)
+    #     self.experimentSkippedChanged.emit()
+
+    # def _onExperimentLoadedChanged(self):
+    #     print("***** _onExperimentLoadedChanged")
+    #     if self.experimentLoaded:
+    #         self._onParametersChanged()
+    #         self._onInstrumentParametersChanged()
+    #         self._onPatternParametersChanged()
+
+    # def _onExperimentSkippedChanged(self):
+    #     print("***** _onExperimentSkippedChanged")
+    #     if self.experimentSkipped:
+    #         self._onParametersChanged()
+    #         self._onInstrumentParametersChanged()
+    #         self._onPatternParametersChanged()
+    #         self.lc.l_state._updateCalculatedData()
 
     ####################################################################################################################
     # Simulation parameters

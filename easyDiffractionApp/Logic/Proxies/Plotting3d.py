@@ -36,7 +36,7 @@ class Plotting3dProxy(QObject):
 
     @showBonds.setter
     def showBonds(self, show_bonds: bool):
-        self.logic.setShowBons(show_bonds)
+        self.logic.setShowBonds(show_bonds)
         self.structureViewChanged.emit()
 
     @Property(float, notify=structureViewChanged)

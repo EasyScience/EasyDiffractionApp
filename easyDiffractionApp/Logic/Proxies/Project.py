@@ -6,6 +6,7 @@ class ProjectProxy(QObject):
     projectInfoChanged = Signal()
     dummySignal = Signal()
     stateChanged = Signal(bool)
+    htmlExportingFinished = Signal(bool, str)
 
     def __init__(self, parent=None, logic=None):  # , interface=None):
         super().__init__(parent)
@@ -113,12 +114,6 @@ class ProjectProxy(QObject):
         Save the generated report to the specified file
         Currently only html
         """
-        try:
-            with open(filepath, 'w', encoding='utf-8') as f:
-                f.write(self._report)
-            success = True
-        except IOError:
-            success = False
-        finally:
-            self.htmlExportingFinished.emit(success, filepath)
+        success = self.logic.saveReport(filepath)
+        self.htmlExportingFinished.emit(success, filepath)
 

@@ -12,13 +12,16 @@ class ExperimentProxy(QObject):
     experimentLoadedChanged = Signal()
     experimentSkippedChanged = Signal()
 
-    def __init__(self, parent=None, logic=None):  # , interface=None):
+    def __init__(self, parent=None, logic=None):
         super().__init__(parent)
         self.parent = parent
         self.logic = logic.l_experiment
         self.logic.experimentLoadedChanged.connect(self.experimentLoadedChanged)
         self.logic.experimentSkippedChanged.connect(self.experimentSkippedChanged)
         self.logic.experimentDataChanged.connect(self.experimentDataChanged)
+        self.experimentSkippedChanged.connect(self._onExperimentSkippedChanged)
+        self.experimentLoadedChanged.connect(self._onExperimentLoadedChanged)
+        self.logic.patternParametersAsObjChanged.connect(self.parent.patternParametersAsObjChanged)
 
     @Property('QVariant', notify=experimentDataChanged)
     def experimentDataAsObj(self):
@@ -99,12 +102,15 @@ class ExperimentProxy(QObject):
         if self.experimentLoaded:
             self.parent._onParametersChanged()
             self.parent._onInstrumentParametersChanged()
-            self.logic._onPatternParametersChanged()
+            self._setPatternParametersAsObj()
 
     def _onExperimentSkippedChanged(self):
         print("***** _onExperimentSkippedChanged")
         if self.experimentSkipped:
             self.parent._onParametersChanged()
             self.parent._onInstrumentParametersChanged()
-            self.parent_onPatternParametersChanged()
+            self._setPatternParametersAsObj()
             self.logic._onExperimentSkippedChanged()
+
+    def _setPatternParametersAsObj(self):
+        self.logic._onPatternParametersChanged()

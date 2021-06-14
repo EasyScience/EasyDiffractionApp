@@ -15,7 +15,7 @@ Item {
     id: container
 
     property bool isFitting: typeof ExGlobals.Constants.proxy.fitting.fitResults.redchi2 !== 'undefined'
-    property bool hasPhases: Object.keys(ExGlobals.Constants.proxy.phasesAsObj).length !== 0
+    property bool hasPhases: Object.keys(ExGlobals.Constants.proxy.phase.phasesAsObj).length !== 0
     property string htmlBackground: EaStyle.Colors.contentBackground
     property int chartWidth: 520
 
@@ -355,7 +355,7 @@ Item {
     }
 
     property string structureChart: ''
-    property string cifStr: ExGlobals.Constants.proxy.phasesAsExtendedCif
+    property string cifStr: ExGlobals.Constants.proxy.phase.phasesAsExtendedCif
     onCifStrChanged: ExGlobals.Variables.chemDoodleStructureChart.runJavaScript(
                          'document.body.outerHTML',
                          function(result) {
@@ -465,7 +465,7 @@ Item {
         if (!hasPhases)
             return ''
         const projectDescription = ExGlobals.Constants.proxy.project.projectInfoAsJson.short_description
-        const phaseName = ExGlobals.Constants.proxy.phasesAsObj[0].name
+        const phaseName = ExGlobals.Constants.proxy.phase.phasesAsObj[0].name
         const datasetName = ExGlobals.Constants.proxy.experiment.experimentDataAsObj[0].name
         const modifiedDate = ExGlobals.Constants.proxy.project.projectInfoAsJson.modified
         const list = [
@@ -497,7 +497,7 @@ Item {
     property string structureSection: {
         if (!hasPhases)
             return ''
-        const phase = ExGlobals.Constants.proxy.phasesAsObj[0]
+        const phase = ExGlobals.Constants.proxy.phase.phasesAsObj[0]
         const phaseName = phase.name
         const spaceGroup = phase.spacegroup._space_group_HM_name.value
         const list = [

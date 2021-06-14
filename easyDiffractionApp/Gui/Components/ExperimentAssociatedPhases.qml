@@ -18,7 +18,7 @@ EaComponents.TableView {
     // Table model
 
     model: XmlListModel {
-        xml: ExGlobals.Constants.proxy.phasesAsXml
+        xml: ExGlobals.Constants.proxy.phase.phasesAsXml
         query: "/root/item"
 
         XmlRole { name: "label"; query: "name/string()" }

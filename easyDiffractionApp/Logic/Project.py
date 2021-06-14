@@ -171,8 +171,8 @@ class ProjectLogic(QObject):
             if old_interface_name != interface_name:
                 self._interface.switch(interface_name)
 
-        self.parent.l_state._sample = Sample.from_dict(descr['sample'])
-        self.parent.l_state._sample.interface = self._interface
+        self.parent.l_phase._sample = Sample.from_dict(descr['sample'])
+        self.parent.l_phase._sample.interface = self._interface
 
         # send signal to tell the proxy we changed phases
         self.phasesEnabled.emit()
@@ -216,7 +216,7 @@ class ProjectLogic(QObject):
             new_method_index = self.parent.l_fitting.minimizerMethodNames().index(new_method)
             self.parent.l_fitting.currentMinimizerMethodIndex(new_method_index)
 
-        self.parent.l_fitting.fitter.fit_object = self.parent.l_state._sample
+        self.parent.l_fitting.fitter.fit_object = self.parent.l_phase._sample
         self.parent.l_stack.resetUndoRedoStack()
         self.setProjectCreated(True)
 
@@ -226,7 +226,7 @@ class ProjectLogic(QObject):
         projectPath = self._currentProjectPath
         project_save_filepath = os.path.join(projectPath, 'project.json')
         descr = {
-            'sample': self.parent.l_state._sample.as_dict(skip=['interface'])
+            'sample': self.parent.l_phase._sample.as_dict(skip=['interface'])
         }
         if self.parent.l_state._data.experiments:
             experiments_x = self.parent.l_state._data.experiments[0].x
@@ -261,12 +261,13 @@ class ProjectLogic(QObject):
         self.projectInfoChanged.emit()
         self.project_save_filepath = ""
         self.parent.l_experiment.removeExperiment()
-        self.removePhaseSignal.emit(self.parent.l_state._sample.phases[self.parent.l_state._current_phase_index].name)
+        self.removePhaseSignal.emit(self.parent.l_phase._sample.phases[self.parent.l_phase._current_phase_index].name)
         self.reset.emit()
 
     def updateProjectInfo(self, key_value):
         if len(key_value) == 2:
             self._project_info[key_value[0]] = key_value[1]
+            self.projectInfoChanged.emit()
 
 # utilities. Should probably be moved away from here
 def createFile(path, content):

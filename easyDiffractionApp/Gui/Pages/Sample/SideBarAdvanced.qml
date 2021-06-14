@@ -12,7 +12,7 @@ EaComponents.SideBarColumn {
     /*
     EaElements.GroupBox {
         title: qsTr("Bonds")
-        enabled: ExGlobals.Constants.proxy.samplesPresent
+        enabled: ExGlobals.Constants.proxy.phase.samplesPresent
 
         Row {
             spacing: EaStyle.Sizes.fontPixelSize

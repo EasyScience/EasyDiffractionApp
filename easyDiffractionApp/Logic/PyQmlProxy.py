@@ -11,6 +11,7 @@ from easyDiffractionApp.Logic.LogicController import LogicController
 from easyDiffractionApp.Logic.Proxies.Background import BackgroundProxy
 from easyDiffractionApp.Logic.Proxies.Experiment import ExperimentProxy
 from easyDiffractionApp.Logic.Proxies.Fitting import FittingProxy
+from easyDiffractionApp.Logic.Proxies.Phase import PhaseProxy
 from easyDiffractionApp.Logic.Proxies.Plotting1d import Plotting1dProxy
 from easyDiffractionApp.Logic.Proxies.Plotting3d import Plotting3dProxy
 from easyDiffractionApp.Logic.Proxies.Project import ProjectProxy
@@ -24,27 +25,11 @@ class PyQmlProxy(QObject):
     parametersAsObjChanged = Signal()
     parametersAsXmlChanged = Signal()
 
-    # Structure
-    structureParametersChanged = Signal()
-    structureViewChanged = Signal()
-
-    phasesAsObjChanged = Signal()
-    phasesAsXmlChanged = Signal()
-    phasesAsCifChanged = Signal()
-    currentPhaseChanged = Signal()
-    phasesEnabled = Signal()
-
     # Experiment
     patternParametersAsObjChanged = Signal()
 
     instrumentParametersAsObjChanged = Signal()
     instrumentParametersAsXmlChanged = Signal()
-
-    # experimentDataChanged = Signal()
-    # experimentDataAsXmlChanged = Signal()
-
-    # experimentLoadedChanged = Signal()
-    # experimentSkippedChanged = Signal()
 
     # Analysis
     simulationParametersChanged = Signal()
@@ -76,28 +61,13 @@ class PyQmlProxy(QObject):
         self._stack_proxy = StackProxy(self, logic=self.lc)
         self._project_proxy = ProjectProxy(self, logic=self.lc)
         self._experiment_proxy = ExperimentProxy(self, logic=self.lc)
-
+        self._phase_proxy = PhaseProxy(self, logic=self.lc)
 
         ####################################################################################################################
         ####################################################################################################################
         # SIGNALS
         ####################################################################################################################
         ####################################################################################################################
-
-        # Structure
-        self.structureParametersChanged.connect(self._onStructureParametersChanged)
-        self.structureParametersChanged.connect(self.lc.l_state._updateCalculatedData())
-
-        self.lc.phaseAdded.connect(self._onPhaseAdded)
-        self.lc.phaseAdded.connect(self.phasesEnabled)
-
-        self.currentPhaseChanged.connect(self._onCurrentPhaseChanged)
-
-        # Experiment
-        # self.experimentDataChanged.connect(self._onExperimentDataChanged)
-
-        # self.experimentLoadedChanged.connect(self._onExperimentLoadedChanged)
-        # self.experimentSkippedChanged.connect(self._onExperimentSkippedChanged)
 
         # Analysis
         self.simulationParametersChanged.connect(self._onSimulationParametersChanged)
@@ -153,172 +123,10 @@ class PyQmlProxy(QObject):
     def stack(self):
         return self._stack_proxy
 
-
-    ####################################################################################################################
-    # Phase models (list, xml, cif)
-    ####################################################################################################################
-
-    @Property('QVariant', notify=phasesAsObjChanged)
-    def phasesAsObj(self):
-        return self.lc.l_state._phases_as_obj
-
-    @Property(str, notify=phasesAsXmlChanged)
-    def phasesAsXml(self):
-        return self.lc.l_state._phases_as_xml
-
-    @Property(str, notify=phasesAsCifChanged)
-    def phasesAsCif(self):
-        return self.lc.l_state._phases_as_cif
-
-    @Property(str, notify=phasesAsCifChanged)
-    def phasesAsExtendedCif(self):
-        return self.lc.l_state.phasesAsExtendedCif()
-
-    @phasesAsCif.setter
-    @property_stack_deco
-    def phasesAsCif(self, phases_as_cif):
-        self.lc.l_state.phasesAsCif(phases_as_cif)
-        self.lc.parametersChanged.emit()
-
-    def _setPhasesAsObj(self):
-        start_time = timeit.default_timer()
-        self.lc.l_state._setPhasesAsObj()
-        print("+ _setPhasesAsObj: {0:.3f} s".format(timeit.default_timer() - start_time))
-        self.phasesAsObjChanged.emit()
-
-    def _setPhasesAsXml(self):
-        start_time = timeit.default_timer()
-        self.lc.l_state._setPhasesAsXml()
-        print("+ _setPhasesAsXml: {0:.3f} s".format(timeit.default_timer() - start_time))
-        self.phasesAsXmlChanged.emit()
-
-    def _setPhasesAsCif(self):
-        start_time = timeit.default_timer()
-        self.lc.l_state._setPhasesAsCif()
-        print("+ _setPhasesAsCif: {0:.3f} s".format(timeit.default_timer() - start_time))
-        self.phasesAsCifChanged.emit()
-
-    def _onStructureParametersChanged(self):
-        print("***** _onStructureParametersChanged")
-        self._setPhasesAsObj()  # 0.025 s
-        self._setPhasesAsXml()  # 0.065 s
-        self._setPhasesAsCif()  # 0.010 s
-        self._project_proxy.stateChanged.emit(True)
-
-    ####################################################################################################################
-    # Phase: Add / Remove
-    ####################################################################################################################
-
-    @Slot(str)
-    def addSampleFromCif(self, cif_url):
-        self.lc.l_state.addSampleFromCif(cif_url)
-        self.lc.phaseAdded.emit()
-
-    @Slot()
-    def addDefaultPhase(self):
-        print("+ addDefaultPhase")
-        self.lc.l_state.addDefaultPhase()
-        self.lc.phaseAdded.emit()
-
-    @Slot(str)
-    def removePhase(self, phase_name: str):
-        self.lc.removePhase(phase_name)
-
-    def _onPhaseAdded(self):
-        print("***** _onPhaseAdded")
-        self.lc._onPhaseAdded()
-        self.phasesEnabled.emit()
-        self.structureParametersChanged.emit()
-        self._project_proxy.projectInfoChanged.emit()
-
-    @Property(bool, notify=phasesEnabled)
-    def samplesPresent(self) -> bool:
-        return self.lc.samplesPresent()
-
-    ####################################################################################################################
-    # Phase: Symmetry
-    ####################################################################################################################
-
-    # Crystal system
-
-    @Property('QVariant', notify=structureParametersChanged)
-    def crystalSystemList(self):
-        return self.lc.l_state.crystalSystemList()
-
-    @Property(str, notify=structureParametersChanged)
-    def currentCrystalSystem(self):
-        return self.lc.l_state.currentCrystalSystem()
-
-    @currentCrystalSystem.setter
-    def currentCrystalSystem(self, new_system: str):
-        self.lc.l_state.setCurrentCrystalSystem(new_system)
-        self.structureParametersChanged.emit()
-
-    @Property('QVariant', notify=structureParametersChanged)
-    def formattedSpaceGroupList(self):
-        return self.lc.l_state.formattedSpaceGroupList()
-
-    @Property(int, notify=structureParametersChanged)
-    def currentSpaceGroup(self):
-        return self.lc.l_state.getCurrentSpaceGroup()
-
-    @currentSpaceGroup.setter
-    def currentSpaceGroup(self, new_idx: int):
-        self.lc.l_state.currentSpaceGroup(new_idx)
-        self.structureParametersChanged.emit()
-
-    @Property('QVariant', notify=structureParametersChanged)
-    def formattedSpaceGroupSettingList(self):
-        return self.lc.l_state.formattedSpaceGroupSettingList()
-
-    @Property(int, notify=structureParametersChanged)
-    def currentSpaceGroupSetting(self):
-        return self.lc.l_state.currentSpaceGroupSetting()
-
-    @currentSpaceGroupSetting.setter
-    def currentSpaceGroupSetting(self, new_number: int):
-        self.lc.l_state.setCurrentSpaceGroupSetting(new_number)
-        self.structureParametersChanged.emit()
-
-    ####################################################################################################################
-    # Phase: Atoms
-    ####################################################################################################################
-
-    @Slot()
-    def addDefaultAtom(self):
-        try:
-            self.lc.l_state.addDefaultAtom()
-            self.structureParametersChanged.emit()
-        except AttributeError:
-            print("Error: failed to add atom")
-
-    @Slot(str)
-    def removeAtom(self, atom_label: str):
-        self.lc.l_state.removeAtom(atom_label)
-        self.structureParametersChanged.emit()
-
-    ####################################################################################################################
-    # Current phase
-    ####################################################################################################################
-
-    @Property(int, notify=currentPhaseChanged)
-    def currentPhaseIndex(self):
-        return self.lc.l_state._current_phase_index
-
-    @currentPhaseIndex.setter
-    def currentPhaseIndex(self, new_index: int):
-        if self.lc.l_state.currentPhaseIndex(new_index):
-            self.currentPhaseChanged.emit()
-
-    def _onCurrentPhaseChanged(self):
-        print("***** _onCurrentPhaseChanged")
-        self.structureViewChanged.emit()
-
-    @Slot(str)
-    def setCurrentPhaseName(self, name):
-        self.lc.l_state.setCurrentPhaseName(name)
-        self.lc.parametersChanged.emit()
-        self._project_proxy.projectInfoChanged.emit()
+    # phase
+    @Property('QVariant', notify=dummySignal)
+    def phase(self):
+        return self._phase_proxy
 
     ####################################################################################################################
     # Simulation parameters
@@ -344,16 +152,6 @@ class PyQmlProxy(QObject):
     @Property('QVariant', notify=patternParametersAsObjChanged)
     def patternParametersAsObj(self):
         return self.lc.l_state._pattern_parameters_as_obj
-
-    def _setPatternParametersAsObj(self):
-        start_time = timeit.default_timer()
-        self.lc.l_state._setPatternParametersAsObj()
-        print("+ _setPatternParametersAsObj: {0:.3f} s".format(timeit.default_timer() - start_time))
-        self.patternParametersAsObjChanged.emit()
-
-    def _onPatternParametersChanged(self):
-        print("***** _onPatternParametersChanged")
-        self._setPatternParametersAsObj()
 
     ####################################################################################################################
     # Instrument parameters (wavelength, resolution_u, ..., resolution_y)

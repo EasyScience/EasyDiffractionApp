@@ -53,7 +53,7 @@ EaComponents.ApplicationWindow {
 
         EaElements.ToolButton {
             enabled: ExGlobals.Constants.proxy.project.projectCreated ||
-                     ExGlobals.Constants.proxy.samplesPresent ||
+                     ExGlobals.Constants.proxy.phase.samplesPresent ||
                      ExGlobals.Constants.proxy.experiment.experimentSkipped ||
                      ExGlobals.Constants.proxy.experiment.experimentLoaded
             fontIcon: "backspace"
@@ -123,7 +123,7 @@ EaComponents.ApplicationWindow {
         // Experiment tab
         EaElements.AppBarTabButton {
             id: experimentTabButton
-            enabled: ExGlobals.Constants.proxy.samplesPresent
+            enabled: ExGlobals.Constants.proxy.phase.samplesPresent
             fontIcon: "microscope"
             text: qsTr("Experiment")
             ToolTip.text: qsTr("Experimental settings and data page")
@@ -133,7 +133,7 @@ EaComponents.ApplicationWindow {
         // Analysis tab
         EaElements.AppBarTabButton {
             id: analysisTabButton
-            enabled: ExGlobals.Constants.proxy.samplesPresent &&
+            enabled: ExGlobals.Constants.proxy.phase.samplesPresent &&
                      (ExGlobals.Constants.proxy.experiment.experimentSkipped ||
                       ExGlobals.Constants.proxy.experiment.experimentLoaded)
             fontIcon: "calculator"
@@ -145,7 +145,7 @@ EaComponents.ApplicationWindow {
         // Summary tab
         EaElements.AppBarTabButton {
             id: summaryTabButton
-            enabled: ExGlobals.Constants.proxy.samplesPresent &&
+            enabled: ExGlobals.Constants.proxy.phase.samplesPresent &&
                      (ExGlobals.Constants.proxy.experiment.experimentSkipped ||
                       ExGlobals.Constants.proxy.experiment.experimentLoaded)
             fontIcon: "clipboard-list"
@@ -201,15 +201,15 @@ EaComponents.ApplicationWindow {
 
         // Sample page
         EaComponents.ContentPage {
-            defaultInfo: ExGlobals.Constants.proxy.samplesPresent ? "" : qsTr("No Samples Added/Loaded")
+            defaultInfo: ExGlobals.Constants.proxy.phase.samplesPresent ? "" : qsTr("No Samples Added/Loaded")
 
             mainContent: EaComponents.MainContent {
                 tabs: [
                     EaElements.TabButton { text: qsTr("Structure view") },
                     EaElements.TabButton {
                         /*
-                        text: typeof ExGlobals.Constants.proxy.phasesAsObj[ExGlobals.Constants.proxy.currentPhaseIndex] !== 'undefined' && ExGlobals.Constants.proxy.phasesAsObj.length > 0
-                              ? ExGlobals.Constants.proxy.phasesAsObj[ExGlobals.Constants.proxy.currentPhaseIndex].name + '.cif'
+                        text: typeof ExGlobals.Constants.proxy.phase.phasesAsObj[ExGlobals.Constants.proxy.phase.currentPhaseIndex] !== 'undefined' && ExGlobals.Constants.proxy.phase.phasesAsObj.length > 0
+                              ? ExGlobals.Constants.proxy.phase.phasesAsObj[ExGlobals.Constants.proxy.phase.currentPhaseIndex].name + '.cif'
                               : 'Unknown'
                               */
                         text: qsTr("Text View") + " (CIF)"

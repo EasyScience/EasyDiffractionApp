@@ -22,7 +22,7 @@ class FittingLogic(QObject):
         self.parent = parent
         self.interface = interface
         self.state = state
-        self.fitter = CoreFitter(self.state._sample, self.interface.fit_func)
+        self.fitter = CoreFitter(self.parent.l_phase._sample, self.interface.fit_func)
 
         # Multithreading
         # self._fitter_thread = None

@@ -5,6 +5,7 @@ from PySide2.QtCore import QObject, Signal
 from easyDiffractionApp.Logic.Background import BackgroundLogic
 from easyDiffractionApp.Logic.Experiment import ExperimentLogic
 from easyDiffractionApp.Logic.Fitting import FittingLogic
+from easyDiffractionApp.Logic.Phase import PhaseLogic
 from easyDiffractionApp.Logic.Plotting1d import Plotting1dLogic
 from easyDiffractionApp.Logic.Plotting3d import Plotting3dLogic
 from easyDiffractionApp.Logic.Project import ProjectLogic
@@ -15,7 +16,6 @@ from easyDiffractionLib.interface import InterfaceFactory
 
 class LogicController(QObject):
     parametersChanged = Signal()
-    phaseAdded = Signal()
 
     def __init__(self, parent):
         super().__init__(parent)
@@ -29,6 +29,7 @@ class LogicController(QObject):
 
     def initializeLogics(self):
         self.l_state = StateLogic(self, interface=self.interface)
+        self.l_phase = PhaseLogic(self, interface=self.interface)
         self.l_experiment = ExperimentLogic(self)
         self.l_fitting = FittingLogic(self, state=self.l_state, interface=self.interface)
         self.l_plotting1d = Plotting1dLogic(self)
@@ -37,8 +38,7 @@ class LogicController(QObject):
         self.l_project = ProjectLogic(self, interface=self.interface)
         # stack logic
         no_history = [self.parametersChanged]
-        with_history = [self.phaseAdded, self.parametersChanged]
-        # TODO fix after phase logic implemented
+        with_history = [self.l_phase.phaseAdded, self.parametersChanged]
         self.l_stack = StackLogic(self, self.proxy,
                                   callbacks_no_history=no_history,
                                   callbacks_with_history=with_history)
@@ -46,25 +46,25 @@ class LogicController(QObject):
     def setupSignals(self):
        # background logic
         self.l_background.asObjChanged.connect(self.proxy._onParametersChanged)
-        self.l_background.asObjChanged.connect(self.l_state._sample.set_background)
+        self.l_background.asObjChanged.connect(self.l_phase._sample.set_background)
         self.l_background.asObjChanged.connect(self.l_state._updateCalculatedData)
 
         self.l_fitting.fitFinished.connect(self.onFitFinished)
         self.l_fitting.currentCalculatorChanged.connect(self.proxy.currentCalculatorChanged)
 
         self.l_project.reset.connect(self.resetState)
-        self.l_project.phasesEnabled.connect(self.proxy.phasesEnabled)
-        self.l_project.phasesAsObjChanged.connect(self.proxy.phasesAsObjChanged)
+        self.l_project.phasesEnabled.connect(self.l_phase.phasesEnabled)
+        self.l_project.phasesAsObjChanged.connect(self.l_phase.phasesAsObjChanged)
         self.l_project.experimentDataAdded.connect(self._onExperimentDataAdded)
-        self.l_project.structureParametersChanged.connect(self.proxy.structureParametersChanged)
+        self.l_project.structureParametersChanged.connect(self.l_phase.structureParametersChanged)
         self.l_project.removePhaseSignal.connect(self.removePhase)
         self.l_project.parametersChanged.connect(self.parametersChanged)
         self.l_project.experimentLoadedChanged.connect(self.l_experiment.experimentLoadedChanged)
 
         self.parametersChanged.connect(self.proxy._onParametersChanged)
         self.parametersChanged.connect(self.l_state._updateCalculatedData)
-        self.parametersChanged.connect(self.proxy._onStructureParametersChanged)
-        self.parametersChanged.connect(self.proxy._onPatternParametersChanged)
+        self.parametersChanged.connect(self.l_phase.structureParametersChanged)
+        self.parametersChanged.connect(self.l_experiment._onPatternParametersChanged)
         self.parametersChanged.connect(self.proxy._onInstrumentParametersChanged)
         self.parametersChanged.connect(self.l_background.onAsObjChanged)
         self.parametersChanged.connect(self.l_stack.undoRedoChanged)
@@ -73,7 +73,9 @@ class LogicController(QObject):
         self.l_state.plotBraggDataSignal.connect(self.plotBraggData)
         self.l_state.undoRedoChanged.connect(self.l_stack.undoRedoChanged)
         self.l_state.parametersChanged.connect(self.parametersChanged)
-        self.l_state.updateProjectInfo.connect(self.l_project.updateProjectInfo)
+        self.l_state.simulationParametersChanged.connect(self.proxy.simulationParametersChanged)
+
+        self.l_phase.updateProjectInfo.connect(self.l_project.updateProjectInfo)
 
     def resetFactory(self):
         self.interface = InterfaceFactory()
@@ -95,17 +97,10 @@ class LogicController(QObject):
         self.l_plotting1d.clearFrontendState()
         self.l_stack.resetUndoRedoStack()
 
-    def _onPhaseAdded(self):
-        self.l_state._onPhaseAdded(self.l_background._background_as_obj)
-
     def removePhase(self, phase_name: str):
-        if self.l_state.removePhase(phase_name):
-            self.proxy.structureParametersChanged.emit()
-            self.proxy.phasesEnabled.emit()
-
-    def samplesPresent(self):
-        result = len(self.l_state._sample.phases) > 0
-        return result
+        if self.l_phase.removePhase(phase_name):
+            self.l_phase.structureParametersChanged.emit()
+            self.l_phase.phasesEnabled.emit()
 
     def _onExperimentDataAdded(self):
         print("***** _onExperimentDataAdded")
@@ -119,7 +114,7 @@ class LogicController(QObject):
         self.proxy.simulationParametersAsObj = \
             json.dumps(self.l_experiment._experiment_parameters)
 
-        if len(self.l_state._sample.pattern.backgrounds) == 0:
+        if len(self.l_phase._sample.pattern.backgrounds) == 0:
             self.l_background.initializeContainer()
 
         self.l_experiment.experimentDataChanged.emit()

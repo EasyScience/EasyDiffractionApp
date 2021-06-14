@@ -16,6 +16,7 @@ class ExperimentLogic(QObject):
     experimentLoadedChanged = Signal()
     experimentSkippedChanged = Signal()
     experimentDataChanged = Signal()
+    patternParametersAsObjChanged = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -102,8 +103,12 @@ class ExperimentLogic(QObject):
         self.state._onPatternParametersChanged()
 
     def setCurrentExperimentDatasetName(self, name):
-        self.state.setCurrentExperimentDatasetName(name)
+        self.parent.l_phase.setCurrentExperimentDatasetName(name)
 
     def _onExperimentDataAdded(self):
         # needed for proxy -> LC communication
         self.parent._onExperimentDataAdded()
+
+    def _onPatternParametersChanged(self):
+        self.state._setPatternParametersAsObj()
+        self.patternParametersAsObjChanged.emit()

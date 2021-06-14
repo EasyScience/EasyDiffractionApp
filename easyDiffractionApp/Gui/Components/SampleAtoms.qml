@@ -126,11 +126,11 @@ EaComponents.TableView {
     // Logic
 
     function editParameterValue(id, value) {
-        ExGlobals.Constants.proxy.editParameter(id, parseFloat(value))
+        ExGlobals.Constants.proxy.parameters.editParameter(id, parseFloat(value))
     }
 
     function editDescriptorValue(id, value) {
-        ExGlobals.Constants.proxy.editParameter(id, value)
+        ExGlobals.Constants.proxy.parameters.editParameter(id, value)
     }
 
     function jmolAtomColor(symbol) {

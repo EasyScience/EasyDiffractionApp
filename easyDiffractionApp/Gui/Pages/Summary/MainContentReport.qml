@@ -438,7 +438,7 @@ Item {
         hlist.push('</tr>')
         list.push(hlist.join(' '))
         // data
-        const params = ExGlobals.Constants.proxy.parametersAsObj
+        const params = ExGlobals.Constants.proxy.parameters.parametersAsObj
         for (let i = 0; i < params.length; i++) {
             const number = params[i].number
             const label = params[i].label.replace('.point_background', '')

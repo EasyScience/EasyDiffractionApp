@@ -10,10 +10,9 @@ class BackgroundLogic(QObject):
     asObjChanged = Signal('QVariant')
     asXmlChanged = Signal()
 
-    def __init__(self, parent, state=None):
+    def __init__(self, parent):
         super().__init__(parent)
         self.parent = parent
-        self.state = state
         self._background_as_xml = ""
         self.asObjChanged.connect(self.onAsObjChanged)
         self.asXmlChanged.connect(self.updateChartBackground)

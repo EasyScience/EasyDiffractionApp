@@ -24,7 +24,7 @@ class ProjectLogic(QObject):
     structureParametersChanged = Signal()
     removePhaseSignal = Signal(str)
     experimentDataAdded = Signal()
-    parametersChanged = Signal()
+    # parametersChanged = Signal()
     experimentLoadedChanged = Signal()
 
     def __init__(self, parent=None , interface=None):
@@ -183,16 +183,16 @@ class ProjectLogic(QObject):
         if 'experiments' in descr:
             self.parent.l_experiment.experimentLoaded(True)
             self.parent.l_experiment.experimentSkipped(False)
-            self.parent.l_state._data.experiments[0].x = np.array(descr['experiments'][0])
-            self.parent.l_state._data.experiments[0].y = np.array(descr['experiments'][1])
-            self.parent.l_state._data.experiments[0].e = np.array(descr['experiments'][2])
-            self.parent.l_experiment._experiment_data = self.parent.l_state._data.experiments[0]
+            self.parent.l_parameters._data.experiments[0].x = np.array(descr['experiments'][0])
+            self.parent.l_parameters._data.experiments[0].y = np.array(descr['experiments'][1])
+            self.parent.l_parameters._data.experiments[0].e = np.array(descr['experiments'][2])
+            self.parent.l_experiment._experiment_data = self.parent.l_parameters._data.experiments[0]
             self.parent.l_experiment.experiments = [{'name': descr['project_info']['experiments']}]
             self.parent.l_experiment.setCurrentExperimentDatasetName(descr['project_info']['experiments'])
 
             # send signal to tell the proxy we changed experiment
             self.experimentDataAdded.emit()
-            self.parametersChanged.emit()
+            self.parent.parametersChanged.emit()
             self.experimentLoadedChanged.emit()
 
         else:
@@ -228,10 +228,10 @@ class ProjectLogic(QObject):
         descr = {
             'sample': self.parent.l_phase._sample.as_dict(skip=['interface'])
         }
-        if self.parent.l_state._data.experiments:
-            experiments_x = self.parent.l_state._data.experiments[0].x
-            experiments_y = self.parent.l_state._data.experiments[0].y
-            experiments_e = self.parent.l_state._data.experiments[0].e
+        if self.parent.l_parameters._data.experiments:
+            experiments_x = self.parent.l_parameters._data.experiments[0].x
+            experiments_y = self.parent.l_parameters._data.experiments[0].y
+            experiments_e = self.parent.l_parameters._data.experiments[0].e
             descr['experiments'] = [experiments_x, experiments_y, experiments_e]
 
         descr['experiment_skipped'] = self.parent.l_experiment._experiment_skipped

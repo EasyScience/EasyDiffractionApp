@@ -21,7 +21,7 @@ class ExperimentLogic(QObject):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.parent = parent
-        self.state = parent.l_state
+        self.state = parent.l_parameters
 
         self._experiment_parameters = None
         self._experiment_data_as_xml = ""

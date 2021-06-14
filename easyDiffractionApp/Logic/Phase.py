@@ -24,7 +24,7 @@ class PhaseLogic(QObject):
         super().__init__(parent)
         self.parent = parent
         self._interface=interface
-        self.state = parent.l_state
+        self.state = parent.l_parameters
         self.phases = None
         self._phases_as_obj = []
         self._phases_as_xml = ""
@@ -212,9 +212,9 @@ class PhaseLogic(QObject):
         del self._sample.phases[self._current_phase_index].atoms[atom_label]
 
     def setCurrentExperimentDatasetName(self, name):
-        if self.state._data.experiments[0].name == name:
+        if self.parent.l_parameters._data.experiments[0].name == name:
             return
-        self.state._data.experiments[0].name = name
+        self.parent.l_parameters._data.experiments[0].name = name
         # self._project_info['experiments'] = name
         self.updateProjectInfo.emit(('experiments', name))
 

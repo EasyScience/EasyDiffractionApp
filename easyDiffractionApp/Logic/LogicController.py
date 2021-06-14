@@ -51,16 +51,15 @@ class LogicController(QObject):
         self.l_background.asObjChanged.connect(self.l_phase._sample.set_background)
         self.l_background.asObjChanged.connect(self.l_parameters._updateCalculatedData)
 
-        self.l_fitting.fitFinished.connect(self.onFitFinished)
+        self.l_fitting.fitFinished.connect(self.parametersChanged)
         self.l_fitting.currentCalculatorChanged.connect(self.proxy.currentCalculatorChanged)
 
         self.l_project.reset.connect(self.resetState)
         self.l_project.phasesEnabled.connect(self.l_phase.phasesEnabled)
         self.l_project.phasesAsObjChanged.connect(self.l_phase.phasesAsObjChanged)
-        self.l_project.experimentDataAdded.connect(self._onExperimentDataAdded)
+        self.l_project.experimentDataAdded.connect(self.l_experiment._onExperimentDataAdded)
         self.l_project.structureParametersChanged.connect(self.l_phase.structureParametersChanged)
         self.l_project.removePhaseSignal.connect(self.removePhase)
-        # self.l_project.parametersChanged.connect(self.parametersChanged)
         self.l_project.experimentLoadedChanged.connect(self.l_experiment.experimentLoadedChanged)
 
         self.parametersChanged.connect(self.l_parameters.parametersChanged)
@@ -74,7 +73,6 @@ class LogicController(QObject):
         self.l_parameters.plotCalculatedDataSignal.connect(self.plotCalculatedData)
         self.l_parameters.plotBraggDataSignal.connect(self.plotBraggData)
         self.l_parameters.undoRedoChanged.connect(self.l_stack.undoRedoChanged)
-        # self.l_parameters.parametersChanged.connect(self.parametersChanged)
 
         self.l_phase.updateProjectInfo.connect(self.l_project.updateProjectInfo)
 
@@ -86,9 +84,6 @@ class LogicController(QObject):
 
     def plotBraggData(self, data):
         self.l_plotting1d.setBraggData(data[0], data[1], data[2], data[3])  # noqa: E501
-
-    def onFitFinished(self):
-        self.parametersChanged.emit()
 
     def initializeBorg(self):
         self.l_stack.initializeBorg()
@@ -102,27 +97,6 @@ class LogicController(QObject):
         if self.l_phase.removePhase(phase_name):
             self.l_phase.structureParametersChanged.emit()
             self.l_phase.phasesEnabled.emit()
-
-    def _onExperimentDataAdded(self):
-        print("***** _onExperimentDataAdded")
-        self.l_plotting1d.setMeasuredData(
-                                          self.l_experiment._experiment_data.x,
-                                          self.l_experiment._experiment_data.y,
-                                          self.l_experiment._experiment_data.e)
-        self.l_experiment._experiment_parameters = \
-            self.l_experiment._experimentDataParameters(self.l_experiment._experiment_data)
-
-        self.proxy.parameters.simulationParametersAsObj = \
-            json.dumps(self.l_experiment._experiment_parameters)
-
-        if len(self.l_phase._sample.pattern.backgrounds) == 0:
-            self.l_background.initializeContainer()
-
-        self.l_experiment.experimentDataChanged.emit()
-        self.l_project._project_info['experiments'] = \
-            self.l_parameters._data.experiments[0].name
-
-        self.l_project.projectInfoChanged.emit()
 
     def statusModelAsObj(self):
         engine_name = self.l_fitting.fitter.current_engine.name

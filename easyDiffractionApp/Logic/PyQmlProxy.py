@@ -56,11 +56,9 @@ class PyQmlProxy(QObject):
         ####################################################################################################################
 
         # Status info
-        self.statusInfoChanged.connect(self._onStatusInfoChanged)
         self.currentCalculatorChanged.connect(self.statusInfoChanged)
         self._fitting_proxy.currentMinimizerChanged.connect(self.statusInfoChanged)
         self._fitting_proxy.currentMinimizerMethodChanged.connect(self.statusInfoChanged)
-        self._parameters_proxy.stateChanged.connect(self.project.stateChanged)
 
         # start the undo/redo stack
         self.lc.initializeBorg()
@@ -129,9 +127,6 @@ class PyQmlProxy(QObject):
     @Property(str, notify=statusInfoChanged)
     def statusModelAsXml(self):
         return self.lc.statusModelAsXml()
-
-    def _onStatusInfoChanged(self):
-        pass
 
     ####################################################################################################################
     ####################################################################################################################

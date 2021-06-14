@@ -2,6 +2,7 @@
 
 from dicttoxml import dicttoxml
 import pathlib
+import json
 
 from PySide2.QtCore import Signal, QObject
 
@@ -106,8 +107,26 @@ class ExperimentLogic(QObject):
         self.parent.l_phase.setCurrentExperimentDatasetName(name)
 
     def _onExperimentDataAdded(self):
-        # needed for proxy -> LC communication
-        self.parent._onExperimentDataAdded()
+        print("***** _onExperimentDataAdded")
+        self.parent.l_plotting1d.setMeasuredData(
+                                          self._experiment_data.x,
+                                          self._experiment_data.y,
+                                          self._experiment_data.e)
+        self._experiment_parameters = \
+            self._experimentDataParameters(self._experiment_data)
+
+        # non-kosher connection to foreign proxy. Ewwww :(
+        self.parent.proxy.parameters.simulationParametersAsObj = \
+            json.dumps(self._experiment_parameters)
+
+        if len(self.parent.l_phase._sample.pattern.backgrounds) == 0:
+            self.parent.l_background.initializeContainer()
+
+        self.experimentDataChanged.emit()
+        self.parent.l_project._project_info['experiments'] = \
+            self.parent.l_parameters._data.experiments[0].name
+
+        self.parent.l_project.projectInfoChanged.emit()
 
     def _onPatternParametersChanged(self):
         self.state._setPatternParametersAsObj()

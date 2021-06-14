@@ -114,8 +114,7 @@ class ParametersProxy(QObject):
         print("***** _onParametersChanged")
         self._setParametersAsObj()
         self._setParametersAsXml()
-        # self.parent.stateChanged.emit(True) #>??????
-        self.stateChanged.emit(True)
+        self.parent.project.stateChanged.emit(True)
 
     # Filtering
     @Slot(str)

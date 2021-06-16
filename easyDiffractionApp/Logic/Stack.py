@@ -16,6 +16,7 @@ class StackLogic(QObject):
                  callbacks_no_history=None,
                  callbacks_with_history=None):
         super().__init__(parent)
+        self.parent = parent
         self.proxy = proxy
         self.callbacks_no_history = callbacks_no_history
         self.callbacks_with_history = callbacks_with_history

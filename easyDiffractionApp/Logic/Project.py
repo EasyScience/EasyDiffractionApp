@@ -218,6 +218,7 @@ class ProjectLogic(QObject):
 
         self.parent.l_fitting.fitter.fit_object = self.parent.l_phase._sample
         self.parent.l_stack.resetUndoRedoStack()
+        self.parent.l_stack.undoRedoChanged.emit()
         self.setProjectCreated(True)
 
     def saveProject(self):

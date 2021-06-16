@@ -1,9 +1,5 @@
 # noqa: E501
-import timeit
-
-from PySide2.QtCore import QObject, Slot, Signal, Property
-
-from easyCore.Utils.UndoRedo import property_stack_deco
+from PySide2.QtCore import QObject, Signal, Property
 
 from easyDiffractionApp.Logic.LogicController import LogicController
 from easyDiffractionApp.Logic.Proxies.Background import BackgroundProxy
@@ -23,9 +19,6 @@ class PyQmlProxy(QObject):
 
     # Status info
     statusInfoChanged = Signal()
-
-    # Undo Redo
-    undoRedoChanged = Signal()
 
     # Misc
     dummySignal = Signal()
@@ -49,13 +42,7 @@ class PyQmlProxy(QObject):
         self._experiment_proxy = ExperimentProxy(self, logic=self.lc)
         self._phase_proxy = PhaseProxy(self, logic=self.lc)
 
-        ####################################################################################################################
-        ####################################################################################################################
-        # SIGNALS
-        ####################################################################################################################
-        ####################################################################################################################
-
-        # Status info
+        ################## signals from other proxies #################
         self.currentCalculatorChanged.connect(self.statusInfoChanged)
         self._fitting_proxy.currentMinimizerChanged.connect(self.statusInfoChanged)
         self._fitting_proxy.currentMinimizerMethodChanged.connect(self.statusInfoChanged)
@@ -127,16 +114,6 @@ class PyQmlProxy(QObject):
     @Property(str, notify=statusInfoChanged)
     def statusModelAsXml(self):
         return self.lc.statusModelAsXml()
-
-    ####################################################################################################################
-    ####################################################################################################################
-    # Project examples
-    ####################################################################################################################
-    ####################################################################################################################
-
-    @Property(str, notify=dummySignal)
-    def projectExamplesAsXml(self):
-        return self.lc.l_project.projectExamplesAsXml()
 
     ####################################################################################################################
     ####################################################################################################################

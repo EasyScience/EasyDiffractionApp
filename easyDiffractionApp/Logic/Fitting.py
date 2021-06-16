@@ -16,12 +16,11 @@ class FittingLogic(QObject):
     currentCalculatorChanged = Signal()
     finished = Signal(dict)
 
-    def __init__(self, parent=None, parameters=None, interface=None):
+    def __init__(self, parent=None, interface=None):
         super().__init__(parent)
 
         self.parent = parent
         self.interface = interface
-        self.parameters = parameters
         self.fitter = CoreFitter(self.parent.l_phase._sample, self.interface.fit_func)
 
         # Multithreading
@@ -76,7 +75,7 @@ class FittingLogic(QObject):
 
     # def fit(self, data):
     def fit(self):
-        self.data = self.parameters._data
+        self.data = self.parent.l_parameters._data
         self.minimizer_name = self._current_minimizer_method_name
         if not self.fit_thread.is_alive():
             self.is_fitting_now = True

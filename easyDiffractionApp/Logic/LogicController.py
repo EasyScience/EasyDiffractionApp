@@ -33,7 +33,7 @@ class LogicController(QObject):
         self.l_parameters = ParametersLogic(self, interface=self.interface)
         self.l_experiment = ExperimentLogic(self)
         self.l_phase = PhaseLogic(self, interface=self.interface)
-        self.l_fitting = FittingLogic(self, parameters=self.l_parameters, interface=self.interface)
+        self.l_fitting = FittingLogic(self, interface=self.interface)
         self.l_plotting1d = Plotting1dLogic(self)
         self.l_plotting3d = Plotting3dLogic(self)
         self.l_background = BackgroundLogic(self)
@@ -46,7 +46,6 @@ class LogicController(QObject):
                                   callbacks_with_history=with_history)
 
     def setupSignals(self):
-       # background logic
         self.l_background.asObjChanged.connect(self.l_parameters.parametersChanged)
         self.l_background.asObjChanged.connect(self.l_phase._sample.set_background)
         self.l_background.asObjChanged.connect(self.l_parameters._updateCalculatedData)
@@ -92,6 +91,7 @@ class LogicController(QObject):
         self.l_plotting1d.clearBackendState()
         self.l_plotting1d.clearFrontendState()
         self.l_stack.resetUndoRedoStack()
+        self.l_stack.undoRedoChanged.emit()
 
     def removePhase(self, phase_name: str):
         if self.l_phase.removePhase(phase_name):

@@ -47,6 +47,10 @@ class ProjectProxy(QObject):
     def createProject(self):
         self.logic.createProject()
 
+    @Property(str, notify=dummySignal)
+    def projectExamplesAsXml(self):
+        return self.logic.projectExamplesAsXml()
+
     ####################################################################################################################
     ####################################################################################################################
     # State save/load
@@ -86,8 +90,6 @@ class ProjectProxy(QObject):
     @projectCreated.setter
     def projectCreated(self, created: bool):
         self.logic.setProjectCreated(created)
-        #if self.logic.setProjectCreated(created):
-        #    self.projectCreatedChanged.emit()
 
     @Slot()
     def resetState(self):

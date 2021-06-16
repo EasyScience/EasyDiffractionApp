@@ -215,7 +215,6 @@ class PhaseLogic(QObject):
         if self.parent.l_parameters._data.experiments[0].name == name:
             return
         self.parent.l_parameters._data.experiments[0].name = name
-        # self._project_info['experiments'] = name
         self.updateProjectInfo.emit(('experiments', name))
 
     ####################################################################################################################

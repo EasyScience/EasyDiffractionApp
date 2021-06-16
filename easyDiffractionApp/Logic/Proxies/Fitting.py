@@ -28,7 +28,6 @@ class FittingProxy(QObject):
     def fit(self):
         # Currently using python threads from the `threading` module,
         # since QThreads don't seem to properly work under macos
-        # self.logic.fit(self._data)
         self.logic.fit()
 
     @Property('QVariant', notify=fitResultsChanged)

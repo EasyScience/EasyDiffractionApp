@@ -75,4 +75,3 @@ class StackLogic(QObject):
     def resetUndoRedoStack(self):
         if borg.stack.enabled:
             borg.stack.clear()
-

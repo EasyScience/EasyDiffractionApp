@@ -1,3 +1,17 @@
+# Version 0.8.1-beta (8 June 2021)
+
+### Changes
+
+- Implemented automatic update of the application and made it easier to update the application manually.
+- Implemented a file-less interface with the CrysPy calculation engine.
+- Add Bragg peaks for the GSAS-II calculation engine.
+- Fitting calculations do not block the GUI on macOS anymore (implemented threading).
+- Redesigned and expanded the application settings window.
+
+### Bug Fixes
+
+- Added an icon to the application window on Windows and Linux.
+
 # Version 0.8.0-beta.1 (7 May 2021)
 
 ### Changes

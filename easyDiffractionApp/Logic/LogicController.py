@@ -22,6 +22,10 @@ class LogicController(QObject):
         super().__init__(parent)
         self.proxy = parent
         self.interface = InterfaceFactory()
+
+        # Screen recorder
+        self._screen_recorder = self.recorder()
+
         # instantiate logics
         self.initializeLogics()
 

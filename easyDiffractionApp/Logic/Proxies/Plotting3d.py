@@ -7,6 +7,7 @@ class Plotting3dProxy(QObject):
     # Plotting
     current3dPlottingLibChanged = Signal()
     structureViewChanged = Signal()
+    dummySignal = Signal()
 
     def __init__(self, logic=None):
         super().__init__()
@@ -27,8 +28,9 @@ class Plotting3dProxy(QObject):
     def onCurrent3dPlottingLibChanged(self):
         self.logic.onCurrent3dPlottingLibChanged()
 
-    # def current3dPlottingLib(self):
-    #     return self.logic._current_3d_plotting_lib
+    @Property('QVariant', notify=dummySignal)
+    def plotting3dLibs(self):
+        return self.logic.plotting3dLibs()
 
     @Property(bool, notify=structureViewChanged)
     def showBonds(self):

@@ -10,7 +10,6 @@ class Plotting3dLogic():
         self._show_bonds = True
         self._bonds_max_distance = 2.0
 
-    # 3d plotting
     def plotting3dLibs(self):
         return self._3d_plotting_libs
 

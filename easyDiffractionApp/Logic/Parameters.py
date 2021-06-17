@@ -16,7 +16,7 @@ from easyDiffractionApp.Logic.DataStore import DataSet1D, DataStore
 class ParametersLogic(QObject):
     """
     """
-    instrumentParametersChanged  = Signal()
+    instrumentParametersChanged = Signal()
     simulationParametersChanged = Signal()
     parametersChanged = Signal()
     undoRedoChanged = Signal()

@@ -38,6 +38,7 @@ class BackgroundLogic(QObject):
 
     def onAsObjChanged(self):
         print(f"***** onAsObjChanged")
+        self._background_as_obj = self._background_obj()
         self._setAsXml()
 
     def _setAsXml(self):

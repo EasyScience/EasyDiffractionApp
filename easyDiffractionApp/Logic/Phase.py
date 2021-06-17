@@ -23,7 +23,7 @@ class PhaseLogic(QObject):
     def __init__(self, parent=None, interface=None):
         super().__init__(parent)
         self.parent = parent
-        self._interface=interface
+        self._interface = interface
         self.state = parent.l_parameters
         self.phases = None
         self._phases_as_obj = []
@@ -255,5 +255,4 @@ class PhaseLogic(QObject):
         return result
 
     def _updateCalculatedData(self):
-        print("UPDATE CALCULATED DATA FROM PHASE")
         self.state._updateCalculatedData()

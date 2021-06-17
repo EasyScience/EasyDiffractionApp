@@ -178,6 +178,7 @@ class ProjectLogic(QObject):
         self.phasesEnabled.emit()
         self.phasesAsObjChanged.emit()
         self.structureParametersChanged.emit()
+        self.parent.l_background._setAsXml()
 
         # experiment
         if 'experiments' in descr:

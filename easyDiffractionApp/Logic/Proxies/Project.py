@@ -70,7 +70,7 @@ class ProjectProxy(QObject):
     @Slot()
     def loadProject(self):
         self.logic._loadProject()
-        self._background_proxy.onAsObjChanged()
+        # self._background_proxy.onAsObjChanged()
         self.stateChanged.emit(False)
 
     @Slot(str)

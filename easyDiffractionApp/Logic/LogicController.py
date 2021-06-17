@@ -65,7 +65,6 @@ class LogicController(QObject):
         self.l_project.removePhaseSignal.connect(self.removePhase)
         self.l_project.experimentLoadedChanged.connect(self.l_experiment.experimentLoadedChanged)
 
-        self.parametersChanged.connect(self.l_parameters.parametersChanged)
         self.parametersChanged.connect(self.l_parameters._updateCalculatedData)
         self.parametersChanged.connect(self.l_phase.structureParametersChanged)
         self.parametersChanged.connect(self.l_experiment._onPatternParametersChanged)
@@ -73,6 +72,7 @@ class LogicController(QObject):
         self.parametersChanged.connect(self.l_background.onAsObjChanged)
         self.parametersChanged.connect(self.l_stack.undoRedoChanged)
 
+        self.l_parameters.parametersChanged.connect(self.parametersChanged)
         self.l_parameters.plotCalculatedDataSignal.connect(self.plotCalculatedData)
         self.l_parameters.plotBraggDataSignal.connect(self.plotBraggData)
         self.l_parameters.undoRedoChanged.connect(self.l_stack.undoRedoChanged)

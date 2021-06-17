@@ -209,7 +209,7 @@ class PhaseLogic(QObject):
         self._sample.phases[self._current_phase_index].add_atom(atom)
 
     def removeAtom(self, atom_label: str):
-        del self._sample.phases[self._current_phase_index].atoms[atom_label]
+        self._sample.phases[self._current_phase_index].remove_atom(atom_label)
 
     def setCurrentExperimentDatasetName(self, name):
         if self.parent.l_parameters._data.experiments[0].name == name:

@@ -236,5 +236,3 @@ class ParametersLogic(QObject):
 
         self.plotCalculatedDataSignal.emit((sim.x, sim.y))
         self.plotBraggDataSignal.emit((hkl['ttheta'], hkl['h'], hkl['k'], hkl['l']))  # noqa: E501
-
-

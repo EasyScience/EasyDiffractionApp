@@ -94,6 +94,7 @@ class ProjectProxy(QObject):
     @Slot()
     def resetState(self):
         self.logic.resetState()
+        self.logic.stateHasChanged(False)
         self.stateChanged.emit(False)
 
     @Property(bool, notify=stateChanged)

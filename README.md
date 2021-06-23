@@ -14,7 +14,7 @@
 
 ## Main features
 
-**easydiffraction** is open source (currently [GPL v3](LICENSE.md)) and cross-platform, with support for Windows, macOS and Linux (Ubuntu).
+**easydiffraction** is open source (currently [BSD v.3](LICENSE.md)) and cross-platform, with support for Windows, macOS and Linux (Ubuntu).
 
 The intuitive tabbed interface allows for a clear and defined data modelling and analysis workflow. There are also built-in step-by-step user guides and video tutorials for new users.
 

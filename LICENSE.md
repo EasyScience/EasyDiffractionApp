@@ -1,6 +1,7 @@
 BSD 3-Clause License
 
-Copyright (c) 2021, Scipp contributors (https://github.com/scipp)
+Copyright (c) 2021, easyDiffraction contributors (https://github.com/easyScience/easyDiffraction).
+
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without

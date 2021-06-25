@@ -10,14 +10,20 @@ import easyApp.Gui.Components 1.0 as EaComponents
 import Gui.Globals 1.0 as ExGlobals
 
 EaComponents.TableView  {
-    id: listView
+    id: table
 
+    enabled: ExGlobals.Constants.proxy.experimentLoaded
+
+    maxRowCountShow: 8
     defaultInfoText: qsTr("No Constraints Added")
 
     // Table model
 
     model: XmlListModel {
-        ///xml: ExGlobals.Constants.proxy.constraintsListAsXml
+        id: constraintsModel
+
+        //xml: ExGlobals.Constants.proxy.constraintsListAsXml
+        xml: ExGlobals.Constants.proxy.constraintsAsXml
 
         query: "/root/item"
 
@@ -44,7 +50,7 @@ EaComponents.TableView  {
         EaComponents.TableViewLabel {
             id: dependentNameColumn
             horizontalAlignment: Text.AlignLeft
-            width: (listView.width -
+            width: (table.width -
                     (parent.children.length - 1) * EaStyle.Sizes.tableColumnSpacing -
                     numberColumn.width -
                     relationalOperatorColumn.width -
@@ -61,7 +67,10 @@ EaComponents.TableView  {
             horizontalAlignment: Text.AlignLeft
             width: EaStyle.Sizes.fontPixelSize * 2
             font.family: EaStyle.Fonts.iconsFamily
-            text: model.relationalOperator.replace("=", "\uf52c").replace(">", "\uf531").replace("<", "\uf536")
+            text: model.relationalOperator
+                .replace("=", "\uf52c")
+                .replace(">", "\uf531")
+                .replace("<", "\uf536")
         }
 
         EaComponents.TableViewLabel {
@@ -76,7 +85,11 @@ EaComponents.TableView  {
             horizontalAlignment: Text.AlignLeft
             width: EaStyle.Sizes.fontPixelSize * 2
             font.family: EaStyle.Fonts.iconsFamily
-            text: model.arithmeticOperator.replace("*", "\uf00d").replace("/", "\uf529").replace("+", "\uf067").replace("-", "\uf068")
+            text: model.arithmeticOperator
+                .replace("*", "\uf00d")
+                .replace("/", "\uf529")
+                .replace("+", "\uf067")
+                .replace("-", "\uf068")
         }
 
         EaComponents.TableViewLabel {

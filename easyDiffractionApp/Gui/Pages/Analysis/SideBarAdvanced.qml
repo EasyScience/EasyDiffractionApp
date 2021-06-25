@@ -128,8 +128,7 @@ EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
         title: qsTr("Fitting constraints")
-        visible: ExGlobals.Variables.analysisPageEnabled
-        //collapsed: false
+        enabled: ExGlobals.Constants.proxy.experimentLoaded
         last: true
 
         ExComponents.AnalysisConstraints {}

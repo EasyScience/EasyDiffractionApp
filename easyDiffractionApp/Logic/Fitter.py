@@ -184,7 +184,7 @@ class FitterLogic(QObject):
         #    print(f"Add constraint: {self.fitablesList()[dependent_par_idx]['label']}{relational_operator}{value}")
         # else:
         #    print(f"Add constraint: {self.fitablesList()[dependent_par_idx]['label']}{relational_operator}{value}{arithmetic_operator}{self.fitablesList()[independent_par_idx]['label']}")
-        pars = self.fitter.fit_object.get_parameters()
+        pars = [par for par in self.fitter.fit_object.get_parameters() if par.enabled]
         if arithmetic_operator != "" and independent_par_idx > -1:
             c = ObjConstraint(pars[dependent_par_idx],
                               str(float(value)) + arithmetic_operator,
@@ -200,7 +200,6 @@ class FitterLogic(QObject):
         c()
         self.fitter.add_fit_constraint(c)
         self.constraintsChanged.emit()
-###        self.updateCalculatedData()
 
     def constraintsList(self):
         constraint_list = []
@@ -248,7 +247,6 @@ class FitterLogic(QObject):
         constraint = self.fitter.fit_constraints()[index]
         constraint.enabled = bool(strtobool(enabled))
         self.constraintsChanged.emit()
-##        self.updateCalculatedData()
 
 class Fitter(QThread):
     """

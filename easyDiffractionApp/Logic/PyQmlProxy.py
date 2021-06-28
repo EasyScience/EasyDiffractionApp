@@ -121,6 +121,11 @@ class PyQmlProxy(QObject):
         # start the undo/redo stack
         self.lc.initializeBorg()
 
+        # Constraints
+        self.lc.fitLogic.constraintsChanged.connect(self._setParametersAsObj)
+        self.lc.fitLogic.constraintsChanged.connect(self._setParametersAsXml)
+        self.lc.fitLogic.constraintsChanged.connect(self.lc.state._updateCalculatedData)
+
     ####################################################################################################################
     ####################################################################################################################
     # Charts

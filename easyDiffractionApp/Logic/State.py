@@ -766,8 +766,10 @@ class StateLogic(QObject):
         self._parameters_as_obj.clear()
 
         par_ids, par_paths = generatePath(self._sample, True)
-        for par_index, par_path in enumerate(par_paths):
-            par_id = par_ids[par_index]
+        par_index = 0
+
+        for par_id, par_path in zip(par_ids, par_paths):
+            # par_id = par_ids[par_index]
             par = borg.map.get_item_by_key(par_id)
 
             if not par.enabled:
@@ -791,6 +793,8 @@ class StateLogic(QObject):
                 "error":  float(par.error),
                 "fit":    int(not par.fixed)
             })
+
+            par_index += 1
 
         self._setIconifiedLabels()
 

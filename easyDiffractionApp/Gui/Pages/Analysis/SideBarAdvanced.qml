@@ -10,6 +10,9 @@ import Gui.Globals 1.0 as ExGlobals
 import Gui.Components 1.0 as ExComponents
 
 EaComponents.SideBarColumn {
+    property int independentParCurrentIndex: 0
+    property int dependentParCurrentIndex: 0
+    property int dependentParCurrentIndex2: 0
 
     /*
     EaElements.GroupBox {
@@ -155,10 +158,14 @@ EaComponents.SideBarColumn {
                         width: 359
                         currentIndex: -1
                         displayText: currentIndex === -1 ? "Select parameter" : currentText
+                        textFormat: ExGlobals.Variables.iconifiedNames ? Text.RichText : Text.PlainText
+                        elide: Text.ElideMiddle
+                        textRole: ExGlobals.Variables.iconifiedNames ? "iconified_label" : "label"
                         model: XmlListModel {
                             xml: ExGlobals.Constants.proxy.parametersAsXml
                             query: "/root/item"
-                            XmlRole { name: "label"; query: "label/string()" }
+                            XmlRole { name: "label"; query: "label_with_index/string()" }
+                            XmlRole { name: "iconified_label"; query: "iconified_label_with_index/string()" }
                             onXmlChanged: dependentParCurrentIndex2 = dependentPar2.currentIndex
                         }
                         onCurrentIndexChanged: {
@@ -226,13 +233,18 @@ EaComponents.SideBarColumn {
                         width: 359
                         currentIndex: -1
                         displayText: currentIndex === -1 ? "Select parameter" : currentText
+                        textFormat: ExGlobals.Variables.iconifiedNames ? Text.RichText : Text.PlainText
+                        elide: Text.ElideMiddle
+                        textRole: ExGlobals.Variables.iconifiedNames ? "iconified_label" : "label"
                         model: XmlListModel {
                             xml: ExGlobals.Constants.proxy.parametersAsXml
                             query: "/root/item"
-                            XmlRole { name: "label"; query: "label/string()" }
+                            XmlRole { name: "label"; query: "label_with_index/string()" }
+                            XmlRole { name: "iconified_label"; query: "iconified_label_with_index/string()" }
                             onXmlChanged: dependentParCurrentIndex = dependentPar.currentIndex
                         }
                         onCurrentIndexChanged: {
+                            //print(currentText)
                             if (dependentPar.currentIndex === -1 && model.count > 0)
                                 dependentPar.currentIndex = dependentParCurrentIndex
                         }
@@ -254,16 +266,19 @@ EaComponents.SideBarColumn {
                     Item { height: 1; width: 1 }
                     Item { height: 1; width: 1 }
 
-
                     EaElements.ComboBox {
                         id: independentPar
                         width: dependentPar.width
                         currentIndex: -1
                         displayText: currentIndex === -1 ? "Select parameter" : currentText
+                        textFormat: ExGlobals.Variables.iconifiedNames ? Text.RichText : Text.PlainText
+                        elide: Text.ElideMiddle
+                        textRole: ExGlobals.Variables.iconifiedNames ? "iconified_label" : "label"
                         model: XmlListModel {
                             xml: ExGlobals.Constants.proxy.parametersAsXml
                             query: "/root/item"
-                            XmlRole { name: "label"; query: "label/string()" }
+                            XmlRole { name: "label"; query: "label_with_index/string()" }
+                            XmlRole { name: "iconified_label"; query: "iconified_label_with_index/string()" }
                             onXmlChanged: independentParCurrentIndex = independentPar.currentIndex
                         }
                         onCurrentIndexChanged: {

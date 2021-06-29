@@ -49,7 +49,6 @@ class FitterLogic(QObject):
         try:
             res = self.fitter.fit(x, y, weights=weights, method=method)
         except Exception as ex:
-            # print("Fitting failed with:\n {}".format(str(ex)))
             self.failed.emit(str(ex))
             return
         self.finished.emit(res)
@@ -76,6 +75,7 @@ class FitterLogic(QObject):
     def onFailed(self, ex):
         if self.fit_thread.is_alive():
             self.fit_thread.join()
+        print("**** onFailed: fit FAILED with:\n {}".format(str(ex)))
         self._fit_results = self._defaultFitResults()
         self._fit_results['success'] = 'Failure'  # not None but a string
         self.setFitResults()

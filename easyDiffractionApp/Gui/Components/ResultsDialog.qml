@@ -23,7 +23,7 @@ EaElements.Dialog {
         EaElements.Label {
             text: gotResults
                   ? `Success: ${ExGlobals.Constants.proxy.fitResults.success}`
-                  : `Fitting cancelled`
+                  : `Fitting failed.`
         }
 
         EaElements.Label {

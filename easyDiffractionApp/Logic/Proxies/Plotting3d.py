@@ -3,6 +3,7 @@ from PySide2.QtCore import QObject, Signal, Property
 # from easyDiffractionApp.Logic.Plotting3d import Plotting3dLogic
 from easyCore.Utils.UndoRedo import property_stack_deco
 
+
 class Plotting3dProxy(QObject):
     # Plotting
     current3dPlottingLibChanged = Signal()

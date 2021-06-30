@@ -55,10 +55,6 @@ class FittingProxy(QObject):
     def currentMinimizerIndex(self, new_index: int):
         self.logic.setCurrentMinimizerIndex(new_index)
 
-    # def _onCurrentMinimizerChanged(self):
-    #     print("***** _onCurrentMinimizerChanged")
-    #     self.logic.onCurrentMinimizerChanged()
-
     # Minimizer method
     @Property('QVariant', notify=currentMinimizerChanged)
     def minimizerMethodNames(self):

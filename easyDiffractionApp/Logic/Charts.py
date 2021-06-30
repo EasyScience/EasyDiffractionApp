@@ -31,8 +31,8 @@ class ChartsLogic():
 
     # Structure view
 
-    def _onStructureViewChanged(self):
-        print("***** _onStructureViewChanged")
+    # def _onStructureViewChanged(self):
+    #     print("***** _onStructureViewChanged")
 
     def showBonds(self):
         return self._show_bonds

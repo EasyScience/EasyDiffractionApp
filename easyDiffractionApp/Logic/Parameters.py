@@ -19,6 +19,7 @@ class ParametersLogic(QObject):
     instrumentParametersChanged = Signal()
     simulationParametersChanged = Signal()
     parametersChanged = Signal()
+    parametersValuesChanged = Signal()
     undoRedoChanged = Signal()
     plotCalculatedDataSignal = Signal(tuple)
     plotBraggDataSignal = Signal(tuple)
@@ -200,6 +201,7 @@ class ParametersLogic(QObject):
                 return
 
             obj.value = new_value
+            self.parametersValuesChanged.emit()
             self.parametersChanged.emit()
 
     def _parameterObj(self, obj_id: str):

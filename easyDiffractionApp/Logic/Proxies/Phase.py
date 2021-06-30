@@ -3,6 +3,7 @@ import timeit
 from PySide2.QtCore import QObject, Signal, Slot, Property
 from easyCore.Utils.UndoRedo import property_stack_deco
 
+
 class PhaseProxy(QObject):
 
     dummySignal = Signal()
@@ -31,7 +32,7 @@ class PhaseProxy(QObject):
 
         self.currentPhaseChanged.connect(self._onCurrentPhaseChanged)
 
-   ####################################################################################################################
+    ####################################################################################################################
     # Phase models (list, xml, cif)
     ####################################################################################################################
 

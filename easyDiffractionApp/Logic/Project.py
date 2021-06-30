@@ -70,7 +70,6 @@ class ProjectLogic(QObject):
         if self._project_created == created:
             return
         self._project_created = created
-        #return True
         self.projectCreatedChanged.emit()
 
     ####################################################################################################################
@@ -272,7 +271,7 @@ class ProjectLogic(QObject):
             self._project_info[key_value[0]] = key_value[1]
             self.projectInfoChanged.emit()
 
-# utilities. Should probably be moved away from here
+
 def createFile(path, content):
     if os.path.exists(path):
         print(f'File already exists {path}. Overwriting...')

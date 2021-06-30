@@ -266,7 +266,8 @@ class ProjectLogic(QObject):
         self.projectInfoChanged.emit()
         self.project_save_filepath = ""
         self.parent.l_experiment.removeExperiment()
-        self.removePhaseSignal.emit(self.parent.l_phase._sample.phases[self.parent.l_phase._current_phase_index].name)
+        if self.parent.l_phase.samplesPresent():
+            self.removePhaseSignal.emit(self.parent.l_phase._sample.phases[self.parent.l_phase._current_phase_index].name)
         self.reset.emit()
 
     def updateProjectInfo(self, key_value):

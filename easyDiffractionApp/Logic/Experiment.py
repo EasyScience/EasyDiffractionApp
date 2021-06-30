@@ -21,6 +21,7 @@ class ExperimentLogic(QObject):
     experimentSkippedChanged = Signal()
     experimentDataChanged = Signal()
     patternParametersAsObjChanged = Signal()
+    clearFrontendState = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -34,6 +35,7 @@ class ExperimentLogic(QObject):
         self._experiment_loaded = False
         self._experiment_skipped = False
         self.experiments = self._defaultExperiments()
+        self.clearFrontendState.connect(self.onClearFrontendState)
 
     def _defaultExperiment(self):
         return {
@@ -58,11 +60,6 @@ class ExperimentLogic(QObject):
             "x_step": x_step
         }
         return parameters
-
-    # def _onExperimentDataAdded(self):
-    #     self._experiment_parameters = self._experimentDataParameters(self._experiment_data)  # noqa: E501
-    #     self.simulationParametersAsObj(json.dumps(self._experiment_parameters))  # noqa: E501
-    #     self.experiments = [self._defaultExperiment()]
 
     def experimentDataXYZ(self):
         return (self._experiment_data.x, self._experiment_data.y, self._experiment_data.e)  # noqa: E501
@@ -134,3 +131,6 @@ class ExperimentLogic(QObject):
     def _onPatternParametersChanged(self):
         self.state._setPatternParametersAsObj()
         self.patternParametersAsObjChanged.emit()
+
+    def onClearFrontendState(self):
+        self.parent.l_plotting1d.clearFrontendState()

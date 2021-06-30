@@ -105,6 +105,7 @@ class PhaseProxy(QObject):
     def removePhase(self, phase_name: str):
         if self.logic.removePhase(phase_name):
             self.structureParametersChanged.emit()
+            self.phasesEnabled.emit()
 
     def _onPhaseAdded(self):
         print("***** _onPhaseAdded")

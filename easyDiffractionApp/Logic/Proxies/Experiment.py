@@ -22,6 +22,7 @@ class ExperimentProxy(QObject):
         self.logic.experimentLoadedChanged.connect(self.experimentLoadedChanged)
         self.logic.experimentSkippedChanged.connect(self.experimentSkippedChanged)
         self.logic.experimentDataChanged.connect(self.experimentDataChanged)
+        self.experimentDataChanged.connect(self._onExperimentDataChanged)
         self.experimentSkippedChanged.connect(self._onExperimentSkippedChanged)
         self.experimentLoadedChanged.connect(self._onExperimentLoadedChanged)
         self.logic.patternParametersAsObjChanged.connect(self.parent.parameters.patternParametersAsObjChanged)
@@ -79,7 +80,7 @@ class ExperimentProxy(QObject):
 
     def _onExperimentDataRemoved(self):
         print("***** _onExperimentDataRemoved")
-        self.lc.chartsLogic._plotting_1d_proxy.clearFrontendState()
+        self.logic.clearFrontendState.emit()
         self.experimentDataChanged.emit()
 
     @Property(bool, notify=experimentLoadedChanged)

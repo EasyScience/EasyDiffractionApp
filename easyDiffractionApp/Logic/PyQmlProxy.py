@@ -121,6 +121,11 @@ class PyQmlProxy(QObject):
         # start the undo/redo stack
         self.lc.initializeBorg()
 
+        # Constraints
+        self.lc.fitLogic.constraintsChanged.connect(self._setParametersAsObj)
+        self.lc.fitLogic.constraintsChanged.connect(self._setParametersAsXml)
+        self.lc.fitLogic.constraintsChanged.connect(self.lc.state._updateCalculatedData)
+
     ####################################################################################################################
     ####################################################################################################################
     # Charts
@@ -685,6 +690,14 @@ class PyQmlProxy(QObject):
     @Property(bool, notify=fitFinishedNotify)
     def isFitFinished(self):
         return self.lc.fitLogic._fit_finished
+
+    ####################################################################################################################
+    # Constraints
+    ####################################################################################################################
+
+    @Property('QVariant', notify=dummySignal)
+    def fitLogic(self):
+        return self.lc.fitLogic
 
     ####################################################################################################################
     ####################################################################################################################

@@ -55,6 +55,7 @@ class LogicController(QObject):
         self.l_background.asObjChanged.connect(self.l_parameters._updateCalculatedData)
 
         self.l_fitting.fitFinished.connect(self.parametersChanged)
+        self.l_fitting.fitFinished.connect(self.l_parameters.parametersChanged)
         self.l_fitting.currentCalculatorChanged.connect(self.proxy.currentCalculatorChanged)
 
         self.l_project.reset.connect(self.resetState)

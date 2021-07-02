@@ -3,6 +3,10 @@ from PySide2.QtCore import Signal, QObject, QThread
 from threading import Thread
 
 from easyCore.Fitting.Fitting import Fitter as CoreFitter
+from easyCore.Fitting.Constraints import ObjConstraint, NumericConstraint
+
+from dicttoxml import dicttoxml
+from distutils.util import strtobool
 
 
 def _defaultFitResults():
@@ -24,6 +28,7 @@ class FittingLogic(QObject):
     currentMinimizerMethodChanged = Signal()
     currentCalculatorChanged = Signal()
     finished = Signal(dict)
+    failed = Signal(str)
 
     def __init__(self, parent=None, interface=None):
         super().__init__(parent)
@@ -43,8 +48,8 @@ class FittingLogic(QObject):
         self.currentMinimizerChanged.connect(self.onCurrentMinimizerChanged)
 
         self.fit_thread = Thread(target=self.fit_threading)
-        self.finished.connect(self._setFitResults)
-        self.fitFinished.emit()
+        self.finished.connect(self.onSuccess)
+        self.failed.connect(self.onFailed)
 
     def fit_threading(self):
         data = self.data
@@ -58,10 +63,22 @@ class FittingLogic(QObject):
         y = exp_data.y
         weights = 1 / exp_data.e
 
-        res = self.fitter.fit(x, y, weights=weights, method=method)
+        try:
+            res = self.fitter.fit(x, y, weights=weights, method=method)
+        except Exception as ex:
+            self.failed.emit(str(ex))
+            return
         self.finished.emit(res)
 
-    def _setFitResults(self, res):
+    def _defaultFitResults(self):
+        return {
+            "success": None,
+            "nvarys":  None,
+            "GOF":     None,
+            "redchi2": None
+        }
+
+    def onSuccess(self, res):
         if self.fit_thread.is_alive():
             self.fit_thread.join()
         self._fit_results = {
@@ -70,6 +87,17 @@ class FittingLogic(QObject):
             "GOF":     float(res.goodness_of_fit),
             "redchi2": float(res.reduced_chi)
         }
+        self.setFitResults()
+
+    def onFailed(self, ex):
+        if self.fit_thread.is_alive():
+            self.fit_thread.join()
+        print("**** onFailed: fit FAILED with:\n {}".format(str(ex)))
+        self._fit_results = self._defaultFitResults()
+        self._fit_results['success'] = 'Failure'  # not None but a string
+        self.setFitResults()
+
+    def setFitResults(self):
         self._fit_finished = True
         self.fitFinished.emit()
         # must reinstantiate the thread object
@@ -143,12 +171,80 @@ class FittingLogic(QObject):
         self.currentCalculatorChanged.emit()
         print("***** _onCurrentCalculatorChanged")
         self._onCurrentCalculatorChanged()
-        self.parameters._updateCalculatedData()
+        self.parent.l_parameters._updateCalculatedData()
 
     def _onCurrentCalculatorChanged(self):
-        data = self.parameters._data.simulations
+        data = self.parent.l_parameters._data.simulations
         data = data[0]
         data.name = f'{self.interface.current_interface_name} engine'
+
+    # Constraints
+    def addConstraint(self, dependent_par_idx, relational_operator,
+                      value, arithmetic_operator, independent_par_idx):
+        if dependent_par_idx == -1 or value == "":
+            print("Failed to add constraint: Unsupported type")
+            return
+        # if independent_par_idx == -1:
+        #    print(f"Add constraint: {self.fitablesList()[dependent_par_idx]['label']}{relational_operator}{value}")
+        # else:
+        #    print(f"Add constraint: {self.fitablesList()[dependent_par_idx]['label']}{relational_operator}{value}{arithmetic_operator}{self.fitablesList()[independent_par_idx]['label']}")
+        pars = [par for par in self.fitter.fit_object.get_parameters() if par.enabled]
+        if arithmetic_operator != "" and independent_par_idx > -1:
+            c = ObjConstraint(pars[dependent_par_idx],
+                              str(float(value)) + arithmetic_operator,
+                              pars[independent_par_idx])
+        elif arithmetic_operator == "" and independent_par_idx == -1:
+            c = NumericConstraint(pars[dependent_par_idx],
+                                  relational_operator.replace("=", "=="),
+                                  float(value))
+        else:
+            print("Failed to add constraint: Unsupported type")
+            return
+        # print(c)
+        c()
+        self.fitter.add_fit_constraint(c)
+
+    def constraintsList(self):
+        constraint_list = []
+        for index, constraint in enumerate(self.fitter.fit_constraints()):
+            if type(constraint) is ObjConstraint:
+                independent_name = constraint.get_obj(constraint.independent_obj_ids).name
+                relational_operator = "="
+                value = float(constraint.operator[:-1])
+                arithmetic_operator = constraint.operator[-1]
+            elif type(constraint) is NumericConstraint:
+                independent_name = ""
+                relational_operator = constraint.operator.replace("==", "=")
+                value = constraint.value
+                arithmetic_operator = ""
+            else:
+                print(f"Failed to get constraint: Unsupported type {type(constraint)}")
+                return
+            number = index + 1
+            dependent_name = constraint.get_obj(constraint.dependent_obj_ids).name
+            enabled = int(constraint.enabled)
+            constraint_list.append(
+                {"number": number,
+                 "dependentName": dependent_name,
+                 "relationalOperator": relational_operator,
+                 "value": value,
+                 "arithmeticOperator": arithmetic_operator,
+                 "independentName": independent_name,
+                 "enabled": enabled}
+            )
+        return constraint_list
+
+    def constraintsAsXml(self):
+        xml = dicttoxml(self.constraintsList(), attr_type=False)
+        xml = xml.decode()
+        return xml
+
+    def removeConstraintByIndex(self, index: int):
+        self.fitter.remove_fit_constraint(index)
+
+    def toggleConstraintByIndex(self, index, enabled):
+        constraint = self.fitter.fit_constraints()[index]
+        constraint.enabled = bool(strtobool(enabled))
 
 
 class Fitter(QThread):

@@ -12,6 +12,7 @@ class FittingProxy(QObject):
     currentMinimizerChanged = Signal()
     currentMinimizerMethodChanged = Signal()
     currentCalculatorChanged = Signal()
+    constraintsChanged = Signal()
 
     def __init__(self, parent=None, logic=None):
         super().__init__(parent)
@@ -88,3 +89,28 @@ class FittingProxy(QObject):
     @property_stack_deco('Calculation engine change')
     def currentCalculatorIndex(self, new_index: int):
         self.logic.setCurrentCalculatorIndex(new_index)
+
+    ####################################################################################################################
+    # Constraints
+    ####################################################################################################################
+
+    @Slot(int, str, str, str, int)
+    def addConstraint(self, dependent_par_idx, relational_operator,
+                      value, arithmetic_operator, independent_par_idx):
+        self.logic.addConstraint(dependent_par_idx, relational_operator,
+                                 value, arithmetic_operator, independent_par_idx)
+        self.constraintsChanged.emit()
+
+    @Property(str, notify=constraintsChanged)
+    def constraintsAsXml(self):
+        return self.logic.constraintsAsXml()
+
+    @Slot(int)
+    def removeConstraintByIndex(self, index: int):
+        self.logic.removeConstraintByIndex(index)
+        self.constraintsChanged.emit()
+
+    @Slot(int, str)
+    def toggleConstraintByIndex(self, index, enabled):
+        self.logic.toggleConstraintByIndex(index, enabled)
+        self.constraintsChanged.emit()

@@ -30,6 +30,7 @@ EaComponents.TableView {
         XmlRole { name: "id"; query: "id/string()" }
         XmlRole { name: "number"; query: "number/number()" }
         XmlRole { name: "label"; query: "label/string()" }
+        XmlRole { name: "iconified_label"; query: "iconified_label/string()" }
         XmlRole { name: "value"; query: "value/number()" }
         XmlRole { name: "unit"; query: "unit/string()" }
         XmlRole { name: "error"; query: "error/number()" }
@@ -64,8 +65,14 @@ EaComponents.TableView {
                    errorColumn.width -
                    fitColumn.width
             headerText: "Label"
-            text: formatLabel(model.index, model.label)
-            textFormat: Text.RichText
+            text: (ExGlobals.Variables.iconifiedNames ?
+                       model.iconified_label
+                       .split('$TEXT_COLOR').join(EaStyle.Colors.themeForegroundMinor)
+                       .split('$ICON_COLOR').join(EaStyle.Colors.isDarkTheme ? Qt.darker(EaStyle.Colors.themeForegroundMinor, 1.2) : Qt.lighter(EaStyle.Colors.themeForegroundMinor, 1.2))
+                       .split('$ICONS_FAMILY').join(EaStyle.Fonts.iconsFamily) :
+                       model.label)
+            textFormat: ExGlobals.Variables.iconifiedNames ? Text.RichText : Text.PlainText
+            elide: Text.ElideMiddle
         }
 
         EaComponents.TableViewTextInput {
@@ -141,102 +148,6 @@ EaComponents.TableView {
     }
     function editParameterFit(id, value) {
         ExGlobals.Constants.proxy.parameters.editParameter(id, value)
-    }
-
-    function formatLabel(index, label) {
-        if (index < 0 || typeof label === "undefined")
-            return ""
-
-        // Modify current label
-        label = label.replace(".background.", ".")
-        label = label.replace("Uiso.Uiso", "Uiso")
-        label = label.replace("fract_", "fract.")
-        label = label.replace("length_", "length.")
-        label = label.replace("angle_", "angle.")
-        label = label.replace("resolution_", "resolution.")
-
-        // Current label to list
-        let list = label.split(".")
-        const last = list.length - 1
-
-        // Modify previous label to list
-        let previousLabel = index > 0 ? fitablesModel.get(index - 1).label : ""
-        previousLabel = previousLabel.replace(".background.", ".")
-        previousLabel = previousLabel.replace("Uiso.Uiso", "Uiso")
-        previousLabel = previousLabel.replace("fract_", "fract.")
-        previousLabel = previousLabel.replace("length_", "length.")
-        previousLabel = previousLabel.replace("angle_", "angle.")
-        previousLabel = previousLabel.replace("resolution_", "resolution.")
-
-        // Previous label to list
-        let previousList = previousLabel.split(".")
-
-        // First element formatting
-        //const iconColor = EaStyle.Colors.themeForegroundMinor
-        const iconColor = EaStyle.Colors.isDarkTheme ? Qt.darker(EaStyle.Colors.themeForegroundMinor, 1.2) : Qt.lighter(EaStyle.Colors.themeForegroundMinor, 1.2)
-        if (list[0] === previousList[0]) {
-            if (ExGlobals.Variables.iconifiedNames) {
-                list[0] = `<font color=${iconColor} face="${EaStyle.Fonts.iconsFamily}">${list[0]}</font>`
-                list[0] = list[0].replace("Phases", "gem").replace("Instrument", "microscope")
-            } else {
-                list[0] = `<font color=${EaStyle.Colors.themeForegroundMinor}>${list[0]}</font>`
-            }
-        } else {
-            if (ExGlobals.Variables.iconifiedNames) {
-                list[0] = `<font face="${EaStyle.Fonts.iconsFamily}">${list[0]}</font>`
-                list[0] = list[0].replace("Phases", "gem").replace("Instrument", "microscope")
-            } else {
-                list[0] = `<font color=${EaStyle.Colors.themeForeground}>${list[0]}</font>`
-            }
-        }
-
-        // Intermediate elements formatting (excluding first and last)
-        for (let i = 1; i < last; ++i) {
-            if (list[i] === previousList[i]) {
-                list[i] = `<font color=${EaStyle.Colors.themeForegroundMinor}>${list[i]}</font>`
-                if (ExGlobals.Variables.iconifiedNames) {
-                    list[i] = list[i].replace("lattice", `<font color=${iconColor} face="${EaStyle.Fonts.iconsFamily}">cube</font>`)
-                    list[i] = list[i].replace("length", `<font color=${iconColor} face="${EaStyle.Fonts.iconsFamily}">ruler</font>`)
-                    list[i] = list[i].replace("angle", `<font color=${iconColor} face="${EaStyle.Fonts.iconsFamily}">less-than</font>`)
-                    list[i] = list[i].replace("atoms", `<font color=${iconColor} face="${EaStyle.Fonts.iconsFamily}">atom</font>`)
-                    list[i] = list[i].replace("adp", `<font color=${iconColor} face="${EaStyle.Fonts.iconsFamily}">arrows-alt</font>`)
-                    list[i] = list[i].replace("fract", `<font color=${iconColor} face="${EaStyle.Fonts.iconsFamily}">map-marker-alt</font>`)
-                    list[i] = list[i].replace("resolution", `<font color=${iconColor} face="${EaStyle.Fonts.iconsFamily}">grip-lines-vertical</font>`)
-                    list[i] = list[i].replace("point_background", `<font color=${iconColor} face="${EaStyle.Fonts.iconsFamily}">wave-square</font>`)
-                }
-            } else {
-                list[i] = `${list[i]}`
-                if (ExGlobals.Variables.iconifiedNames) {
-                    list[i] = list[i].replace("lattice", `<font face="${EaStyle.Fonts.iconsFamily}">cube</font>`)
-                    list[i] = list[i].replace("length", `<font face="${EaStyle.Fonts.iconsFamily}">ruler</font>`)
-                    list[i] = list[i].replace("angle", `<font face="${EaStyle.Fonts.iconsFamily}">less-than</font>`)
-                    list[i] = list[i].replace("atoms", `<font face="${EaStyle.Fonts.iconsFamily}">atom</font>`)
-                    list[i] = list[i].replace("adp", `<font face="${EaStyle.Fonts.iconsFamily}">arrows-alt</font>`)
-                    list[i] = list[i].replace("fract", `<font face="${EaStyle.Fonts.iconsFamily}">map-marker-alt</font>`)
-                    list[i] = list[i].replace("resolution", `<font face="${EaStyle.Fonts.iconsFamily}">grip-lines-vertical</font>`)
-                    list[i] = list[i].replace("point_background", `<font face="${EaStyle.Fonts.iconsFamily}">wave-square</font>`)
-                }
-            }
-        }
-
-        // Last element formatting
-        //list[last] = `<font color=${EaStyle.Colors.themeForegroundHovered}>${list[last]}</font>`
-        list[last] = `${list[last]}`
-
-        // Back to string
-        if (ExGlobals.Variables.iconifiedNames) {
-            label = list.join(`&nbsp;&nbsp;`)
-        } else {
-            label = list.join(`<font color=${EaStyle.Colors.themeForegroundMinor}>.</font>`)
-            label = label.replace("fract<font color=#aaaaaa>.", "fract_").replace("<font color=#aaaaaa>fract</font><font color=#aaaaaa>.", "fract_")
-            label = label.replace("length<font color=#aaaaaa>.", "length_").replace("<font color=#aaaaaa>length</font><font color=#aaaaaa>.", "length_")
-            label = label.replace("angle<font color=#aaaaaa>.", "angle_").replace("<font color=#aaaaaa>angle</font><font color=#aaaaaa>.", "angle_")
-        }
-
-        // 180,0_deg to 180.0°
-        label = label.replace(",", ".").replace("_deg", "°")
-
-        return label
     }
 
 }

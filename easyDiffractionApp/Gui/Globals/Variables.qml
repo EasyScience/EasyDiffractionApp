@@ -88,8 +88,6 @@ QtObject {
     property var cellLengthALabel
 
     // Tab buttons
-    property var appearanceTab
-    property var promptsTab
     property var phaseCifTab
     property var experimentTableTab
     property var experimentCifTab

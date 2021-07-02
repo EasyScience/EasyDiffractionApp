@@ -33,7 +33,7 @@ Project {
         recursive: true
     }
     Files {
-        filter: "qmldir;*.ts;*.qrc"
+        filter: "qmldir;*.ts;*.qrc;*.html"
         directory: "../easyApp"
         recursive: true
     }

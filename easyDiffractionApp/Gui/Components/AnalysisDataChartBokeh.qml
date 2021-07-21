@@ -1,5 +1,6 @@
 import QtQuick 2.13
 
+import easyApp.Gui.Logic 1.0 as EaLogic
 import easyApp.Gui.Style 1.0 as EaStyle
 import easyApp.Gui.Charts 1.0 as EaCharts
 
@@ -17,8 +18,8 @@ EaCharts.BaseBokeh {
     xAxisTitle: "2θ (deg)"
     yMainAxisTitle: {
         let title = 'Icalc'
-        if (hasMeasuredData) title = 'Imeas, Icalc'
-        if (hasBackgroundData) title += ', Ibkg'
+        if (EaLogic.Utils.hasData(measuredData)) title = 'Imeas, ' + title
+        if (EaLogic.Utils.hasData(backgroundData)) title = title + ', Ibkg'
         return title
     }
     yDifferenceAxisTitle: "Imeas - Icalc"

@@ -17,13 +17,18 @@ documentation = 'https://easydiffraction.org'
 include = ['CHANGELOG.md']
 packages = [ { include = 'easyDiffractionApp' } ]
 
+[[tool.poetry.source]]
+name = "easyScience"
+url = "https://easyscience.github.io/pypi/"
+secondary = true
+
 [tool.poetry.dependencies]
 python = '^3.7, <3.8'
 darkdetect = '^0.3.1'
 pyobjc-core = { version = '^7.1', platform = 'darwin' }
 pyobjc-framework-cocoa = { version = '^7.1', platform = 'darwin' }
 # easyScience
-easyDiffractionLib = { git = 'https://github.com/easyScience/easyDiffractionLib.git', rev = 'develop' }
+easyDiffractionLib = { git = 'https://github.com/easyScience/easyDiffractionLib.git', rev = 'CFML_wheel' }
 easyApp = { git = 'https://github.com/easyScience/easyApp.git', rev = 'develop' }
 
 #[tool.poetry.dev-dependencies]

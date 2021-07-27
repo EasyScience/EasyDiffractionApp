@@ -76,21 +76,20 @@ jobs:
             ${{ env.PYTHON_PACKAGES_PATH }}
           key: ${{ matrix.os }}-${{ hashFiles('pyproject.toml') }}
 
-      - name: Set up Python dependences
-        #if: steps.cache.outputs.cache-hit != 'true'
-        run: pip install ${{ env.GIT_INSTALL_URL }}
+      - name: Set up Python packages manager
+        uses: Gr1N/setup-poetry@v7
 
-      #- name: Relink CrysFML from default Python dylib
-      #  run: python ${{ env.SCRIPTS_PATH }}/RelinkCrysfml.py
+      - name: Create venv and install Python dependences
+        run: poetry install
 
       - name: Create freezed python app bundle
-        run: python ${{ env.SCRIPTS_PATH }}/FreezeApp.py
+        run: poetry run python ${{ env.SCRIPTS_PATH }}/FreezeApp.py
 
       - name: Create offline and online app installers from freezed app bundle
-        run: python ${{ env.SCRIPTS_PATH }}/MakeInstaller.py ${{ secrets.BINARY_SIGN_WIN }} ${{ secrets.CERT_ZIP_PASS }}
+        run: poetry run python ${{ env.SCRIPTS_PATH }}/MakeInstaller.py ${{ secrets.BINARY_SIGN_WIN }} ${{ secrets.CERT_ZIP_PASS }}
 
       - name: Sign the installer
-        run: python ${{ env.SCRIPTS_PATH }}/Signatures.py ${{ secrets.BINARY_SIGN_WIN }} ${{ secrets.CERT_ZIP_PASS }}
+        run: poetry run python ${{ env.SCRIPTS_PATH }}/Signatures.py ${{ secrets.BINARY_SIGN_WIN }} ${{ secrets.CERT_ZIP_PASS }}
 
       - name: Set up screen recording dependencies (macOS)
         if: runner.os == 'macOS'
@@ -116,17 +115,17 @@ jobs:
         run: mkdir -p ~/.local/share/applications/
 
       - name: Install app
-        run: python ${{ env.SCRIPTS_PATH }}/InstallApp.py
+        run: poetry run python ${{ env.SCRIPTS_PATH }}/InstallApp.py
 
       - name: Run app in testmode, record screen and quit
         if: runner.os != 'Windows'
-        run: python ${{ env.SCRIPTS_PATH }}/RunApp.py --testmode
+        run: poetry run python ${{ env.SCRIPTS_PATH }}/RunApp.py --testmode
 
       - name: Rename test videos
-        run: python ${{ env.SCRIPTS_PATH }}/CreateTestVideos.py ${{ env.BRANCH_NAME }}
+        run: poetry run python ${{ env.SCRIPTS_PATH }}/CreateTestVideos.py ${{ env.BRANCH_NAME }}
 
       - name: Create zip archive of offline app installer
-        run: python ${{ env.SCRIPTS_PATH }}/ZipArtifacts.py ${{ env.BRANCH_NAME }}
+        run: poetry run python ${{ env.SCRIPTS_PATH }}/ZipArtifacts.py ${{ env.BRANCH_NAME }}
 
       - name: Upload zipped offline app installer to GitHub releases
         if: github.event_name == 'push'
@@ -144,4 +143,4 @@ jobs:
 
       - name: Upload online app installer to repository via FTP
         if: github.event_name == 'push'
-        run: python ${{ env.SCRIPTS_PATH }}/UploadToFtp.py ${{ env.BRANCH_NAME }} ${{ secrets.APP_REPO_FTP_PASSWORD }}
+        run: poetry run python ${{ env.SCRIPTS_PATH }}/UploadToFtp.py ${{ env.BRANCH_NAME }} ${{ secrets.APP_REPO_FTP_PASSWORD }}

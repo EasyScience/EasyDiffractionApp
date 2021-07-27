@@ -2,7 +2,6 @@ __author__ = "github.com/AndrewSazonov"
 __version__ = '0.0.1'
 
 import os, sys
-import importlib
 import glob
 import PySide2, shiboken2
 import cryspy
@@ -27,9 +26,7 @@ def excludedModules():
 
 def addedData():
     separator = CONFIG['ci']['pyinstaller']['separator'][CONFIG.os]
-    lib = CONFIG['ci']['pyinstaller']['libs'][CONFIG.os]
     data = [{'from': CONFIG.package_name, 'to': CONFIG.package_name},
-            {'from': importlib.import_module(lib).__path__[0], 'to': lib},
             {'from': cryspy.__path__[0], 'to': 'cryspy'},
             {'from': easyCore.__path__[0], 'to': 'easyCore'},
             {'from': easyDiffractionLib.__path__[0], 'to': 'easyDiffractionLib'},

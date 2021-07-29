@@ -20,8 +20,21 @@ from easyApp.Logic.Translate import Translator
 from easyApp.Logic.Maintenance import Updater
 from easyDiffractionApp.Logic.PyQmlProxy import PyQmlProxy
 
+
+# Hooks for pyinstaller
+try:
+    import CFML_api
+except ImportError:
+    print('Warning: CrysFML is not installed')
+
+try:
+    from GSASII import GSASIIscriptable as G2sc
+except ImportError:
+    print('Warning: GSAS-2 is not installed')
+
 # Global vars
 CONFIG = utils.conf()
+
 
 
 class App(QApplication):

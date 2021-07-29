@@ -4,7 +4,7 @@ __version__ = '0.0.1'
 import os, sys
 import glob
 import PySide2, shiboken2
-import cryspy
+import cryspy, GSASII
 import easyCore, easyDiffractionLib, easyApp
 import Functions, Config
 from PyInstaller.__main__ import run as pyInstallerMain
@@ -28,6 +28,7 @@ def addedData():
     separator = CONFIG['ci']['pyinstaller']['separator'][CONFIG.os]
     data = [{'from': CONFIG.package_name, 'to': CONFIG.package_name},
             {'from': cryspy.__path__[0], 'to': 'cryspy'},
+            {'from': GSASII.__path__[0], 'to': '.'},
             {'from': easyCore.__path__[0], 'to': 'easyCore'},
             {'from': easyDiffractionLib.__path__[0], 'to': 'easyDiffractionLib'},
             {'from': easyApp.__path__[0], 'to': 'easyApp'},

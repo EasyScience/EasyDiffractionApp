@@ -109,3 +109,4 @@ For bug reports and feature requests, please use [Issue Tracker](https://github.
 
 [90]: https://img.shields.io/w3c-validation/default?targetUrl=https://easyscience.github.io/easyDiffractionApp
 [91]: https://easyscience.github.io/easyDiffractionApp
+

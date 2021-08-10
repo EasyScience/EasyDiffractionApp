@@ -12,6 +12,7 @@ import easyApp.Gui.Elements 1.0 as EaElements
 import easyApp.Gui.Components 1.0 as EaComponents
 import easyApp.Gui.Logic 1.0 as EaLogic
 
+import Gui.Logic 1.0 as ExLogic
 import Gui.Globals 1.0 as ExGlobals
 import Gui.Components 1.0 as ExComponents
 
@@ -132,7 +133,20 @@ EaComponents.SideBarColumn {
 
                     EaElements.ComboBox {
                         width: (EaStyle.Sizes.sideBarContentWidth - EaStyle.Sizes.fontPixelSize * 2 ) / 3
-                        model: ["Constant wavelength"]
+
+                        textRole: "text"
+                        valueRole: "value"
+
+                        model: [
+                            { value: "cw", text: qsTr("Constant wavelength") },
+                            { value: "tof", text: qsTr("Time-of-Flight") }
+                        ]
+
+                        onActivated: {
+                            ExGlobals.Variables.experimentMode = currentValue
+                            print("--------------- ExGlobals.Variables.experimentMode", ExGlobals.Variables.experimentMode)
+                        }
+
                     }
                 }
 
@@ -160,7 +174,15 @@ EaComponents.SideBarColumn {
         enabled: ExGlobals.Constants.proxy.experiment.experimentLoaded ||
                  ExGlobals.Constants.proxy.experiment.experimentSkipped
 
-        ExComponents.ExperimentSimulationSetup {}
+        Loader {
+            source: {
+                if (ExGlobals.Variables.experimentMode === 'cw') {
+                    return 'Components/RangesCw.qml'
+                } else if (ExGlobals.Variables.experimentMode === 'tof') {
+                    return 'Components/RangesTof.qml'
+                }
+            }
+        }
     }
 
     EaElements.GroupBox {
@@ -168,7 +190,15 @@ EaComponents.SideBarColumn {
         enabled: ExGlobals.Constants.proxy.experiment.experimentLoaded ||
                  ExGlobals.Constants.proxy.experiment.experimentSkipped
 
-        ExComponents.ExperimentInstrumentSetup {}
+        Loader {
+            source: {
+                if (ExGlobals.Variables.experimentMode === 'cw') {
+                    return 'Components/InstrumentSetupCw.qml'
+                } else if (ExGlobals.Variables.experimentMode === 'tof') {
+                    return 'Components/InstrumentSetupTof.qml'
+                }
+            }
+        }
     }
 
     EaElements.GroupBox {

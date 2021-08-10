@@ -11,8 +11,8 @@ from easyDiffractionLib import Phases, Phase, Lattice, Site, SpaceGroup
 from easyCore.Symmetry.tools import SpacegroupInfo
 from easyApp.Logic.Utils.Utils import generalizePath
 from easyDiffractionLib.sample import Sample
-from easyDiffractionLib.Elements.Experiments.Experiment import Pars1D
-from easyDiffractionLib.Elements.Experiments.Pattern import Pattern1D
+from easyDiffractionLib.Profiles.P1D import Instrument1DCWParameters as Pars1D
+from easyDiffractionLib.Profiles.P1D import Powder1DParameters as Pattern1D
 
 
 class PhaseLogic(QObject):

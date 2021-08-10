@@ -19,24 +19,49 @@ Row {
     EaComponents.TableViewLabel{
         horizontalAlignment: Text.AlignRight
         width: labelWidth()
-        text: qsTr("Zero shift:")
+        text: qsTr("Zero:")
     }
     EaElements.Parameter {
-        width: textFieldWidth()
-        units: "deg" //ExGlobals.Constants.proxy.parameters.patternParametersAsObj.zero_shift.units
+        width: inputFieldWidth()
+        units: "μs"
         text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.parameters.patternParametersAsObj.zero_shift.value)
         onEditingFinished: editParameterValue(ExGlobals.Constants.proxy.parameters.patternParametersAsObj.zero_shift["@id"], text)
     }
 
-    // Wavelength
     EaComponents.TableViewLabel{
         horizontalAlignment: Text.AlignRight
         width: labelWidth()
-        text: qsTr("Wavelength:")
+        text: qsTr("2θ:")
     }
     EaElements.Parameter {
-        width: textFieldWidth()
-        units: "Å" //ExGlobals.Constants.proxy.parameters.instrumentParametersAsObj.wavelength.units
+        width: inputFieldWidth()
+        units: "deg"
+        text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.parameters.instrumentParametersAsObj.wavelength.value)
+        onEditingFinished: editParameterValue(ExGlobals.Constants.proxy.parameters.instrumentParametersAsObj.wavelength["@id"], text)
+    }
+
+    // Dtt1/DIFC
+    EaComponents.TableViewLabel{
+        horizontalAlignment: Text.AlignRight
+        width: labelWidth()
+        text: qsTr("Dtt1:")
+    }
+    EaElements.Parameter {
+        width: inputFieldWidth()
+        units: "" // "μs/Å" ???
+        text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.parameters.instrumentParametersAsObj.wavelength.value)
+        onEditingFinished: editParameterValue(ExGlobals.Constants.proxy.parameters.instrumentParametersAsObj.wavelength["@id"], text)
+    }
+
+    // Dtt2/DIFA
+    EaComponents.TableViewLabel{
+        horizontalAlignment: Text.AlignRight
+        width: labelWidth()
+        text: qsTr("Dtt2:")
+    }
+    EaElements.Parameter {
+        width: inputFieldWidth()
+        units: "" // ???
         text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.parameters.instrumentParametersAsObj.wavelength.value)
         onEditingFinished: editParameterValue(ExGlobals.Constants.proxy.parameters.instrumentParametersAsObj.wavelength["@id"], text)
     }
@@ -44,11 +69,11 @@ Row {
     // Logic
 
     function labelWidth() {
-        return (EaStyle.Sizes.sideBarContentWidth - spacing * 3 - textFieldWidth() * 2) / 2
+        return (EaStyle.Sizes.sideBarContentWidth - spacing * 7 - inputFieldWidth() * 4) / 4
     }
 
-    function textFieldWidth() {
-        return EaStyle.Sizes.fontPixelSize * 11.0
+    function inputFieldWidth() {
+        return EaStyle.Sizes.fontPixelSize * 5.0
     }
 
     function editParameterValue(id, value) {

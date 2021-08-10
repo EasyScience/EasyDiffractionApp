@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 easyDiffraction contributors <support@easydiffraction.org>
+// SPDX-License-Identifier: BSD-3-Clause
+// © 2021 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+
 pragma Singleton
 
 import QtQuick 2.13
@@ -143,5 +147,8 @@ QtObject {
     property var userGuidesLastDisableButton
     property var userGuidesNextButtons: [[], [], [], [], [], []]
     property var userGuidesTextList: [[], [], [], [], [], []]
+
+    // TO DO: move to python backend
+    property string experimentMode: "cw" // supported: "cw", "tof"
 
 }

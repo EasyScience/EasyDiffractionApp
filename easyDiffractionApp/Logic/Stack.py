@@ -1,16 +1,26 @@
+# SPDX-FileCopyrightText: 2021 easyDiffraction contributors <support@easydiffraction.org>
+# SPDX-License-Identifier: BSD-3-Clause
+# © 2021 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+
+from PySide2.QtCore import Signal, QObject
+
 from easyCore import borg
 from easyCore.Objects.Groups import BaseCollection
 from easyCore.Objects.Base import BaseObj
 from easyDiffractionLib import Phases, Phase
 
 
-class StackLogic():
+class StackLogic(QObject):
     """
     Logic for Undo/Redo stack-related operations.
     """
-    def __init__(self, proxy,
+    undoRedoChanged = Signal()
+
+    def __init__(self, parent, proxy,
                  callbacks_no_history=None,
                  callbacks_with_history=None):
+        super().__init__(parent)
+        self.parent = parent
         self.proxy = proxy
         self.callbacks_no_history = callbacks_no_history
         self.callbacks_with_history = callbacks_with_history
@@ -19,7 +29,6 @@ class StackLogic():
         # Start the undo/redo stack
         borg.stack.enabled = True
         borg.stack.clear()
-        # borg.debug = True
 
     def canUndo(self) -> bool:
         return borg.stack.canUndo()

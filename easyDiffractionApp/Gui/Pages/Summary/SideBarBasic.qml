@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 easyDiffraction contributors <support@easydiffraction.org>
+// SPDX-License-Identifier: BSD-3-Clause
+// © 2021 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Dialogs 1.3 as QtQuickDialogs1
@@ -16,7 +20,7 @@ EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
         title: qsTr("Export report")
-        enabled: ExGlobals.Constants.proxy.currentProjectPath !== '--- EXAMPLE ---' && ExGlobals.Constants.proxy.projectCreated
+        enabled: ExGlobals.Constants.proxy.project.currentProjectPath !== '--- EXAMPLE ---' && ExGlobals.Constants.proxy.project.projectCreated
         collapsible: false
         last: true
 
@@ -93,7 +97,7 @@ EaComponents.SideBarColumn {
                 horizontalAlignment: TextInput.AlignLeft
 
                 placeholderText: qsTr("Enter report location here")
-                text: ExGlobals.Constants.proxy.currentProjectPath !== '--- EXAMPLE ---' && ExGlobals.Constants.proxy.projectCreated ?
+                text: ExGlobals.Constants.proxy.project.currentProjectPath !== '--- EXAMPLE ---' && ExGlobals.Constants.proxy.project.projectCreated ?
                           EaLogic.Utils.urlToLocalFile(reportParentDirDialog.folder + '/' + reportNameField.text + '.' + reportFormatField.currentValue) :
                           ''
 
@@ -119,7 +123,7 @@ EaComponents.SideBarColumn {
 
             onClicked: {
                 if (reportFormatField.currentValue === 'html') {
-                    ExGlobals.Constants.proxy.saveReport(reportLocationField.text)
+                    ExGlobals.Constants.proxy.project.saveReport(reportLocationField.text)
                 } else if (reportFormatField.currentValue === 'pdf') {
                     ExGlobals.Variables.reportWebView.printToPdf(reportLocationField.text)
                 }
@@ -139,7 +143,7 @@ EaComponents.SideBarColumn {
         selectFolder: true
         selectMultiple: false
 
-        folder: ExGlobals.Constants.proxy.currentProjectPath
+        folder: ExGlobals.Constants.proxy.project.currentProjectPath
     }
 
 }

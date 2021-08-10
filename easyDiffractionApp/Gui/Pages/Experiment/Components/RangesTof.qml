@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 easyDiffraction contributors <support@easydiffraction.org>
+// SPDX-License-Identifier: BSD-3-Clause
+// © 2021 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 
@@ -15,14 +19,14 @@ Row {
     EaComponents.TableViewLabel{
         horizontalAlignment: Text.AlignRight
         width: labelWidth()
-        text: qsTr("2θ-min:")
+        text: "ToF-min:"
     }
     EaElements.Parameter {
         id: xMin
-        enabled: !ExGlobals.Constants.proxy.experimentLoaded
+        enabled: !ExGlobals.Constants.proxy.experiment.experimentLoaded
         width: textFieldWidth()
-        units: "deg"
-        text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.simulationParametersAsObj.x_min, 3)
+        units: "μs"
+        text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.parameters.simulationParametersAsObj.x_min, 3)
         onEditingFinished: updateParameters()
     }
 
@@ -30,14 +34,14 @@ Row {
     EaComponents.TableViewLabel{
         horizontalAlignment: Text.AlignRight
         width: labelWidth()
-        text: qsTr("2θ-max:")
+        text: "ToF-max:"
     }
     EaElements.Parameter {
         id: xMax
-        enabled: !ExGlobals.Constants.proxy.experimentLoaded
+        enabled: !ExGlobals.Constants.proxy.experiment.experimentLoaded
         width: textFieldWidth()
-        units: "deg"
-        text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.simulationParametersAsObj.x_max, 3)
+        units: "μs"
+        text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.parameters.simulationParametersAsObj.x_max, 3)
         onEditingFinished: updateParameters()
     }
 
@@ -45,14 +49,14 @@ Row {
     EaComponents.TableViewLabel{
         horizontalAlignment: Text.AlignRight
         width: labelWidth()
-        text: qsTr("2θ-step:")
+        text: "ToF-step:"
     }
     EaElements.Parameter {
         id: xStep
-        enabled: !ExGlobals.Constants.proxy.experimentLoaded
+        enabled: !ExGlobals.Constants.proxy.experiment.experimentLoaded
         width: textFieldWidth()
-        units: "deg"
-        text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.simulationParametersAsObj.x_step, 3)
+        units: "μs"
+        text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.parameters.simulationParametersAsObj.x_step, 3)
         onEditingFinished: updateParameters()
     }
 
@@ -72,6 +76,6 @@ Row {
             "x_max": parseFloat(xMax.text),
             "x_step": parseFloat(xStep.text)
         }
-        ExGlobals.Constants.proxy.simulationParametersAsObj = JSON.stringify(json)
+        ExGlobals.Constants.proxy.parameters.simulationParametersAsObj = JSON.stringify(json)
     }
 }

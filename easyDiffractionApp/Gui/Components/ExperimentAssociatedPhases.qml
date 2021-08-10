@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 easyDiffraction contributors <support@easydiffraction.org>
+// SPDX-License-Identifier: BSD-3-Clause
+// © 2021 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.XmlListModel 2.13
@@ -18,7 +22,7 @@ EaComponents.TableView {
     // Table model
 
     model: XmlListModel {
-        xml: ExGlobals.Constants.proxy.phasesAsXml
+        xml: ExGlobals.Constants.proxy.phase.phasesAsXml
         query: "/root/item"
 
         XmlRole { name: "label"; query: "name/string()" }
@@ -52,8 +56,8 @@ EaComponents.TableView {
         EaComponents.TableViewTextInput {
             id: scaleColumn
             headerText: "Scale"
-            text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.patternParametersAsObj.scale.value)
-            onEditingFinished: editParameterValue(ExGlobals.Constants.proxy.patternParametersAsObj.scale["@id"], text)
+            text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.parameters.patternParametersAsObj.scale.value)
+            onEditingFinished: editParameterValue(ExGlobals.Constants.proxy.parameters.patternParametersAsObj.scale["@id"], text)
         }
 
         EaComponents.TableViewCheckBox {
@@ -77,6 +81,6 @@ EaComponents.TableView {
     // Logic
 
     function editParameterValue(id, value) {
-        ExGlobals.Constants.proxy.editParameter(id, parseFloat(value))
+        ExGlobals.Constants.proxy.parameters.editParameter(id, parseFloat(value))
     }
 }

@@ -138,13 +138,13 @@ EaComponents.SideBarColumn {
                         valueRole: "value"
 
                         model: [
-                            { value: "cw", text: qsTr("Constant wavelength") },
-                            { value: "tof", text: qsTr("Time-of-Flight") }
+                            { value: "powder1DCW", text: qsTr("Constant wavelength") },
+                            { value: "powder1DTOF", text: qsTr("Time-of-Flight") }
                         ]
 
                         onActivated: {
-                            ExGlobals.Variables.experimentMode = currentValue
-                            print("--------------- ExGlobals.Variables.experimentMode", ExGlobals.Variables.experimentMode)
+                            ExGlobals.Constants.proxy.sample.experimentType = currentValue
+                            print("--------------- ExGlobals.Constants.proxy.sample.experimentType", ExGlobals.Constants.proxy.sample.experimentType)
                         }
 
                     }
@@ -176,9 +176,9 @@ EaComponents.SideBarColumn {
 
         Loader {
             source: {
-                if (ExGlobals.Variables.experimentMode === 'cw') {
+                if (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DCW') {
                     return 'Components/RangesCw.qml'
-                } else if (ExGlobals.Variables.experimentMode === 'tof') {
+                } else if (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DTOF') {
                     return 'Components/RangesTof.qml'
                 }
             }
@@ -192,9 +192,9 @@ EaComponents.SideBarColumn {
 
         Loader {
             source: {
-                if (ExGlobals.Variables.experimentMode === 'cw') {
+                if (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DCW') {
                     return 'Components/InstrumentSetupCw.qml'
-                } else if (ExGlobals.Variables.experimentMode === 'tof') {
+                } else if (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DTOF') {
                     return 'Components/InstrumentSetupTof.qml'
                 }
             }

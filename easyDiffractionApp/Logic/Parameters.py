@@ -116,7 +116,7 @@ class ParametersLogic(QObject):
         }
 
     def _setPatternParametersAsObj(self):
-        parameters = self.parent.l_phase._sample.pattern.as_dict(skip=['interface'])
+        parameters = self.parent.l_sample._sample.pattern.as_dict(skip=['interface'])
         self._pattern_parameters_as_obj = parameters
 
     ####################################################################################################################
@@ -135,7 +135,7 @@ class ParametersLogic(QObject):
 
     def _setInstrumentParametersAsObj(self):
         # parameters = self._sample.parameters.as_dict()
-        parameters = self.parent.l_phase._sample.parameters.as_dict(skip=['interface'])
+        parameters = self.parent.l_sample._sample.parameters.as_dict(skip=['interface'])
         self._instrument_parameters_as_obj = parameters
 
     def _setInstrumentParametersAsXml(self):
@@ -226,7 +226,7 @@ class ParametersLogic(QObject):
     def _setParametersAsObj(self):
         self._parameters_as_obj.clear()
 
-        par_ids, par_paths = generatePath(self.parent.l_phase._sample, True)
+        par_ids, par_paths = generatePath(self.parent.l_sample._sample, True)
         par_index = 0
 
         for par_id, par_path in zip(par_ids, par_paths):
@@ -307,7 +307,7 @@ class ParametersLogic(QObject):
     def _updateCalculatedData(self):
         if not self.parent.l_experiment._experiment_loaded and not self.parent.l_experiment._experiment_skipped:
             return
-        self.parent.l_phase._sample.output_index = self.parent.l_phase._current_phase_index
+        self.parent.l_sample._sample.output_index = self.parent.l_phase._current_phase_index
 
         #  THIS IS WHERE WE WOULD LOOK UP CURRENT EXP INDEX
         sim = self._data.simulations[0]
@@ -327,4 +327,7 @@ class ParametersLogic(QObject):
         hkl = self._interface.get_hkl()
 
         self.plotCalculatedDataSignal.emit((sim.x, sim.y))
-        self.plotBraggDataSignal.emit((hkl['ttheta'], hkl['h'], hkl['k'], hkl['l']))  # noqa: E501
+        if 'ttheta' in hkl.keys():
+            self.plotBraggDataSignal.emit((hkl['ttheta'], hkl['h'], hkl['k'], hkl['l']))  # noqa: E501
+        if 'time' in hkl.keys():
+            self.plotBraggDataSignal.emit((hkl['time'], hkl['h'], hkl['k'], hkl['l']))  # noqa: E501

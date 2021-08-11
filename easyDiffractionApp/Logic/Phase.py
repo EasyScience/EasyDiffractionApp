@@ -10,9 +10,6 @@ from easyCore import np, borg
 from easyDiffractionLib import Phases, Phase, Lattice, Site, SpaceGroup
 from easyCore.Symmetry.tools import SpacegroupInfo
 from easyApp.Logic.Utils.Utils import generalizePath
-from easyDiffractionLib.sample import Sample
-from easyDiffractionLib.Profiles.P1D import Instrument1DCWParameters as Pars1D
-from easyDiffractionLib.Profiles.P1D import Powder1DParameters as Pattern1D
 
 
 class PhaseLogic(QObject):
@@ -23,17 +20,17 @@ class PhaseLogic(QObject):
     structureParametersChanged = Signal()
     phasesEnabled = Signal()  # from other logics
     phasesAsObjChanged = Signal()
+    phasesReplaced = Signal()
 
     def __init__(self, parent=None, interface=None):
         super().__init__(parent)
         self.parent = parent
         self._interface = interface
         self.state = parent.l_parameters
-        self.phases = None
+        self.phases = Phases(interface=interface)
         self._phases_as_obj = []
         self._phases_as_xml = ""
         self._phases_as_cif = ""
-        self._sample = self._defaultSample()
         self._current_phase_index = 0
 
     ####################################################################################################################
@@ -49,14 +46,14 @@ class PhaseLogic(QObject):
         return True
 
     def removePhase(self, phase_name: str):
-        if phase_name in self._sample.phases.phase_names:
-            del self._sample.phases[phase_name]
+        if phase_name in self.phases.phase_names:
+            del self.phases[phase_name]
             return True
         return False
 
     def addDefaultPhase(self):
         borg.stack.enabled = False
-        self._sample.phases.append(self._defaultPhase())
+        self.phases.append(self._defaultPhase())
         borg.stack.enabled = True
 
     def _defaultPhase(self):
@@ -69,14 +66,14 @@ class PhaseLogic(QObject):
         return phase
 
     def _onPhaseAdded(self):
-        if self._interface.current_interface_name != 'CrysPy':
-            self._interface.generate_sample_binding("filename", self._sample)
-        self._sample.phases.name = 'Phases'
-        name = self._sample.phases[self._current_phase_index].name
+        # if self._interface.current_interface_name != 'CrysPy':
+        #     self._interface.generate_sample_binding("filename", self._sample)
+        self.phases.name = 'Phases'
+        name = self.phases[self._current_phase_index].name
         self.updateProjectInfo.emit(('samples', name))
 
     def currentCrystalSystem(self):
-        phases = self._sample.phases
+        phases = self.phases
         if not phases:
             return ''
 
@@ -92,10 +89,10 @@ class PhaseLogic(QObject):
         self._setCurrentSpaceGroup(top_space_group_name)
 
     def phasesAsExtendedCif(self):
-        if len(self._sample.phases) == 0:
+        if len(self.phases) == 0:
             return
 
-        symm_ops = self._sample.phases[0].spacegroup.symmetry_opts
+        symm_ops = self.phases[0].spacegroup.symmetry_opts
         symm_ops_cif_loop = "loop_\n _symmetry_equiv_pos_as_xyz\n"
         for symm_op in symm_ops:
             symm_ops_cif_loop += f' {symm_op.as_xyz_string()}\n'
@@ -104,25 +101,25 @@ class PhaseLogic(QObject):
     def phasesAsCif(self, phases_as_cif):
         if self._phases_as_cif == phases_as_cif:
             return
-        self._sample.phases = Phases.from_cif_str(phases_as_cif)
+        self.phases = Phases.from_cif_str(phases_as_cif)
 
     def _setPhasesAsObj(self):
-        self._phases_as_obj = self._sample.phases.as_dict(skip=['interface'])['data']
+        self._phases_as_obj = self.phases.as_dict(skip=['interface'])['data']
 
     def _setPhasesAsXml(self):
         self._phases_as_xml = dicttoxml(self._phases_as_obj, attr_type=True).decode()  # noqa: E501
 
     def _setPhasesAsCif(self):
-        self._phases_as_cif = str(self._sample.phases.cif)
+        self._phases_as_cif = str(self.phases.cif)
 
     def _setCurrentSpaceGroup(self, new_name: str):
-        phases = self._sample.phases
+        phases = self.phases
         if phases[self._current_phase_index].spacegroup.space_group_HM_name == new_name:  # noqa: E501
             return
         phases[self._current_phase_index].spacegroup.space_group_HM_name = new_name  # noqa: E501
 
     def _spaceGroupSettingList(self):
-        phases = self._sample.phases
+        phases = self.phases
         if not phases:
             return []
 
@@ -136,7 +133,7 @@ class PhaseLogic(QObject):
         return numbers
 
     def _currentSpaceGroupNumber(self):
-        phases = self._sample.phases
+        phases = self.phases
         current_number = phases[self._current_phase_index].spacegroup.int_number  # noqa: E501
         return current_number
 
@@ -146,7 +143,7 @@ class PhaseLogic(QObject):
                 return numbers.index(number)
             return 0
 
-        phases = self._sample.phases
+        phases = self.phases
         if not phases:
             return -1
 
@@ -183,7 +180,7 @@ class PhaseLogic(QObject):
         return formatted_list
 
     def currentSpaceGroupSetting(self):
-        phases = self._sample.phases
+        phases = self.phases
         if not phases:
             return 0
 
@@ -202,7 +199,7 @@ class PhaseLogic(QObject):
     # Phase: Atoms
     ####################################################################################################################
     def addDefaultAtom(self):
-        index = len(self._sample.phases[0].atoms.atom_labels) + 1
+        index = len(self.phases[0].atoms.atom_labels) + 1
         label = f'Label{index}'
         atom = Site.from_pars(label=label,
                               specie='O',
@@ -210,10 +207,10 @@ class PhaseLogic(QObject):
                               fract_y=0.05,
                               fract_z=0.05)
         atom.add_adp('Uiso', Uiso=0.0)
-        self._sample.phases[self._current_phase_index].add_atom(atom)
+        self.phases[self._current_phase_index].add_atom(atom)
 
     def removeAtom(self, atom_label: str):
-        self._sample.phases[self._current_phase_index].remove_atom(atom_label)
+        self.phases[self._current_phase_index].remove_atom(atom_label)
 
     def setCurrentExperimentDatasetName(self, name):
         if self.parent.l_parameters._data.experiments[0].name == name:
@@ -221,41 +218,22 @@ class PhaseLogic(QObject):
         self.parent.l_parameters._data.experiments[0].name = name
         self.updateProjectInfo.emit(('experiments', name))
 
-    ####################################################################################################################
-    ####################################################################################################################
-    # SAMPLE
-    ####################################################################################################################
-    ####################################################################################################################
-
-    def _defaultSample(self):
-        sample = Sample(parameters=Pars1D.default(),
-                        pattern=Pattern1D.default(),
-                        interface=self._interface)
-        sample.pattern.zero_shift = 0.0
-        sample.pattern.scale = 100.0
-        sample.parameters.wavelength = 1.912
-        sample.parameters.resolution_u = 0.1447
-        sample.parameters.resolution_v = -0.4252
-        sample.parameters.resolution_w = 0.3864
-        sample.parameters.resolution_x = 0.0
-        sample.parameters.resolution_y = 0.0  # 0.0961
-        return sample
-
     def addSampleFromCif(self, cif_url):
         cif_path = generalizePath(cif_url)
         borg.stack.enabled = False
-        self._sample.phases = Phases.from_cif_file(cif_path)
+        self.phases = Phases.from_cif_file(cif_path)
+        self.phasesReplaced.emit()
         borg.stack.enabled = True
 
     def setCurrentPhaseName(self, name):
-        if self._sample.phases[self._current_phase_index].name == name:
+        if self.phases[self._current_phase_index].name == name:
             return
-        self._sample.phases[self._current_phase_index].name = name
+        self.phases[self._current_phase_index].name = name
         # self._project_info['samples'] = name
         self.updateProjectInfo.emit(('samples', name))
 
     def samplesPresent(self):
-        result = len(self._sample.phases) > 0
+        result = len(self.phases) > 0
         return result
 
     def _updateCalculatedData(self):

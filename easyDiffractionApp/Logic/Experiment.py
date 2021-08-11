@@ -120,7 +120,7 @@ class ExperimentLogic(QObject):
         self.parent.proxy.parameters.simulationParametersAsObj = \
             json.dumps(self._experiment_parameters)
 
-        if len(self.parent.l_phase._sample.pattern.backgrounds) == 0:
+        if len(self.parent.l_sample._sample.pattern.backgrounds) == 0:
             self.parent.l_background.initializeContainer()
 
         self.experimentDataChanged.emit()

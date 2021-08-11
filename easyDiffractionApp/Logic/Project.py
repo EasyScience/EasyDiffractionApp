@@ -174,8 +174,10 @@ class ProjectLogic(QObject):
             if old_interface_name != interface_name:
                 self._interface.switch(interface_name)
 
-        self.parent.l_phase._sample = Sample.from_dict(descr['sample'])
-        self.parent.l_phase._sample.interface = self._interface
+        self.parent.l_sample._sample = Sample.from_dict(descr['sample'])
+        self.parent.l_phase.phases = self.parent.l_sample._sample._phases
+        self.parent.l_sample._sample.interface = self._interface
+        self.parent.l_phase.phases.phasesAsObjChanged.emit()
 
         # send signal to tell the proxy we changed phases
         self.phasesEnabled.emit()
@@ -220,7 +222,7 @@ class ProjectLogic(QObject):
             new_method_index = self.parent.l_fitting.minimizerMethodNames().index(new_method)
             self.parent.l_fitting.currentMinimizerMethodIndex(new_method_index)
 
-        self.parent.l_fitting.fitter.fit_object = self.parent.l_phase._sample
+        self.parent.l_fitting.fitter.fit_object = self.parent.l_sample._sample
         self.parent.l_stack.resetUndoRedoStack()
         self.parent.l_stack.undoRedoChanged.emit()
         self.setProjectCreated(True)
@@ -231,7 +233,7 @@ class ProjectLogic(QObject):
         projectPath = self._currentProjectPath
         project_save_filepath = os.path.join(projectPath, 'project.json')
         descr = {
-            'sample': self.parent.l_phase._sample.as_dict(skip=['interface'])
+            'sample': self.parent.l_sample._sample.as_dict(skip=['interface'])
         }
         if self.parent.l_parameters._data.experiments:
             experiments_x = self.parent.l_parameters._data.experiments[0].x
@@ -267,7 +269,7 @@ class ProjectLogic(QObject):
         self.project_save_filepath = ""
         self.parent.l_experiment.removeExperiment()
         if self.parent.l_phase.samplesPresent():
-            self.removePhaseSignal.emit(self.parent.l_phase._sample.phases[self.parent.l_phase._current_phase_index].name)
+            self.removePhaseSignal.emit(self.parent.l_sample._sample.phases[self.parent.l_phase._current_phase_index].name)
         self.reset.emit()
 
     def updateProjectInfo(self, key_value):

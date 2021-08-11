@@ -144,7 +144,6 @@ EaComponents.SideBarColumn {
 
                         onActivated: {
                             ExGlobals.Constants.proxy.sample.experimentType = currentValue
-                            print("--------------- ExGlobals.Constants.proxy.sample.experimentType", ExGlobals.Constants.proxy.sample.experimentType)
                         }
 
                     }

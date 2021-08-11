@@ -26,7 +26,7 @@ Row {
         enabled: !ExGlobals.Constants.proxy.experiment.experimentLoaded
         width: textFieldWidth()
         units: "μs"
-        text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.parameters.simulationParametersAsObj.x_min, 3)
+        text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.parameters.simulationParametersAsObj.x_min, 0)
         onEditingFinished: updateParameters()
     }
 
@@ -41,7 +41,7 @@ Row {
         enabled: !ExGlobals.Constants.proxy.experiment.experimentLoaded
         width: textFieldWidth()
         units: "μs"
-        text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.parameters.simulationParametersAsObj.x_max, 3)
+        text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.parameters.simulationParametersAsObj.x_max, 0)
         onEditingFinished: updateParameters()
     }
 

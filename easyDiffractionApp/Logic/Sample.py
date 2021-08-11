@@ -51,7 +51,7 @@ class SampleLogic(QObject):
         if issubclass(type(self._sample.parameters), Instrument1DCWParameters):
             exp_type = 'powder1DCW'
         elif issubclass(type(self._sample.parameters), Instrument1DTOFParameters):
-            exp_type = 'Powder1DTOF'
+            exp_type = 'powder1DTOF'
         else:
             raise AttributeError('Unknown EXP type')
         return exp_type

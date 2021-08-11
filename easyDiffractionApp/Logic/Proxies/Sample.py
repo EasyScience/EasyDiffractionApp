@@ -2,11 +2,8 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # © 2021 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
-import timeit
+from PySide2.QtCore import QObject, Signal, Property
 
-from PySide2.QtCore import QObject, Signal, Slot, Property
-from easyCore.Utils.UndoRedo import property_stack_deco
-import json
 
 class SampleProxy(QObject):
 
@@ -24,14 +21,8 @@ class SampleProxy(QObject):
     @experimentType.setter
     def experimentType(self, exp_type: str):
         self.logic.experimentType = exp_type
-        self.parent.parameters.simulationParametersAsObj = json.dumps({
-            'x_min': 3000,
-            'x_max': 10000,
-            'x_step': 20
-        })
+        self.parent.parameters.simulationParametersAsObj = \
+            self.logic.defaultTOFsimulationParams()
         self.experimentTypeChanged.emit()
-
-
-
-
-
+        self.parent.parameters._onParametersChanged()
+        self.parent.parameters._onInstrumentParametersChanged()

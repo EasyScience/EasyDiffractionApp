@@ -36,8 +36,8 @@ Row {
     EaElements.Parameter {
         width: inputFieldWidth()
         units: "deg"
-        text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.parameters.instrumentParametersAsObj.wavelength.value)
-        onEditingFinished: editParameterValue(ExGlobals.Constants.proxy.parameters.instrumentParametersAsObj.wavelength["@id"], text)
+        text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.parameters.instrumentParametersAsObj.ttheta_bank.value)
+        onEditingFinished: editParameterValue(ExGlobals.Constants.proxy.parameters.instrumentParametersAsObj.ttheta_bank["@id"], text)
     }
 
     // Dtt1/DIFC
@@ -49,8 +49,8 @@ Row {
     EaElements.Parameter {
         width: inputFieldWidth()
         units: "" // "μs/Å" ???
-        text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.parameters.instrumentParametersAsObj.wavelength.value)
-        onEditingFinished: editParameterValue(ExGlobals.Constants.proxy.parameters.instrumentParametersAsObj.wavelength["@id"], text)
+        text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.parameters.instrumentParametersAsObj.dtt1.value)
+        onEditingFinished: editParameterValue(ExGlobals.Constants.proxy.parameters.instrumentParametersAsObj.dtt1["@id"], text)
     }
 
     // Dtt2/DIFA
@@ -62,8 +62,8 @@ Row {
     EaElements.Parameter {
         width: inputFieldWidth()
         units: "" // ???
-        text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.parameters.instrumentParametersAsObj.wavelength.value)
-        onEditingFinished: editParameterValue(ExGlobals.Constants.proxy.parameters.instrumentParametersAsObj.wavelength["@id"], text)
+        text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.parameters.instrumentParametersAsObj.dtt2.value)
+        onEditingFinished: editParameterValue(ExGlobals.Constants.proxy.parameters.instrumentParametersAsObj.dtt2["@id"], text)
     }
 
     // Logic

@@ -12,62 +12,67 @@ import easyApp.Gui.Logic 1.0 as EaLogic
 
 import Gui.Globals 1.0 as ExGlobals
 
-Row {
-    spacing: EaStyle.Sizes.fontPixelSize * 0.5
 
-    // Min
-    EaComponents.TableViewLabel{
-        horizontalAlignment: Text.AlignRight
-        width: labelWidth()
-        text: "ToF-min:"
-    }
-    EaElements.Parameter {
-        id: xMin
-        enabled: !ExGlobals.Constants.proxy.experiment.experimentLoaded
-        width: textFieldWidth()
-        units: "μs"
-        text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.parameters.simulationParametersAsObj.x_min, 0)
-        onEditingFinished: updateParameters()
-    }
+Grid {
+    columns: 3
+    columnSpacing: EaStyle.Sizes.fontPixelSize
 
-    // Max
-    EaComponents.TableViewLabel{
-        horizontalAlignment: Text.AlignRight
-        width: labelWidth()
-        text: "ToF-max:"
-    }
-    EaElements.Parameter {
-        id: xMax
-        enabled: !ExGlobals.Constants.proxy.experiment.experimentLoaded
-        width: textFieldWidth()
-        units: "μs"
-        text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.parameters.simulationParametersAsObj.x_max, 0)
-        onEditingFinished: updateParameters()
+    Column {
+        EaElements.Label {
+            enabled: false
+            text: qsTr("ToF-min")
+        }
+
+        EaElements.Parameter {
+            id: xMin
+            enabled: !ExGlobals.Constants.proxy.experiment.experimentLoaded
+            width: inputFieldWidth()
+            units: "μs"
+            text: formatParameter(ExGlobals.Constants.proxy.parameters.simulationParametersAsObj.x_min)
+            onEditingFinished: updateParameters()
+        }
     }
 
-    // Step
-    EaComponents.TableViewLabel{
-        horizontalAlignment: Text.AlignRight
-        width: labelWidth()
-        text: "ToF-step:"
+    Column {
+        EaElements.Label {
+            enabled: false
+            text: qsTr("ToF-max")
+        }
+
+        EaElements.Parameter {
+            id: xMax
+            enabled: !ExGlobals.Constants.proxy.experiment.experimentLoaded
+            width: inputFieldWidth()
+            units: "μs"
+            text: formatParameter(ExGlobals.Constants.proxy.parameters.simulationParametersAsObj.x_max)
+            onEditingFinished: updateParameters()
+        }
     }
-    EaElements.Parameter {
-        id: xStep
-        enabled: !ExGlobals.Constants.proxy.experiment.experimentLoaded
-        width: textFieldWidth()
-        units: "μs"
-        text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.parameters.simulationParametersAsObj.x_step, 3)
-        onEditingFinished: updateParameters()
+
+    Column {
+        EaElements.Label {
+            enabled: false
+            text: qsTr("ToF-step")
+        }
+
+        EaElements.Parameter {
+            id: xStep
+            enabled: !ExGlobals.Constants.proxy.experiment.experimentLoaded
+            width: inputFieldWidth()
+            units: "μs"
+            text: formatParameter(ExGlobals.Constants.proxy.parameters.simulationParametersAsObj.x_step)
+            onEditingFinished: updateParameters()
+        }
     }
 
     // Logic
 
-    function labelWidth() {
-        return (EaStyle.Sizes.sideBarContentWidth - spacing * 5 - textFieldWidth() * 3) / 3
+    function inputFieldWidth() {
+        return (EaStyle.Sizes.sideBarContentWidth - columnSpacing * (columns - 1)) / columns
     }
 
-    function textFieldWidth() {
-        return EaStyle.Sizes.fontPixelSize * 7.0
+    function formatParameter(value) {
+        return EaLogic.Utils.toFixed(value, 0)
     }
 
     function updateParameters() {
@@ -79,3 +84,4 @@ Row {
         ExGlobals.Constants.proxy.parameters.simulationParametersAsObj = JSON.stringify(json)
     }
 }
+

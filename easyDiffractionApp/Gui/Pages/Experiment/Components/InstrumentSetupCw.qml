@@ -12,43 +12,43 @@ import easyApp.Gui.Logic 1.0 as EaLogic
 
 import Gui.Globals 1.0 as ExGlobals
 
-Row {
-    spacing: EaStyle.Sizes.fontPixelSize * 0.5
 
-    // Zero shift
-    EaComponents.TableViewLabel{
-        horizontalAlignment: Text.AlignRight
-        width: labelWidth()
-        text: qsTr("Zero shift:")
-    }
-    EaElements.Parameter {
-        width: textFieldWidth()
-        units: "deg" //ExGlobals.Constants.proxy.parameters.patternParametersAsObj.zero_shift.units
-        text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.parameters.patternParametersAsObj.zero_shift.value)
-        onEditingFinished: editParameterValue(ExGlobals.Constants.proxy.parameters.patternParametersAsObj.zero_shift["@id"], text)
+Grid {
+    columns: 2
+    columnSpacing: EaStyle.Sizes.fontPixelSize
+
+    Column {
+        EaElements.Label {
+            enabled: false
+            text: qsTr("Zero shift")
+        }
+
+        EaElements.Parameter {
+            width: inputFieldWidth()
+            units: "deg" //ExGlobals.Constants.proxy.parameters.patternParametersAsObj.zero_shift.units
+            text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.parameters.patternParametersAsObj.zero_shift.value)
+            onEditingFinished: editParameterValue(ExGlobals.Constants.proxy.parameters.patternParametersAsObj.zero_shift["@id"], text)
+        }
     }
 
-    // Wavelength
-    EaComponents.TableViewLabel{
-        horizontalAlignment: Text.AlignRight
-        width: labelWidth()
-        text: qsTr("Wavelength:")
-    }
-    EaElements.Parameter {
-        width: textFieldWidth()
-        units: "Å" //ExGlobals.Constants.proxy.parameters.instrumentParametersAsObj.wavelength.units
-        text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.parameters.instrumentParametersAsObj.wavelength.value)
-        onEditingFinished: editParameterValue(ExGlobals.Constants.proxy.parameters.instrumentParametersAsObj.wavelength["@id"], text)
+    Column {
+        EaElements.Label {
+            enabled: false
+            text: qsTr("Wavelength")
+        }
+
+        EaElements.Parameter {
+            width: inputFieldWidth()
+            units: "Å" //ExGlobals.Constants.proxy.parameters.instrumentParametersAsObj.wavelength.units
+            text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.parameters.instrumentParametersAsObj.wavelength.value)
+            onEditingFinished: editParameterValue(ExGlobals.Constants.proxy.parameters.instrumentParametersAsObj.wavelength["@id"], text)
+        }
     }
 
     // Logic
 
-    function labelWidth() {
-        return (EaStyle.Sizes.sideBarContentWidth - spacing * 3 - textFieldWidth() * 2) / 2
-    }
-
-    function textFieldWidth() {
-        return EaStyle.Sizes.fontPixelSize * 11.0
+    function inputFieldWidth() {
+        return (EaStyle.Sizes.sideBarContentWidth - columnSpacing * (columns - 1)) / columns
     }
 
     function editParameterValue(id, value) {

@@ -2,8 +2,6 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # © 2021 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
-import json
-
 from PySide2.QtCore import Signal, QObject
 
 from easyDiffractionLib.sample import Sample
@@ -102,10 +100,3 @@ class SampleLogic(QObject):
         self.parent.l_phase.phasesAsObjChanged.emit()
         #self.parent.parametersChanged.emit()
 
-    def defaultTOFsimulationParams(self):
-        params = json.dumps({
-            'x_min': 3000,
-            'x_max': 10000,
-            'x_step': 20
-        })
-        return params

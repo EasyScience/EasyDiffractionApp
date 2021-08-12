@@ -48,7 +48,7 @@ class ParametersLogic(QObject):
         self._parameters_filter_criteria = ""
 
         self._data = self._defaultData()
-        self._simulation_parameters_as_obj = self._defaultSimulationParameters()  # noqa: E501
+        self._simulation_parameters_as_obj = defaultSimulationParams(jsonify=False)  # noqa: E501
 
     ####################################################################################################################
     ####################################################################################################################
@@ -57,9 +57,10 @@ class ParametersLogic(QObject):
     ####################################################################################################################
 
     def _defaultData(self):
-        x_min = self._defaultSimulationParameters()['x_min']
-        x_max = self._defaultSimulationParameters()['x_max']
-        x_step = self._defaultSimulationParameters()['x_step']
+        pars = defaultSimulationParams(jsonify=False)
+        x_min = pars['x_min']
+        x_max = pars['x_max']
+        x_step = pars['x_step']
         num_points = int((x_max - x_min) / x_step + 1)
         x_data = np.linspace(x_min, x_max, num_points)
 
@@ -90,13 +91,6 @@ class ParametersLogic(QObject):
             )
         )
         return data
-
-    def _defaultSimulationParameters(self):
-        return {
-            "x_min": 10.0,
-            "x_max": 120.0,
-            "x_step": 0.1
-        }
 
     ####################################################################################################################
     # Simulation parameters
@@ -317,9 +311,10 @@ class ParametersLogic(QObject):
             sim.x = exp.x
 
         elif self.parent.l_experiment._experiment_skipped:
-            x_min = float(self._simulation_parameters_as_obj['x_min'])
-            x_max = float(self._simulation_parameters_as_obj['x_max'])
-            x_step = float(self._simulation_parameters_as_obj['x_step'])
+            params = self._simulation_parameters_as_obj
+            x_min = float(params['x_min'])
+            x_max = float(params['x_max'])
+            x_step = float(params['x_step'])
             num_points = int((x_max - x_min) / x_step + 1)
             sim.x = np.linspace(x_min, x_max, num_points)
 
@@ -331,3 +326,23 @@ class ParametersLogic(QObject):
             self.plotBraggDataSignal.emit((hkl['ttheta'], hkl['h'], hkl['k'], hkl['l']))  # noqa: E501
         if 'time' in hkl.keys():
             self.plotBraggDataSignal.emit((hkl['time'], hkl['h'], hkl['k'], hkl['l']))  # noqa: E501
+
+
+def defaultSimulationParams(exp_type='powder1DCW', jsonify=True):
+    if exp_type == 'powder1DCW':
+        params = {
+            'x_min':  10,
+            'x_max':  120,
+            'x_step': 0.1
+        }
+    elif exp_type == 'powder1DTOF':
+        params = {
+            'x_min':  5000,
+            'x_max':  60000,
+            'x_step': 50
+        }
+    else:
+        raise AttributeError('Unknown Experiment type')
+    if jsonify:
+        params = json.dumps(params)
+    return params

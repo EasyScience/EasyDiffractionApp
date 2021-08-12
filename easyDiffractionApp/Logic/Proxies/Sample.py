@@ -4,6 +4,8 @@
 
 from PySide2.QtCore import QObject, Signal, Property
 
+from easyDiffractionApp.Logic.Parameters import defaultSimulationParams
+
 
 class SampleProxy(QObject):
 
@@ -21,8 +23,7 @@ class SampleProxy(QObject):
     @experimentType.setter
     def experimentType(self, exp_type: str):
         self.logic.experimentType = exp_type
-        self.parent.parameters.simulationParametersAsObj = \
-            self.logic.defaultTOFsimulationParams()
+        self.parent.parameters.simulationParametersAsObj = defaultSimulationParams(exp_type)
         self.experimentTypeChanged.emit()
         self.parent.parameters._onParametersChanged()
         self.parent.parameters._onInstrumentParametersChanged()

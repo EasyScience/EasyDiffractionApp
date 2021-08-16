@@ -177,7 +177,7 @@ class ProjectLogic(QObject):
         self.parent.l_sample._sample = Sample.from_dict(descr['sample'])
         self.parent.l_phase.phases = self.parent.l_sample._sample._phases
         self.parent.l_sample._sample.interface = self._interface
-        self.parent.l_phase.phases.phasesAsObjChanged.emit()
+        self.parent.l_phase.phasesAsObjChanged.emit()
 
         # send signal to tell the proxy we changed phases
         self.phasesEnabled.emit()

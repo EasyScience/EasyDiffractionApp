@@ -11,6 +11,7 @@ from easyDiffractionApp.Logic.Proxies.Experiment import ExperimentProxy
 from easyDiffractionApp.Logic.Proxies.Fitting import FittingProxy
 from easyDiffractionApp.Logic.Proxies.Parameters import ParametersProxy
 from easyDiffractionApp.Logic.Proxies.Phase import PhaseProxy
+from easyDiffractionApp.Logic.Proxies.Sample import SampleProxy
 from easyDiffractionApp.Logic.Proxies.Plotting1d import Plotting1dProxy
 from easyDiffractionApp.Logic.Proxies.Plotting3d import Plotting3dProxy
 from easyDiffractionApp.Logic.Proxies.Project import ProjectProxy
@@ -45,6 +46,7 @@ class PyQmlProxy(QObject):
         self._project_proxy = ProjectProxy(self, logic=self.lc)
         self._experiment_proxy = ExperimentProxy(self, logic=self.lc)
         self._phase_proxy = PhaseProxy(self, logic=self.lc)
+        self._sample_proxy = SampleProxy(self, logic=self.lc)
 
         ################## signals from other proxies #################
         self.currentCalculatorChanged.connect(self.statusInfoChanged)
@@ -103,6 +105,11 @@ class PyQmlProxy(QObject):
     @Property('QVariant', notify=dummySignal)
     def phase(self):
         return self._phase_proxy
+
+    # sample
+    @Property('QVariant', notify=dummySignal)
+    def sample(self):
+        return self._sample_proxy
 
     # parameters
     @Property('QVariant', notify=dummySignal)

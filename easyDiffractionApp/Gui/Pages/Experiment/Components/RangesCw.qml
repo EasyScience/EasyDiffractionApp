@@ -12,62 +12,67 @@ import easyApp.Gui.Logic 1.0 as EaLogic
 
 import Gui.Globals 1.0 as ExGlobals
 
-Row {
-    spacing: EaStyle.Sizes.fontPixelSize * 0.5
 
-    // Min
-    EaComponents.TableViewLabel{
-        horizontalAlignment: Text.AlignRight
-        width: labelWidth()
-        text: "2θ-min:"
-    }
-    EaElements.Parameter {
-        id: xMin
-        enabled: !ExGlobals.Constants.proxy.experiment.experimentLoaded
-        width: textFieldWidth()
-        units: "deg"
-        text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.parameters.simulationParametersAsObj.x_min, 3)
-        onEditingFinished: updateParameters()
-    }
+Grid {
+    columns: 3
+    columnSpacing: EaStyle.Sizes.fontPixelSize
 
-    // Max
-    EaComponents.TableViewLabel{
-        horizontalAlignment: Text.AlignRight
-        width: labelWidth()
-        text: "2θ-max:"
-    }
-    EaElements.Parameter {
-        id: xMax
-        enabled: !ExGlobals.Constants.proxy.experiment.experimentLoaded
-        width: textFieldWidth()
-        units: "deg"
-        text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.parameters.simulationParametersAsObj.x_max, 3)
-        onEditingFinished: updateParameters()
+    Column {
+        EaElements.Label {
+            enabled: false
+            text: qsTr("2θ-min")
+        }
+
+        EaElements.Parameter {
+            id: xMin
+            enabled: !ExGlobals.Constants.proxy.experiment.experimentLoaded
+            width: inputFieldWidth()
+            units: "deg"
+            text: formatParameter(ExGlobals.Constants.proxy.parameters.simulationParametersAsObj.x_min)
+            onEditingFinished: updateParameters()
+        }
     }
 
-    // Step
-    EaComponents.TableViewLabel{
-        horizontalAlignment: Text.AlignRight
-        width: labelWidth()
-        text: "2θ-step:"
+    Column {
+        EaElements.Label {
+            enabled: false
+            text: qsTr("2θ-max")
+        }
+
+        EaElements.Parameter {
+            id: xMax
+            enabled: !ExGlobals.Constants.proxy.experiment.experimentLoaded
+            width: inputFieldWidth()
+            units: "deg"
+            text: formatParameter(ExGlobals.Constants.proxy.parameters.simulationParametersAsObj.x_max)
+            onEditingFinished: updateParameters()
+        }
     }
-    EaElements.Parameter {
-        id: xStep
-        enabled: !ExGlobals.Constants.proxy.experiment.experimentLoaded
-        width: textFieldWidth()
-        units: "deg"
-        text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.parameters.simulationParametersAsObj.x_step, 3)
-        onEditingFinished: updateParameters()
+
+    Column {
+        EaElements.Label {
+            enabled: false
+            text: qsTr("2θ-step")
+        }
+
+        EaElements.Parameter {
+            id: xStep
+            enabled: !ExGlobals.Constants.proxy.experiment.experimentLoaded
+            width: inputFieldWidth()
+            units: "deg"
+            text: formatParameter(ExGlobals.Constants.proxy.parameters.simulationParametersAsObj.x_step)
+            onEditingFinished: updateParameters()
+        }
     }
 
     // Logic
 
-    function labelWidth() {
-        return (EaStyle.Sizes.sideBarContentWidth - spacing * 5 - textFieldWidth() * 3) / 3
+    function inputFieldWidth() {
+        return (EaStyle.Sizes.sideBarContentWidth - columnSpacing * (columns - 1)) / columns
     }
 
-    function textFieldWidth() {
-        return EaStyle.Sizes.fontPixelSize * 7.0
+    function formatParameter(value) {
+        return EaLogic.Utils.toFixed(value, 2)
     }
 
     function updateParameters() {

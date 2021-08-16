@@ -11,6 +11,7 @@ from easyDiffractionApp.Logic.Experiment import ExperimentLogic
 from easyDiffractionApp.Logic.Fitting import FittingLogic
 from easyDiffractionApp.Logic.Parameters import ParametersLogic
 from easyDiffractionApp.Logic.Phase import PhaseLogic
+from easyDiffractionApp.Logic.Sample import SampleLogic
 from easyDiffractionApp.Logic.Plotting1d import Plotting1dLogic
 from easyDiffractionApp.Logic.Plotting3d import Plotting3dLogic
 from easyDiffractionApp.Logic.Project import ProjectLogic
@@ -41,6 +42,7 @@ class LogicController(QObject):
         self.l_parameters = ParametersLogic(self, interface=self.interface)
         self.l_experiment = ExperimentLogic(self)
         self.l_phase = PhaseLogic(self, interface=self.interface)
+        self.l_sample = SampleLogic(self, interface=self.interface)
         self.l_fitting = FittingLogic(self, interface=self.interface)
         self.l_plotting1d = Plotting1dLogic(self)
         self.l_plotting3d = Plotting3dLogic(self)
@@ -55,7 +57,7 @@ class LogicController(QObject):
 
     def setupSignals(self):
         self.l_background.asObjChanged.connect(self.l_parameters.parametersChanged)
-        self.l_background.asObjChanged.connect(self.l_phase._sample.set_background)
+        self.l_background.asObjChanged.connect(self.l_sample._sample.set_background)
         self.l_background.asObjChanged.connect(self.l_parameters._updateCalculatedData)
 
         self.l_fitting.fitFinished.connect(self.parametersChanged)

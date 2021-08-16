@@ -148,7 +148,4 @@ QtObject {
     property var userGuidesNextButtons: [[], [], [], [], [], []]
     property var userGuidesTextList: [[], [], [], [], [], []]
 
-    // TO DO: move to python backend
-    property string experimentMode: "cw" // supported: "cw", "tof"
-
 }

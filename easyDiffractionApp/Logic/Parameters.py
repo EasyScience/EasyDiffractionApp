@@ -48,7 +48,7 @@ class ParametersLogic(QObject):
         self._parameters_filter_criteria = ""
 
         self._data = self._defaultData()
-        self._simulation_parameters_as_obj = self._defaultSimulationParameters()  # noqa: E501
+        self._simulation_parameters_as_obj = defaultSimulationParams(jsonify=False)  # noqa: E501
 
     ####################################################################################################################
     ####################################################################################################################
@@ -57,9 +57,10 @@ class ParametersLogic(QObject):
     ####################################################################################################################
 
     def _defaultData(self):
-        x_min = self._defaultSimulationParameters()['x_min']
-        x_max = self._defaultSimulationParameters()['x_max']
-        x_step = self._defaultSimulationParameters()['x_step']
+        pars = defaultSimulationParams(jsonify=False)
+        x_min = pars['x_min']
+        x_max = pars['x_max']
+        x_step = pars['x_step']
         num_points = int((x_max - x_min) / x_step + 1)
         x_data = np.linspace(x_min, x_max, num_points)
 
@@ -91,13 +92,6 @@ class ParametersLogic(QObject):
         )
         return data
 
-    def _defaultSimulationParameters(self):
-        return {
-            "x_min": 10.0,
-            "x_max": 120.0,
-            "x_step": 0.1
-        }
-
     ####################################################################################################################
     # Simulation parameters
     ####################################################################################################################
@@ -116,7 +110,7 @@ class ParametersLogic(QObject):
         }
 
     def _setPatternParametersAsObj(self):
-        parameters = self.parent.l_phase._sample.pattern.as_dict(skip=['interface'])
+        parameters = self.parent.l_sample._sample.pattern.as_dict(skip=['interface'])
         self._pattern_parameters_as_obj = parameters
 
     ####################################################################################################################
@@ -135,7 +129,7 @@ class ParametersLogic(QObject):
 
     def _setInstrumentParametersAsObj(self):
         # parameters = self._sample.parameters.as_dict()
-        parameters = self.parent.l_phase._sample.parameters.as_dict(skip=['interface'])
+        parameters = self.parent.l_sample._sample.parameters.as_dict(skip=['interface'])
         self._instrument_parameters_as_obj = parameters
 
     def _setInstrumentParametersAsXml(self):
@@ -226,7 +220,7 @@ class ParametersLogic(QObject):
     def _setParametersAsObj(self):
         self._parameters_as_obj.clear()
 
-        par_ids, par_paths = generatePath(self.parent.l_phase._sample, True)
+        par_ids, par_paths = generatePath(self.parent.l_sample._sample, True)
         par_index = 0
 
         for par_id, par_path in zip(par_ids, par_paths):
@@ -307,7 +301,7 @@ class ParametersLogic(QObject):
     def _updateCalculatedData(self):
         if not self.parent.l_experiment._experiment_loaded and not self.parent.l_experiment._experiment_skipped:
             return
-        self.parent.l_phase._sample.output_index = self.parent.l_phase._current_phase_index
+        self.parent.l_sample._sample.output_index = self.parent.l_phase._current_phase_index
 
         #  THIS IS WHERE WE WOULD LOOK UP CURRENT EXP INDEX
         sim = self._data.simulations[0]
@@ -317,9 +311,10 @@ class ParametersLogic(QObject):
             sim.x = exp.x
 
         elif self.parent.l_experiment._experiment_skipped:
-            x_min = float(self._simulation_parameters_as_obj['x_min'])
-            x_max = float(self._simulation_parameters_as_obj['x_max'])
-            x_step = float(self._simulation_parameters_as_obj['x_step'])
+            params = self._simulation_parameters_as_obj
+            x_min = float(params['x_min'])
+            x_max = float(params['x_max'])
+            x_step = float(params['x_step'])
             num_points = int((x_max - x_min) / x_step + 1)
             sim.x = np.linspace(x_min, x_max, num_points)
 
@@ -327,4 +322,27 @@ class ParametersLogic(QObject):
         hkl = self._interface.get_hkl()
 
         self.plotCalculatedDataSignal.emit((sim.x, sim.y))
-        self.plotBraggDataSignal.emit((hkl['ttheta'], hkl['h'], hkl['k'], hkl['l']))  # noqa: E501
+        if 'ttheta' in hkl.keys():
+            self.plotBraggDataSignal.emit((hkl['ttheta'], hkl['h'], hkl['k'], hkl['l']))  # noqa: E501
+        if 'time' in hkl.keys():
+            self.plotBraggDataSignal.emit((hkl['time'], hkl['h'], hkl['k'], hkl['l']))  # noqa: E501
+
+
+def defaultSimulationParams(exp_type='powder1DCW', jsonify=True):
+    if exp_type == 'powder1DCW':
+        params = {
+            'x_min':  10,
+            'x_max':  120,
+            'x_step': 0.1
+        }
+    elif exp_type == 'powder1DTOF':
+        params = {
+            'x_min':  5000,
+            'x_max':  60000,
+            'x_step': 50
+        }
+    else:
+        raise AttributeError('Unknown Experiment type')
+    if jsonify:
+        params = json.dumps(params)
+    return params

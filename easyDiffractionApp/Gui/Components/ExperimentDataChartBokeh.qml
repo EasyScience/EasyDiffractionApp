@@ -13,6 +13,12 @@ EaCharts.BaseBokeh {
 
     plotRanges: ExGlobals.Constants.proxy.plotting1d.experimentPlotRangesObj
 
-    xAxisTitle: "2θ (deg)"
+    xAxisTitle: {
+        if (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DCW') {
+            return "2θ (deg)"
+        } else if (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DTOF') {
+            return "TOF (μs)"
+        }
+    }
     yMainAxisTitle: "Imeas"
 }

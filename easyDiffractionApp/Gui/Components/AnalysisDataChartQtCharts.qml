@@ -17,7 +17,13 @@ EaCharts.BaseQtCharts {
 
     plotRanges: ExGlobals.Constants.proxy.plotting1d.analysisPlotRangesObj
 
-    xAxisTitle: "2θ (deg)"
+    xAxisTitle: {
+        if (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DCW') {
+            return "2θ (deg)"
+        } else if (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DTOF') {
+            return "TOF (μs)"
+        }
+    }
     yMainAxisTitle: {
         let title = 'Icalc'
         if (hasMeasuredData) title = 'Imeas, Icalc'

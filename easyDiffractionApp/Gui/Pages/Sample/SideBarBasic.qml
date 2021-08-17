@@ -56,6 +56,8 @@ EaComponents.SideBarColumn {
         enabled: ExGlobals.Constants.proxy.phase.samplesPresent
 
         Column {
+            spacing: EaStyle.Sizes.fontPixelSize * 0.5
+
             ExComponents.SampleSymmetry {}
             ExComponents.SampleCell { titleText: "Cell parameters" }
         }

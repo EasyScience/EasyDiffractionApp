@@ -59,13 +59,12 @@ EaComponents.SideBarColumn {
                  ExGlobals.Constants.proxy.experiment.experimentSkipped
 
         Column {
+            spacing: EaStyle.Sizes.fontPixelSize * 0.5
 
             Row {
                 spacing: EaStyle.Sizes.fontPixelSize
 
                 Column {
-                    spacing: EaStyle.Sizes.fontPixelSize * -0.5
-
                     EaElements.Label {
                         enabled: false
                         text: qsTr("Facility")
@@ -78,8 +77,6 @@ EaComponents.SideBarColumn {
                 }
 
                 Column {
-                    spacing: EaStyle.Sizes.fontPixelSize * -0.5
-
                     EaElements.Label {
                         enabled: false
                         text: qsTr("Instrument")
@@ -92,8 +89,6 @@ EaComponents.SideBarColumn {
                 }
 
                 Column {
-                    spacing: EaStyle.Sizes.fontPixelSize * -0.5
-
                     EaElements.Label {
                         enabled: false
                         text: qsTr("Configuration")
@@ -110,8 +105,6 @@ EaComponents.SideBarColumn {
                 spacing: EaStyle.Sizes.fontPixelSize
 
                 Column {
-                    spacing: EaStyle.Sizes.fontPixelSize * -0.5
-
                     EaElements.Label {
                         enabled: false
                         text: qsTr("Radiation")
@@ -124,8 +117,6 @@ EaComponents.SideBarColumn {
                 }
 
                 Column {
-                    spacing: EaStyle.Sizes.fontPixelSize * -0.5
-
                     EaElements.Label {
                         enabled: false
                         text: qsTr("Mode")
@@ -150,8 +141,6 @@ EaComponents.SideBarColumn {
                 }
 
                 Column {
-                    spacing: EaStyle.Sizes.fontPixelSize * -0.5
-
                     EaElements.Label {
                         enabled: false
                         text: qsTr("Method")
@@ -166,6 +155,7 @@ EaComponents.SideBarColumn {
         }
     }
 
+
     EaElements.GroupBox {
         title: ExGlobals.Constants.proxy.experiment.experimentLoaded ?
                    qsTr("Measured range") :
@@ -176,9 +166,9 @@ EaComponents.SideBarColumn {
         Loader {
             source: {
                 if (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DCW') {
-                    return 'Components/RangesCw.qml'
+                    return 'SideBarGroups/RangesPdCw1d.qml'
                 } else if (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DTOF') {
-                    return 'Components/RangesTof.qml'
+                    return 'SideBarGroups/RangesPdTof1d.qml'
                 }
             }
         }
@@ -192,9 +182,9 @@ EaComponents.SideBarColumn {
         Loader {
             source: {
                 if (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DCW') {
-                    return 'Components/InstrumentSetupCw.qml'
+                    return 'SideBarGroups/InstrumentSetupPdCw1d.qml'
                 } else if (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DTOF') {
-                    return 'Components/InstrumentSetupTof.qml'
+                    return 'SideBarGroups/InstrumentSetupPdTof1d.qml'
                 }
             }
         }
@@ -205,40 +195,12 @@ EaComponents.SideBarColumn {
         enabled: ExGlobals.Constants.proxy.experiment.experimentLoaded ||
                  ExGlobals.Constants.proxy.experiment.experimentSkipped
 
-        Column {
-            Column {
-                spacing: EaStyle.Sizes.fontPixelSize * -0.5
-
-                EaElements.Label {
-                    enabled: false
-                    text: qsTr("Profile function")
-                }
-
-                EaElements.ComboBox {
-                    width: EaStyle.Sizes.sideBarContentWidth
-                    model: ["Pseudo-Voigt"]
-                }
-            }
-
-            Row {
-                spacing: EaStyle.Sizes.tableColumnSpacing * 2
-
-                Column {
-                    EaElements.Label {
-                        enabled: false
-                        text: qsTr("Gaussian instrumental broadening")
-                    }
-
-                    ExComponents.ExperimentPeakProfileG {}
-                }
-
-                Column {
-                    EaElements.Label {
-                        enabled: false
-                        text: qsTr("Lorentzian sample broadening")
-                    }
-
-                    ExComponents.ExperimentPeakProfileL {}
+        Loader {
+            source: {
+                if (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DCW') {
+                    return 'SideBarGroups/PeakProfilePdCw1d.qml'
+                } else if (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DTOF') {
+                    return 'SideBarGroups/PeakProfilePdTof1d.qml'
                 }
             }
         }
@@ -250,9 +212,9 @@ EaComponents.SideBarColumn {
                  ExGlobals.Constants.proxy.experiment.experimentSkipped
 
         Column {
-            Column {
-                spacing: EaStyle.Sizes.fontPixelSize * -0.5
+            spacing: EaStyle.Sizes.fontPixelSize * 0.5
 
+            Column {
                 EaElements.Label {
                     enabled: false
                     text: qsTr("Type")

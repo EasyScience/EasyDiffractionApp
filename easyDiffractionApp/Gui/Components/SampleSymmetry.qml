@@ -15,8 +15,6 @@ Row {
     spacing: EaStyle.Sizes.fontPixelSize
 
     Column {
-        spacing: EaStyle.Sizes.fontPixelSize * -0.5
-
         EaElements.Label {
             enabled: false
             text: qsTr("Crystal system")
@@ -32,8 +30,6 @@ Row {
     }
 
     Column {
-        spacing: EaStyle.Sizes.fontPixelSize * -0.5
-
         EaElements.Label {
             enabled: false
             text: qsTr("Space group")
@@ -48,8 +44,6 @@ Row {
     }
 
     Column {
-        spacing: EaStyle.Sizes.fontPixelSize * -0.5
-
         EaElements.Label {
             enabled: false
             text: qsTr("Setting")

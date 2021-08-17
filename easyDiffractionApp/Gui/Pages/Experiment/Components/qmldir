@@ -1,8 +1,0 @@
-module Components
-
-# Sidebar components
-
-RangesCw 1.0 RangesCw.qml
-RangesTof 1.0 RangesTof.qml
-InstrumentSetupCw 1.0 InstrumentSetupCw.qml
-InstrumentSetupTof 1.0 InstrumentSetupTof.qml

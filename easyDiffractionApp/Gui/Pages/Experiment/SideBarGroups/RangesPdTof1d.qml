@@ -7,10 +7,36 @@ import QtQuick.Controls 2.13
 
 import easyApp.Gui.Style 1.0 as EaStyle
 import easyApp.Gui.Elements 1.0 as EaElements
-import easyApp.Gui.Components 1.0 as EaComponents
 import easyApp.Gui.Logic 1.0 as EaLogic
 
 import Gui.Globals 1.0 as ExGlobals
+
+
+// sigma (Gaussian width), gamma (Lorentzian width), alpha/beta (TOF width)
+
+// CW
+// U, V, W (float) Cagliotti profile coefficients for Gaussian instrumental broadening
+// X, Y, Z (float) Cauchy (Lorentzian) instrumental broadening coefficients
+
+// GSAS... TOF
+// alpha - Exponential rise profile coefficients
+// beta-0 beta-1 beta-q - Exponential decay profile coefficients
+// sig-0 sig-1 sig-2 sig-q - Gaussian profile coefficients
+// X,Y,Z - Lorentzian profile coefficients
+
+// FP... TOF
+// ALPH0, BETA0, ALPH1, BETA1 - Exponential decay parameters for TOF patterns
+
+// GSAS... TOF: Thus the two convolutions between the Ikeda-Carpenter function and a Gaussian and Lorentzian are needed. The Gaussian part is
+// FP... Npr=9 T.O.F. Convolution pseudo-Voigt with back-to-back exponential functions
+// FP... convolution of a double exponential with a TCH pseudo-Voigt for TOF.
+// ... Thompson-Cox-Hasting (TCH) pseudo-Voigt peak profile function h
+
+// ???
+// alpha, beta-0, beta-1, beta-q - TOF profile terms
+// sig-0, sig-1, sig-2, sig-q - TOF profile terms
+// U, V, W - Gaussian peak profile terms
+// X, Y, Z - Lorentzian peak profile terms
 
 
 Grid {

@@ -7,7 +7,6 @@ import QtQuick.Controls 2.13
 
 import easyApp.Gui.Style 1.0 as EaStyle
 import easyApp.Gui.Elements 1.0 as EaElements
-import easyApp.Gui.Components 1.0 as EaComponents
 import easyApp.Gui.Logic 1.0 as EaLogic
 
 import Gui.Globals 1.0 as ExGlobals
@@ -84,3 +83,4 @@ Grid {
         ExGlobals.Constants.proxy.parameters.simulationParametersAsObj = JSON.stringify(json)
     }
 }
+

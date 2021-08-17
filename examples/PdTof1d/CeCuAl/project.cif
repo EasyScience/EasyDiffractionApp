@@ -1,0 +1,5 @@
+_name CeCuAl
+_short_description 'diffraction, powder, time-of-flight, 1D'
+_samples CeCuAl
+_experiments data
+_modified '17.08.2021 12:09'

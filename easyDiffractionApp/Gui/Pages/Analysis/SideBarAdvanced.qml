@@ -142,7 +142,6 @@ EaComponents.SideBarColumn {
 
             // Type 1 START
             Column {
-                spacing: EaStyle.Sizes.fontPixelSize * -0.5
 
                 EaElements.Label {
                     enabled: false
@@ -217,7 +216,6 @@ EaComponents.SideBarColumn {
 
             // Type 2 START
             Column {
-                spacing: EaStyle.Sizes.fontPixelSize * -0.5
 
                 EaElements.Label {
                     enabled: false
@@ -227,7 +225,6 @@ EaComponents.SideBarColumn {
                 Grid {
                     columns: 4
                     columnSpacing: EaStyle.Sizes.fontPixelSize * 0.5
-                    rowSpacing: -EaStyle.Sizes.fontPixelSize * 0.5
                     verticalItemAlignment: Grid.AlignVCenter
 
                     EaElements.ComboBox {

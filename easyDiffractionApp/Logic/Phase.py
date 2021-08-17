@@ -222,6 +222,7 @@ class PhaseLogic(QObject):
         cif_path = generalizePath(cif_url)
         borg.stack.enabled = False
         self.phases = Phases.from_cif_file(cif_path)
+        self.phases.interface = self._interface
         self.phasesReplaced.emit()
         borg.stack.enabled = True
 

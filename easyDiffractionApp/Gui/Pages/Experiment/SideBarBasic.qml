@@ -211,44 +211,13 @@ EaComponents.SideBarColumn {
         enabled: ExGlobals.Constants.proxy.experiment.experimentLoaded ||
                  ExGlobals.Constants.proxy.experiment.experimentSkipped
 
-        Column {
-            spacing: EaStyle.Sizes.fontPixelSize * 0.5
-
-            Column {
-                EaElements.Label {
-                    enabled: false
-                    text: qsTr("Type")
+        Loader {
+            source: {
+                if (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DCW') {
+                    return 'SideBarGroups/BackgroundPdCw1d.qml'
+                } else if (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DTOF') {
+                    return 'SideBarGroups/BackgroundPdTof1d.qml'
                 }
-
-                EaElements.ComboBox {
-                    width: EaStyle.Sizes.sideBarContentWidth
-                    model: ["Point background"]
-                }
-            }
-
-            Column {
-                EaElements.Label {
-                    enabled: false
-                    text: qsTr("Points")
-                }
-
-                ExComponents.ExperimentBackground {}
-            }
-        }
-
-        Row {
-            spacing: EaStyle.Sizes.fontPixelSize
-
-            EaElements.SideBarButton {
-                fontIcon: "plus-circle"
-                text: qsTr("Append new point")
-                onClicked: ExGlobals.Constants.proxy.background.addPoint()
-            }
-
-            EaElements.SideBarButton {
-                fontIcon: "undo-alt"
-                text: qsTr("Reset to default points")
-                onClicked: ExGlobals.Constants.proxy.background.setDefaultPoints()
             }
         }
     }

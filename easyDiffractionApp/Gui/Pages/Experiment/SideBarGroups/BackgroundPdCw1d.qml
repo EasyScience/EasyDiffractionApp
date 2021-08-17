@@ -68,7 +68,7 @@ Column {
                     id: xLabel
                     horizontalAlignment: Text.AlignRight
                     width: EaStyle.Sizes.fontPixelSize * 11.6
-                    headerText: "2θ"
+                    headerText: "2θ (deg)"
                     text: EaLogic.Utils.toFixed(model.x)
                     onEditingFinished: editParameterValue(model.xId, text)
                 }
@@ -77,7 +77,7 @@ Column {
                     id: yLabel
                     horizontalAlignment: Text.AlignRight
                     width: xLabel.width
-                    headerText: "Intensity"
+                    headerText: "Ibkg"
                     text: EaLogic.Utils.toFixed(model.y)
                     onEditingFinished: editParameterValue(model.yId, text)
                 }

@@ -162,16 +162,22 @@ class FittingLogic(QObject):
     ####################################################################################################################
 
     def calculatorNames(self):
-        return self.interface.available_interfaces
+        interfaces = self.interface.interface_compatability(self.parent.l_sample._sample.exp_type_str)
+        return interfaces
 
     def currentCalculatorIndex(self):
-        return self.interface.available_interfaces.index(self.interface.current_interface_name)
+        interfaces = self.interface.interface_compatability(self.parent.l_sample._sample.exp_type_str)
+        return interfaces.index(self.interface.current_interface_name)
 
     def setCurrentCalculatorIndex(self, new_index: int):
         if self.currentCalculatorIndex == new_index:
             return
-        new_name = self.interface.available_interfaces[new_index]
+        print(self.parent.l_sample._sample.exp_type_str)
+        interfaces = self.interface.interface_compatability(self.parent.l_sample._sample.exp_type_str)
+        print(f'INTERFACES : {interfaces}')
+        new_name = interfaces[new_index]
         self.interface.switch(new_name)
+        self.parent.l_sample._sample.update_bindings()
         self.currentCalculatorChanged.emit()
         print("***** _onCurrentCalculatorChanged")
         self._onCurrentCalculatorChanged()

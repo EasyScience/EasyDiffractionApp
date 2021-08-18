@@ -172,6 +172,7 @@ class FittingLogic(QObject):
             return
         new_name = self.interface.available_interfaces[new_index]
         self.interface.switch(new_name)
+        self.parent.l_sample._sample.generate_bindings()
         self.currentCalculatorChanged.emit()
         print("***** _onCurrentCalculatorChanged")
         self._onCurrentCalculatorChanged()

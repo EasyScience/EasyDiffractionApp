@@ -15,6 +15,7 @@ class FittingProxy(QObject):
     dummySignal = Signal()
     currentMinimizerChanged = Signal()
     currentMinimizerMethodChanged = Signal()
+    calculatorListChanged = Signal()
     currentCalculatorChanged = Signal()
     constraintsChanged = Signal()
 
@@ -81,7 +82,7 @@ class FittingProxy(QObject):
     # Calculator
     ####################################################################################################################
 
-    @Property('QVariant', notify=dummySignal)
+    @Property('QVariant', notify=calculatorListChanged)
     def calculatorNames(self):
         return self.logic.calculatorNames()
 

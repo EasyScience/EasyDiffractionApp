@@ -92,11 +92,18 @@ class SampleLogic(QObject):
         else:
             raise AttributeError('Unknown Experiment type')
 
+        interface = self._interface
+        test_str = 'N' + new_exp_type
+        if not self._interface.current_interface.feature_checker(test_str=test_str):
+            interfaces = self._interface.interface_compatability(test_str)
+            interface.switch(interfaces[0])
+
         self._sample = Sample(
             phases=phases,
             parameters=params,
             pattern=pattern,
             interface=self._interface)
         self.parent.l_phase.phasesAsObjChanged.emit()
+        self.parent.proxy.fitting.calculatorListChanged.emit()
         #self.parent.parametersChanged.emit()
 

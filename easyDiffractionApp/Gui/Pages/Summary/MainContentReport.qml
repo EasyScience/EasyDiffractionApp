@@ -359,7 +359,7 @@ Item {
     }
 
     property string structureChart: ''
-    property string cifStr: ExGlobals.Constants.proxy.phase.phasesAsExtendedCif
+    property string cifStr: ExGlobals.Constants.proxy.phase.currentPhaseAsExtendedCif
     onCifStrChanged: ExGlobals.Variables.chemDoodleStructureChart.runJavaScript(
                          'document.body.outerHTML',
                          function(result) {

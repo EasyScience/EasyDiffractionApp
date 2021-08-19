@@ -15,15 +15,11 @@ import easyApp.Gui.Logic 1.0 as EaLogic
 import Gui.Globals 1.0 as ExGlobals
 
 EaComponents.TableView {
-    //id: phasesTable
-
     defaultInfoText: qsTr("No Samples Added/Loaded")
 
     // Table model
 
     model: XmlListModel {
-        property int phaseIndex: ExGlobals.Constants.proxy.phase.currentPhaseIndex + 1
-
         xml: ExGlobals.Constants.proxy.phase.phasesAsXml
         query: "/root/item"
 
@@ -69,5 +65,4 @@ EaComponents.TableView {
     onCurrentIndexChanged: {
         ExGlobals.Constants.proxy.phase.currentPhaseIndex = currentIndex
     }
-
 }

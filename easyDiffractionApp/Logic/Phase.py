@@ -88,15 +88,15 @@ class PhaseLogic(QObject):
         top_space_group_name = SpacegroupInfo.get_symbol_from_int_number(top_space_group_number)  # noqa: E501
         self._setCurrentSpaceGroup(top_space_group_name)
 
-    def phasesAsExtendedCif(self):
+    def currentPhaseAsExtendedCif(self):
         if len(self.phases) == 0:
             return
-
-        symm_ops = self.phases[0].spacegroup.symmetry_opts
+        symm_ops = self.phases[self._current_phase_index].spacegroup.symmetry_opts
         symm_ops_cif_loop = "loop_\n _symmetry_equiv_pos_as_xyz\n"
         for symm_op in symm_ops:
             symm_ops_cif_loop += f' {symm_op.as_xyz_string()}\n'
-        return self._phases_as_cif + symm_ops_cif_loop
+        extended_cif = str(self.phases[self._current_phase_index].cif) + symm_ops_cif_loop
+        return extended_cif
 
     def phasesAsCif(self, phases_as_cif):
         if self._phases_as_cif == phases_as_cif:

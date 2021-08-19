@@ -52,9 +52,9 @@ class PhaseProxy(QObject):
     def phasesAsCif(self):
         return self.logic._phases_as_cif
 
-    @Property(str, notify=phasesAsCifChanged)
-    def phasesAsExtendedCif(self):
-        return self.logic.phasesAsExtendedCif()
+    @Property(str, notify=structureViewChanged)
+    def currentPhaseAsExtendedCif(self):
+        return self.logic.currentPhaseAsExtendedCif()
 
     @phasesAsCif.setter
     @property_stack_deco
@@ -96,19 +96,23 @@ class PhaseProxy(QObject):
     def addSampleFromCif(self, cif_url):
         self.logic.addSampleFromCif(cif_url)
         self._onPhaseAdded()
+        self.currentPhaseIndex = 0
+        self.structureViewChanged.emit()
 
     @Slot()
     def addDefaultPhase(self):
         print("+ addDefaultPhase")
         self.logic.addDefaultPhase()
         self._onPhaseAdded()
+        self.currentPhaseIndex = 0
+        self.structureViewChanged.emit()
 
     @Slot(str)
     def removePhase(self, phase_name: str):
         noPhases = len(self.phasesAsObj) - 1
         if self.logic.removePhase(phase_name):
             if self.currentPhaseIndex == noPhases and not self.currentPhaseIndex == 0:
-                self.currentPhaseIndex = noPhases-1
+                self.currentPhaseIndex = noPhases - 1
             self.structureParametersChanged.emit()
             self.phasesEnabled.emit()
 
@@ -118,7 +122,6 @@ class PhaseProxy(QObject):
         self.phasesEnabled.emit()
         self.phasesAsObjChanged.emit()
         self.structureParametersChanged.emit()
-        self.currentPhaseIndex = len(self.phasesAsObj) - 1
         self.parent._project_proxy.projectInfoChanged.emit()
 
     @Property(bool, notify=phasesEnabled)

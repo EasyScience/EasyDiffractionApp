@@ -105,7 +105,10 @@ class PhaseProxy(QObject):
 
     @Slot(str)
     def removePhase(self, phase_name: str):
+        noPhases = len(self.phasesAsObj) - 1
         if self.logic.removePhase(phase_name):
+            if self.currentPhaseIndex == noPhases and not self.currentPhaseIndex == 0:
+                self.currentPhaseIndex = noPhases-1
             self.structureParametersChanged.emit()
             self.phasesEnabled.emit()
 
@@ -115,6 +118,7 @@ class PhaseProxy(QObject):
         self.phasesEnabled.emit()
         self.phasesAsObjChanged.emit()
         self.structureParametersChanged.emit()
+        self.currentPhaseIndex = len(self.phasesAsObj) - 1
         self.parent._project_proxy.projectInfoChanged.emit()
 
     @Property(bool, notify=phasesEnabled)
@@ -202,7 +206,9 @@ class PhaseProxy(QObject):
 
     @Slot(str)
     def setCurrentPhaseName(self, name):
+        if self.logic.getCurrentPhaseName() == name:
+            return
         self.logic.setCurrentPhaseName(name)
-        self.parent.parametersChanged.emit()
+        self.parent.parameters.parametersChanged.emit()
         self.parent._project_proxy.projectInfoChanged.emit()
 

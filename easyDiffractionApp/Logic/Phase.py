@@ -221,10 +221,15 @@ class PhaseLogic(QObject):
     def addSampleFromCif(self, cif_url):
         cif_path = generalizePath(cif_url)
         borg.stack.enabled = False
-        self.phases = Phases.from_cif_file(cif_path)
+        phases = Phases.from_cif_file(cif_path)
+        for phase in phases:
+            self.phases.append(phase)
         self.phases.interface = self._interface
         self.phasesReplaced.emit()
         borg.stack.enabled = True
+
+    def getCurrentPhaseName(self):
+        return self.phases[self._current_phase_index].name
 
     def setCurrentPhaseName(self, name):
         if self.phases[self._current_phase_index].name == name:

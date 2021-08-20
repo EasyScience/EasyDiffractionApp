@@ -109,10 +109,8 @@ class PhaseProxy(QObject):
 
     @Slot(str)
     def removePhase(self, phase_name: str):
-        noPhases = len(self.phasesAsObj) - 1
         if self.logic.removePhase(phase_name):
-            if self.currentPhaseIndex == noPhases and not self.currentPhaseIndex == 0:
-                self.currentPhaseIndex = noPhases - 1
+            self.currentPhaseIndex = 0
             self.structureParametersChanged.emit()
             self.phasesEnabled.emit()
 
@@ -206,6 +204,7 @@ class PhaseProxy(QObject):
     def _onCurrentPhaseChanged(self):
         print("***** _onCurrentPhaseChanged")
         self.structureViewChanged.emit()
+        self.structureParametersChanged.emit()
 
     @Slot(str)
     def setCurrentPhaseName(self, name):

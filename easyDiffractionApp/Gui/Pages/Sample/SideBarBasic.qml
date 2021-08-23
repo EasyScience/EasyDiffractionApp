@@ -112,7 +112,8 @@ EaComponents.SideBarColumn {
 
     Dialogs1.FileDialog{
         id: loadPhaseFileDialog
+        selectMultiple: true
         nameFilters: [ "CIF files (*.cif)"]
-        onAccepted: ExGlobals.Constants.proxy.phase.addSampleFromCif(fileUrl)
+        onAccepted: ExGlobals.Constants.proxy.phase.addSampleFromCif(fileUrls)
     }
 }

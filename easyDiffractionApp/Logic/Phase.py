@@ -219,14 +219,16 @@ class PhaseLogic(QObject):
         self.updateProjectInfo.emit(('experiments', name))
 
     def addSampleFromCif(self, cif_url):
-        cif_path = generalizePath(cif_url)
-        borg.stack.enabled = False
-        phases = Phases.from_cif_file(cif_path)
-        for phase in phases:
-            self.phases.append(phase)
-        self.phases.interface = self._interface
-        self.phasesReplaced.emit()
-        borg.stack.enabled = True
+        file_list = cif_url.split(',')
+        for cif_file in file_list:
+            cif_path = generalizePath(cif_file)
+            borg.stack.enabled = False
+            phases = Phases.from_cif_file(cif_path)
+            for phase in phases:
+                self.phases.append(phase)
+            self.phases.interface = self._interface
+            self.phasesReplaced.emit()
+            borg.stack.enabled = True
 
     def getCurrentPhaseName(self):
         return self.phases[self._current_phase_index].name

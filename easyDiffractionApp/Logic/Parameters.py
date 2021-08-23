@@ -319,7 +319,7 @@ class ParametersLogic(QObject):
             sim.x = np.linspace(x_min, x_max, num_points)
 
         sim.y = self._interface.fit_func(sim.x)
-        hkl = self._interface.get_hkl()
+        hkl = self._interface.get_hkl(idx=self.parent.proxy.phase.currentPhaseIndex)
 
         self.plotCalculatedDataSignal.emit((sim.x, sim.y))
         if 'ttheta' in hkl.keys():

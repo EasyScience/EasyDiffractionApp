@@ -2,6 +2,8 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # © 2021 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
+
+import re
 from dicttoxml import dicttoxml
 
 from PySide2.QtCore import Signal, QObject
@@ -12,6 +14,7 @@ from easyCore.Symmetry.tools import SpacegroupInfo
 from easyApp.Logic.Utils.Utils import generalizePath
 
 
+# noinspection PyUnresolvedReferences
 class PhaseLogic(QObject):
     """
     """
@@ -53,10 +56,17 @@ class PhaseLogic(QObject):
 
     def addDefaultPhase(self):
         borg.stack.enabled = False
-        self.phases.append(self._defaultPhase())
+        default_phase = self._defaultPhase()
+        r = re.compile('(.+[^0-9])\d*$')
+        known_phases = [r.findall(s)[0] for s in self.phases.phase_names]  # Strip out any 1, 2, 3 etc we may have added
+        if default_phase.name in known_phases:
+            idx = known_phases.count(default_phase.name)
+            default_phase.name = default_phase.name + str(idx)
+        self.phases.append(default_phase)
         borg.stack.enabled = True
 
-    def _defaultPhase(self):
+    @staticmethod
+    def _defaultPhase():
         space_group = SpaceGroup.from_pars('P 42/n c m')
         cell = Lattice.from_pars(8.56, 8.56, 6.12, 90, 90, 90)
         atom = Site.from_pars(label='Cl1', specie='Cl', fract_x=0.125, fract_y=0.167, fract_z=0.107)  # noqa: E501
@@ -66,8 +76,6 @@ class PhaseLogic(QObject):
         return phase
 
     def _onPhaseAdded(self):
-        # if self._interface.current_interface_name != 'CrysPy':
-        #     self._interface.generate_sample_binding("filename", self._sample)
         self.phases.name = 'Phases'
         name = self.phases[self._current_phase_index].name
         self.updateProjectInfo.emit(('samples', name))

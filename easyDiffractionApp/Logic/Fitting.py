@@ -172,9 +172,7 @@ class FittingLogic(QObject):
     def setCurrentCalculatorIndex(self, new_index: int):
         if self.currentCalculatorIndex == new_index:
             return
-        print(self.parent.l_sample._sample.exp_type_str)
         interfaces = self.interface.interface_compatability(self.parent.l_sample._sample.exp_type_str)
-        print(f'INTERFACES : {interfaces}')
         new_name = interfaces[new_index]
         self.interface.switch(new_name)
         self.parent.l_sample._sample.update_bindings()

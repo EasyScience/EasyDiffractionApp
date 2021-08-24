@@ -211,6 +211,6 @@ class PhaseProxy(QObject):
         if self.logic.getCurrentPhaseName() == name:
             return
         self.logic.setCurrentPhaseName(name)
-        self.parent.parameters.parametersChanged.emit()
+        self.structureParametersChanged.emit()
         self.parent._project_proxy.projectInfoChanged.emit()
 

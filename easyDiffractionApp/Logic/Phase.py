@@ -62,6 +62,8 @@ class PhaseLogic(QObject):
         if default_phase.name in known_phases:
             idx = known_phases.count(default_phase.name)
             default_phase.name = default_phase.name + str(idx)
+        print('Disabling scale')
+        default_phase.scale.enabled = False
         self.phases.append(default_phase)
         borg.stack.enabled = True
 
@@ -233,6 +235,8 @@ class PhaseLogic(QObject):
             borg.stack.enabled = False
             phases = Phases.from_cif_file(cif_path)
             for phase in phases:
+                print('Disabling scale')
+                phase.scale.enabled = False
                 self.phases.append(phase)
             self.phases.interface = self._interface
             self.phasesReplaced.emit()

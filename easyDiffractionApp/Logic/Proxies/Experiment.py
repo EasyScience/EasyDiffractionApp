@@ -100,7 +100,6 @@ class ExperimentProxy(QObject):
     @experimentSkipped.setter
     def experimentSkipped(self, skipped: bool):
         self.logic.experimentSkipped(skipped)
-        self.experimentSkippedChanged.emit()
 
     def _onExperimentLoadedChanged(self):
         print("***** _onExperimentLoadedChanged")

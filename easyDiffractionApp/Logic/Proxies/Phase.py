@@ -86,7 +86,6 @@ class PhaseProxy(QObject):
         self._setPhasesAsXml()  # 0.065 s
         self._setPhasesAsCif()  # 0.010 s
         self.parent._project_proxy.stateChanged.emit(True)
-        self.logic._updateCalculatedData()
 
     ####################################################################################################################
     # Phase: Add / Remove

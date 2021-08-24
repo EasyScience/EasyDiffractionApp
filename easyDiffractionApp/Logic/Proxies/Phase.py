@@ -33,6 +33,7 @@ class PhaseProxy(QObject):
         self.logic.phaseAdded.connect(self.phasesEnabled)
         self.logic.phasesEnabled.connect(self.phasesEnabled)
         self.logic.phasesAsObjChanged.connect(self.phasesAsObjChanged)
+        self.logic.phasesAsObjChanged.connect(self.structureViewChanged)
 
         self.currentPhaseChanged.connect(self._onCurrentPhaseChanged)
 

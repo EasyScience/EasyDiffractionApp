@@ -93,7 +93,7 @@ class ProjectLogic(QObject):
 
     def projectExamplesAsXml(self):
         model = [
-            {"name": "PbSO4", "description": "neutrons, powder, 1D, D1A@ILL",
+            {"name": "PbSO4", "description": "neutrons, powder, constant wavelength, 1D, D1@ILL",
              "path": "../Resources/Examples/PbSO4/project.json"},
             {"name": "Co2SiO4", "description": "neutrons, powder, 1D, D20@ILL",
              "path": "../Resources/Examples/Co2SiO4/project.json"},

@@ -95,7 +95,7 @@ class ProjectLogic(QObject):
         model = [
             {"name": "PbSO4", "description": "neutrons, powder, constant wavelength, 1D, D1@ILL",
              "path": "../Resources/Examples/PbSO4/project.json"},
-            {"name": "Co2SiO4", "description": "neutrons, powder, 1D, D20@ILL",
+            {"name": "Co2SiO4", "description": "neutrons, powder, constant wavelength, 1D, D20@ILL",
              "path": "../Resources/Examples/Co2SiO4/project.json"},
             {"name": "Dy3Al5O12", "description": "neutrons, powder, 1D, G41@LLB",
              "path": "../Resources/Examples/Dy3Al5O12/project.json"}

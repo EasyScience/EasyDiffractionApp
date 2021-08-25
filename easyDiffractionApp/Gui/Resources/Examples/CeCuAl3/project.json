@@ -12719,7 +12719,7 @@
     "experiment_skipped": false,
     "project_info": {
         "name": "CeCuAl3",
-        "short_description": "neutrons, powder, time-of-flight, 1D, Polaris@ISIS",
+        "short_description": "neutrons, powder, time-of-flight, 1D",
         "samples": "CeCuAl3",
         "experiments": "Polaris@ISIS",
         "modified": "25.08.2021 11:00"

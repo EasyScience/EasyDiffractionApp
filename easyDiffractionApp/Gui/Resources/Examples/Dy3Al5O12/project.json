@@ -3700,7 +3700,7 @@
     "experiment_skipped": false,
     "project_info": {
         "name": "Dy3Al5O12",
-        "short_description": "neutrons, powder, constant wavelength, 1D, G41@LLB",
+        "short_description": "neutrons, powder, constant wavelength, 1D",
         "samples": "Dy3Al5O12",
         "experiments": "G41@LLB",
         "modified": "25.08.2021 10:46"

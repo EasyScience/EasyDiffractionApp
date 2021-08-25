@@ -60,7 +60,7 @@ EaComponents.TableView {
         EaComponents.TableViewLabel {
             id: descriptionColumn
 
-            width: EaStyle.Sizes.fontPixelSize * 25
+            width: EaStyle.Sizes.fontPixelSize * 24
 
             horizontalAlignment: Text.AlignLeft
 

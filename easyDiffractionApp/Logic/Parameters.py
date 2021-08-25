@@ -230,10 +230,20 @@ class ParametersLogic(QObject):
             if not par.enabled:
                 continue
 
-            # add experimental dataset name
-            par_path = par_path.replace('Pars1D.', f'Instrument.{self.parent.l_experiment.experimentDataAsObj()[0]["name"]}.')
-            par_path = par_path.replace('Pattern1D.', f'Instrument.{self.parent.l_experiment.experimentDataAsObj()[0]["name"]}.')
-            # par_path = par_path.replace('Instrument.', f'Instrument.{self.parent.l_experiment.experimentDataAsObj()[0]["name"]}.')
+            # rename some groups of parameters and add experimental dataset name
+            par_path = par_path.replace('Instrument1DCWParameters.', f'Instrument.{self.parent.l_experiment.experimentDataAsObj()[0]["name"]}.')
+            par_path = par_path.replace('Instrument1DTOFParameters.', f'Instrument.{self.parent.l_experiment.experimentDataAsObj()[0]["name"]}.')
+            par_path = par_path.replace('Powder1DParameters.', f'Instrument.{self.parent.l_experiment.experimentDataAsObj()[0]["name"]}.')
+            par_path = par_path.replace('.sigma0', '.resolution_sigma0')
+            par_path = par_path.replace('.sigma1', '.resolution_sigma1')
+            par_path = par_path.replace('.sigma2', '.resolution_sigma2')
+            par_path = par_path.replace('.gamma0', '.resolution_gamma0')
+            par_path = par_path.replace('.gamma1', '.resolution_gamma1')
+            par_path = par_path.replace('.gamma2', '.resolution_gamma2')
+            par_path = par_path.replace('.alpha0', '.resolution_alpha0')
+            par_path = par_path.replace('.alpha1', '.resolution_alpha1')
+            par_path = par_path.replace('.beta0', '.resolution_beta0')
+            par_path = par_path.replace('.beta1', '.resolution_beta1')
 
             if self._parameters_filter_criteria.lower() not in par_path.lower():  # noqa: E501
                 continue

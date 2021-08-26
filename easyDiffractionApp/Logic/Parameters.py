@@ -295,6 +295,7 @@ class ParametersLogic(QObject):
                 return
 
             obj.value = new_value
+            obj.error = 0.
             self.parametersValuesChanged.emit()
             self.parametersChanged.emit()
 

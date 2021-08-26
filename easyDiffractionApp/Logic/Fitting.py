@@ -93,6 +93,13 @@ class FittingLogic(QObject):
         }
         self.setFitResults()
 
+        # Reset all errors to zero
+        all_pars = set(self.parent.l_sample._sample.get_parameters())
+        fit_pars = {par for par in all_pars if par.enabled and not par.fixed}
+        to_zero = all_pars.difference(fit_pars)
+        for par in to_zero:
+            par.error = 0.
+
     def onFailed(self, ex):
         if self.fit_thread.is_alive():
             self.fit_thread.join()
@@ -104,7 +111,7 @@ class FittingLogic(QObject):
     def setFitResults(self):
         self._fit_finished = True
         self.fitFinished.emit()
-        # must reinstantiate the thread object
+        # must re-instantiate the thread object
         self.fit_thread = Thread(target=self.fit_threading)
 
     # def fit(self, data):

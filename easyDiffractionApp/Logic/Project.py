@@ -257,6 +257,7 @@ class ProjectLogic(QObject):
         content_json = json.dumps(descr, indent=4, default=self.default)
         path = generalizePath(project_save_filepath)
         createFile(path, content_json)
+        self.stateHasChanged(False)
 
     def default(self, obj):
         if type(obj).__module__ == np.__name__:

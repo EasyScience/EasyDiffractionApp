@@ -1,0 +1,25 @@
+data_CeCuAl3
+
+_cell_length_a 4.25678
+_cell_length_b 4.25678
+_cell_length_c 10.63386
+_cell_angle_alpha 90.0
+_cell_angle_beta 90.0
+_cell_angle_gamma 90.0
+_space_group_name_H-M_alt 'I 4 m m'
+
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_occupancy
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_adp_type
+_atom_site_U_iso_or_equiv
+Ce Ce 1.0 0.0 0.0 0.0 Uiso 0.00589
+Cu1 Cu 0.925 0.0 0.0 0.63224 Uiso 0.0083
+Al1 Al 0.075 0.0 0.0 0.63224 Uiso 0.0083
+Cu2 Cu 0.044 0.0 0.0 0.40437 Uiso 0.0097
+Al2 Al 0.956 0.0 0.0 0.40437 Uiso 0.0097
+Al3 Al 0.986 0.0 0.5 0.24981 Uiso 0.00707

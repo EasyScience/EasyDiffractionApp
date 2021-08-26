@@ -10338,7 +10338,7 @@
     "experiment_skipped": false,
     "project_info": {
         "name": "PbSO4",
-        "short_description": "neutrons, powder, constant wavelength, 1D, D1@ILL",
+        "short_description": "neutrons, powder, constant wavelength, 1D",
         "samples": "PbSO4",
         "experiments": "D1A@ILL",
         "modified": "24.08.2021 13:37"

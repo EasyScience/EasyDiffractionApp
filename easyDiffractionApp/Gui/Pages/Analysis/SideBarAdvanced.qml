@@ -151,6 +151,7 @@ EaComponents.SideBarColumn {
                 Grid {
                     columns: 4
                     columnSpacing: EaStyle.Sizes.fontPixelSize * 0.5
+                    rowSpacing: EaStyle.Sizes.fontPixelSize * 0.5
                     anchors.horizontalCenter: parent.horizontalCenter
                     verticalItemAlignment: Grid.AlignVCenter
 
@@ -225,6 +226,7 @@ EaComponents.SideBarColumn {
                 Grid {
                     columns: 4
                     columnSpacing: EaStyle.Sizes.fontPixelSize * 0.5
+                    rowSpacing: EaStyle.Sizes.fontPixelSize * 0.5
                     verticalItemAlignment: Grid.AlignVCenter
 
                     EaElements.ComboBox {

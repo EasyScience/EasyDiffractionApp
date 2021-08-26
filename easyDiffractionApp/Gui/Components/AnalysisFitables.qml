@@ -112,8 +112,9 @@ EaComponents.TableView {
             id: errorColumn
             horizontalAlignment: Text.AlignRight
             width: EaStyle.Sizes.fontPixelSize * 4
+            elide: Text.ElideNone
             headerText: "Error  "
-            text: model.error === 0.0 || model.error > 999999 ? "" : model.error.toFixed(4) + "  "
+            text: model.error === 0.0 || model.error > 999999 ? "" : model.error.toFixed(4)
         }
 
         EaComponents.TableViewCheckBox {

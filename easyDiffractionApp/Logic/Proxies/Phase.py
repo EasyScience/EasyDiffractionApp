@@ -68,6 +68,7 @@ class PhaseProxy(QObject):
         self.logic._setPhasesAsObj()
         print("+ _setPhasesAsObj: {0:.3f} s".format(timeit.default_timer() - start_time))
         self.phasesAsObjChanged.emit()
+        self.structureViewChanged.emit()
 
     def _setPhasesAsXml(self):
         start_time = timeit.default_timer()

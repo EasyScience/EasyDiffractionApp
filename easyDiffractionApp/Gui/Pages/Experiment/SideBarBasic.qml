@@ -71,6 +71,7 @@ EaComponents.SideBarColumn {
                     }
 
                     EaElements.ComboBox {
+                        enabled: !ExGlobals.Constants.proxy.experiment.experimentLoaded
                         width: (EaStyle.Sizes.sideBarContentWidth - EaStyle.Sizes.fontPixelSize * 2 ) / 3
                         model: ["Unknown"]
                     }
@@ -83,6 +84,7 @@ EaComponents.SideBarColumn {
                     }
 
                     EaElements.ComboBox {
+                        enabled: !ExGlobals.Constants.proxy.experiment.experimentLoaded
                         width: (EaStyle.Sizes.sideBarContentWidth - EaStyle.Sizes.fontPixelSize * 2 ) / 3
                         model: ["Unknown"]
                     }
@@ -95,6 +97,7 @@ EaComponents.SideBarColumn {
                     }
 
                     EaElements.ComboBox {
+                        enabled: !ExGlobals.Constants.proxy.experiment.experimentLoaded
                         width: (EaStyle.Sizes.sideBarContentWidth - EaStyle.Sizes.fontPixelSize * 2 ) / 3
                         model: ["Unknown"]
                     }
@@ -158,6 +161,7 @@ EaComponents.SideBarColumn {
                     }
 
                     EaElements.ComboBox {
+                        enabled: !ExGlobals.Constants.proxy.experiment.experimentLoaded
                         width: (EaStyle.Sizes.sideBarContentWidth - EaStyle.Sizes.fontPixelSize * 2 ) / 3
                         model: ["Powder"]
                     }

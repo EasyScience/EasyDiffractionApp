@@ -197,7 +197,7 @@ class ParametersLogic(QObject):
                 else:
                     list[i] = list[i].replace("lattice", f'<font face="{iconsFamily}">cube</font>')
                     list[i] = list[i].replace("length", f'<font face="{iconsFamily}">ruler</font>')
-                    list[i] = list[i].replace("angle", 'f<font face="{iconsFamily}">less-than</font>')
+                    list[i] = list[i].replace("angle", f'<font face="{iconsFamily}">less-than</font>')
                     list[i] = list[i].replace("atoms", f'<font face="{iconsFamily}">atom</font>')
                     list[i] = list[i].replace("adp", f'<font face="{iconsFamily}">arrows-alt</font>')
                     list[i] = list[i].replace("fract", f'<font face="{iconsFamily}">map-marker-alt</font>')

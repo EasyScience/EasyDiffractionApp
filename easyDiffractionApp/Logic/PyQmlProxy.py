@@ -21,6 +21,7 @@ from easyDiffractionApp.Logic.Proxies.Stack import StackProxy
 class PyQmlProxy(QObject):
     # SIGNALS
     currentCalculatorChanged = Signal()
+    parametersChanged = Signal()
 
     # Status info
     statusInfoChanged = Signal()
@@ -49,6 +50,7 @@ class PyQmlProxy(QObject):
         self._sample_proxy = SampleProxy(self, logic=self.lc)
 
         ################## signals from other proxies #################
+        self.parametersChanged.connect(self.lc.parametersChanged)
         self.currentCalculatorChanged.connect(self.statusInfoChanged)
         self._fitting_proxy.currentMinimizerChanged.connect(self.statusInfoChanged)
         self._fitting_proxy.currentMinimizerMethodChanged.connect(self.statusInfoChanged)

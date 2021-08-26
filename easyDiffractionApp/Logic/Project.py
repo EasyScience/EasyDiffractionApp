@@ -183,6 +183,8 @@ class ProjectLogic(QObject):
         self.parent.l_sample._sample.interface = self._interface
         self.parent.l_phase.phasesAsObjChanged.emit()
 
+        self.parent.proxy.sample.updateExperimentType()
+
         # send signal to tell the proxy we changed phases
         self.phasesEnabled.emit()
         self.phasesAsObjChanged.emit()

@@ -111,6 +111,7 @@ EaComponents.SideBarColumn {
                     }
 
                     EaElements.ComboBox {
+                        enabled: !ExGlobals.Constants.proxy.experiment.experimentLoaded
                         width: (EaStyle.Sizes.sideBarContentWidth - EaStyle.Sizes.fontPixelSize * 2 ) / 3
                         model: ["Neutron"]
                     }
@@ -123,6 +124,9 @@ EaComponents.SideBarColumn {
                     }
 
                     EaElements.ComboBox {
+                        property string experimentType: ExGlobals.Constants.proxy.sample.experimentType
+
+                        enabled: !ExGlobals.Constants.proxy.experiment.experimentLoaded
                         width: (EaStyle.Sizes.sideBarContentWidth - EaStyle.Sizes.fontPixelSize * 2 ) / 3
 
                         textRole: "text"
@@ -133,10 +137,17 @@ EaComponents.SideBarColumn {
                             { value: "powder1DTOF", text: qsTr("Time-of-Flight") }
                         ]
 
+                        onExperimentTypeChanged: {
+                            if (experimentType === "powder1DCW") {
+                                currentIndex = 0
+                            } else if (experimentType === "powder1DTOF") {
+                                currentIndex = 1
+                            }
+                        }
+
                         onActivated: {
                             ExGlobals.Constants.proxy.sample.experimentType = currentValue
                         }
-
                     }
                 }
 
@@ -242,5 +253,15 @@ EaComponents.SideBarColumn {
         onAccepted: ExGlobals.Constants.proxy.experiment.addExperimentDataFromXye(fileUrl)
     }
 
+    // Logic
+
+    function indexOf(model, item) {
+        for (let i in model) {
+            if (model[i] === item) {
+                return parseInt(i)
+            }
+        }
+        return -1
+    }
 }
 

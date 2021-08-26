@@ -27,3 +27,8 @@ class SampleProxy(QObject):
         self.experimentTypeChanged.emit()
         self.parent.parameters._onParametersChanged()
         self.parent.parameters._onInstrumentParametersChanged()
+
+    def updateExperimentType(self):
+        self.experimentTypeChanged.emit()
+        self.parent.parameters._onParametersChanged()
+        self.parent.parameters._onInstrumentParametersChanged()

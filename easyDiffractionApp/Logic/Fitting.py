@@ -74,25 +74,19 @@ class FittingLogic(QObject):
             return
         self.finished.emit(res)
 
-    def _defaultFitResults(self):
-        return {
-            "success": None,
-            "nvarys":  None,
-            "GOF":     None,
-            "redchi2": None
-        }
+    def setFailedFitResults(self):
+        self._fit_results = _defaultFitResults()
+        self._fit_results['success'] = 'Failure'  # not None but a string
 
-    def onSuccess(self, res):
-        if self.fit_thread.is_alive():
-            self.fit_thread.join()
+    def setSuccessFitResults(self, res):
         self._fit_results = {
             "success": res.success,
             "nvarys":  res.n_pars,
             "GOF":     float(res.goodness_of_fit),
             "redchi2": float(res.reduced_chi)
         }
-        self.setFitResults()
 
+    def resetErrors(self):
         # Reset all errors to zero
         all_pars = set(self.parent.l_sample._sample.get_parameters())
         fit_pars = {par for par in all_pars if par.enabled and not par.fixed}
@@ -100,19 +94,27 @@ class FittingLogic(QObject):
         for par in to_zero:
             par.error = 0.
 
-    def onFailed(self, ex):
+    def joinFitThread(self):
         if self.fit_thread.is_alive():
             self.fit_thread.join()
-        print("**** onFailed: fit FAILED with:\n {}".format(str(ex)))
-        self._fit_results = self._defaultFitResults()
-        self._fit_results['success'] = 'Failure'  # not None but a string
-        self.setFitResults()
 
-    def setFitResults(self):
+    def finishFit(self):
         self._fit_finished = True
         self.fitFinished.emit()
         # must re-instantiate the thread object
         self.fit_thread = Thread(target=self.fit_threading)
+
+    def onSuccess(self, res):
+        self.joinFitThread()
+        self.resetErrors()
+        self.setSuccessFitResults(res)
+        self.finishFit()
+
+    def onFailed(self, ex):
+        print("**** onFailed: fit FAILED with:\n {}".format(str(ex)))
+        self.joinFitThread()
+        self.setFailedFitResults()
+        self.finishFit()
 
     # def fit(self, data):
     def fit(self):

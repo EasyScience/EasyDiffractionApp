@@ -287,17 +287,20 @@ class ParametersLogic(QObject):
                 return
 
             obj.fixed = not new_value
+            borg.stack.history[0].text = f"'{obj.display_name}' fit changed from {obj.fixed} to {new_value}"
             self.parametersChanged.emit()
             self.undoRedoChanged.emit()
 
         else:
             if obj.raw_value == new_value:
                 return
-
+            borg.stack.beginMacro(f"'{obj.display_name}' value changed from {obj.raw_value} to {new_value}")
             obj.value = new_value
             obj.error = 0.
+            borg.stack.endMacro()
             self.parametersValuesChanged.emit()
             self.parametersChanged.emit()
+
 
     def _parameterObj(self, obj_id: str):
         if not obj_id:

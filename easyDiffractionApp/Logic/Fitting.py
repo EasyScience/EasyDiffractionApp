@@ -91,8 +91,14 @@ class FittingLogic(QObject):
         all_pars = set(self.parent.l_sample._sample.get_parameters())
         fit_pars = {par for par in all_pars if par.enabled and not par.fixed}
         to_zero = all_pars.difference(fit_pars)
+        borg = self.parent.l_sample._sample._borg
+        borg.stack.beginMacro('reset errors')
         for par in to_zero:
             par.error = 0.
+        borg.stack.endMacro()
+        macro = borg.stack.history.popleft()
+        for command in macro._commands:
+            borg.stack.history[0]._commands.appendleft(command)
 
     def joinFitThread(self):
         if self.fit_thread.is_alive():

@@ -156,6 +156,7 @@ EaComponents.SideBarColumn {
             // Slider
             EaElements.Slider {
                 id: slider
+                enabled: ExGlobals.Constants.proxy.fitting.isFitFinished
                 width: parent.width
                        - parent.spacing * 2
                        - sliderFromLabel.width
@@ -189,10 +190,12 @@ EaComponents.SideBarColumn {
             // temporarily disabled
             // enabled: ExGlobals.Constants.proxy.experimentLoaded
             enabled: ExGlobals.Constants.proxy.experiment.experimentLoaded && ExGlobals.Constants.proxy.fitting.isFitFinished
-            fontIcon: ExGlobals.Constants.proxy.fitting.isFitFinished ? "play-circle" : "pause-circle"
+            //fontIcon: ExGlobals.Constants.proxy.fitting.isFitFinished ? "play-circle" : "pause-circle"
+            fontIcon: "play-circle"
             // temporarily modified
             // text: ExGlobals.Constants.proxy.fitting.isFitFinished ? qsTr("Start fitting") : qsTr("Stop fitting")
-            text: ExGlobals.Constants.proxy.fitting.isFitFinished ? qsTr("Start fitting") : qsTr("Fitting in progress")
+            //text: ExGlobals.Constants.proxy.fitting.isFitFinished ? qsTr("Start fitting") : qsTr("Fitting in progress")
+            text: qsTr("Start fitting")
             onClicked: ExGlobals.Constants.proxy.fitting.fit()
             Component.onCompleted: ExGlobals.Variables.startFittingButton = this
         }

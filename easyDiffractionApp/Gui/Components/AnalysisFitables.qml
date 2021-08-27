@@ -16,8 +16,6 @@ import Gui.Globals 1.0 as ExGlobals
 EaComponents.TableView {
     id: table
 
-    enabled: ExGlobals.Constants.proxy.fitting.isFitFinished
-
     maxRowCountShow: 8
     defaultInfoText: qsTr("No Parameters Found")
 
@@ -81,6 +79,7 @@ EaComponents.TableView {
 
         EaComponents.TableViewTextInput {
             id: valueColumn
+            enabled: ExGlobals.Constants.proxy.fitting.isFitFinished
             horizontalAlignment: Text.AlignRight
             width: EaStyle.Sizes.fontPixelSize * 4
             headerText: "Value"
@@ -118,8 +117,8 @@ EaComponents.TableView {
         }
 
         EaComponents.TableViewCheckBox {
-            enabled: ExGlobals.Constants.proxy.experiment.experimentLoaded
             id: fitColumn
+            enabled: ExGlobals.Constants.proxy.experiment.experimentLoaded && ExGlobals.Constants.proxy.fitting.isFitFinished
             headerText: "Fit"
             checked: model.fit
             onCheckedChanged: editParameterFit(model.id, checked)

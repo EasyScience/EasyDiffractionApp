@@ -61,7 +61,6 @@ class PhaseProxy(QObject):
     @property_stack_deco
     def phasesAsCif(self, phases_as_cif):
         self.logic.phasesAsCif(phases_as_cif)
-        self.parent.parametersChanged.emit()
 
     def _setPhasesAsObj(self):
         start_time = timeit.default_timer()
@@ -84,9 +83,9 @@ class PhaseProxy(QObject):
 
     def _onStructureParametersChanged(self):
         print("***** _onStructureParametersChanged")
-        self._setPhasesAsObj()  # 0.025 s
-        self._setPhasesAsXml()  # 0.065 s
-        self._setPhasesAsCif()  # 0.010 s
+        self._setPhasesAsObj()
+        self._setPhasesAsXml()
+        self._setPhasesAsCif()
         self.parent._project_proxy.stateChanged.emit(True)
 
     ####################################################################################################################
@@ -180,14 +179,12 @@ class PhaseProxy(QObject):
     def addDefaultAtom(self):
         try:
             self.logic.addDefaultAtom()
-            self.structureParametersChanged.emit()
         except AttributeError:
             print("Error: failed to add atom")
 
     @Slot(str)
     def removeAtom(self, atom_label: str):
         self.logic.removeAtom(atom_label)
-        self.structureParametersChanged.emit()
 
     ####################################################################################################################
     # Current phase
@@ -214,4 +211,3 @@ class PhaseProxy(QObject):
         self.logic.setCurrentPhaseName(name)
         self.structureParametersChanged.emit()
         self.parent._project_proxy.projectInfoChanged.emit()
-

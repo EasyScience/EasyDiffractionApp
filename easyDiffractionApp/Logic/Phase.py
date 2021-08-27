@@ -112,6 +112,8 @@ class PhaseLogic(QObject):
         if self._phases_as_cif == phases_as_cif:
             return
         self.phases = Phases.from_cif_str(phases_as_cif)
+        self.parent.l_sample._sample.phases = self.phases
+        self.updateParameters()
 
     def _setPhasesAsObj(self):
         self._phases_as_obj = self.phases.as_dict(skip=['interface'])['data']
@@ -127,6 +129,10 @@ class PhaseLogic(QObject):
         if phases[self._current_phase_index].spacegroup.space_group_HM_name == new_name:  # noqa: E501
             return
         phases[self._current_phase_index].spacegroup.space_group_HM_name = new_name  # noqa: E501
+
+    def updateParameters(self):
+        self.parent.parametersChanged.emit()
+        self.parent.l_parameters.parametersChanged.emit()
 
     def _spaceGroupSettingList(self):
         phases = self.phases
@@ -218,9 +224,11 @@ class PhaseLogic(QObject):
                               fract_z=0.05)
         atom.add_adp('Uiso', Uiso=0.0)
         self.phases[self._current_phase_index].add_atom(atom)
+        self.updateParameters()
 
     def removeAtom(self, atom_label: str):
         self.phases[self._current_phase_index].remove_atom(atom_label)
+        self.updateParameters()
 
     def setCurrentExperimentDatasetName(self, name):
         if self.parent.l_parameters._data.experiments[0].name == name:

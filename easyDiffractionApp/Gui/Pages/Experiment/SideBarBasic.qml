@@ -62,6 +62,7 @@ EaComponents.SideBarColumn {
             spacing: EaStyle.Sizes.fontPixelSize * 0.5
 
             Row {
+                visible: false
                 spacing: EaStyle.Sizes.fontPixelSize
 
                 Column {

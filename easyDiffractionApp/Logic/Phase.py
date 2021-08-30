@@ -117,6 +117,8 @@ class PhaseLogic(QObject):
 
     def _setPhasesAsObj(self):
         self._phases_as_obj = self.phases.as_dict(skip=['interface'])['data']
+        # phase set - update xml so parameter table is also updated
+        self.parent.l_parameters.parametersChanged.emit()
 
     def _setPhasesAsXml(self):
         self._phases_as_xml = dicttoxml(self._phases_as_obj, attr_type=True).decode()  # noqa: E501

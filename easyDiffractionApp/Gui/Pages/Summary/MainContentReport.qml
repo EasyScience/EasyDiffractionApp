@@ -37,8 +37,8 @@ Item {
     property string dataChartLibVersion: EaLogic.Plotting.bokehInfo().version
     property string dataChartLibUrl: EaLogic.Plotting.bokehInfo().url
 
-    property int dataChartWidth: chartWidth
-    property int dataChartHeight: chartWidth
+    property int dataChartWidth: chartWidth + EaStyle.Sizes.fontPixelSize
+    property int dataChartHeight: dataChartWidth
     property int dataChartPadding: EaStyle.Sizes.fontPixelSize
 
     property string dataChartBackgroundColor: EaStyle.Colors.chartPlotAreaBackground
@@ -392,10 +392,14 @@ Item {
             },
             // specs
             {
-                chartWidth: dataChartWidth, //dataChartWidth,
-                mainChartHeight: ExGlobals.Variables.analysisChart.mainChartHeight * 0.84,
+                chartWidth: dataChartWidth,
+                mainChartHeight: dataChartHeight -
+                                 ExGlobals.Variables.analysisChart.braggChartHeight -
+                                 ExGlobals.Variables.analysisChart.differenceChartHeight -
+                                 ExGlobals.Variables.analysisChart.xAxisChartHeight -
+                                 dataChartPadding * 2,
                 braggChartHeight: ExGlobals.Variables.analysisChart.braggChartHeight,
-                differenceChartHeight: ExGlobals.Variables.analysisChart.differenceChartHeight * 0.84,
+                differenceChartHeight: ExGlobals.Variables.analysisChart.differenceChartHeight,
                 xAxisChartHeight: ExGlobals.Variables.analysisChart.xAxisChartHeight,
 
                 xAxisTitle: ExGlobals.Variables.analysisChart.xAxisTitle,

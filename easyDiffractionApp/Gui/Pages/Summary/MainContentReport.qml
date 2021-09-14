@@ -320,7 +320,7 @@ Item {
                   '    position: absolute;',
                   '    bottom: 100%;',
                   '    left: 50%;',
-                  '    transform: translate(-50%, calc(-0.75 * var(--fontPixelSize) * 1px));',
+                  '    transform: translate(-50%, calc(-1.5 * var(--fontPixelSize) * 1px));',
                   '    font-family: "PT Sans", sans-serif;',
                   '    font-size: calc(var(--fontPixelSize) * 1px);',
                   '    padding: calc(0.75 * var(--fontPixelSize) * 1px) calc(var(--fontPixelSize) * 1px);',

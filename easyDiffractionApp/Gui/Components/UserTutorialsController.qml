@@ -374,6 +374,8 @@ EaElements.RemoteController {
 
         // Analysis page
         rc.mouseClick(ExGlobals.Variables.fitCellACheckBox)
+        rc.mouseClick(ExGlobals.Variables.fitCellBCheckBox)
+        rc.mouseClick(ExGlobals.Variables.fitCellCCheckBox)
         rc.mouseClick(ExGlobals.Variables.parametersFilterTypeSelector)
         rc.mouseClick(ExGlobals.Variables.parametersFilterTypeSelector, x_pos, y_pos)
         rc.mouseClick(ExGlobals.Variables.fitZeroShiftCheckBox)
@@ -383,8 +385,9 @@ EaElements.RemoteController {
                     0
         rc.mouseClick(ExGlobals.Variables.fitResolutionYValue, x_pos)
         rc.deleteCharacters(4)
-        rc.typeText("0961")
+        rc.typeText("0")
         rc.keyClick(Qt.Key_Enter) // DOESN'T WORK ON CI XVFB ?
+        rc.mouseClick(ExGlobals.Variables.fitResolutionYCheckBox)
         rc.wait(1000)
         rc.mouseClick(ExGlobals.Variables.startFittingButton)
 

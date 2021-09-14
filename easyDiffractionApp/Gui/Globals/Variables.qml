@@ -101,8 +101,11 @@ QtObject {
     property var enableToolTipsCheckBox
     property var enableUserGuidesCheckBox
     property var fitCellACheckBox
+    property var fitCellBCheckBox
+    property var fitCellCCheckBox
     property var fitZeroShiftCheckBox
     property var fitScaleCheckBox
+    property var fitResolutionYCheckBox
     property var fitResolutionUValue
     property var fitResolutionVValue
     property var fitResolutionWValue

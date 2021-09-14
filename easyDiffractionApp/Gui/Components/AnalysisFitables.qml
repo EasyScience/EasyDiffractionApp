@@ -126,10 +126,16 @@ EaComponents.TableView {
             Component.onCompleted: {
                 if (model.label.endsWith('.length_a'))
                     ExGlobals.Variables.fitCellACheckBox = this
+                if (model.label.endsWith('.length_b'))
+                    ExGlobals.Variables.fitCellBCheckBox = this
+                if (model.label.endsWith('.length_c'))
+                    ExGlobals.Variables.fitCellCCheckBox = this
                 if (model.label.endsWith('.zero_shift'))
                     ExGlobals.Variables.fitZeroShiftCheckBox = this
                 if (model.label.endsWith('.scale'))
                     ExGlobals.Variables.fitScaleCheckBox = this
+                if (model.label.endsWith('.resolution_y'))
+                    ExGlobals.Variables.fitResolutionYCheckBox = this
             }
         }
 

@@ -160,7 +160,7 @@ def appPackageXml():
     try:
         message = f"create app package content"
         license_id = CONFIG['tool']['poetry']['license'].replace('-only', '')
-        license_name = dephell_licenses.licenses.get_by_id(license_id).name
+        license_name = dephell_licenses.licenses.get_by_id(license_id).name.replace('"', "'")
         requires_root = 'false'
         raw_xml = Functions.dict2xml({
             'Package': {

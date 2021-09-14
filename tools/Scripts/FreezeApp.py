@@ -71,7 +71,7 @@ def copyMissingLibs():
                 Functions.copyFile(file_path, pyside2_path)
     except Exception as exception:
         Functions.printFailMessage(message, exception)
-        sys.exit()
+        sys.exit(1)
     else:
         Functions.printSuccessMessage(message)
 
@@ -91,7 +91,7 @@ def copyMissingPlugins():
             Functions.copyDir(src_dir_path, dst_dir_path)
     except Exception as exception:
         Functions.printFailMessage(message, exception)
-        sys.exit()
+        sys.exit(1)
     else:
         Functions.printSuccessMessage(message)
 
@@ -116,7 +116,7 @@ def runPyInstaller():
             ])
     except Exception as exception:
         Functions.printFailMessage(message, exception)
-        sys.exit()
+        sys.exit(1)
     else:
         Functions.printSuccessMessage(message)
 
@@ -136,7 +136,7 @@ def excludeFiles():
                 Functions.removeFile(file_path)
     except Exception as exception:
         Functions.printFailMessage(message, exception)
-        sys.exit()
+        sys.exit(1)
     else:
         Functions.printSuccessMessage(message)
 

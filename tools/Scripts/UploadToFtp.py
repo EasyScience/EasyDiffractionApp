@@ -19,7 +19,7 @@ def connect(ftp, host, port):
         ftp.connect(host, port)
     except Exception as exception:
         Functions.printFailMessage(message, exception)
-        sys.exit()
+        sys.exit(1)
     else:
         Functions.printSuccessMessage(message)
 
@@ -29,7 +29,7 @@ def login(ftp, user, password):
         ftp.login(user, password)
     except Exception as exception:
         Functions.printFailMessage(message, exception)
-        sys.exit()
+        sys.exit(1)
     else:
         Functions.printSuccessMessage(message)
 
@@ -46,7 +46,7 @@ def makeDir(ftp, path):
         ftp.mkd(path)
     except Exception as exception:
         Functions.printFailMessage(message, exception)
-        sys.exit()
+        sys.exit(1)
     else:
         Functions.printSuccessMessage(message)
 
@@ -63,7 +63,7 @@ def uploadFile(ftp, source, destination):
             ftp.storbinary(f'STOR {destination}', fb)
     except Exception as exception:
         Functions.printFailMessage(message, exception)
-        sys.exit()
+        sys.exit(1)
     else:
         Functions.printSuccessMessage(message)
 
@@ -80,7 +80,7 @@ def uploadDir(ftp, source, destination):
                 uploadFile(ftp, source_file, destination_dir)
     except Exception as exception:
         Functions.printFailMessage(message, exception)
-        sys.exit()
+        sys.exit(1)
     else:
         Functions.printSuccessMessage(message)
 
@@ -93,10 +93,10 @@ def upload(ftp, source, destination):
             uploadDir(ftp, source, destination)
         else:
             Functions.printFailMessage(message)
-            sys.exit()
+            sys.exit(1)
     except Exception as exception:
         Functions.printFailMessage(message, exception)
-        sys.exit()
+        sys.exit(1)
     else:
         Functions.printSuccessMessage(message)
 
@@ -128,7 +128,7 @@ def removeDir(ftp, path):
         ftp.rmd(path)
     except Exception as exception:
         Functions.printNeutralMessage(message, exception)
-        sys.exit()
+        sys.exit(1)
     else:
         Functions.printSuccessMessage(message)
 

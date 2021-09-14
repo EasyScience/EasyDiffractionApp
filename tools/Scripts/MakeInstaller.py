@@ -55,7 +55,7 @@ def qtifwSetupDownloadUrl():
     except Exception as exception:
         message += f'from any of {repos}'
         Functions.printFailMessage(message, exception)
-        sys.exit()
+        sys.exit(1)
     else:
         Functions.printSuccessMessage(message)
         return url
@@ -151,7 +151,7 @@ def installerConfigXml():
         pretty_xml = xml.dom.minidom.parseString(raw_xml).toprettyxml()
     except Exception as exception:
         Functions.printFailMessage(message, exception)
-        sys.exit()
+        sys.exit(1)
     else:
         Functions.printSuccessMessage(message)
         return pretty_xml
@@ -185,7 +185,7 @@ def appPackageXml():
         pretty_xml = xml.dom.minidom.parseString(raw_xml).toprettyxml()
     except Exception as exception:
         Functions.printFailMessage(message, exception)
-        sys.exit()
+        sys.exit(1)
     else:
         Functions.printSuccessMessage(message)
         return pretty_xml
@@ -247,7 +247,7 @@ def installQtInstallerFramework():
         time.sleep(10)
     except Exception as exception:
         Functions.printFailMessage(message, exception)
-        sys.exit()
+        sys.exit(1)
     else:
         Functions.printSuccessMessage(message)
 
@@ -264,7 +264,7 @@ def prepareSignedMaintenanceTool():
         Signatures.sign_windows(file_to_sign=target_file, cert_pass=sys.argv[1])
     except Exception as exception:
         Functions.printFailMessage(message, exception)
-        sys.exit()
+        sys.exit(1)
     else:
         Functions.printSuccessMessage(message)
 
@@ -326,7 +326,7 @@ def createInstallerSourceDir():
             Functions.copyFile(source=CONFIG.maintenancetool_file, destination=app_data_subsubdir_path)
     except Exception as exception:
         Functions.printFailMessage(message, exception)
-        sys.exit()
+        sys.exit(1)
     else:
         Functions.printSuccessMessage(message)
 
@@ -348,7 +348,7 @@ def createOfflineInstaller():
         )
     except Exception as exception:
         Functions.printFailMessage(message, exception)
-        sys.exit()
+        sys.exit(1)
     else:
         Functions.printSuccessMessage(message)
 
@@ -367,7 +367,7 @@ def createOnlineRepositoryLocally():
         )
     except Exception as exception:
         Functions.printFailMessage(message, exception)
-        sys.exit()
+        sys.exit(1)
     else:
         Functions.printSuccessMessage(message)
 
@@ -378,7 +378,7 @@ def addFilesToLocalRepository():
         Functions.copyFile(source=CONFIG['release']['changelog_file'], destination=repository_dir_path)
     except Exception as exception:
         Functions.printFailMessage(message, exception)
-        sys.exit()
+        sys.exit(1)
     else:
         Functions.printSuccessMessage(message)
 

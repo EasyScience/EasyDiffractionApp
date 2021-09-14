@@ -32,7 +32,7 @@ def runInstallerSilently():
         Functions.installSilently(**args)
     except Exception as exception:
         Functions.printFailMessage(message, exception)
-        sys.exit()
+        sys.exit(1)
     else:
         Functions.printSuccessMessage(message)
 

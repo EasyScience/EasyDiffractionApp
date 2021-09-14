@@ -1098,7 +1098,7 @@
                 "max": Infinity,
                 "fixed": true,
                 "units": "dimensionless",
-                "enabled": true,
+                "enabled": false,
                 "@id": "297237732547413199692306304295640773532"
             },
             "gamma0": {
@@ -1112,7 +1112,7 @@
                 "max": Infinity,
                 "fixed": true,
                 "units": "dimensionless",
-                "enabled": true,
+                "enabled": false,
                 "@id": "192748759747999099236609812909205313971"
             },
             "gamma1": {
@@ -1126,7 +1126,7 @@
                 "max": Infinity,
                 "fixed": true,
                 "units": "dimensionless",
-                "enabled": true,
+                "enabled": false,
                 "@id": "21375162311649086619657816760359342506"
             },
             "gamma2": {
@@ -1140,7 +1140,7 @@
                 "max": Infinity,
                 "fixed": true,
                 "units": "dimensionless",
-                "enabled": true,
+                "enabled": false,
                 "@id": "234357689007981737041868590257900001564"
             },
             "alpha0": {

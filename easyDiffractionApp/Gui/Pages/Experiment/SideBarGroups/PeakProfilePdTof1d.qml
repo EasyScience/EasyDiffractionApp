@@ -25,7 +25,7 @@ Column {
 
         EaElements.ComboBox {
             width: EaStyle.Sizes.sideBarContentWidth
-            model: ["Pseudo-Voigt * Exponential"]
+            model: ["Gauss * Exponential"]
         }
     }
 
@@ -35,7 +35,7 @@ Column {
         Column {
             EaElements.Label {
                 enabled: false
-                text: qsTr("Gaussian instrumental broadening")
+                text: qsTr("Gaussian broadening")
             }
 
             EaComponents.TableView {
@@ -51,6 +51,10 @@ Column {
                     XmlRole { name: "sigma1"; query: "sigma1/value/number()" }
                     XmlRole { name: "sigma2"; query: "sigma2/value/number()" }
 
+                    XmlRole { name: "sigma0_enabled"; query: "sigma0/enabled/string()" }
+                    XmlRole { name: "sigma1_enabled"; query: "sigma1/enabled/string()" }
+                    XmlRole { name: "sigma2_enabled"; query: "sigma2/enabled/string()" }
+
                     XmlRole { name: "sigma0Id"; query: "sigma0/key[4]/string()" }
                     XmlRole { name: "sigma1Id"; query: "sigma1/key[4]/string()" }
                     XmlRole { name: "sigma2Id"; query: "sigma2/key[4]/string()" }
@@ -59,6 +63,7 @@ Column {
                 delegate: EaComponents.TableViewDelegate {
 
                     EaComponents.TableViewTextInput {
+                        enabled: model.sigma0_enabled === 'True'
                         width: tableViewGauss.width / contentRowData.length
                         headerText: "σ0"
                         text: EaLogic.Utils.toFixed(model.sigma0)
@@ -66,6 +71,7 @@ Column {
                     }
 
                     EaComponents.TableViewTextInput {
+                        enabled: model.sigma1_enabled === 'True'
                         width: tableViewGauss.width / contentRowData.length
                         headerText: "σ1"
                         text: EaLogic.Utils.toFixed(model.sigma1)
@@ -73,6 +79,7 @@ Column {
                     }
 
                     EaComponents.TableViewTextInput {
+                        enabled: model.sigma2_enabled === 'True'
                         width: tableViewGauss.width / contentRowData.length
                         headerText: "σ2"
                         text: EaLogic.Utils.toFixed(model.sigma2)
@@ -85,7 +92,7 @@ Column {
         Column {
             EaElements.Label {
                 enabled: false
-                text: qsTr("Lorentzian sample broadening")
+                text: qsTr("Lorentzian broadening")
             }
 
             EaComponents.TableView {
@@ -101,6 +108,10 @@ Column {
                     XmlRole { name: "gamma1"; query: "gamma1/value/number()" }
                     XmlRole { name: "gamma2"; query: "gamma2/value/number()" }
 
+                    XmlRole { name: "gamma0_enabled"; query: "gamma0/enabled/string()" }
+                    XmlRole { name: "gamma1_enabled"; query: "gamma1/enabled/string()" }
+                    XmlRole { name: "gamma2_enabled"; query: "gamma2/enabled/string()" }
+
                     XmlRole { name: "gamma0Id"; query: "gamma0/key[4]/string()" }
                     XmlRole { name: "gamma1Id"; query: "gamma1/key[4]/string()" }
                     XmlRole { name: "gamma2Id"; query: "gamma2/key[4]/string()" }
@@ -109,6 +120,7 @@ Column {
                 delegate: EaComponents.TableViewDelegate {
 
                     EaComponents.TableViewTextInput {
+                        enabled: model.gamma0_enabled === 'True'
                         width: tableViewLorentz.width / contentRowData.length
                         headerText: "γ0"
                         text: EaLogic.Utils.toFixed(model.gamma0)
@@ -116,6 +128,7 @@ Column {
                     }
 
                     EaComponents.TableViewTextInput {
+                        enabled: model.gamma1_enabled === 'True'
                         width: tableViewLorentz.width / contentRowData.length
                         headerText: "γ1"
                         text: EaLogic.Utils.toFixed(model.gamma1)
@@ -123,6 +136,7 @@ Column {
                     }
 
                     EaComponents.TableViewTextInput {
+                        enabled: model.gamma2_enabled === 'True'
                         width: tableViewLorentz.width / contentRowData.length
                         headerText: "γ2"
                         text: EaLogic.Utils.toFixed(model.gamma2)

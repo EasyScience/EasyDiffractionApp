@@ -11,6 +11,7 @@ class ProjectProxy(QObject):
     dummySignal = Signal()
     stateChanged = Signal(bool)
     htmlExportingFinished = Signal(bool, str)
+    removeExperiment = Signal()
 
     def __init__(self, parent=None, logic=None):  # , interface=None):
         super().__init__(parent)
@@ -19,6 +20,7 @@ class ProjectProxy(QObject):
         self.stateChanged.connect(self._onStateChanged)
         self.logic.projectCreatedChanged.connect(self.projectCreatedChanged)
         self.logic.projectInfoChanged.connect(self.projectInfoChanged)
+        self.logic.removeExperiment.connect(self.removeExperiment)
 
     @Property('QVariant', notify=projectInfoChanged)
     def projectInfoAsJson(self):

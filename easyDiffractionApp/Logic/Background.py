@@ -37,8 +37,11 @@ class BackgroundLogic(QObject):
         return itm
 
     def removeAllPoints(self):
+        self.asObjChanged.disconnect()
         for point_name in self._background_as_obj.names:
             self.removePoint(point_name)
+        self.asObjChanged.connect(self.onAsObjChanged)
+        self.onAsObjChanged()
 
     def onAsObjChanged(self):
         print(f"***** onAsObjChanged")

@@ -94,6 +94,7 @@ class ExperimentLogic(QObject):
         self.experimentSkipped(False)
 
     def removeExperiment(self):
+        self.parent.l_background.removeAllPoints()
         self.experiments.clear()
         self.experimentLoaded(False)
         self.experimentSkipped(False)

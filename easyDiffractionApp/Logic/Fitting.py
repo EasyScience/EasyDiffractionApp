@@ -33,6 +33,7 @@ class FittingLogic(QObject):
     currentCalculatorChanged = Signal()
     finished = Signal(dict)
     failed = Signal(str)
+    constraintsChanged = Signal()
 
     def __init__(self, parent=None, interface=None):
         super().__init__(parent)
@@ -268,6 +269,11 @@ class FittingLogic(QObject):
     def toggleConstraintByIndex(self, index, enabled):
         constraint = self.fitter.fit_constraints()[index]
         constraint.enabled = bool(strtobool(enabled))
+
+    def removeAllConstraints(self):
+        for _ in range(len(self.fitter.fit_constraints())):
+            self.removeConstraintByIndex(0)
+        self.constraintsChanged.emit()
 
 
 class Fitter(QThread):

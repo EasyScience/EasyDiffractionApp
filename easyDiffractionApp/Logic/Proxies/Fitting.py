@@ -26,6 +26,7 @@ class FittingProxy(QObject):
         self.logic.fitStarted.connect(self.fitFinishedNotify)
         self.logic.fitFinished.connect(self.fitFinishedNotify)
         self.logic.fitFinished.connect(self.fitResultsChanged)
+        self.logic.constraintsChanged.connect(self.constraintsChanged)
         self.logic.currentMinimizerChanged.connect(self.currentMinimizerChanged)
         self.logic.currentMinimizerMethodChanged.connect(self.currentMinimizerMethodChanged)
         self.logic.currentCalculatorChanged.connect(self.currentCalculatorChanged)

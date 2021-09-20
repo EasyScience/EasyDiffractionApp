@@ -96,6 +96,7 @@ class ExperimentLogic(QObject):
     def removeExperiment(self):
         if len(self.parent.l_sample._sample.pattern.backgrounds) > 0:
             self.parent.l_background.removeAllPoints()
+        self.parent.l_fitting.removeAllConstraints()
         self.experiments.clear()
         self.experimentLoaded(False)
         self.experimentSkipped(False)

@@ -191,6 +191,8 @@ class FittingLogic(QObject):
         interfaces = self.interface.interface_compatability(self.parent.l_sample._sample.exp_type_str)
         new_name = interfaces[new_index]
         self.interface.switch(new_name)
+        # recreate the fitter object with the new interface
+        self.fitter = CoreFitter(self.parent.l_sample._sample, self.interface.fit_func)
         self.parent.l_sample._sample.update_bindings()
         self.currentCalculatorChanged.emit()
         print("***** _onCurrentCalculatorChanged")

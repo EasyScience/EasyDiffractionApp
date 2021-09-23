@@ -68,8 +68,14 @@ class FittingLogic(QObject):
         y = exp_data.y
         weights = 1 / exp_data.e
 
+        kwargs = {
+            'weights': weights,
+            'method': method
+        }
+        if method == 'least_squares':
+            kwargs['minimizer_kwargs'] = {'diff_step': 1e-5}
         try:
-            res = self.fitter.fit(x, y, weights=weights, method=method)
+            res = self.fitter.fit(x, y, **kwargs)
         except Exception as ex:
             self.failed.emit(str(ex))
             return
@@ -146,7 +152,7 @@ class FittingLogic(QObject):
         idx = 0
         minimizer_name = self.fitter.current_engine.name
         if minimizer_name == 'lmfit':
-            idx = self.minimizerMethodNames().index('leastsq')
+            idx = self.minimizerMethodNames().index('least_squares')
         elif minimizer_name == 'bumps':
             idx = self.minimizerMethodNames().index('lm')
         if -1 < idx != self._current_minimizer_method_index:
@@ -159,7 +165,7 @@ class FittingLogic(QObject):
     def minimizerMethodNames(self):
         current_minimizer = self.fitter.available_engines[self.currentMinimizerIndex()]  # noqa: E501
         tested_methods = {
-            'lmfit': ['leastsq', 'powell', 'cobyla'],
+            'lmfit': ['least_squares', 'powell', 'cobyla', 'leastsq'],
             'bumps': ['newton', 'lm'],
             'DFO_LS': ['leastsq']
         }

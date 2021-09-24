@@ -12727,6 +12727,6 @@
     "interface": "CrysPy",
     "minimizer": {
         "engine": "lmfit",
-        "method": "leastsq"
+        "method": "least_squares"
     }
 }

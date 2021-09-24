@@ -165,8 +165,8 @@ class FittingLogic(QObject):
     def minimizerMethodNames(self):
         current_minimizer = self.fitter.available_engines[self.currentMinimizerIndex()]  # noqa: E501
         tested_methods = {
-            'lmfit': ['least_squares', 'powell', 'cobyla', 'leastsq'],
-            'bumps': ['newton', 'lm'],
+            'lmfit': ['least_squares', 'leastsq'], # 'least_squares', 'powell', 'cobyla', 'leastsq'
+            'bumps': ['lm'], # 'newton', 'lm'
             'DFO_LS': ['leastsq']
         }
         return tested_methods[current_minimizer]

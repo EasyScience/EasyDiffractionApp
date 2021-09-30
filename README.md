@@ -2,7 +2,7 @@
 
 <img height="80"><img src="./resources/images/ed_logo.svg" height="65">
 
-**easydiffraction** is a scientific software for modelling and analysis of diffraction data. Currently, **easydiffraction** covers classical 1D unpolarized neutron powder diffraction data collected at constant wavelength.
+**easydiffraction** is a scientific software for modelling and analysis of diffraction data. Currently, **easydiffraction** covers classical 1D unpolarized neutron powder diffraction data collected using constant wavelength (CW) or time-of-flight (TOF) diffractometers.
 
 **easydiffraction** is an open source project led by the [European Spallation Source ERIC](https://europeanspallationsource.se/) (ESS).
 
@@ -12,22 +12,23 @@
 
 **easydiffraction** allows simulation of diffraction patterns based on a structural model and refinement of its parameters. For refinement, the program uses a number of fitting engines (minimizers).
 
-**easydiffraction** is similar to crystallographic programs like FullProf, Jana, GSAS, ShelX, etc. Unlike these programs **easydiffraction** is based on _external_ crystallographic libraries such as [CrysPy](https://github.com/ikibalin/cryspy), [CrysFML](https://code.ill.fr/scientific-software/crysfml) and [GSAS-II](https://subversion.xray.aps.anl.gov/trac/pyGSAS). This allows **easydiffraction** to cover different functionality aspects within a single, intuitive and user-friendly graphical interface. These libraries are included with the installation so there is no need to download and compile any additional components.
+**easydiffraction** is similar to crystallographic programs like FullProf, Jana, GSAS, ShelX, etc. Unlike these programs **easydiffraction** is based on _external_ crystallographic libraries (calculation engines) such as [CrysPy](https://github.com/ikibalin/cryspy), [CrysFML](https://code.ill.fr/scientific-software/crysfml) and [GSAS-II](https://subversion.xray.aps.anl.gov/trac/pyGSAS). This allows **easydiffraction** to cover different functionality aspects within a single, intuitive and user-friendly graphical interface. These libraries are included with the installation so there is no need to download and compile any additional components.
 
 ## Main features
 
-**easydiffraction** is open source (currently [BSD v.3](LICENSE.md)) and cross-platform, with support for Windows, macOS and Linux (Ubuntu).
+**easydiffraction** is open source ([BSD-3-Clause License](LICENSE.md)) and cross-platform, with support for Windows, macOS and Linux (Ubuntu).
 
 The intuitive tabbed interface allows for a clear and defined data modelling and analysis workflow. There are also built-in step-by-step user guides and video tutorials for new users.
 
 Current main features of **easydiffraction**:
 
-- Support for constant-wavelength 1D unpolarized neutron powder diffraction data.
-- Structure refinement (yet unstable) using [CrysPy](https://github.com/ikibalin/cryspy), [CrysFML](https://code.ill.fr/scientific-software/crysfml) and [GSAS-II](https://subversion.xray.aps.anl.gov/trac/pyGSAS).
-- Simulations of diffraction pattern using aforementioned libraries.
+- Support for both constant-wavelength and time-of-flight 1D unpolarized neutron powder diffraction data.
+- Structure refinement (yet unstable) using [CrysPy](https://github.com/ikibalin/cryspy), [CrysFML](https://code.ill.fr/scientific-software/crysfml) and [GSAS-II](https://subversion.xray.aps.anl.gov/trac/pyGSAS) calculation engines.
+- Simulations of diffraction pattern using aforementioned engines.
 - Multiple minimization engines: [lmfit](https://lmfit.github.io/lmfit-py), [bumps](https://github.com/bumps/bumps) and [DFO-LS](https://github.com/numericalalgorithmsgroup/dfols).
+- Parameter constraints during refinement.
 - Crystal structure visualizer and builder.
-- Diffraction pattern viewer, including Bragg peaks and difference curve.
+- Diffraction pattern viewer, including Bragg peaks and residual curve.
 - Live update of calculations on parameters change.
 - Input files are in [CIF (Crystallographic Information File)](https://www.iucr.org/resources/cif) format.
 - Interactive HTML and standard PDF report generation.
@@ -36,9 +37,12 @@ Current main features of **easydiffraction**:
 Planned improvements / new functionality for **easydiffraction**:
 
 - Improved refinement.
-- Parameter constraints during refinement.
-- Loading and simulation of Time-of-Flight data.
+- Time-of-flight support using [CrysFML](https://code.ill.fr/scientific-software/crysfml) and [GSAS-II](https://subversion.xray.aps.anl.gov/trac/pyGSAS).
+- Asymmetric peak shapes.
+- Multiple phases and datasets.
+- Combined and sequential refinement.
 - Support for polarized neutron data.
+- Single crystal data.
 - Magnetic structure refinement.
 - Pair distribution function.
 - X-ray data analysis.
@@ -48,7 +52,6 @@ Planned improvements / new functionality for **easydiffraction**:
 ### Downloading
 
 The official **easydiffraction** installer for Windows, macOS and Linux (Ubuntu) can be found [here](https://github.com/easyScience/easyDiffractionApp/releases):
-
 
 ### Installing
 

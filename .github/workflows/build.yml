@@ -90,6 +90,7 @@ jobs:
         run: poetry run python ${{ env.SCRIPTS_PATH }}/MakeInstaller.py ${{ secrets.BINARY_SIGN_WIN }} ${{ secrets.CERT_ZIP_PASS }}
 
       - name: Sign the installer
+        if: False  # temporarily disabled until EC signing is automated
         run: poetry run python ${{ env.SCRIPTS_PATH }}/Signatures.py ${{ secrets.BINARY_SIGN_WIN }} ${{ secrets.CERT_ZIP_PASS }}
 
       - name: Set up screen recording dependencies (macOS)

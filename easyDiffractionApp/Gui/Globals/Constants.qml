@@ -13,7 +13,7 @@ QtObject {
     readonly property var proxy: typeof _pyQmlProxyObj !== "undefined" && _pyQmlProxyObj !== null ? _pyQmlProxyObj : new ExLogic.PyQmlProxy.PyQmlProxy()
     readonly property bool remote: typeof EaGlobals.Variables.projectConfig.ci.app.info !== 'undefined'
 
-    readonly property string appName: EaGlobals.Variables.projectConfig.tool.poetry.name.toLowerCase()
+    readonly property string appName: EaGlobals.Variables.projectConfig.release.app_name.toLowerCase()
     readonly property string appPrefixName: "easy"
     readonly property string appSuffixName: appName.replace(appPrefixName, "")
 

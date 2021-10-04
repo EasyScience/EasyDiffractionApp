@@ -5,7 +5,7 @@ requires = ['poetry>=1.0']
 build-backend = 'poetry.masonry.api'
 
 [tool.poetry]
-name = 'easyDiffraction'
+name = 'easyDiffractionApp'
 version = '0.8.2-beta'
 description = 'Making diffraction data analysis and modelling easy.'
 license = 'BSD-3-Clause'
@@ -15,7 +15,6 @@ homepage = 'https://easydiffraction.org'
 repository = 'https://download.easydiffraction.org/'
 documentation = 'https://easydiffraction.org'
 include = ['CHANGELOG.md']
-packages = [ { include = 'easyDiffractionApp' } ]
 
 [[tool.poetry.source]]
 name = "easyScience"
@@ -28,8 +27,8 @@ darkdetect = '^0.3.1'
 pyobjc-core = { version = '^7.1', platform = 'darwin' }
 pyobjc-framework-cocoa = { version = '^7.1', platform = 'darwin' }
 # easyScience
-#easyDiffractionLib = { git = 'https://github.com/easyScience/easyDiffractionLib.git', rev = 'develop' }
-easyDiffraction = '^0.0.1' # easyDiffractionLib from our custom PyPi server
+#easyDiffraction = { git = 'https://github.com/easyScience/easyDiffractionLib.git', rev = 'develop' }
+easyDiffraction = '>=0.0.3a0' # easyDiffractionLib from our custom PyPi server
 easyApp = { git = 'https://github.com/easyScience/easyApp.git', rev = 'develop' }
 
 #[tool.poetry.dev-dependencies]
@@ -56,6 +55,7 @@ easyDiffraction = 'easyDiffractionApp.main:main'
 # CUSTOM CONFIG
 
 [release]
+app_name = 'easyDiffraction'
 date_for_qtifw = '2021-10-05' # YYYY-MM-DD, e.g. 2021-05-30
 tag_template = 'v{VERSION}'
 title_template = 'Version {VERSION} ({DATE})'

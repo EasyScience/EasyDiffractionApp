@@ -43,7 +43,8 @@ def getValue(d, element):
 def extraDict():
     python_packages_path = os.path.dirname(pip.__path__[0]).replace('\\', '/')
 
-    build_date = datetime.datetime.now().strftime('%-d %b %Y')
+    dt = datetime.datetime.now()
+    build_date = f'{dt.day} {dt:%b} {dt.year}'
 
     github_server_url = os.getenv('GITHUB_SERVER_URL', '')
     github_repo = os.getenv('GITHUB_REPOSITORY', '')

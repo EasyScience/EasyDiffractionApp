@@ -21,13 +21,23 @@ QtObject {
     readonly property string appUrl: EaGlobals.Variables.projectConfig.tool.poetry.homepage
 
     readonly property string appVersion: EaGlobals.Variables.projectConfig.tool.poetry.version
-    readonly property string appDate: remote ? EaGlobals.Variables.projectConfig.ci.app.info.build_date : new Date().toISOString().slice(0,10)
+    readonly property string appDate: remote ?
+                                          EaGlobals.Variables.projectConfig.ci.app.info.build_date :
+                                          new Date().toISOString().slice(0,10)
 
-    readonly property string commit: remote ? EaGlobals.Variables.projectConfig.ci.app.info.commit_sha_short : ''
-    readonly property string commitUrl: remote ? EaGlobals.Variables.projectConfig.ci.app.info.commit_url : ''
+    readonly property string commit: remote ?
+                                         EaGlobals.Variables.projectConfig.ci.app.info.commit_sha_short :
+                                         ''
+    readonly property string commitUrl: remote ?
+                                            EaGlobals.Variables.projectConfig.ci.app.info.commit_url :
+                                            ''
 
-    readonly property string branch: remote ? EaGlobals.Variables.projectConfig.ci.app.info.branch_name : ''
-    readonly property string branchUrl: remote ? EaGlobals.Variables.projectConfig.ci.app.info.branch_url : ''
+    readonly property string branch: remote ?
+                                         EaGlobals.Variables.projectConfig.ci.app.info.branch_name
+                                       : ''
+    readonly property string branchUrl: remote ?
+                                            EaGlobals.Variables.projectConfig.ci.app.info.branch_url :
+                                            ''
 
     readonly property string eulaUrl: githubRawContent(branch, 'LICENSE.md')
     readonly property string oslUrl: githubRawContent(branch, 'DEPENDENCIES.md')

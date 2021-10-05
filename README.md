@@ -18,7 +18,7 @@
 
 **easyDiffraction** application is cross-platform, with support for Windows, macOS and Linux (Ubuntu). Its intuitive tabbed interface allows for a clear and defined data modelling and analysis workflow. There are also built-in step-by-step user guides and tutorials for new users.
 
-Current main features of **easyDiffraction**:
+Current main features of **easydiffraction**:
 
 - Support for both constant-wavelength and time-of-flight 1D unpolarized neutron powder diffraction data.
 - Simulations of diffraction pattern using [CrysPy](https://github.com/ikibalin/cryspy), [CrysFML](https://code.ill.fr/scientific-software/crysfml) and [GSAS-II](https://subversion.xray.aps.anl.gov/trac/pyGSAS) calculation engines.
@@ -32,7 +32,7 @@ Current main features of **easyDiffraction**:
 - Interactive HTML and standard PDF report generation.
 - Undo/redo for both parameter changes and fitting.
 
-Planned improvements / new functionality for **easyDiffraction**:
+Planned improvements / new functionality for **easydiffraction**:
 
 - Improved refinement.
 - Time-of-flight support using [CrysFML](https://code.ill.fr/scientific-software/crysfml) and [GSAS-II](https://subversion.xray.aps.anl.gov/trac/pyGSAS).
@@ -57,7 +57,13 @@ Run **easyDiffraction** installer and follow the instructions.
 
 ### Uninstalling
 
-Run **MaintenanceTool** from the **easyDiffraction** installation directory, select _Remove all components_ and follow the instructions.
+Run **MaintenanceTool** from the **easydiffraction** installation directory, select _Remove all components_ and follow the instructions.
+
+## Common Issues
+
+- On `macOS`, if you see the message _easyDiffractionSetup.app can't be opened because it is from an unidentified developer_, do the following:
+In the **Finder**, locate the **easydiffraction** installer application, then _control-click_ the installer icon, then choose _Open_ from the shortcut menu and finally click _Open_.
+- On `Linux` based system there can be the following error on startup: _Failed to create OpenGL context for format QSurfaceFormat_. This is due to a system OpenGL driver problem. Please re-install your graphics card drivers.
 
 ## Common Issues
 

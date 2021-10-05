@@ -23,7 +23,7 @@ EaComponents.SideBarColumn {
         title: qsTr("Plot settings")
 
         Row {
-            spacing: EaStyle.Sizes.fontPixelSize
+            spacing: minimizerRow.spacing
 
             EaElements.CheckBox {
                 text: qsTr("Show legend")

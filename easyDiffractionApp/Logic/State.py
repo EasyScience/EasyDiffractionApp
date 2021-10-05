@@ -47,4 +47,3 @@ class StateLogic(QObject):
         xml = dicttoxml(model, attr_type=False)
         xml = xml.decode()
         return xml
-

@@ -134,7 +134,7 @@ def removeDir(ftp, path):
 
 def deploy():
     branch = sys.argv[1]
-    if branch != 'master' and branch != 'hot_fixes':
+    if branch != 'master':
         Functions.printNeutralMessage(f'No ftp upload for branch {branch}')
         return
 

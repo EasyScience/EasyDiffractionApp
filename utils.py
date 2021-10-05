@@ -51,9 +51,15 @@ def extraDict():
     commit_sha_short = commit_sha[:6]
     commit_url = f'{github_repo_url}/commit/{commit_sha}'
 
+    app_version = getValue(conf(), 'tool.poetry.version')
+    release_tag = f'v{app_version}'
+    release_title = f'Version {app_version} ({build_date})'
+
     return { 'ci': { 'cache': { 'python_packages_path': python_packages_path },
                      'app': { 'info': { 'build_date': build_date,
                                         'date_for_qtifw': date_for_qtifw,
+                                        'release_tag': release_tag,
+                                        'release_title': release_title,
                                         'branch_name': branch_name,
                                         'branch_url': branch_url,
                                         'commit_sha_short': commit_sha_short,

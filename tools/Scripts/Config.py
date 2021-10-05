@@ -47,11 +47,6 @@ class Config():
         # Application repository
         self.repository_dir_suffix = self.__dict__['ci']['app']['setup']['repository_dir_suffix']
 
-        # Release
-        self.release_date = self.__dict__['ci']['app']['info']['build_date']
-        self.release_tag = self.__dict__['release']['tag_template'].replace('{VERSION}', self.app_version)
-        self.release_title = self.__dict__['release']['title_template'].replace('{VERSION}', self.app_version).replace('{DATE}', self.release_date)
-
         # Project
         self.package_name = f'{self.app_name}App'
         self.license_file = self.__dict__['ci']['project']['license_file']

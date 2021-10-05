@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 easyDiffraction contributors <support@easydiffraction.org>
+// SPDX-License-Identifier: BSD-3-Clause
+// © 2021 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.XmlListModel 2.13
@@ -15,9 +19,9 @@ EaComponents.TableView {
     // Table model
 
     model: XmlListModel {
-        property int phaseIndex: ExGlobals.Constants.proxy.currentPhaseIndex + 1
+        property int phaseIndex: ExGlobals.Constants.proxy.phase.currentPhaseIndex + 1
 
-        xml: ExGlobals.Constants.proxy.phasesAsXml
+        xml: ExGlobals.Constants.proxy.phase.phasesAsXml
         query: `/root/item[${phaseIndex}]`
 
         XmlRole { name: "a"; query: "cell/length_a/value/number()" }
@@ -48,52 +52,52 @@ EaComponents.TableView {
 
         EaComponents.TableViewTextInput {
             id: cellLengthALabel
+            enabled: model.a_enabled === 'True'
             width: EaStyle.Sizes.fontPixelSize * 5.8
             headerText: "a (Å)"
             text: EaLogic.Utils.toFixed(model.a)
             onEditingFinished: editParameterValue(model.aId, text)
-            enabled: model.a_enabled === 'True'
             Component.onCompleted: ExGlobals.Variables.cellLengthALabel = this
         }
 
         EaComponents.TableViewTextInput {
+            enabled: model.b_enabled === 'True'
             width: cellLengthALabel.width
             headerText: "b (Å)"
             text: EaLogic.Utils.toFixed(model.b)
             onEditingFinished: editParameterValue(model.bId, text)
-            enabled: model.b_enabled === 'True'
         }
 
         EaComponents.TableViewTextInput {
+            enabled: model.c_enabled === 'True'
             width: cellLengthALabel.width
             headerText: "c (Å)"
             text: EaLogic.Utils.toFixed(model.c)
             onEditingFinished: editParameterValue(model.cId, text)
-            enabled: model.c_enabled === 'True'
         }
 
         EaComponents.TableViewTextInput {
+            enabled: model.alpha_enabled === 'True'
             width: cellLengthALabel.width
             headerText: "alpha (°)"
             text: EaLogic.Utils.toFixed(model.alpha)
             onEditingFinished: editParameterValue(model.alphaId, text)
-            enabled: model.alpha_enabled === 'True'
         }
 
         EaComponents.TableViewTextInput {
+            enabled: model.beta_enabled === 'True'
             width: cellLengthALabel.width
             headerText: "beta (°)"
             text: EaLogic.Utils.toFixed(model.beta)
             onEditingFinished: editParameterValue(model.betaId, text)
-            enabled: model.beta_enabled === 'True'
         }
 
         EaComponents.TableViewTextInput {
+            enabled: model.gamma_enabled === 'True'
             width: cellLengthALabel.width
             headerText: "gamma (°)"
             text: EaLogic.Utils.toFixed(model.gamma)
             onEditingFinished: editParameterValue(model.gammaId, text)
-            enabled: model.gamma_enabled === 'True'
         }
 
     }
@@ -101,8 +105,8 @@ EaComponents.TableView {
     // Logic
 
     function editParameterValue(id, value) {
-        //ExGlobals.Constants.proxy.editParameter(id, parseFloat(value))
-        ExGlobals.Constants.proxy.editParameter(id, parseFloat(value))
+        //ExGlobals.Constants.proxy.parameters.editParameter(id, parseFloat(value))
+        ExGlobals.Constants.proxy.parameters.editParameter(id, parseFloat(value))
     }
 
 }

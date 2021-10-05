@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 easyDiffraction contributors <support@easydiffraction.org>
+// SPDX-License-Identifier: BSD-3-Clause
+// © 2021 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.Dialogs 1.3 as QtQuickDialogs1
@@ -27,7 +31,7 @@ EaComponents.SideBarColumn {
                 onClicked: EaGlobals.Variables.showProjectDescriptionDialog = true
                 Component.onCompleted: {
                     ExGlobals.Variables.createProjectButton = this
-                    ExGlobals.Constants.proxy.resetUndoRedoStack()
+                    ExGlobals.Constants.proxy.stack.resetUndoRedoStack()
                 }
             }
 
@@ -38,7 +42,7 @@ EaComponents.SideBarColumn {
                 onClicked: ExGlobals.Variables.samplePageEnabled = true
                 Component.onCompleted: {
                     ExGlobals.Variables.continueWithoutProjectButton = this
-                    ExGlobals.Constants.proxy.resetUndoRedoStack()
+                    ExGlobals.Constants.proxy.stack.resetUndoRedoStack()
                 }
             }
 
@@ -65,7 +69,7 @@ EaComponents.SideBarColumn {
         onAccepted: {
             // enablement will depend on what is available in the project file,
             // obviously, so care is needed. TODO
-            ExGlobals.Constants.proxy.loadProjectAs(fileUrl)
+            ExGlobals.Constants.proxy.project.loadProjectAs(fileUrl)
 
             ExGlobals.Variables.samplePageEnabled = true
             ExGlobals.Variables.experimentPageEnabled = true

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 easyDiffraction contributors <support@easydiffraction.org>
+// SPDX-License-Identifier: BSD-3-Clause
+// © 2021 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.XmlListModel 2.13
@@ -18,7 +22,7 @@ EaComponents.TableView {
     // Table model
 
     model: XmlListModel {
-        xml: ExGlobals.Constants.proxy.projectExamplesAsXml
+        xml: ExGlobals.Constants.proxy.project.projectExamplesAsXml
         query: "/root/item"
 
         XmlRole { name: "name"; query: "name/string()" }
@@ -56,7 +60,7 @@ EaComponents.TableView {
         EaComponents.TableViewLabel {
             id: descriptionColumn
 
-            width: EaStyle.Sizes.fontPixelSize * 25
+            width: EaStyle.Sizes.fontPixelSize * 24
 
             horizontalAlignment: Text.AlignLeft
 
@@ -72,7 +76,7 @@ EaComponents.TableView {
 
             onClicked: {
                 const fileUrl = Qt.resolvedUrl(model.path)
-                ExGlobals.Constants.proxy.loadExampleProject(fileUrl)
+                ExGlobals.Constants.proxy.project.loadExampleProject(fileUrl)
 
                 ExGlobals.Variables.samplePageEnabled = true
                 ExGlobals.Variables.experimentPageEnabled = true

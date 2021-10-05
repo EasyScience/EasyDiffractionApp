@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 easyDiffraction contributors <support@easydiffraction.org>
+// SPDX-License-Identifier: BSD-3-Clause
+// © 2021 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtQuick.XmlListModel 2.13
@@ -18,7 +22,7 @@ EaComponents.TableView {
     // Table model
 
     model: XmlListModel {
-        xml: ExGlobals.Constants.proxy.experimentDataAsXml
+        xml: ExGlobals.Constants.proxy.experiment.experimentDataAsXml
         query: "/root/item"
 
         XmlRole { name: "label"; query: "name/string()" }
@@ -54,9 +58,9 @@ EaComponents.TableView {
             fontIcon: "minus-circle"
             ToolTip.text: qsTr("Remove this dataset")
             onClicked: {
-                ExGlobals.Constants.proxy.experimentLoaded = false
-                ExGlobals.Constants.proxy.experimentSkipped = true
-                ExGlobals.Constants.proxy.removeExperiment()
+                ExGlobals.Constants.proxy.experiment.experimentLoaded = false
+                ExGlobals.Constants.proxy.experiment.experimentSkipped = true
+                ExGlobals.Constants.proxy.experiment.removeExperiment()
             }
         }
 

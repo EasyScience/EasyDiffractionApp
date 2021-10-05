@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 easyDiffraction contributors <support@easydiffraction.org>
+// SPDX-License-Identifier: BSD-3-Clause
+// © 2021 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+
 function Controller()
 {
 }
@@ -11,7 +15,7 @@ Controller.prototype.IntroductionPageCallback = function()
     {
       var msg = ""
       msg += "<p>Welcome to the easyDiffraction Setup Wizard.</p>"
-      msg += "<p>easydiffraction is a scientific software for modelling and analysis of diffraction data.</p>"
+      msg += "<p>easyDiffraction is a scientific software for modelling and analysis of diffraction data.</p>"
       msg += "<p>For more details, please visit <a href=\"https://easydiffraction.org\">https://easydiffraction.org</a></p>"
       page.MessageLabel.setText(msg)
     }

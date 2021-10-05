@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2021 easyDiffraction contributors <support@easydiffraction.org>
+# SPDX-License-Identifier: BSD-3-Clause
+# © 2021 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+
 import os
 import sys
 import pathlib
@@ -43,9 +47,9 @@ def main():
         import easyApp.Logging
 
     # Paths
-    app_name = CONFIG['tool']['poetry']['name']
     current_path = os.path.dirname(sys.argv[0])
-    package_path = os.path.join(current_path, f'{app_name}App')
+    package_name = CONFIG['tool']['poetry']['name']
+    package_path = os.path.join(current_path, package_name)
     if not os.path.exists(package_path):
         package_path = current_path
 
@@ -54,8 +58,8 @@ def main():
     app_icon_path = os.path.join(package_path, 'Gui', 'Resources', 'Logo', 'App.png')
     easyApp_path = os.path.join(easyApp2.__path__[0], '..')
 
-
     home_path = pathlib.Path.home()
+    app_name = CONFIG['release']['app_name']
     settings_path = str(home_path.joinpath(f'.{app_name}', 'settings.ini'))
 
     languages = CONFIG['ci']['app']['translations']['languages']

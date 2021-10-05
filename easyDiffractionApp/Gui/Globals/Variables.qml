@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 easyDiffraction contributors <support@easydiffraction.org>
+// SPDX-License-Identifier: BSD-3-Clause
+// © 2021 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+
 pragma Singleton
 
 import QtQuick 2.13
@@ -97,8 +101,11 @@ QtObject {
     property var enableToolTipsCheckBox
     property var enableUserGuidesCheckBox
     property var fitCellACheckBox
+    property var fitCellBCheckBox
+    property var fitCellCCheckBox
     property var fitZeroShiftCheckBox
     property var fitScaleCheckBox
+    property var fitResolutionYCheckBox
     property var fitResolutionUValue
     property var fitResolutionVValue
     property var fitResolutionWValue
@@ -112,7 +119,6 @@ QtObject {
     // Tables
     property var phasesTable
     property var parametersTable
-    property int currentPhaseIndex: -1
     property int currentAtomIndex: -1
 
     // Slider

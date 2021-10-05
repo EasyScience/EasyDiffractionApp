@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2021 easyDiffraction contributors <support@easydiffraction.org>
+# SPDX-License-Identifier: BSD-3-Clause
+# © 2021 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+
 __author__ = "github.com/AndrewSazonov"
 __version__ = '0.0.1'
 
@@ -28,7 +32,7 @@ def runInstallerSilently():
         Functions.installSilently(**args)
     except Exception as exception:
         Functions.printFailMessage(message, exception)
-        sys.exit()
+        sys.exit(1)
     else:
         Functions.printSuccessMessage(message)
 

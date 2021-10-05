@@ -1,0 +1,11 @@
+module SideBarGroups
+
+RangesPdCw1d 1.0 RangesPdCw1d.qml
+InstrumentSetupPdCw1d 1.0 InstrumentSetupPdCw1d.qml
+PeakProfilePdCw1d 1.0 PeakProfilePdCw1d.qml
+BackgroundPdCw1d 1.0 BackgroundPdCw1d.qml
+
+RangesPdTof1d 1.0 RangesPdTof1d.qml
+InstrumentSetupPdTof1d 1.0 InstrumentSetupPdTof1d.qml
+PeakProfilePdTof1d 1.0 PeakProfilePdTof1d.qml
+BackgroundPdTof1d 1.0 BackgroundPdTof1d.qml

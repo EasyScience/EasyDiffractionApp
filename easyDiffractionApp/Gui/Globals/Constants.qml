@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 easyDiffraction contributors <support@easydiffraction.org>
+// SPDX-License-Identifier: BSD-3-Clause
+// © 2021 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+
 pragma Singleton
 
 import QtQuick 2.13
@@ -9,7 +13,7 @@ QtObject {
     readonly property var proxy: typeof _pyQmlProxyObj !== "undefined" && _pyQmlProxyObj !== null ? _pyQmlProxyObj : new ExLogic.PyQmlProxy.PyQmlProxy()
     readonly property bool remote: typeof EaGlobals.Variables.projectConfig.ci.app.info !== 'undefined'
 
-    readonly property string appName: EaGlobals.Variables.projectConfig.tool.poetry.name.toLowerCase()
+    readonly property string appName: EaGlobals.Variables.projectConfig.release.app_name.toLowerCase()
     readonly property string appPrefixName: "easy"
     readonly property string appSuffixName: appName.replace(appPrefixName, "")
 
@@ -17,13 +21,23 @@ QtObject {
     readonly property string appUrl: EaGlobals.Variables.projectConfig.tool.poetry.homepage
 
     readonly property string appVersion: EaGlobals.Variables.projectConfig.tool.poetry.version
-    readonly property string appDate: remote ? EaGlobals.Variables.projectConfig.ci.app.info.build_date : new Date().toISOString().slice(0,10)
+    readonly property string appDate: remote ?
+                                          EaGlobals.Variables.projectConfig.ci.app.info.build_date :
+                                          new Date().toISOString().slice(0,10)
 
-    readonly property string commit: remote ? EaGlobals.Variables.projectConfig.ci.app.info.commit_sha_short : ''
-    readonly property string commitUrl: remote ? EaGlobals.Variables.projectConfig.ci.app.info.commit_url : ''
+    readonly property string commit: remote ?
+                                         EaGlobals.Variables.projectConfig.ci.app.info.commit_sha_short :
+                                         ''
+    readonly property string commitUrl: remote ?
+                                            EaGlobals.Variables.projectConfig.ci.app.info.commit_url :
+                                            ''
 
-    readonly property string branch: remote ? EaGlobals.Variables.projectConfig.ci.app.info.branch_name : ''
-    readonly property string branchUrl: remote ? EaGlobals.Variables.projectConfig.ci.app.info.branch_url : ''
+    readonly property string branch: remote ?
+                                         EaGlobals.Variables.projectConfig.ci.app.info.branch_name
+                                       : ''
+    readonly property string branchUrl: remote ?
+                                            EaGlobals.Variables.projectConfig.ci.app.info.branch_url :
+                                            ''
 
     readonly property string eulaUrl: githubRawContent(branch, 'LICENSE.md')
     readonly property string oslUrl: githubRawContent(branch, 'DEPENDENCIES.md')

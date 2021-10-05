@@ -1,11 +1,14 @@
+# SPDX-FileCopyrightText: 2021 easyDiffraction contributors <support@easydiffraction.org>
+# SPDX-License-Identifier: BSD-3-Clause
+# © 2021 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+
 __author__ = "github.com/AndrewSazonov"
 __version__ = '0.0.1'
 
 import os, sys
-import importlib
 import glob
 import PySide2, shiboken2
-import cryspy
+import cryspy, GSASII
 import easyCore, easyDiffractionLib, easyApp
 import Functions, Config
 from PyInstaller.__main__ import run as pyInstallerMain
@@ -27,18 +30,14 @@ def excludedModules():
 
 def addedData():
     separator = CONFIG['ci']['pyinstaller']['separator'][CONFIG.os]
-    lib = CONFIG['ci']['pyinstaller']['libs'][CONFIG.os]
     data = [{'from': CONFIG.package_name, 'to': CONFIG.package_name},
-            {'from': importlib.import_module(lib).__path__[0], 'to': lib},
             {'from': cryspy.__path__[0], 'to': 'cryspy'},
+            {'from': GSASII.__path__[0], 'to': '.'},
             {'from': easyCore.__path__[0], 'to': 'easyCore'},
             {'from': easyDiffractionLib.__path__[0], 'to': 'easyDiffractionLib'},
             {'from': easyApp.__path__[0], 'to': 'easyApp'},
             {'from': 'utils.py', 'to': '.'},
             {'from': 'pyproject.toml', 'to': '.'}]
-    if CONFIG.os == 'ubuntu':
-        import libsLinux
-        data.append({'from': f'{libsLinux.__path__[0]}/lib/libgfortran.so.4', 'to': '.'})
     extras = CONFIG['ci']['pyinstaller']['missing_other_libraries'][CONFIG.os]
     if extras:
         for extra_file in extras:
@@ -72,7 +71,7 @@ def copyMissingLibs():
                 Functions.copyFile(file_path, pyside2_path)
     except Exception as exception:
         Functions.printFailMessage(message, exception)
-        sys.exit()
+        sys.exit(1)
     else:
         Functions.printSuccessMessage(message)
 
@@ -92,7 +91,7 @@ def copyMissingPlugins():
             Functions.copyDir(src_dir_path, dst_dir_path)
     except Exception as exception:
         Functions.printFailMessage(message, exception)
-        sys.exit()
+        sys.exit(1)
     else:
         Functions.printSuccessMessage(message)
 
@@ -117,7 +116,7 @@ def runPyInstaller():
             ])
     except Exception as exception:
         Functions.printFailMessage(message, exception)
-        sys.exit()
+        sys.exit(1)
     else:
         Functions.printSuccessMessage(message)
 
@@ -137,7 +136,7 @@ def excludeFiles():
                 Functions.removeFile(file_path)
     except Exception as exception:
         Functions.printFailMessage(message, exception)
-        sys.exit()
+        sys.exit(1)
     else:
         Functions.printSuccessMessage(message)
 

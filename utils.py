@@ -1,16 +1,13 @@
+# SPDX-FileCopyrightText: 2021 easyDiffraction contributors <support@easydiffraction.org>
+# SPDX-License-Identifier: BSD-3-Clause
+# © 2021 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+
 import os
 import sys
-import pip
-import pathlib
 import datetime
 import argparse
-
-try:
-    import toml
-except ImportError:
-    import pip
-    pip.main(['install', 'toml'])
-    import toml
+import pip
+import toml
 
 
 ### Get value from pyproject.toml
@@ -39,7 +36,9 @@ def getValue(d, element):
 def extraDict():
     python_packages_path = os.path.dirname(pip.__path__[0]).replace('\\', '/')
 
-    build_date = datetime.datetime.now().strftime('%d %b %Y')
+    dt = datetime.datetime.now()
+    build_date = f'{dt.day} {dt:%b} {dt.year}'  # e.g. 3 Jun 2021
+    date_for_qtifw = f'{dt.year}-{dt:%m}-{dt:%d}'  # e.g. 2021-06-03
 
     github_server_url = os.getenv('GITHUB_SERVER_URL', '')
     github_repo = os.getenv('GITHUB_REPOSITORY', '')
@@ -52,8 +51,15 @@ def extraDict():
     commit_sha_short = commit_sha[:6]
     commit_url = f'{github_repo_url}/commit/{commit_sha}'
 
+    app_version = getValue(conf(), 'tool.poetry.version')
+    release_tag = f'v{app_version}'
+    release_title = f'Version {app_version} ({build_date})'
+
     return { 'ci': { 'cache': { 'python_packages_path': python_packages_path },
                      'app': { 'info': { 'build_date': build_date,
+                                        'date_for_qtifw': date_for_qtifw,
+                                        'release_tag': release_tag,
+                                        'release_title': release_title,
                                         'branch_name': branch_name,
                                         'branch_url': branch_url,
                                         'commit_sha_short': commit_sha_short,

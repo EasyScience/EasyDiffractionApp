@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2021 easyDiffraction contributors <support@easydiffraction.org>
+# SPDX-License-Identifier: BSD-3-Clause
+# © 2021 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+
 __author__ = "github.com/AndrewSazonov"
 __version__ = '0.0.1'
 
@@ -51,7 +55,7 @@ def qtifwSetupDownloadUrl():
     except Exception as exception:
         message += f'from any of {repos}'
         Functions.printFailMessage(message, exception)
-        sys.exit()
+        sys.exit(1)
     else:
         Functions.printSuccessMessage(message)
         return url
@@ -147,7 +151,7 @@ def installerConfigXml():
         pretty_xml = xml.dom.minidom.parseString(raw_xml).toprettyxml()
     except Exception as exception:
         Functions.printFailMessage(message, exception)
-        sys.exit()
+        sys.exit(1)
     else:
         Functions.printSuccessMessage(message)
         return pretty_xml
@@ -156,14 +160,14 @@ def appPackageXml():
     try:
         message = f"create app package content"
         license_id = CONFIG['tool']['poetry']['license'].replace('-only', '')
-        license_name = dephell_licenses.licenses.get_by_id(license_id).name
+        license_name = dephell_licenses.licenses.get_by_id(license_id).name.replace('"', "'")
         requires_root = 'false'
         raw_xml = Functions.dict2xml({
             'Package': {
                 'DisplayName': CONFIG.app_name,
                 'Description': CONFIG['tool']['poetry']['description'],
                 'Version': CONFIG.app_version,
-                'ReleaseDate': CONFIG['release']['date_for_qtifw'],
+                'ReleaseDate': CONFIG['ci']['app']['info']['date_for_qtifw'],
                 'Default': 'true',
                 #'SortingPriority': 100,
                 'Essential': 'true',
@@ -181,7 +185,7 @@ def appPackageXml():
         pretty_xml = xml.dom.minidom.parseString(raw_xml).toprettyxml()
     except Exception as exception:
         Functions.printFailMessage(message, exception)
-        sys.exit()
+        sys.exit(1)
     else:
         Functions.printSuccessMessage(message)
         return pretty_xml
@@ -243,7 +247,7 @@ def installQtInstallerFramework():
         time.sleep(10)
     except Exception as exception:
         Functions.printFailMessage(message, exception)
-        sys.exit()
+        sys.exit(1)
     else:
         Functions.printSuccessMessage(message)
 
@@ -260,7 +264,7 @@ def prepareSignedMaintenanceTool():
         Signatures.sign_windows(file_to_sign=target_file, cert_pass=sys.argv[1])
     except Exception as exception:
         Functions.printFailMessage(message, exception)
-        sys.exit()
+        sys.exit(1)
     else:
         Functions.printSuccessMessage(message)
 
@@ -322,7 +326,7 @@ def createInstallerSourceDir():
             Functions.copyFile(source=CONFIG.maintenancetool_file, destination=app_data_subsubdir_path)
     except Exception as exception:
         Functions.printFailMessage(message, exception)
-        sys.exit()
+        sys.exit(1)
     else:
         Functions.printSuccessMessage(message)
 
@@ -344,7 +348,7 @@ def createOfflineInstaller():
         )
     except Exception as exception:
         Functions.printFailMessage(message, exception)
-        sys.exit()
+        sys.exit(1)
     else:
         Functions.printSuccessMessage(message)
 
@@ -363,7 +367,7 @@ def createOnlineRepositoryLocally():
         )
     except Exception as exception:
         Functions.printFailMessage(message, exception)
-        sys.exit()
+        sys.exit(1)
     else:
         Functions.printSuccessMessage(message)
 
@@ -374,7 +378,7 @@ def addFilesToLocalRepository():
         Functions.copyFile(source=CONFIG['release']['changelog_file'], destination=repository_dir_path)
     except Exception as exception:
         Functions.printFailMessage(message, exception)
-        sys.exit()
+        sys.exit(1)
     else:
         Functions.printSuccessMessage(message)
 

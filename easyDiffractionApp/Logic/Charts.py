@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2021 easyDiffraction contributors <support@easydiffraction.org>
+# SPDX-License-Identifier: BSD-3-Clause
+# © 2021 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+
 from easyDiffractionApp.Logic.Proxies.Plotting1d import Plotting1dProxy
 
 
@@ -31,8 +35,8 @@ class ChartsLogic():
 
     # Structure view
 
-    def _onStructureViewChanged(self):
-        print("***** _onStructureViewChanged")
+    # def _onStructureViewChanged(self):
+    #     print("***** _onStructureViewChanged")
 
     def showBonds(self):
         return self._show_bonds

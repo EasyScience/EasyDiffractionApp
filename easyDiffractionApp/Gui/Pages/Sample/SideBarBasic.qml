@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 easyDiffraction contributors <support@easydiffraction.org>
+// SPDX-License-Identifier: BSD-3-Clause
+// © 2021 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+
 import QtQuick 2.14
 import QtQuick.Controls 2.14
 import QtQuick.Dialogs 1.3 as Dialogs1
@@ -16,7 +20,7 @@ EaComponents.SideBarColumn {
     EaElements.GroupBox {
         title: qsTr("Structural phases")
         collapsible: false
-        enabled: ExGlobals.Constants.proxy.isFitFinished
+        enabled: ExGlobals.Constants.proxy.fitting.isFitFinished
 
         ExComponents.SamplePhasesExplorer {}
 
@@ -24,7 +28,7 @@ EaComponents.SideBarColumn {
             spacing: EaStyle.Sizes.fontPixelSize
 
             EaElements.SideBarButton {
-                enabled: ExGlobals.Constants.proxy.phasesAsObj.length === 0
+                enabled: ExGlobals.Constants.proxy.phase.phasesAsObj.length === 0
 
                 fontIcon: "upload"
                 text: qsTr("Set new phase from CIF")
@@ -33,12 +37,12 @@ EaComponents.SideBarColumn {
             }
 
             EaElements.SideBarButton {
-                enabled: ExGlobals.Constants.proxy.phasesAsObj.length === 0
+                enabled: ExGlobals.Constants.proxy.phase.phasesAsObj.length === 0
 
                 fontIcon: "plus-circle"
                 text: qsTr("Set new phase manually")
 
-                onClicked: ExGlobals.Constants.proxy.addDefaultPhase()
+                onClicked: ExGlobals.Constants.proxy.phase.addDefaultPhase()
 
                 Component.onCompleted: ExGlobals.Variables.setNewSampleManuallyButton = this
             }
@@ -49,9 +53,11 @@ EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
         title: qsTr("Symmetry and cell parameters")
-        enabled: ExGlobals.Constants.proxy.samplesPresent
+        enabled: ExGlobals.Constants.proxy.phase.samplesPresent
 
         Column {
+            spacing: EaStyle.Sizes.fontPixelSize * 0.5
+
             ExComponents.SampleSymmetry {}
             ExComponents.SampleCell { titleText: "Cell parameters" }
         }
@@ -63,7 +69,7 @@ EaComponents.SideBarColumn {
         id: atomsGroup
 
         title: qsTr("Atoms, atomic coordinates and occupations")
-        enabled: ExGlobals.Constants.proxy.samplesPresent
+        enabled: ExGlobals.Constants.proxy.phase.samplesPresent
 
         ExComponents.SampleAtoms {}
 
@@ -76,7 +82,7 @@ EaComponents.SideBarColumn {
                 fontIcon: "plus-circle"
                 text: qsTr("Append new atom")
 
-                onClicked: ExGlobals.Constants.proxy.addDefaultAtom()
+                onClicked: ExGlobals.Constants.proxy.phase.addDefaultAtom()
 
                 Component.onCompleted: ExGlobals.Variables.appendNewAtomButton = appendNewAtomButton
             }
@@ -95,7 +101,7 @@ EaComponents.SideBarColumn {
     EaElements.GroupBox {
         title: qsTr("Atomic displacement parameters")
         last: true
-        enabled: ExGlobals.Constants.proxy.samplesPresent
+        enabled: ExGlobals.Constants.proxy.phase.samplesPresent
 
         ExComponents.SampleAdps {}
 
@@ -106,7 +112,8 @@ EaComponents.SideBarColumn {
 
     Dialogs1.FileDialog{
         id: loadPhaseFileDialog
+        selectMultiple: true
         nameFilters: [ "CIF files (*.cif)"]
-        onAccepted: ExGlobals.Constants.proxy.addSampleFromCif(fileUrl)
+        onAccepted: ExGlobals.Constants.proxy.phase.addSampleFromCif(fileUrls)
     }
 }

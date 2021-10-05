@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2021 easyDiffraction contributors <support@easydiffraction.org>
+# SPDX-License-Identifier: BSD-3-Clause
+# © 2021 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+
 __author__ = "github.com/AndrewSazonov"
 __version__ = '0.0.1'
 
@@ -15,7 +19,7 @@ def connect(ftp, host, port):
         ftp.connect(host, port)
     except Exception as exception:
         Functions.printFailMessage(message, exception)
-        sys.exit()
+        sys.exit(1)
     else:
         Functions.printSuccessMessage(message)
 
@@ -25,7 +29,7 @@ def login(ftp, user, password):
         ftp.login(user, password)
     except Exception as exception:
         Functions.printFailMessage(message, exception)
-        sys.exit()
+        sys.exit(1)
     else:
         Functions.printSuccessMessage(message)
 
@@ -42,7 +46,7 @@ def makeDir(ftp, path):
         ftp.mkd(path)
     except Exception as exception:
         Functions.printFailMessage(message, exception)
-        sys.exit()
+        sys.exit(1)
     else:
         Functions.printSuccessMessage(message)
 
@@ -59,7 +63,7 @@ def uploadFile(ftp, source, destination):
             ftp.storbinary(f'STOR {destination}', fb)
     except Exception as exception:
         Functions.printFailMessage(message, exception)
-        sys.exit()
+        sys.exit(1)
     else:
         Functions.printSuccessMessage(message)
 
@@ -76,7 +80,7 @@ def uploadDir(ftp, source, destination):
                 uploadFile(ftp, source_file, destination_dir)
     except Exception as exception:
         Functions.printFailMessage(message, exception)
-        sys.exit()
+        sys.exit(1)
     else:
         Functions.printSuccessMessage(message)
 
@@ -89,10 +93,10 @@ def upload(ftp, source, destination):
             uploadDir(ftp, source, destination)
         else:
             Functions.printFailMessage(message)
-            sys.exit()
+            sys.exit(1)
     except Exception as exception:
         Functions.printFailMessage(message, exception)
-        sys.exit()
+        sys.exit(1)
     else:
         Functions.printSuccessMessage(message)
 
@@ -124,13 +128,13 @@ def removeDir(ftp, path):
         ftp.rmd(path)
     except Exception as exception:
         Functions.printNeutralMessage(message, exception)
-        sys.exit()
+        sys.exit(1)
     else:
         Functions.printSuccessMessage(message)
 
 def deploy():
     branch = sys.argv[1]
-    if branch != 'master' and branch != 'develop' and branch != 'hot_fixes':
+    if branch != 'master':
         Functions.printNeutralMessage(f'No ftp upload for branch {branch}')
         return
 

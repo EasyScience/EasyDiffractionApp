@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 easyDiffraction contributors <support@easydiffraction.org>
+// SPDX-License-Identifier: BSD-3-Clause
+// © 2021 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+
 import QtQuick 2.13
 
 import easyApp.Gui.Style 1.0 as EaStyle
@@ -14,7 +18,13 @@ EaCharts.BaseBokeh {
 
     plotRanges: ExGlobals.Constants.proxy.plotting1d.analysisPlotRangesObj
 
-    xAxisTitle: "2θ (deg)"
+    xAxisTitle: {
+        if (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DCW') {
+            return "2θ (deg)"
+        } else if (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DTOF') {
+            return "TOF (μs)"
+        }
+    }
     yMainAxisTitle: {
         let title = 'Icalc'
         if (hasMeasuredData) title = 'Imeas, Icalc'

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 easyDiffraction contributors <support@easydiffraction.org>
+// SPDX-License-Identifier: BSD-3-Clause
+// © 2021 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 
@@ -13,8 +17,8 @@ EaElements.RemoteController {
     id: rc
 
     property bool isPreparationToFitDone: false
-    property bool isFitSuccessfullyDone: typeof ExGlobals.Constants.proxy.fitResults.success !== 'undefined' &&
-                                         ExGlobals.Constants.proxy.isFitFinished
+    property bool isFitSuccessfullyDone: typeof ExGlobals.Constants.proxy.fitting.fitResults.success !== 'undefined' &&
+                                         ExGlobals.Constants.proxy.fitting.isFitFinished
 
     visible: false
     audioDir: Qt.resolvedUrl("../../Resources/Audio")
@@ -370,6 +374,8 @@ EaElements.RemoteController {
 
         // Analysis page
         rc.mouseClick(ExGlobals.Variables.fitCellACheckBox)
+        rc.mouseClick(ExGlobals.Variables.fitCellBCheckBox)
+        rc.mouseClick(ExGlobals.Variables.fitCellCCheckBox)
         rc.mouseClick(ExGlobals.Variables.parametersFilterTypeSelector)
         rc.mouseClick(ExGlobals.Variables.parametersFilterTypeSelector, x_pos, y_pos)
         rc.mouseClick(ExGlobals.Variables.fitZeroShiftCheckBox)
@@ -379,8 +385,9 @@ EaElements.RemoteController {
                     0
         rc.mouseClick(ExGlobals.Variables.fitResolutionYValue, x_pos)
         rc.deleteCharacters(4)
-        rc.typeText("0961")
+        rc.typeText("0")
         rc.keyClick(Qt.Key_Enter) // DOESN'T WORK ON CI XVFB ?
+        rc.mouseClick(ExGlobals.Variables.fitResolutionYCheckBox)
         rc.wait(1000)
         rc.mouseClick(ExGlobals.Variables.startFittingButton)
 

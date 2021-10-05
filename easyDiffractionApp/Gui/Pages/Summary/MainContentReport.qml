@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2021 easyDiffraction contributors <support@easydiffraction.org>
+// SPDX-License-Identifier: BSD-3-Clause
+// © 2021 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 import QtWebEngine 1.10
@@ -14,8 +18,8 @@ import Gui.Globals 1.0 as ExGlobals
 Item {
     id: container
 
-    property bool isFitting: typeof ExGlobals.Constants.proxy.fitResults.redchi2 !== 'undefined'
-    property bool hasPhases: Object.keys(ExGlobals.Constants.proxy.phasesAsObj).length !== 0
+    property bool isFitting: typeof ExGlobals.Constants.proxy.fitting.fitResults.redchi2 !== 'undefined'
+    property bool hasPhases: Object.keys(ExGlobals.Constants.proxy.phase.phasesAsObj).length !== 0
     property string htmlBackground: EaStyle.Colors.contentBackground
     property int chartWidth: 520
 
@@ -33,8 +37,8 @@ Item {
     property string dataChartLibVersion: EaLogic.Plotting.bokehInfo().version
     property string dataChartLibUrl: EaLogic.Plotting.bokehInfo().url
 
-    property int dataChartWidth: chartWidth
-    property int dataChartHeight: chartWidth
+    property int dataChartWidth: chartWidth + EaStyle.Sizes.fontPixelSize
+    property int dataChartHeight: dataChartWidth
     property int dataChartPadding: EaStyle.Sizes.fontPixelSize
 
     property string dataChartBackgroundColor: EaStyle.Colors.chartPlotAreaBackground
@@ -81,7 +85,7 @@ Item {
 
         Component.onCompleted: {
             ExGlobals.Variables.reportWebView = this
-            ExGlobals.Constants.proxy.htmlExportingFinished.connect(htmlExportingFinished)
+            ExGlobals.Constants.proxy.project.htmlExportingFinished.connect(htmlExportingFinished)
         }
     }
 
@@ -135,7 +139,7 @@ Item {
 
     onHtmlChanged: {
         //print(html)
-        ExGlobals.Constants.proxy.setReport(html)
+        ExGlobals.Constants.proxy.project.setReport(html)
         webView.loadHtml(html)
     }
 
@@ -316,7 +320,7 @@ Item {
                   '    position: absolute;',
                   '    bottom: 100%;',
                   '    left: 50%;',
-                  '    transform: translate(-50%, calc(-0.75 * var(--fontPixelSize) * 1px));',
+                  '    transform: translate(-50%, calc(-1.5 * var(--fontPixelSize) * 1px));',
                   '    font-family: "PT Sans", sans-serif;',
                   '    font-size: calc(var(--fontPixelSize) * 1px);',
                   '    padding: calc(0.75 * var(--fontPixelSize) * 1px) calc(var(--fontPixelSize) * 1px);',
@@ -355,7 +359,7 @@ Item {
     }
 
     property string structureChart: ''
-    property string cifStr: ExGlobals.Constants.proxy.phasesAsExtendedCif
+    property string cifStr: ExGlobals.Constants.proxy.phase.currentPhaseAsExtendedCif
     onCifStrChanged: ExGlobals.Variables.chemDoodleStructureChart.runJavaScript(
                          'document.body.outerHTML',
                          function(result) {
@@ -388,10 +392,14 @@ Item {
             },
             // specs
             {
-                chartWidth: dataChartWidth, //dataChartWidth,
-                mainChartHeight: ExGlobals.Variables.analysisChart.mainChartHeight * 0.84,
+                chartWidth: dataChartWidth,
+                mainChartHeight: dataChartHeight -
+                                 ExGlobals.Variables.analysisChart.braggChartHeight -
+                                 ExGlobals.Variables.analysisChart.differenceChartHeight -
+                                 ExGlobals.Variables.analysisChart.xAxisChartHeight -
+                                 dataChartPadding * 2,
                 braggChartHeight: ExGlobals.Variables.analysisChart.braggChartHeight,
-                differenceChartHeight: ExGlobals.Variables.analysisChart.differenceChartHeight * 0.84,
+                differenceChartHeight: ExGlobals.Variables.analysisChart.differenceChartHeight,
                 xAxisChartHeight: ExGlobals.Variables.analysisChart.xAxisChartHeight,
 
                 xAxisTitle: ExGlobals.Variables.analysisChart.xAxisTitle,
@@ -438,7 +446,7 @@ Item {
         hlist.push('</tr>')
         list.push(hlist.join(' '))
         // data
-        const params = ExGlobals.Constants.proxy.parametersAsObj
+        const params = ExGlobals.Constants.proxy.parameters.parametersAsObj
         for (let i = 0; i < params.length; i++) {
             const number = params[i].number
             const label = params[i].label.replace('.point_background', '')
@@ -464,12 +472,12 @@ Item {
     property string projectSection: {
         if (!hasPhases)
             return ''
-        const projectDescription = ExGlobals.Constants.proxy.projectInfoAsJson.short_description
-        const phaseName = ExGlobals.Constants.proxy.phasesAsObj[0].name
-        const datasetName = ExGlobals.Constants.proxy.experimentDataAsObj[0].name
-        const modifiedDate = ExGlobals.Constants.proxy.projectInfoAsJson.modified
+        const projectDescription = ExGlobals.Constants.proxy.project.projectInfoAsJson.short_description
+        const phaseName = ExGlobals.Constants.proxy.phase.phasesAsObj[0].name
+        const datasetName = ExGlobals.Constants.proxy.experiment.experimentDataAsObj[0].name
+        const modifiedDate = ExGlobals.Constants.proxy.project.projectInfoAsJson.modified
         const list = [
-                `<h1>${ExGlobals.Constants.proxy.projectInfoAsJson.name}</h1>`,
+                `<h1>${ExGlobals.Constants.proxy.project.projectInfoAsJson.name}</h1>`,
                 '<p>',
                 `<b>Short description:</b> ${projectDescription}<br>`,
                 `<b>Structural phases:</b> ${phaseName}<br>`,
@@ -497,7 +505,7 @@ Item {
     property string structureSection: {
         if (!hasPhases)
             return ''
-        const phase = ExGlobals.Constants.proxy.phasesAsObj[0]
+        const phase = ExGlobals.Constants.proxy.phase.phasesAsObj[0]
         const phaseName = phase.name
         const spaceGroup = phase.spacegroup._space_group_HM_name.value
         const list = [

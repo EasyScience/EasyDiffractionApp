@@ -6,6 +6,7 @@ import os
 import sys
 import datetime
 import argparse
+import pip
 import toml
 
 

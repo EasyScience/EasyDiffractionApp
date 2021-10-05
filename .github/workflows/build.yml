@@ -53,7 +53,7 @@ jobs:
 
       - name: Add extra info to pyproject.toml
         run: |
-          python -m pip install toml
+          python -m pip install pip toml
           python utils.py --update
 
       # https://docs.github.com/en/actions/reference/environment-variables

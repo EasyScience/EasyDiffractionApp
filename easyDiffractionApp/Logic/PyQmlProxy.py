@@ -72,7 +72,7 @@ class PyQmlProxy(QObject):
     # 1d plotting
     @Property('QVariant', notify=dummySignal)
     def plotting1d(self):
-        return self.lc.chartsLogic.plotting1d()
+        return self._plotting_1d_proxy
 
     # 3d plotting
     @Property('QVariant', notify=dummySignal)

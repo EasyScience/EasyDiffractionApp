@@ -134,7 +134,7 @@ jobs:
         run: poetry run python ${{ env.SCRIPTS_PATH }}/ZipArtifacts.py ${{ env.BRANCH_NAME }}
 
       - name: Upload zipped offline app installer to GitHub releases (non-master branch)
-        if: github.event_name == 'push' && '${{ env.BRANCH_NAME }}' != 'master'
+        if: github.event_name == 'push' && env.BRANCH_NAME != 'master'
         uses: ncipollo/release-action@v1
         with:
           draft: true
@@ -148,7 +148,7 @@ jobs:
           bodyFile: "RELEASE.md"
 
       - name: Upload zipped offline app installer to GitHub releases (master branch)
-        if: github.event_name == 'push' && '${{ env.BRANCH_NAME }}' == 'master'
+        if: github.event_name == 'push' && env.BRANCH_NAME == 'master'
         uses: ncipollo/release-action@v1
         with:
           draft: true

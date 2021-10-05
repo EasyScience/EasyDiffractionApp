@@ -6,7 +6,6 @@ import os
 import sys
 import datetime
 import argparse
-import pip
 import toml
 
 
@@ -34,6 +33,8 @@ def getValue(d, element):
 ### Update pyproject.toml
 
 def extraDict():
+    import pip
+
     python_packages_path = os.path.dirname(pip.__path__[0]).replace('\\', '/')
 
     dt = datetime.datetime.now()

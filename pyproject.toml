@@ -33,8 +33,8 @@ easyApp = { git = 'https://github.com/easyScience/easyApp.git', rev = 'develop' 
 
 #[tool.poetry.dev-dependencies]
 # PyInstaller
-#pyinstaller = '^4.3'
-pyinstaller = { git = 'https://github.com/pyinstaller/pyinstaller.git', rev = 'develop' }
+pyinstaller = '^4.5.1'
+#pyinstaller = { git = 'https://github.com/pyinstaller/pyinstaller.git', rev = 'develop' }
 pywin32-ctypes = { version = '^0.2.0', platform = 'win32' }
 pypiwin32 = { version = '^223', platform = 'win32' }
 pefile = { version = '^2019.4.18', platform = 'win32' }

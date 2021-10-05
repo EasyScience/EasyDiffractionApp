@@ -167,7 +167,7 @@ def appPackageXml():
                 'DisplayName': CONFIG.app_name,
                 'Description': CONFIG['tool']['poetry']['description'],
                 'Version': CONFIG.app_version,
-                'ReleaseDate': CONFIG['release']['date_for_qtifw'],
+                'ReleaseDate': CONFIG['ci']['app']['info']['date_for_qtifw'],
                 'Default': 'true',
                 #'SortingPriority': 100,
                 'Essential': 'true',

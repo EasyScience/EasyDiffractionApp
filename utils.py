@@ -37,7 +37,8 @@ def extraDict():
     python_packages_path = os.path.dirname(pip.__path__[0]).replace('\\', '/')
 
     dt = datetime.datetime.now()
-    build_date = f'{dt.day} {dt:%b} {dt.year}'
+    build_date = f'{dt.day} {dt:%b} {dt.year}'  # e.g. 3 Jun 2021
+    date_for_qtifw = f'{dt.year}-{dt:%m}-{dt:%d}'  # e.g. 2021-06-03
 
     github_server_url = os.getenv('GITHUB_SERVER_URL', '')
     github_repo = os.getenv('GITHUB_REPOSITORY', '')
@@ -52,6 +53,7 @@ def extraDict():
 
     return { 'ci': { 'cache': { 'python_packages_path': python_packages_path },
                      'app': { 'info': { 'build_date': build_date,
+                                        'date_for_qtifw': date_for_qtifw,
                                         'branch_name': branch_name,
                                         'branch_url': branch_url,
                                         'commit_sha_short': commit_sha_short,

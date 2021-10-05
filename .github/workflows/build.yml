@@ -52,7 +52,9 @@ jobs:
         run: echo "BRANCH_NAME=$GITHUB_HEAD_REF" >> $GITHUB_ENV
 
       - name: Add extra info to pyproject.toml
-        run: python utils.py --update
+        run: |
+          python -m pip install toml
+          python utils.py --update
 
       # https://docs.github.com/en/actions/reference/environment-variables
       - name: Declare env variables on push and pull_request

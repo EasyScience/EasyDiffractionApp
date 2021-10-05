@@ -4,17 +4,9 @@
 
 import os
 import sys
-import pip
-import pathlib
 import datetime
 import argparse
-
-try:
-    import toml
-except ImportError:
-    import pip
-    pip.main(['install', 'toml'])
-    import toml
+import toml
 
 
 ### Get value from pyproject.toml

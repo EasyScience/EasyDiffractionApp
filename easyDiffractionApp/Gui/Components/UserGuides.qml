@@ -213,7 +213,7 @@ Item {
         EaComponents.GuideWindow {
             container: summaryPageGuidesContainer
             parent: ExGlobals.Variables.summaryPageMainContent
-            text: qsTr("The report contains a project summary including;\nlist of fitable parameters, structure view and\nfitting plot.")
+            text: qsTr("The report contains a project summary including;\nlist of fittable parameters, structure view and\nfitting plot.")
         }
 
         EaComponents.GuideWindow {

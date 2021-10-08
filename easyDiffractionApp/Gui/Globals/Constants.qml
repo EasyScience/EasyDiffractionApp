@@ -46,7 +46,7 @@ QtObject {
 `${appName} is a scientific software for
 modelling and analysis of neutron diffraction data.
 
-${appName} is build by ESS DMSC in
+${appName} is built by ESS DMSC in
 Copenhagen, Denmark.`
 
     readonly property string essLogo: logo('ESSlogo.png')

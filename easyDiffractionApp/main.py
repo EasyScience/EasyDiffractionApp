@@ -91,7 +91,11 @@ def main():
     engine.rootContext().setContextProperty('_translator', translator)
     engine.rootContext().setContextProperty('_projectConfig', CONFIG)
     engine.rootContext().setContextProperty('_isTestMode', args.testmode)
-    engine.rootContext().setContextProperty('_isSystemThemeDark', darkdetect.isDark())
+    try:
+        isDark = darkdetect.isDark()
+    except FileNotFoundError:
+        isDark = False
+    engine.rootContext().setContextProperty('_isSystemThemeDark', isDark)
 
     # Register types to be instantiated in QML
     qmlRegisterType(Updater, 'easyApp.Logic.Maintenance', 1, 0, 'Updater')

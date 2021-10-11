@@ -65,12 +65,6 @@ Run **MaintenanceTool** from the **easydiffraction** installation directory, sel
 In the **Finder**, locate the **easydiffraction** installer application, then _control-click_ the installer icon, then choose _Open_ from the shortcut menu and finally click _Open_.
 - On `Linux` based system there can be the following error on startup: _Failed to create OpenGL context for format QSurfaceFormat_. This is due to a system OpenGL driver problem. Please re-install your graphics card drivers.
 
-## Common Issues
-
-- On `macOS`, if you see the message _easyDiffractionSetup.app can't be opened because it is from an unidentified developer_, do the following:
-In the **Finder**, locate the **easyDiffraction** installer application, then _control-click_ the installer icon, then choose _Open_ from the shortcut menu and finally click _Open_.
-- On `Linux` based system there can be the following error on startup: _Failed to create OpenGL context for format QSurfaceFormat_. This is due to a system OpenGL driver problem. Please re-install your graphics card drivers.
-
 ## Contributing
 
 We absolutely welcome contributions. **easyDiffraction** is maintained by the [European Spallation Source ERIC (ESS)](https://europeanspallationsource.se/) and on a volunteer basis and thus we need to foster a community that can support user questions and develop new features to make this software a useful tool for all users while encouraging every member of the community to share their ideas.

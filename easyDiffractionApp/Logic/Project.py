@@ -239,7 +239,7 @@ class ProjectLogic(QObject):
         projectPath = self._currentProjectPath
         project_save_filepath = os.path.join(projectPath, 'project.json')
         descr = {
-            'sample': self.parent.l_sample._sample.as_dict(skip=['interface'])
+            'sample': self.parent.l_sample._sample.as_dict(skip=['interface','calculator'])
         }
         if self.parent.l_parameters._data.experiments:
             experiments_x = self.parent.l_parameters._data.experiments[0].x

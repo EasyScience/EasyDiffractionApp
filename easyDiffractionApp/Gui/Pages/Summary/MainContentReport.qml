@@ -376,15 +376,15 @@ Item {
                 calculated: ExGlobals.Constants.proxy.plotting1d.bokehCalculatedDataObj,
                 difference: ExGlobals.Constants.proxy.plotting1d.bokehDifferenceDataObj,
                 bragg: ExGlobals.Constants.proxy.plotting1d.bokehBraggDataObj,
-                background: ExGlobals.Constants.proxy.plotting1d.bokehBackgroundDataObj,
-                ranges: ExGlobals.Variables.analysisChart.plotRanges,
+                background: ExGlobals.Constants.proxy.plotting1d.bokehBackgroundDataObj//,
+                //ranges: ExGlobals.Variables.analysisChart.plotRanges//,
 
-                hasMeasured: ExGlobals.Variables.analysisChart.hasMeasuredData,
-                hasCalculated: ExGlobals.Variables.analysisChart.hasCalculatedData,
-                hasDifference: ExGlobals.Variables.analysisChart.hasDifferenceData,
-                hasBragg: ExGlobals.Variables.analysisChart.hasBraggData,
-                hasBackground: ExGlobals.Variables.analysisChart.hasBackgroundData,
-                hasPlotRanges: ExGlobals.Variables.analysisChart.hasPlotRangesData
+                //hasMeasured: ExGlobals.Variables.analysisChart.hasMeasuredData,
+                //hasCalculated: ExGlobals.Variables.analysisChart.hasCalculatedData,
+                //hasDifference: ExGlobals.Variables.analysisChart.hasDifferenceData,
+                //hasBragg: ExGlobals.Variables.analysisChart.hasBraggData,
+                //hasBackground: ExGlobals.Variables.analysisChart.hasBackgroundData,
+                //hasPlotRanges: ExGlobals.Variables.analysisChart.hasPlotRangesData
             },
             // specs
             {

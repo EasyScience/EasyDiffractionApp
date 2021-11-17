@@ -7,6 +7,7 @@ __version__ = '0.0.1'
 
 import os, sys
 import glob
+import site
 import PySide2, shiboken2
 import cryspy, GSASII
 import easyCore, easyDiffractionLib, easyApp
@@ -43,6 +44,8 @@ def addedData():
         for extra_file in extras:
             data.append({'from': extra_file, 'to': '.'})
 
+    data = data + copyCalculators()
+
     formatted = []
     for element in data:
         formatted.append(f'--add-data={element["from"]}{separator}{element["to"]}')
@@ -55,6 +58,23 @@ def appIcon():
     icon_path = os.path.join(CONFIG.package_name, icon_dir, f'{icon_name}{icon_ext}')
     icon_path = os.path.abspath(icon_path)
     return f'--icon={icon_path}'
+
+def copyCalculators():
+    missing_calculator_libs = CONFIG['ci']['pyinstaller']['missing_calculator_libs'][CONFIG.os]
+    data = []
+    try:
+        message = 'Copy calculator libraries'
+        # use the last element, since on certain conda installations we get more than one entry
+        site_packages_path = site.getsitepackages()[-1]
+        for lib_name in missing_calculator_libs:
+            lib_path = os.path.join(site_packages_path, lib_name)
+            data.append({'from': lib_path, 'to': lib_name})
+    except Exception as exception:
+        Functions.printFailMessage(message, exception)
+        sys.exit(1)
+
+    Functions.printSuccessMessage(message)
+    return data
 
 def copyMissingLibs():
     missing_files = CONFIG['ci']['pyinstaller']['missing_pyside2_files'][CONFIG.os]

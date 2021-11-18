@@ -33,9 +33,10 @@ class Plotting1dLogic(QObject):
     qtchartsBraggDataObjChanged = Signal()
     qtchartsBackgroundDataObjChanged = Signal()
 
-    def __init__(self, parent):
+    def __init__(self, parent, interface=None):
         super().__init__(parent)
         self.parent = parent
+        self._interface = interface
         # Lib
         self._libs = ['bokeh', 'qtcharts']
         self._current_lib = 'bokeh'
@@ -296,6 +297,18 @@ class Plotting1dLogic(QObject):
             'y_lower': Plotting1dLogic.aroundY(self._measured_yarray_lower)
         }
         self.bokehMeasuredDataObjChanged.emit()
+
+    def setCalculatedDataForPhase(self, index=0):
+        new_yarray = self._interface.get_calculated_y_for_phase(index)
+        self._calculated_yarray = new_yarray
+        self.setCalculatedData(self._calculated_xarray, self._calculated_yarray)
+        self.setTotalDataForPhases()
+
+    def setTotalDataForPhases(self):
+        new_xarray, new_yarray = self._interface.get_total_y_for_phases()
+        self._measured_yarray = new_yarray
+        self._measured_xarray = new_xarray
+        self.setMeasuredData(self._measured_xarray, self._measured_yarray)
 
     def _setBokehCalculatedDataObj(self):
         self._bokeh_calculated_data_obj = {

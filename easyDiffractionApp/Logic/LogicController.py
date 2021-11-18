@@ -44,7 +44,7 @@ class LogicController(QObject):
         self.l_phase = PhaseLogic(self, interface=self.interface)
         self.l_sample = SampleLogic(self, interface=self.interface)
         self.l_fitting = FittingLogic(self, interface=self.interface)
-        self.l_plotting1d = Plotting1dLogic(self)
+        self.l_plotting1d = Plotting1dLogic(self, interface=self.interface)
         self.l_plotting3d = Plotting3dLogic(self)
         self.l_background = BackgroundLogic(self)
         self.l_project = ProjectLogic(self, interface=self.interface)

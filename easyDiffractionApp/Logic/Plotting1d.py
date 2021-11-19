@@ -26,6 +26,7 @@ class Plotting1dLogic(QObject):
     bokehDifferenceDataObjChanged = Signal()
     bokehBraggDataObjChanged = Signal()
     bokehBackgroundDataObjChanged = Signal()
+    bokehPhaseDataObjChanged = Signal()
 
     qtchartsMeasuredDataObjChanged = Signal()
     qtchartsCalculatedDataObjChanged = Signal()
@@ -89,6 +90,7 @@ class Plotting1dLogic(QObject):
         # Data containers for GUI
         self._bokeh_measured_data_obj = {}
         self._bokeh_calculated_data_obj = {}
+        self._bokeh_single_phase_data_obj = {}
         self._bokeh_difference_data_obj = {}
         self._bokeh_bragg_data_obj = {}
         self._bokeh_background_data_obj = {}
@@ -159,6 +161,7 @@ class Plotting1dLogic(QObject):
         self._bokeh_difference_data_obj = {}
         self._bokeh_bragg_data_obj = {}
         self._bokeh_background_data_obj = {}
+        self._bokeh_single_phase_data_obj = {}
 
         self._qtcharts_measured_data_obj = {}
         self._qtcharts_calculated_data_obj = {}
@@ -176,6 +179,7 @@ class Plotting1dLogic(QObject):
         self.bokehDifferenceDataObjChanged.emit()
         self.bokehBraggDataObjChanged.emit()
         self.bokehBackgroundDataObjChanged.emit()
+        self.bokehPhaseDataObjChanged.emit()
 
         self.qtchartsMeasuredDataObjChanged.emit()
         self.qtchartsCalculatedDataObjChanged.emit()
@@ -199,6 +203,7 @@ class Plotting1dLogic(QObject):
         self._setCalculatedDataRanges()
         self._setAnalysisPlotRanges()
         self._setBokehCalculatedDataObj()
+        self._setBokehSinglePhaseDataObj()
         if self.currentLib == 'qtcharts':
             self._setQtChartsCalculatedDataObj()
         if self._measured_xarray.size:
@@ -298,11 +303,18 @@ class Plotting1dLogic(QObject):
         }
         self.bokehMeasuredDataObjChanged.emit()
 
+    def _setBokehSinglePhaseDataObj(self, index=None):
+        if index is None:
+            index=self.parent.proxy.phase.currentPhaseIndex
+        y = self._interface.get_calculated_y_for_phase(index)
+        self._bokeh_single_phase_data_obj = {
+            'x': Plotting1dLogic.aroundX(self._calculated_xarray),
+            'y': Plotting1dLogic.aroundY(y)
+        }
+        self.bokehPhaseDataObjChanged.emit()
+
     def setCalculatedDataForPhase(self, index=0):
-        new_yarray = self._interface.get_calculated_y_for_phase(index)
-        self._calculated_yarray = new_yarray
-        self.setCalculatedData(self._calculated_xarray, self._calculated_yarray)
-        self.setTotalDataForPhases()
+        self._setBokehSinglePhaseDataObj(index=index)
 
     def setTotalDataForPhases(self):
         new_xarray, new_yarray = self._interface.get_total_y_for_phases()

@@ -378,6 +378,7 @@ Item {
             {
                 measured: ExGlobals.Constants.proxy.plotting1d.bokehMeasuredDataObj,
                 calculated: ExGlobals.Constants.proxy.plotting1d.bokehCalculatedDataObj,
+                phase: ExGlobals.Constants.proxy.plotting1d.bokehPhaseDataObj,
                 difference: ExGlobals.Constants.proxy.plotting1d.bokehDifferenceDataObj,
                 bragg: ExGlobals.Constants.proxy.plotting1d.bokehBraggDataObj,
                 background: ExGlobals.Constants.proxy.plotting1d.bokehBackgroundDataObj,
@@ -385,6 +386,7 @@ Item {
 
                 hasMeasured: ExGlobals.Variables.analysisChart.hasMeasuredData,
                 hasCalculated: ExGlobals.Variables.analysisChart.hasCalculatedData,
+                hasPhase: ExGlobals.Constants.proxy.plotting1d.hasSinglePhaseData,
                 hasDifference: ExGlobals.Variables.analysisChart.hasDifferenceData,
                 hasBragg: ExGlobals.Variables.analysisChart.hasBraggData,
                 hasBackground: ExGlobals.Variables.analysisChart.hasBackgroundData,

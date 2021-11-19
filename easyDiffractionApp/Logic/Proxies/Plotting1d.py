@@ -29,6 +29,7 @@ class Plotting1dProxy(QObject):
     bokehDifferenceDataObjChanged = Signal()
     bokehBraggDataObjChanged = Signal()
     bokehBackgroundDataObjChanged = Signal()
+    bokehPhaseDataObjChanged = Signal()
 
     qtchartsMeasuredDataObjChanged = Signal()
     qtchartsCalculatedDataObjChanged = Signal()
@@ -50,6 +51,7 @@ class Plotting1dProxy(QObject):
         # Data containers
         self.logic.bokehMeasuredDataObjChanged.connect(self.bokehMeasuredDataObjChanged)
         self.logic.bokehCalculatedDataObjChanged.connect(self.bokehCalculatedDataObjChanged)
+        self.logic.bokehPhaseDataObjChanged.connect(self.bokehPhaseDataObjChanged)
         self.logic.bokehDifferenceDataObjChanged.connect(self.bokehDifferenceDataObjChanged)
         self.logic.bokehBraggDataObjChanged.connect(self.bokehBraggDataObjChanged)
         self.logic.bokehBackgroundDataObjChanged.connect(self.bokehBackgroundDataObjChanged)
@@ -90,6 +92,10 @@ class Plotting1dProxy(QObject):
     @Property('QVariant', notify=bokehCalculatedDataObjChanged)
     def bokehCalculatedDataObj(self):
         return self.logic._bokeh_calculated_data_obj
+
+    @Property('QVariant', notify=bokehPhaseDataObjChanged)
+    def bokehPhaseDataObj(self):
+        return self.logic._bokeh_single_phase_data_obj
 
     @Property('QVariant', notify=bokehDifferenceDataObjChanged)
     def bokehDifferenceDataObj(self):

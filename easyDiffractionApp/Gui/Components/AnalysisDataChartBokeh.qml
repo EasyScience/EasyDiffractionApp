@@ -12,7 +12,7 @@ import Gui.Globals 1.0 as ExGlobals
 EaCharts.BaseBokeh {
     measuredData: ExGlobals.Constants.proxy.plotting1d.bokehMeasuredDataObj
     calculatedData: ExGlobals.Constants.proxy.plotting1d.bokehCalculatedDataObj
-    // singlePhaseData: ExGlobals.Constants.proxy.plotting1d.bokehSinglePhaseDataObj
+    phaseData: ExGlobals.Constants.proxy.plotting1d.bokehPhaseDataObj
     differenceData: ExGlobals.Constants.proxy.plotting1d.bokehDifferenceDataObj
     braggData: ExGlobals.Constants.proxy.plotting1d.bokehBraggDataObj
     backgroundData: ExGlobals.Constants.proxy.plotting1d.bokehBackgroundDataObj

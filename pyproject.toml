@@ -29,7 +29,7 @@ pyobjc-framework-cocoa = { version = '^7.1', platform = 'darwin' }
 # easyScience
 easyDiffraction = { git = 'https://github.com/easyScience/easyDiffractionLib.git', rev = 'multiphase' }
 # easyDiffraction = '>=0.0.3a0' # easyDiffractionLib from our custom PyPi server
-easyApp = { git = 'https://github.com/easyScience/easyApp.git', rev = 'develop' }
+easyApp = { git = 'https://github.com/easyScience/easyApp.git', rev = 'multiphase' }
 
 #[tool.poetry.dev-dependencies]
 # PyInstaller

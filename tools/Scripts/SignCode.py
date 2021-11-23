@@ -128,15 +128,41 @@ def signMacos():
             Functions.printSuccessMessage(sub_message)
 
         try:
+            sub_message = f'verify app signatures (before .app signing)'
+            Functions.run(
+                'codesign',
+                '--verify',                 # verification of code signatures
+                '--verbose=1',              # set (with a numeric value) or increments the verbosity level of output
+                CONFIG.setup_exe_path)
+        except Exception as sub_exception:
+            Functions.printFailMessage(sub_message, sub_exception)
+            sys.exit(1)
+        else:
+            Functions.printSuccessMessage(sub_message)
+
+        try:
             sub_message = f'sign code with imported certificate'
             Functions.run(
                 'codesign',
                 '--deep',                   # nested code content such as helpers, frameworks, and plug-ins, should be recursively signed
                 '--force',                  # replace any existing signature on the path(s) given
-                '--verbose=4',              # set (with a numeric value) or increments the verbosity level of output
+                '--verbose=1',              # set (with a numeric value) or increments the verbosity level of output
                 '--timestamp',              # request that a default Apple timestamp authority server be contacted to authenticate the time of signin
                 '--options=runtime',        # specify a set of option flags to be embedded in the code signature
                 '--sign', MACOS_IDENTITY,   # sign the code at the path(s) given using this identity
+                CONFIG.setup_exe_path)
+        except Exception as sub_exception:
+            Functions.printFailMessage(sub_message, sub_exception)
+            sys.exit(1)
+        else:
+            Functions.printSuccessMessage(sub_message)
+
+        try:
+            sub_message = f'verify app signatures (after .app signing)'
+            Functions.run(
+                'codesign',
+                '--verify',                 # verification of code signatures
+                '--verbose=1',              # set (with a numeric value) or increments the verbosity level of output
                 CONFIG.setup_exe_path)
         except Exception as sub_exception:
             Functions.printFailMessage(sub_message, sub_exception)

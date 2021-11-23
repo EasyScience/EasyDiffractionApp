@@ -14,7 +14,7 @@ import Functions
 
 CONFIG = Config.Config()
 
-MACOS_IDENTITY = CONFIG['ci']['codesign']['macos']
+MACOS_IDENTITY = CONFIG['ci']['codesign']['macos']['identity']
 MACOS_CERTIFICATE_PASSWORD = sys.argv[1]
 MACOS_CERTIFICATE_ENCODED = sys.argv[2]
 

@@ -33,7 +33,7 @@ easyApp = { git = 'https://github.com/easyScience/easyApp.git', rev = 'develop' 
 
 #[tool.poetry.dev-dependencies]
 # PyInstaller
-pyinstaller = '4.5.1'
+pyinstaller = '4.6'  # 4.7 gives "ModuleNotFoundError: No module named 'pip'" on Ubuntu, when run app
 #pyinstaller = { git = 'https://github.com/pyinstaller/pyinstaller.git', rev = 'develop' }
 pywin32-ctypes = { version = '^0.2.0', platform = 'win32' }
 pypiwin32 = { version = '^223', platform = 'win32' }

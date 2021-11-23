@@ -44,8 +44,6 @@ def signMacos():
         else:
             Functions.printSuccessMessage(sub_message)
 
-        exit()
-
         try:
             sub_message = f'create keychain'
             Functions.run(

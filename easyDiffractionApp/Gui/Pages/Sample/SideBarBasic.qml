@@ -28,19 +28,17 @@ EaComponents.SideBarColumn {
             spacing: EaStyle.Sizes.fontPixelSize
 
             EaElements.SideBarButton {
-                enabled: ExGlobals.Constants.proxy.phase.phasesAsObj.length === 0
-
+                enabled: true
                 fontIcon: "upload"
-                text: qsTr("Set new phase from CIF")
+                text: qsTr("Add new phase from CIF")
 
                 onClicked: loadPhaseFileDialog.open()
             }
 
             EaElements.SideBarButton {
-                enabled: ExGlobals.Constants.proxy.phase.phasesAsObj.length === 0
-
+                enabled: true
                 fontIcon: "plus-circle"
-                text: qsTr("Set new phase manually")
+                text: qsTr("Add new phase manually")
 
                 onClicked: ExGlobals.Constants.proxy.phase.addDefaultPhase()
 

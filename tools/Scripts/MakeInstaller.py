@@ -11,7 +11,6 @@ import requests
 import xml.dom.minidom
 import dephell_licenses
 import Functions, Config
-import Signatures
 
 
 CONFIG = Config.Config()
@@ -251,23 +250,6 @@ def installQtInstallerFramework():
     else:
         Functions.printSuccessMessage(message)
 
-def prepareSignedMaintenanceTool():
-    if CONFIG.setup_os != "Windows":
-        return
-    try:
-        message = 'copy and sign MaintenanceTool'
-        target_dir = CONFIG['ci']['project']['subdirs']['certificates_path']
-        target_file = os.path.join(target_dir, "signedmaintenancetool.exe")
-        # copy MaintenanceTool locally
-        Functions.copyFile(os.path.join(qtifwDirPath(), "bin", "installerbase.exe" ), target_file)
-        Signatures.unzipCerts(zip_pass=sys.argv[2])
-        Signatures.sign_windows(file_to_sign=target_file, cert_pass=sys.argv[1])
-    except Exception as exception:
-        Functions.printFailMessage(message, exception)
-        sys.exit(1)
-    else:
-        Functions.printSuccessMessage(message)
-
 def createInstallerSourceDir():
     try:
         message = f'create installer source directory {setupBuildDirPath()}'
@@ -387,7 +369,6 @@ if __name__ == "__main__":
     downloadQtInstallerFramework()
     osDependentPreparation()
     installQtInstallerFramework()
-    prepareSignedMaintenanceTool()
     createInstallerSourceDir()
     createOfflineInstaller()
     createOnlineRepositoryLocally()

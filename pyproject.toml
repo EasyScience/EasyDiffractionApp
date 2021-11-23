@@ -73,14 +73,15 @@ download = '.ci/download'
 screenshots = '.ci/screenshots'
 build = '.ci/build'
 distribution = '.ci/distribution'
-certificates_path = 'Certificates'
 
 [ci.scripts]
 silent_install = 'SilentInstall.js'
 package_install = 'InstallerInstallScript.js'
 config_control = 'InstallerControlScript.js'
 config_style = 'style.qss'
-certificate_name = 'ESS_cert'
+
+[ci.codesign.macos]
+identity = 'Developer ID Application: European Spallation Source Eric (W2AG9MPZ43)'
 
 [ci.app.icon]
 dir = ['Gui', 'Resources', 'Logo']

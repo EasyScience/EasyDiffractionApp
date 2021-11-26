@@ -7,6 +7,7 @@ __version__ = '0.0.1'
 
 import os
 import sys
+import time
 import base64
 import Config
 import Functions
@@ -216,9 +217,21 @@ def signMacos():
 
         try:
             sub_message = f'download and attach (staple) tickets for notarized executables to app installer "{CONFIG.setup_exe_path}"'
+            time.sleep(20)  # Sleep for 10 seconds before calling the stapler to handle lag on Apple server
             Functions.run(
                 'xcrun', 'stapler',
                 'staple', CONFIG.setup_exe_path)
+        except Exception as sub_exception:
+            Functions.printFailMessage(sub_message, sub_exception)
+            sys.exit(1)
+        else:
+            Functions.printSuccessMessage(sub_message)
+
+        try:
+            sub_message = f'verify the stapled tickets of app installer "{CONFIG.setup_exe_path}"'
+            Functions.run(
+                'xcrun', 'stapler',
+                'validate', CONFIG.setup_exe_path)
         except Exception as sub_exception:
             Functions.printFailMessage(sub_message, sub_exception)
             sys.exit(1)

@@ -31,21 +31,14 @@ def signWindows():
 
 def signMacos():
     try:
+        ##########################
+        # Prepare for code signing
+        ##########################
+
         message = f'sign code on {CONFIG.os}'
         keychain_name = 'codesign.keychain'
         keychain_password = 'password'
         mac_certificate_fpath = 'certificate.p12'
-
-        try:
-            sub_message = f'create certificate file "{mac_certificate_fpath}"'
-            certificate_decoded = base64.b64decode(MACOS_CERTIFICATE_ENCODED)
-            with open(mac_certificate_fpath, 'wb') as f:
-                f.write(certificate_decoded)
-        except Exception as sub_exception:
-            Functions.printFailMessage(sub_message, sub_exception)
-            sys.exit(1)
-        else:
-            Functions.printSuccessMessage(sub_message)
 
         try:
             sub_message = f'create keychain "{keychain_name}"'
@@ -93,6 +86,17 @@ def signMacos():
             Functions.printSuccessMessage(sub_message)
 
         try:
+            sub_message = f'create certificate file "{mac_certificate_fpath}"'
+            certificate_decoded = base64.b64decode(MACOS_CERTIFICATE_ENCODED)
+            with open(mac_certificate_fpath, 'wb') as f:
+                f.write(certificate_decoded)
+        except Exception as sub_exception:
+            Functions.printFailMessage(sub_message, sub_exception)
+            sys.exit(1)
+        else:
+            Functions.printSuccessMessage(sub_message)
+
+        try:
             sub_message = f'import certificate "{mac_certificate_fpath}" to created keychain "{keychain_name}"'
             Functions.run(
                 'security', 'import',
@@ -130,18 +134,9 @@ def signMacos():
         else:
             Functions.printSuccessMessage(sub_message)
 
-        try:
-            sub_message = f'verify app signatures (before .app signing) for installer "{CONFIG.setup_exe_path}"'
-            Functions.run(
-                'codesign',
-                '--verify',                 # verification of code signatures
-                '--verbose=1',              # set (with a numeric value) or increments the verbosity level of output
-                CONFIG.setup_exe_path)
-        except Exception as sub_exception:
-            Functions.printFailMessage(sub_message, sub_exception)
-            sys.exit(1)
-        else:
-            Functions.printSuccessMessage(sub_message)
+        ####################
+        # Sign app installer
+        ####################
 
         try:
             sub_message = f'sign installer app "{CONFIG.setup_exe_path}" with imported certificate'
@@ -161,7 +156,7 @@ def signMacos():
             Functions.printSuccessMessage(sub_message)
 
         try:
-            sub_message = f'verify app signatures (after .app signing) for installer "{CONFIG.setup_exe_path}"'
+            sub_message = f'verify app signatures for installer "{CONFIG.setup_exe_path}"'
             Functions.run(
                 'codesign',
                 '--verify',                 # verification of code signatures
@@ -172,6 +167,10 @@ def signMacos():
             sys.exit(1)
         else:
             Functions.printSuccessMessage(sub_message)
+
+        ########################
+        # Notarize app installer
+        ########################
 
         try:
             sub_message = f'create zip archive "{CONFIG.setup_zip_path_short}" of offline app installer "{CONFIG.setup_exe_path}" for notarization'
@@ -215,9 +214,13 @@ def signMacos():
         else:
             Functions.printSuccessMessage(sub_message)
 
+        ######################
+        # Staple app installer
+        ######################
+
         try:
             sub_message = f'download and attach (staple) tickets for notarized executables to app installer "{CONFIG.setup_exe_path}"'
-            time.sleep(20)  # Sleep for 10 seconds before calling the stapler to handle lag on Apple server
+            time.sleep(120)  # Sleep for 2 minutes before calling the stapler to handle notarization lag on Apple server
             Functions.run(
                 'xcrun', 'stapler',
                 'staple', CONFIG.setup_exe_path)

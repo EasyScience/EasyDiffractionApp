@@ -15,8 +15,8 @@ import Functions
 CONFIG = Config.Config(sys.argv[1])
 
 MACOS_IDENTITY = CONFIG['ci']['codesign']['macos']['identity']
-MACOS_CERTIFICATE_PASSWORD = sys.argv[2]
-MACOS_CERTIFICATE_ENCODED = sys.argv[3]
+MACOS_CERTIFICATE_ENCODED = sys.argv[2]       # Encoded content of the certificate.p12 file
+MACOS_CERTIFICATE_PASSWORD = sys.argv[3]      # Password associated with the certificate.p12 file
 APPSTORE_NOTARIZATION_USERNAME = sys.argv[4]  # Apple ID (esss.se personal account) added to https://developer.apple.com
 APPSTORE_NOTARIZATION_PASSWORD = sys.argv[5]  # App specific password for EasyDiffraction from https://appleid.apple.com
 
@@ -36,7 +36,7 @@ def signMacos():
         mac_certificate_fpath = 'certificate.p12'
 
         try:
-            sub_message = f'create certificate file'
+            sub_message = f'create certificate file "{mac_certificate_fpath}"'
             certificate_decoded = base64.b64decode(MACOS_CERTIFICATE_ENCODED)
             with open(mac_certificate_fpath, 'wb') as f:
                 f.write(certificate_decoded)
@@ -47,7 +47,7 @@ def signMacos():
             Functions.printSuccessMessage(sub_message)
 
         try:
-            sub_message = f'create keychain'
+            sub_message = f'create keychain "{keychain_name}"'
             Functions.run(
                 'security', 'create-keychain',
                 '-p', keychain_password,
@@ -59,7 +59,7 @@ def signMacos():
             Functions.printSuccessMessage(sub_message)
 
         try:
-            sub_message = f'set created keychain to be default keychain'
+            sub_message = f'set created keychain "{keychain_name}" to be default keychain'
             Functions.run(
                 'security', 'default-keychain',
                 '-s', keychain_name)
@@ -80,7 +80,7 @@ def signMacos():
             Functions.printSuccessMessage(sub_message)
 
         try:
-            sub_message = f'unlock created keychain'
+            sub_message = f'unlock created keychain "{keychain_name}"'
             Functions.run(
                 'security', 'unlock-keychain',
                 '-p', keychain_password,
@@ -92,7 +92,7 @@ def signMacos():
             Functions.printSuccessMessage(sub_message)
 
         try:
-            sub_message = f'import certificate to created keychain'
+            sub_message = f'import certificate "{mac_certificate_fpath}" to created keychain "{keychain_name}"'
             Functions.run(
                 'security', 'import',
                 mac_certificate_fpath,
@@ -117,7 +117,7 @@ def signMacos():
             Functions.printSuccessMessage(sub_message)
 
         try:
-            sub_message = f'allow codesign to access certificate key from keychain'
+            sub_message = f'allow codesign to access certificate key from keychain "{keychain_name}"'
             Functions.run(
                 'security', 'set-key-partition-list',
                 '-S', 'apple-tool:,apple:,codesign:',
@@ -130,7 +130,7 @@ def signMacos():
             Functions.printSuccessMessage(sub_message)
 
         try:
-            sub_message = f'verify app signatures (before .app signing)'
+            sub_message = f'verify app signatures (before .app signing) for installer "{CONFIG.setup_exe_path}"'
             Functions.run(
                 'codesign',
                 '--verify',                 # verification of code signatures
@@ -143,7 +143,7 @@ def signMacos():
             Functions.printSuccessMessage(sub_message)
 
         try:
-            sub_message = f'sign code with imported certificate'
+            sub_message = f'sign installer app "{CONFIG.setup_exe_path}" with imported certificate'
             Functions.run(
                 'codesign',
                 '--deep',                   # nested code content such as helpers, frameworks, and plug-ins, should be recursively signed
@@ -160,7 +160,7 @@ def signMacos():
             Functions.printSuccessMessage(sub_message)
 
         try:
-            sub_message = f'verify app signatures (after .app signing)'
+            sub_message = f'verify app signatures (after .app signing) for installer "{CONFIG.setup_exe_path}"'
             Functions.run(
                 'codesign',
                 '--verify',                 # verification of code signatures
@@ -173,7 +173,7 @@ def signMacos():
             Functions.printSuccessMessage(sub_message)
 
         try:
-            sub_message = f'create zip archive of offline app installer for notarization'
+            sub_message = f'create zip archive "{CONFIG.setup_zip_path_short}" of offline app installer "{CONFIG.setup_exe_path}" for notarization'
             #Functions.zip(CONFIG.setup_exe_path, CONFIG.setup_zip_path_short)
             Functions.run(
                 'ditto',
@@ -190,11 +190,11 @@ def signMacos():
             Functions.printSuccessMessage(sub_message)
 
         try:
-            sub_message = f'notarize app installer for distribution outside of the Mac App Store' # Notarize the app by submitting a zipped package of the app bundle
+            sub_message = f'notarize app installer "{CONFIG.setup_zip_path_short}" for distribution outside of the Mac App Store' # Notarize the app by submitting a zipped package of the app bundle
             Functions.run(
                 'xcrun', 'altool',
                 '--notarize-app',
-                '--file', CONFIG.setup_zip_path,
+                '--file', CONFIG.setup_zip_path_short,
                 '--type', 'macos',
                 '--primary-bundle-id', CONFIG['ci']['codesign']['bundle_id'],
                 '--username', APPSTORE_NOTARIZATION_USERNAME,
@@ -206,7 +206,7 @@ def signMacos():
             Functions.printSuccessMessage(sub_message)
 
         try:
-            sub_message = f'delete submitted zip of notarized app installer'
+            sub_message = f'delete submitted zip "{CONFIG.setup_zip_path_short}" of notarized app installer'
             Functions.removeFile(CONFIG.setup_zip_path_short)
         except Exception as sub_exception:
             Functions.printFailMessage(sub_message, sub_exception)
@@ -215,7 +215,7 @@ def signMacos():
             Functions.printSuccessMessage(sub_message)
 
         try:
-            sub_message = f'download and attach (staple) tickets for notarized executables to app installer'
+            sub_message = f'download and attach (staple) tickets for notarized executables to app installer "{CONFIG.setup_exe_path}"'
             Functions.run(
                 'xcrun', 'stapler',
                 'staple', CONFIG.setup_exe_path)

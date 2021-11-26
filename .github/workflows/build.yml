@@ -127,7 +127,11 @@ jobs:
         run: poetry run python ${{ env.SCRIPTS_PATH }}/ZipAppInstaller.py ${{ env.BRANCH_NAME }}
 
       - name: Sign app installer
-        run: poetry run python ${{ env.SCRIPTS_PATH }}/SignAppInstaller.py ${{ env.BRANCH_NAME }} ${{ secrets.MACOS_CERTIFICATE_PASSWORD }} ${{ secrets.MACOS_CERTIFICATE_ENCODED }} ${{ env.APPSTORE_NOTARIZATION_USERNAME }} ${{ env.APPSTORE_NOTARIZATION_PASSWORD }}
+        run: >
+          poetry run python ${{ env.SCRIPTS_PATH }}/SignAppInstaller.py 
+          ${{ env.BRANCH_NAME }} 
+          ${{ secrets.MACOS_CERTIFICATE_PASSWORD }} ${{ secrets.MACOS_CERTIFICATE_ENCODED }} 
+          ${{ env.APPSTORE_NOTARIZATION_USERNAME }} ${{ env.APPSTORE_NOTARIZATION_PASSWORD }}
 
       - name: Upload zipped offline app installer to GitHub releases (non-master branch)
         if: github.event_name == 'push' && env.BRANCH_NAME != 'master'

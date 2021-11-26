@@ -118,20 +118,26 @@ jobs:
         run: poetry run python ${{ env.SCRIPTS_PATH }}/InstallApp.py
 
       - name: Run app in testmode, record screen and quit
-        run: poetry run python ${{ env.SCRIPTS_PATH }}/RunApp.py --testmode
+        run: >
+          poetry run python ${{ env.SCRIPTS_PATH }}/RunApp.py
+          --testmode
 
       - name: Rename test videos
-        run: poetry run python ${{ env.SCRIPTS_PATH }}/RenameTestVideos.py ${{ env.BRANCH_NAME }}
-
-      - name: Create zip archive of offline app installer
-        run: poetry run python ${{ env.SCRIPTS_PATH }}/ZipAppInstaller.py ${{ env.BRANCH_NAME }}
+        run: >
+          poetry run python ${{ env.SCRIPTS_PATH }}/RenameTestVideos.py
+          ${{ env.BRANCH_NAME }}
 
       - name: Sign app installer
         run: >
-          poetry run python ${{ env.SCRIPTS_PATH }}/SignAppInstaller.py 
-          ${{ env.BRANCH_NAME }} 
-          ${{ secrets.MACOS_CERTIFICATE_PASSWORD }} ${{ secrets.MACOS_CERTIFICATE_ENCODED }} 
+          poetry run python ${{ env.SCRIPTS_PATH }}/SignAppInstaller.py
+          ${{ env.BRANCH_NAME }}
+          ${{ secrets.MACOS_CERTIFICATE_PASSWORD }} ${{ secrets.MACOS_CERTIFICATE_ENCODED }}
           ${{ secrets.APPSTORE_NOTARIZATION_USERNAME }} ${{ secrets.APPSTORE_NOTARIZATION_PASSWORD }}
+
+      - name: Create zip archive of offline app installer for distribution
+        run: >
+          poetry run python ${{ env.SCRIPTS_PATH }}/ZipAppInstaller.py
+          ${{ env.BRANCH_NAME }}
 
       - name: Upload zipped offline app installer to GitHub releases (non-master branch)
         if: github.event_name == 'push' && env.BRANCH_NAME != 'master'
@@ -142,7 +148,7 @@ jobs:
           allowUpdates: true
           replacesArtifacts: true
           token: ${{ secrets.GITHUB_TOKEN }}
-          artifacts: "${{ env.DISTRIBUTION_PATH }}/${{ env.APP_NAME }}_*.zip,${{ env.DISTRIBUTION_PATH }}/tutorial_*.mp4"
+          artifacts: "${{ env.DISTRIBUTION_PATH }}/*.zip,${{ env.DISTRIBUTION_PATH }}/*.mp4"
           tag: ${{ env.BRANCH_NAME }}
           name: ${{ env.BRANCH_NAME }}
           bodyFile: "RELEASE.md"
@@ -156,11 +162,14 @@ jobs:
           allowUpdates: true
           replacesArtifacts: true
           token: ${{ secrets.GITHUB_TOKEN }}
-          artifacts: "${{ env.DISTRIBUTION_PATH }}/${{ env.APP_NAME }}_*.zip"
+          artifacts: "${{ env.DISTRIBUTION_PATH }}/*.zip"
           tag: ${{ env.RELEASE_TAG }}
           name: ${{ env.RELEASE_TITLE }}
           bodyFile: "RELEASE.md"
 
       - name: Upload online app installer to repository via FTP
         if: github.event_name == 'push'
-        run: poetry run python ${{ env.SCRIPTS_PATH }}/UploadToFtp.py ${{ env.BRANCH_NAME }} ${{ secrets.APP_REPO_FTP_PASSWORD }}
+        run: >
+          poetry run python ${{ env.SCRIPTS_PATH }}/UploadToFtp.py
+          ${{ env.BRANCH_NAME }}
+          ${{ secrets.APP_REPO_FTP_PASSWORD }}

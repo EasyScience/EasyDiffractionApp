@@ -11,8 +11,14 @@ import Functions, Config
 
 CONFIG = Config.Config(sys.argv[1])
 
+def source():
+    return CONFIG.setup_exe_path
+
+def destination():
+    return CONFIG.setup_zip_path
+
 def zipAppInstaller():
-    Functions.zip(CONFIG.setup_exe_path, CONFIG.setup_zip_path)
+    Functions.zip(source(), destination())
 
 if __name__ == "__main__":
     zipAppInstaller()

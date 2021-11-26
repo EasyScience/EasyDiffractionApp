@@ -17,8 +17,8 @@ CONFIG = Config.Config(sys.argv[1])
 MACOS_IDENTITY = CONFIG['ci']['codesign']['macos']['identity']
 MACOS_CERTIFICATE_PASSWORD = sys.argv[2]
 MACOS_CERTIFICATE_ENCODED = sys.argv[3]
-APPSTORE_NOTARIZATION_USERNAME = sys.argv[4]
-APPSTORE_NOTARIZATION_PASSWORD = sys.argv[5]
+APPSTORE_NOTARIZATION_USERNAME = sys.argv[4]  # Apple ID (esss.se personal account) added to https://developer.apple.com
+APPSTORE_NOTARIZATION_PASSWORD = sys.argv[5]  # App specific password for EasyDiffraction from https://appleid.apple.com
 
 def signLinux():
     Functions.printNeutralMessage('No code signing needed for linux')
@@ -173,7 +173,25 @@ def signMacos():
             Functions.printSuccessMessage(sub_message)
 
         try:
-            sub_message = f'notarize app for distribution outside of the Mac App Store' # Notarize the app by submitting a zipped package of the app bundle
+            sub_message = f'create zip archive of offline app installer for notarization'
+            setup_zip_path = os.path.splitext(CONFIG.setup_exe_path)[0] + '.zip'
+            #Functions.zip(CONFIG.setup_exe_path, setup_zip_path)
+            Functions.run(
+                'ditto',
+                '-c',
+                '-k',
+                '--rsrc',
+                '--sequesterRsrc',
+                CONFIG.setup_exe_path,
+                setup_zip_path)
+        except Exception as sub_exception:
+            Functions.printFailMessage(sub_message, sub_exception)
+            sys.exit(1)
+        else:
+            Functions.printSuccessMessage(sub_message)
+
+        try:
+            sub_message = f'notarize app installer for distribution outside of the Mac App Store' # Notarize the app by submitting a zipped package of the app bundle
             Functions.run(
                 'xcrun', 'altool',
                 '--notarize-app',
@@ -193,15 +211,6 @@ def signMacos():
             Functions.run(
                 'xcrun', 'stapler',
                 'staple', CONFIG.setup_exe_path)
-        except Exception as sub_exception:
-            Functions.printFailMessage(sub_message, sub_exception)
-            sys.exit(1)
-        else:
-            Functions.printSuccessMessage(sub_message)
-
-        try:
-            sub_message = f're-create zip archive of offline app installer after stapling'
-            Functions.zip(CONFIG.setup_exe_path, CONFIG.setup_zip_path)
         except Exception as sub_exception:
             Functions.printFailMessage(sub_message, sub_exception)
             sys.exit(1)

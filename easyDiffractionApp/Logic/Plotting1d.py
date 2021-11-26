@@ -305,8 +305,12 @@ class Plotting1dLogic(QObject):
 
     def _setBokehSinglePhaseDataObj(self, index=None):
         if index is None:
-            index=self.parent.proxy.phase.currentPhaseIndex
-        y = self._interface.get_calculated_y_for_phase(index)
+            index = self.parent.proxy.phase.currentPhaseIndex
+        try:
+            y = self._interface.get_calculated_y_for_phase(index)
+        except Exception:
+            # silent return on calculator error
+            return
         self._bokeh_single_phase_data_obj = {
             'x': Plotting1dLogic.aroundX(self._calculated_xarray),
             'y': Plotting1dLogic.aroundY(y)

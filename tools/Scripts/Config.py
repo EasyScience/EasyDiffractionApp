@@ -12,10 +12,11 @@ import Functions
 
 
 class Config():
-    def __init__(self):
+    def __init__(self, branch_name=None):
         # Main
         self.__dict__ = Functions.config()
         self.os = Functions.osName()
+        self.branch_name = branch_name
 
         # Application
         self.app_version = self.__dict__['tool']['poetry']['version']
@@ -41,6 +42,10 @@ class Config():
         self.setup_file_ext = self.__dict__['ci']['app']['setup']['file_ext'][self.os]
         self.setup_full_name = f'{self.setup_name}{self.setup_file_ext}'
         self.setup_exe_path = os.path.join(self.dist_dir, self.setup_full_name)
+
+        # Artifacts
+        self.setup_zip_path = self.setupZipPath()
+        self.video_tutorial_path = self.videoTutorialPath()
 
         # Application repository
         self.repository_dir_suffix = self.__dict__['ci']['app']['setup']['repository_dir_suffix']
@@ -80,6 +85,24 @@ class Config():
             dir_shortcut = '/Applications'  # @ApplicationsDir@ = @ApplicationsDirUser@ [BUG in QTIFW?]
         dir = os.path.join(dir_shortcut, self.app_name)
         return dir
+
+    def artifactsFileSuffix(self):
+        if self.branch_name != 'master' and self.branch_name is not None:
+            return f'_{self.branch_name}'
+        return ''
+
+    def setupZipPath(self):
+        file_suffix = self.artifactsFileSuffix()
+        setup_zip_name = f'{self.setup_name}{file_suffix}.zip'
+        setup_zip_path = os.path.join(self.dist_dir, setup_zip_name)
+        return setup_zip_path
+
+    def videoTutorialPath(self):
+        file_suffix = self.artifactsFileSuffix()
+        video_tutorial_name = f'tutorial_{self.setup_name}{file_suffix}.mp4'
+        video_tutorial_path = os.path.join(self.dist_dir, video_tutorial_name)
+        return video_tutorial_path
+
 
 if __name__ == "__main__":
     Config()

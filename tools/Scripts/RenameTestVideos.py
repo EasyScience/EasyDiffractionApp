@@ -9,19 +9,13 @@ import os, sys
 import Functions, Config
 
 
-CONFIG = Config.Config()
+CONFIG = Config.Config(sys.argv[1])
 
-def source():
-    return CONFIG.setup_exe_path
+def inputPath():
+    return 'tutorial.mp4'
 
-def destination():
-    file_suffix = Functions.artifactsFileSuffix(sys.argv[1])
-    setup_zip_name = f'{CONFIG.setup_name}{file_suffix}.zip'
-    setup_zip_path = os.path.join(CONFIG.dist_dir, setup_zip_name)
-    return setup_zip_path
-
-def zip():
-    Functions.zip(source(), destination())
+def outputPath():
+    return CONFIG.video_tutorial_path
 
 if __name__ == "__main__":
-    zip()
+    Functions.copyFile(inputPath(), outputPath())

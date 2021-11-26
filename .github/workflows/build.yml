@@ -91,9 +91,6 @@ jobs:
       - name: Create offline and online app installers from freezed app bundle
         run: poetry run python ${{ env.SCRIPTS_PATH }}/MakeInstaller.py
 
-      - name: Code signing
-        run: poetry run python ${{ env.SCRIPTS_PATH }}/SignCode.py ${{ secrets.MACOS_CERTIFICATE_PASSWORD }} ${{ secrets.MACOS_CERTIFICATE_ENCODED }}
-
       - name: Set up screen recording dependencies (macOS)
         if: runner.os == 'macOS'
         run: |
@@ -124,10 +121,13 @@ jobs:
         run: poetry run python ${{ env.SCRIPTS_PATH }}/RunApp.py --testmode
 
       - name: Rename test videos
-        run: poetry run python ${{ env.SCRIPTS_PATH }}/CreateTestVideos.py ${{ env.BRANCH_NAME }}
+        run: poetry run python ${{ env.SCRIPTS_PATH }}/RenameTestVideos.py ${{ env.BRANCH_NAME }}
 
       - name: Create zip archive of offline app installer
-        run: poetry run python ${{ env.SCRIPTS_PATH }}/ZipArtifacts.py ${{ env.BRANCH_NAME }}
+        run: poetry run python ${{ env.SCRIPTS_PATH }}/ZipAppInstaller.py ${{ env.BRANCH_NAME }}
+
+      - name: Sign app installer
+        run: poetry run python ${{ env.SCRIPTS_PATH }}/SignAppInstaller.py ${{ env.BRANCH_NAME }} ${{ secrets.MACOS_CERTIFICATE_PASSWORD }} ${{ secrets.MACOS_CERTIFICATE_ENCODED }} ${{ env.APPSTORE_NOTARIZATION_USERNAME }} ${{ env.APPSTORE_NOTARIZATION_PASSWORD }}
 
       - name: Upload zipped offline app installer to GitHub releases (non-master branch)
         if: github.event_name == 'push' && env.BRANCH_NAME != 'master'

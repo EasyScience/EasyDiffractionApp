@@ -80,6 +80,9 @@ package_install = 'InstallerInstallScript.js'
 config_control = 'InstallerControlScript.js'
 config_style = 'style.qss'
 
+[ci.codesign]
+bundle_id = 'org.easyscience.easydiffraction'
+
 [ci.codesign.macos]
 identity = 'Developer ID Application: European Spallation Source Eric (W2AG9MPZ43)'
 

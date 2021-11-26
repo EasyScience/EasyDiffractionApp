@@ -45,6 +45,9 @@ class PhaseLogic(QObject):
     def currentPhaseIndex(self, new_index: int):
         if self._current_phase_index == new_index or new_index == -1:
             return False
+        if len(self.phases) <= new_index:
+            return False # no phase at this index
+
         self._current_phase_index = new_index
         self.parent.l_plotting1d.setCalculatedDataForPhase(new_index)
         return True

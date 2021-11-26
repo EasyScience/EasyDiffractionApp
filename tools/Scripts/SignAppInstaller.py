@@ -174,8 +174,7 @@ def signMacos():
 
         try:
             sub_message = f'create zip archive of offline app installer for notarization'
-            setup_zip_path = os.path.splitext(CONFIG.setup_exe_path)[0] + '.zip'
-            #Functions.zip(CONFIG.setup_exe_path, setup_zip_path)
+            #Functions.zip(CONFIG.setup_exe_path, CONFIG.setup_zip_path_short)
             Functions.run(
                 'ditto',
                 '-c',
@@ -183,7 +182,7 @@ def signMacos():
                 '--rsrc',
                 '--sequesterRsrc',
                 CONFIG.setup_exe_path,
-                setup_zip_path)
+                CONFIG.setup_zip_path_short)
         except Exception as sub_exception:
             Functions.printFailMessage(sub_message, sub_exception)
             sys.exit(1)
@@ -207,7 +206,16 @@ def signMacos():
             Functions.printSuccessMessage(sub_message)
 
         try:
-            sub_message = f'attach (staple) tickets for notarized executables to app installer'
+            sub_message = f'delete submitted zip of notarized app installer'
+            Functions.removeFile(CONFIG.setup_zip_path_short)
+        except Exception as sub_exception:
+            Functions.printFailMessage(sub_message, sub_exception)
+            sys.exit(1)
+        else:
+            Functions.printSuccessMessage(sub_message)
+
+        try:
+            sub_message = f'download and attach (staple) tickets for notarized executables to app installer'
             Functions.run(
                 'xcrun', 'stapler',
                 'staple', CONFIG.setup_exe_path)

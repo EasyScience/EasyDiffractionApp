@@ -44,6 +44,7 @@ class Config():
         self.setup_exe_path = os.path.join(self.dist_dir, self.setup_full_name)
 
         # Artifacts
+        self.setup_zip_path_short = self.setupZipPathShort()
         self.setup_zip_path = self.setupZipPath()
         self.video_tutorial_path = self.videoTutorialPath()
 
@@ -90,6 +91,11 @@ class Config():
         if self.branch_name != 'master' and self.branch_name is not None:
             return f'_{self.branch_name}'
         return ''
+
+    def setupZipPathShort(self):
+        setup_zip_name = f'{self.setup_name}.zip'
+        setup_zip_path = os.path.join(self.dist_dir, setup_zip_name)
+        return setup_zip_path
 
     def setupZipPath(self):
         file_suffix = self.artifactsFileSuffix()

@@ -1,0 +1,5 @@
+_name Si3N4
+_short_description 'diffraction, powder, 1D'
+_samples 'Not loaded'
+_experiments 'Not loaded'
+_modified '01.12.2021 16:45'

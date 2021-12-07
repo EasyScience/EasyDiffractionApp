@@ -47,9 +47,7 @@ class PhaseLogic(QObject):
             return False
         if len(self.phases) <= new_index:
             return False # no phase at this index
-
         self._current_phase_index = new_index
-        self.parent.l_plotting1d.setCalculatedDataForPhase(new_index)
         return True
 
     def removePhase(self, phase_name: str):
@@ -121,6 +119,7 @@ class PhaseLogic(QObject):
 
     def _setPhasesAsObj(self):
         self._phases_as_obj = self.phases.as_dict(skip=['interface'])['data']
+        self.parent.l_plotting1d.setCalculatedDataForPhase()
         # phase set - update xml so parameter table is also updated
         self.parent.l_parameters.parametersChanged.emit()
 

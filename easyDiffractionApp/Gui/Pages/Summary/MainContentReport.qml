@@ -378,7 +378,7 @@ Item {
             {
                 measured: ExGlobals.Constants.proxy.plotting1d.bokehMeasuredDataObj,
                 calculated: ExGlobals.Constants.proxy.plotting1d.bokehCalculatedDataObj,
-                phase: ExGlobals.Constants.proxy.plotting1d.bokehPhaseDataObj,
+                phase: ExGlobals.Constants.proxy.plotting1d.bokehPhasesDataObj,
                 difference: ExGlobals.Constants.proxy.plotting1d.bokehDifferenceDataObj,
                 bragg: ExGlobals.Constants.proxy.plotting1d.bokehBraggDataObj,
                 background: ExGlobals.Constants.proxy.plotting1d.bokehBackgroundDataObj,

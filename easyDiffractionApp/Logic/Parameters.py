@@ -315,6 +315,7 @@ class ParametersLogic(QObject):
     def _updateCalculatedData(self):
         if not self.parent.l_experiment._experiment_loaded and not self.parent.l_experiment._experiment_skipped:
             return
+
         self.parent.l_sample._sample.output_index = self.parent.l_phase._current_phase_index
 
         #  THIS IS WHERE WE WOULD LOOK UP CURRENT EXP INDEX
@@ -333,15 +334,14 @@ class ParametersLogic(QObject):
             sim.x = np.linspace(x_min, x_max, num_points)
 
         sim.y = self._interface.fit_func(sim.x)
-        idx=self.parent.proxy.phase.currentPhaseIndex
-        # sim.y = sims[idx]
-        hkl = self._interface.get_hkl(idx=idx)
-
         self.plotCalculatedDataSignal.emit((sim.x, sim.y))
-        if 'ttheta' in hkl.keys():
-            self.plotBraggDataSignal.emit((hkl['ttheta'], hkl['h'], hkl['k'], hkl['l']))  # noqa: E501
-        if 'time' in hkl.keys():
-            self.plotBraggDataSignal.emit((hkl['time'], hkl['h'], hkl['k'], hkl['l']))  # noqa: E501
+
+        for phase_index, phase_name in enumerate(self.parent.l_phase.phases.phase_names):
+            hkl = self._interface.get_hkl(x_array=sim.x, phase_name=phase_name)
+            if 'ttheta' in hkl.keys():
+                self.plotBraggDataSignal.emit((phase_index, hkl['ttheta'], hkl['h'], hkl['k'], hkl['l']))  # noqa: E501
+            if 'time' in hkl.keys():
+                self.plotBraggDataSignal.emit((phase_index, hkl['time'], hkl['h'], hkl['k'], hkl['l']))  # noqa: E501
 
 
 def defaultSimulationParams(exp_type='powder1DCW', jsonify=True):

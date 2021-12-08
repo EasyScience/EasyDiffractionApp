@@ -93,7 +93,7 @@ class LogicController(QObject):
         self.l_plotting1d.setCalculatedData(data[0], data[1])
 
     def plotBraggData(self, data):
-        self.l_plotting1d.setBraggData(data[0], data[1], data[2], data[3])  # noqa: E501
+        self.l_plotting1d.setBraggData(data[0], data[1], data[2], data[3], data[4])  # noqa: E501
 
     def initializeBorg(self):
         self.l_stack.initializeBorg()

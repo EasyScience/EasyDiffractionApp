@@ -75,11 +75,7 @@ class Plotting1dLogic(QObject):
         self._difference_yarray_upper = np.empty(0)
         self._difference_yarray_lower = np.empty(0)
 
-        self._bragg_xarray = np.empty(0)
-        self._bragg_yarray = np.empty(0)
-        self._bragg_harray = np.empty(0)
-        self._bragg_karray = np.empty(0)
-        self._bragg_larray = np.empty(0)
+        self._bragg_arrays = {}
 
         self._background_xarray = np.empty(0)
         self._background_yarray = np.empty(0)
@@ -141,11 +137,7 @@ class Plotting1dLogic(QObject):
         self._difference_yarray_upper = np.empty(0)
         self._difference_yarray_lower = np.empty(0)
 
-        self._bragg_xarray = np.empty(0)
-        self._bragg_yarray = np.empty(0)
-        self._bragg_harray = np.empty(0)
-        self._bragg_karray = np.empty(0)
-        self._bragg_larray = np.empty(0)
+        self._bragg_arrays = {}
 
         self._background_xarray = np.empty(0)
         self._background_yarray = np.empty(0)
@@ -214,9 +206,9 @@ class Plotting1dLogic(QObject):
             if self.currentLib == 'qtcharts':
                 self._setQtChartsDifferenceDataObj()
 
-    def setBraggData(self, xarray, harray, karray, larray):
-        self._setBraggDataArrays(xarray, harray, karray, larray)
-        self._setBokehBraggDataObj()
+    def setBraggData(self, phase_index, xarray, harray, karray, larray):
+        self._setBraggDataArrays(phase_index, xarray, harray, karray, larray)
+        self._setBokehBraggDataObj(phase_index)
         if self.currentLib == 'qtcharts':
             self._setQtChartsBraggDataObj()
 
@@ -286,12 +278,14 @@ class Plotting1dLogic(QObject):
         self._difference_yarray_upper = np.add(self._difference_yarray, self._measured_syarray)
         self._difference_yarray_lower = np.subtract(self._difference_yarray, self._measured_syarray)
 
-    def _setBraggDataArrays(self, xarray, harray, karray, larray):
-        self._bragg_xarray = xarray
-        self._bragg_yarray = np.zeros(self._bragg_xarray.size)
-        self._bragg_harray = harray
-        self._bragg_karray = karray
-        self._bragg_larray = larray
+    def _setBraggDataArrays(self, phase_index, xarray, harray, karray, larray):
+        self._bragg_arrays[phase_index] = {
+            'x': xarray,
+            'y': np.full(xarray.size, -phase_index),
+            'h': harray,
+            'k': karray,
+            'l': larray
+        }
 
     def _setBackgroundDataArrays(self, xarray, yarray):
         self._background_xarray = xarray
@@ -309,11 +303,9 @@ class Plotting1dLogic(QObject):
 
     def _setBokehPhasesDataObj(self):
         for phase_index in range(len(self.parent.l_phase.phases)):
-            # skip this step with try-except block until instrumental parameters are defined
+            # skip this step with try-except block until instrumental parameters are defined/loaded
             try:
-                xarray = self._calculated_xarray
                 yarray = self._interface.get_calculated_y_for_phase(phase_index)
-                yarray_bgr = self._background_yarray
                 if self._background_yarray.size:
                     self._bokeh_phases_data_obj[f'{phase_index}'] = {
                         'x': Plotting1dLogic.aroundX(self._calculated_xarray),
@@ -355,13 +347,13 @@ class Plotting1dLogic(QObject):
         }
         self.bokehDifferenceDataObjChanged.emit()
 
-    def _setBokehBraggDataObj(self):
-        self._bokeh_bragg_data_obj = {
-            'x': Plotting1dLogic.aroundX(self._bragg_xarray),
-            'y': Plotting1dLogic.aroundY(self._bragg_yarray),
-            'h': Plotting1dLogic.aroundHkl(self._bragg_harray),
-            'k': Plotting1dLogic.aroundHkl(self._bragg_karray),
-            'l': Plotting1dLogic.aroundHkl(self._bragg_larray)
+    def _setBokehBraggDataObj(self, phase_index):
+        self._bokeh_bragg_data_obj[f'{phase_index}'] = {
+            'x': Plotting1dLogic.aroundX(self._bragg_arrays[phase_index]['x']),
+            'y': Plotting1dLogic.aroundY(self._bragg_arrays[phase_index]['y']),
+            'h': Plotting1dLogic.aroundHkl(self._bragg_arrays[phase_index]['h']),
+            'k': Plotting1dLogic.aroundHkl(self._bragg_arrays[phase_index]['k']),
+            'l': Plotting1dLogic.aroundHkl(self._bragg_arrays[phase_index]['l'])
         }
         self.bokehBraggDataObjChanged.emit()
 

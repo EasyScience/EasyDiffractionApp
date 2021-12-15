@@ -299,6 +299,7 @@ class ParametersLogic(QObject):
             obj.error = 0.
             borg.stack.endMacro()
             self.parametersValuesChanged.emit()
+            self._updateCalculatedData()
             self.parametersChanged.emit()
 
 

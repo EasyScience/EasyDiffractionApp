@@ -72,7 +72,8 @@ class LogicController(QObject):
         self.l_project.removePhaseSignal.connect(self.removePhase)
         self.l_project.experimentLoadedChanged.connect(self.l_experiment.experimentLoadedChanged)
 
-        self.parametersChanged.connect(self.l_parameters._updateCalculatedData)
+        # this is unnecessarily called on project load. To be seen if commenting this influences behaviour
+        # self.parametersChanged.connect(self.l_parameters._updateCalculatedData)
         self.parametersChanged.connect(self.l_phase.structureParametersChanged)
         self.parametersChanged.connect(self.l_experiment._onPatternParametersChanged)
         self.parametersChanged.connect(self.l_parameters.instrumentParametersChanged)

@@ -126,7 +126,6 @@ class ExperimentLogic(QObject):
         if len(self.parent.l_sample._sample.pattern.backgrounds) == 0:
             self.parent.l_background.initializeContainer()
 
-        self.experimentDataChanged.emit()
         self.parent.l_project._project_info['experiments'] = \
             self.parent.l_parameters._data.experiments[0].name
 

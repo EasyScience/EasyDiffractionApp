@@ -69,7 +69,6 @@ class LogicController(QObject):
         self.l_project.phasesAsObjChanged.connect(self.l_phase.phasesAsObjChanged)
         self.l_project.experimentDataAdded.connect(self.l_experiment._onExperimentDataAdded)
         self.l_project.structureParametersChanged.connect(self.l_phase.structureParametersChanged)
-        self.l_project.removePhaseSignal.connect(self.removePhase)
         self.l_project.experimentLoadedChanged.connect(self.l_experiment.experimentLoadedChanged)
 
         # this is unnecessarily called on project load. To be seen if commenting this influences behaviour
@@ -104,11 +103,6 @@ class LogicController(QObject):
         self.l_plotting1d.clearFrontendState()
         self.l_stack.resetUndoRedoStack()
         self.l_stack.undoRedoChanged.emit()
-
-    def removePhase(self, phase_name: str):
-        if self.l_phase.removePhase(phase_name):
-            self.l_phase.structureParametersChanged.emit()
-            self.l_phase.phasesEnabled.emit()
 
     def statusModelAsObj(self):
         engine_name = self.l_fitting.fitter.current_engine.name

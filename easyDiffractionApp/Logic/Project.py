@@ -26,7 +26,6 @@ class ProjectLogic(QObject):
     phasesEnabled = Signal()
     phasesAsObjChanged = Signal()
     structureParametersChanged = Signal()
-    removePhaseSignal = Signal(str)
     experimentDataAdded = Signal()
     removeExperiment = Signal()
     experimentLoadedChanged = Signal()
@@ -276,7 +275,7 @@ class ProjectLogic(QObject):
         self.project_save_filepath = ""
         self.removeExperiment.emit()
         if self.parent.l_phase.samplesPresent():
-            self.removePhaseSignal.emit(self.parent.l_sample._sample.phases[self.parent.l_phase._current_phase_index].name)
+            self.parent.l_phase.removeAllPhases()
         self.reset.emit()
 
     def updateProjectInfo(self, key_value):

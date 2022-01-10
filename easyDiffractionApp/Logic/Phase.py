@@ -50,6 +50,12 @@ class PhaseLogic(QObject):
         self._current_phase_index = new_index
         return True
 
+    def removeAllPhases(self):
+        for name in self.phases.phase_names:
+            del self.phases[name]
+        self.structureParametersChanged.emit()
+        self.phasesEnabled.emit()
+
     def removePhase(self, phase_name: str):
         if phase_name in self.phases.phase_names:
             del self.phases[phase_name]

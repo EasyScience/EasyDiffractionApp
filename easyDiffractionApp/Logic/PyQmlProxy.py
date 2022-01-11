@@ -56,9 +56,9 @@ class PyQmlProxy(QObject):
         self._fitting_proxy.currentMinimizerMethodChanged.connect(self.statusInfoChanged)
         self._project_proxy.removeExperiment.connect(self._experiment_proxy.removeExperiment)
         # Constraints
-        self._fitting_proxy.constraintsChanged.connect(self._parameters_proxy._setParametersAsObj)
-        self._fitting_proxy.constraintsChanged.connect(self._parameters_proxy._setParametersAsXml)
-        self._fitting_proxy.constraintsChanged.connect(self._parameters_proxy._onSimulationParametersChanged)
+        self._fitting_proxy.constraintsModified.connect(self._parameters_proxy._setParametersAsObj)
+        self._fitting_proxy.constraintsModified.connect(self._parameters_proxy._setParametersAsXml)
+        self._fitting_proxy.constraintsModified.connect(self._parameters_proxy._onSimulationParametersChanged)
 
         # start the undo/redo stack
         self.lc.initializeBorg()

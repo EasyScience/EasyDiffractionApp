@@ -5,6 +5,7 @@
 # noqa: E501
 import os
 import datetime
+from timeit import default_timer as timer
 
 from dicttoxml import dicttoxml
 import json
@@ -164,6 +165,7 @@ class ProjectLogic(QObject):
     def _loadProject(self):
         """
         """
+        start_time = timer()
         path = generalizePath(self.project_load_filepath)
         if not os.path.isfile(path):
             print("Failed to find project: '{0}'".format(path))
@@ -177,9 +179,10 @@ class ProjectLogic(QObject):
             if old_interface_name != interface_name:
                 self._interface.switch(interface_name)
 
+        descr['sample']['interface'] = self._interface
         self.parent.l_sample._sample = Sample.from_dict(descr['sample'])
+
         self.parent.l_phase.phases = self.parent.l_sample._sample._phases
-        self.parent.l_sample._sample.interface = self._interface
         self.parent.l_phase.phasesAsObjChanged.emit()
 
         self.parent.proxy.sample.updateExperimentType()
@@ -187,7 +190,7 @@ class ProjectLogic(QObject):
         # send signal to tell the proxy we changed phases
         self.phasesEnabled.emit()
         self.phasesAsObjChanged.emit()
-        self.structureParametersChanged.emit()
+        # self.structureParametersChanged.emit()
         self.parent.l_background._setAsXml()
 
         # experiment
@@ -231,6 +234,7 @@ class ProjectLogic(QObject):
         self.parent.l_stack.resetUndoRedoStack()
         self.parent.l_stack.undoRedoChanged.emit()
         self.setProjectCreated(True)
+        print("\nProject loading time: {0:.3f} s\n".format(timer() - start_time))
 
     def saveProject(self):
         """

@@ -253,11 +253,11 @@ class PhaseLogic(QObject):
             cif_path = generalizePath(cif_file)
             borg.stack.enabled = False
             phases = Phases.from_cif_file(cif_path)
+            self.phases.interface = self._interface
             for phase in phases:
                 # print('Disabling scale')
                 # phase.scale.enabled = False
                 self.phases.append(phase)
-            self.phases.interface = self._interface
             self.phasesReplaced.emit()
             borg.stack.enabled = True
 

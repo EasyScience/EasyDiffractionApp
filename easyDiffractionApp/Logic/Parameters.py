@@ -294,6 +294,8 @@ class ParametersLogic(QObject):
         else:
             if obj.raw_value == new_value:
                 return
+            if isinstance(new_value, str):
+                new_value = new_value.capitalize()
             borg.stack.beginMacro(f"'{obj.display_name}' value changed from {obj.raw_value} to {new_value}")
             obj.value = new_value
             obj.error = 0.

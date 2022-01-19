@@ -10,7 +10,7 @@ from PySide2.QtCore import Signal, QObject
 
 from easyCore import np, borg
 from easyDiffractionLib import Phases, Phase, Lattice, Site, SpaceGroup
-from easyCore.Symmetry.tools import SpacegroupInfo
+from easyCrystallography.Symmetry.tools import SpacegroupInfo
 from easyApp.Logic.Utils.Utils import generalizePath
 
 

@@ -339,8 +339,8 @@ class ParametersLogic(QObject):
         sim.y = self._interface.fit_func(sim.x)
         self.plotCalculatedDataSignal.emit((sim.x, sim.y))
 
-        for phase_index, phase_name in enumerate(self.parent.l_phase.phases.phase_names):
-            hkl = self._interface.get_hkl(x_array=sim.x, phase_name=phase_name)
+        for phase_index, phase_name in enumerate([str(phase._borg.map.convert_id(phase).int) for phase in self.parent.l_phase.phases]):
+            hkl = self._interface.get_hkl(x_array=sim.x, phase_name=phase_name, encoded_name=True)
             if 'ttheta' in hkl.keys():
                 self.plotBraggDataSignal.emit((phase_index, hkl['ttheta'], hkl['h'], hkl['k'], hkl['l']))  # noqa: E501
             if 'time' in hkl.keys():

@@ -9,7 +9,7 @@ import os, sys
 import glob
 import PySide2, shiboken2
 import cryspy, GSASII
-import easyCore, easyDiffractionLib, easyApp
+import easyCore, easyCrystallography, easyDiffractionLib, easyApp
 import Functions, Config
 from PyInstaller.__main__ import run as pyInstallerMain
 
@@ -35,6 +35,7 @@ def addedData():
             {'from': GSASII.__path__[0], 'to': '.'},
             {'from': easyCore.__path__[0], 'to': 'easyCore'},
             {'from': easyDiffractionLib.__path__[0], 'to': 'easyDiffractionLib'},
+            {'from': easyCrystallography.__path__[0], 'to': 'easyCrystallography'},
             {'from': easyApp.__path__[0], 'to': 'easyApp'},
             {'from': 'utils.py', 'to': '.'},
             {'from': 'pyproject.toml', 'to': '.'}]

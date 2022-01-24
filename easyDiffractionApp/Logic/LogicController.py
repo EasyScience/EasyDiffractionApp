@@ -71,8 +71,8 @@ class LogicController(QObject):
         self.l_project.structureParametersChanged.connect(self.l_phase.structureParametersChanged)
         self.l_project.experimentLoadedChanged.connect(self.l_experiment.experimentLoadedChanged)
 
-        # this is unnecessarily called on project load. To be seen if commenting this influences behaviour
-        # self.parametersChanged.connect(self.l_parameters._updateCalculatedData)
+        # the following data update is required for undo/redo.
+        self.parametersChanged.connect(self.l_parameters._updateCalculatedData)
         self.parametersChanged.connect(self.l_phase.structureParametersChanged)
         self.parametersChanged.connect(self.l_experiment._onPatternParametersChanged)
         self.parametersChanged.connect(self.l_parameters.instrumentParametersChanged)

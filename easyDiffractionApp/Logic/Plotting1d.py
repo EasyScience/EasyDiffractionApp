@@ -215,7 +215,7 @@ class Plotting1dLogic(QObject):
     def setBackgroundData(self, xarray, yarray):
         if not xarray.size:
             return
-        interp_func = scipy.interpolate.interp1d(xarray, yarray)
+        interp_func = scipy.interpolate.interp1d(xarray, yarray, fill_value="extrapolate")
         self._setBackgroundDataArrays(self._measured_xarray, interp_func(self._measured_xarray))
         self._setBokehBackgroundDataObj()
         self._setBokehPhasesDataObj()

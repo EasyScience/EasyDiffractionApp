@@ -22,7 +22,7 @@ url = "https://easyscience.github.io/pypi/"
 secondary = true
 
 [tool.poetry.dependencies]
-python = '^3.7, <3.8'
+python = '^3.7, <3.9'
 darkdetect = '^0.3.1'
 pyobjc-core = { version = '^7.1', platform = 'darwin' }
 pyobjc-framework-cocoa = { version = '^7.1', platform = 'darwin' }
@@ -33,7 +33,7 @@ easyApp = { git = 'https://github.com/easyScience/easyApp.git', rev = 'multiphas
 
 #[tool.poetry.dev-dependencies]
 # PyInstaller
-pyinstaller = '^4.5.1'
+pyinstaller = '4.5.1'  # 4.6-4.7 give "ModuleNotFoundError: No module named 'pip'" on Ubuntu, when run app
 #pyinstaller = { git = 'https://github.com/pyinstaller/pyinstaller.git', rev = 'develop' }
 pywin32-ctypes = { version = '^0.2.0', platform = 'win32' }
 pypiwin32 = { version = '^223', platform = 'win32' }

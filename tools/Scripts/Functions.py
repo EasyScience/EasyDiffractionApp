@@ -171,7 +171,7 @@ def copyFile(source, destination):
         shutil.copy2(source, destination, follow_symlinks=True)
     except Exception as exception:
         printFailMessage(message, exception)
-        sys.exit()
+        sys.exit(1)
     else:
         printSuccessMessage(message)
 

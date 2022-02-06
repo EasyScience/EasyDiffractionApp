@@ -1,6 +1,6 @@
-# SPDX-FileCopyrightText: 2021 easyDiffraction contributors <support@easydiffraction.org>
+# SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
 # SPDX-License-Identifier: BSD-3-Clause
-# © 2021 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+# © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
 # noqa: E501
 from typing import Union
@@ -294,11 +294,14 @@ class ParametersLogic(QObject):
         else:
             if obj.raw_value == new_value:
                 return
+            if isinstance(new_value, str):
+                new_value = new_value.capitalize()
             borg.stack.beginMacro(f"'{obj.display_name}' value changed from {obj.raw_value} to {new_value}")
             obj.value = new_value
             obj.error = 0.
             borg.stack.endMacro()
             self.parametersValuesChanged.emit()
+            self._updateCalculatedData()
             self.parametersChanged.emit()
 
 
@@ -315,6 +318,7 @@ class ParametersLogic(QObject):
     def _updateCalculatedData(self):
         if not self.parent.l_experiment._experiment_loaded and not self.parent.l_experiment._experiment_skipped:
             return
+
         self.parent.l_sample._sample.output_index = self.parent.l_phase._current_phase_index
 
         #  THIS IS WHERE WE WOULD LOOK UP CURRENT EXP INDEX
@@ -333,13 +337,14 @@ class ParametersLogic(QObject):
             sim.x = np.linspace(x_min, x_max, num_points)
 
         sim.y = self._interface.fit_func(sim.x)
-        hkl = self._interface.get_hkl(idx=self.parent.proxy.phase.currentPhaseIndex)
-
         self.plotCalculatedDataSignal.emit((sim.x, sim.y))
-        if 'ttheta' in hkl.keys():
-            self.plotBraggDataSignal.emit((hkl['ttheta'], hkl['h'], hkl['k'], hkl['l']))  # noqa: E501
-        if 'time' in hkl.keys():
-            self.plotBraggDataSignal.emit((hkl['time'], hkl['h'], hkl['k'], hkl['l']))  # noqa: E501
+
+        for phase_index, phase_name in enumerate([str(phase._borg.map.convert_id(phase).int) for phase in self.parent.l_phase.phases]):
+            hkl = self._interface.get_hkl(x_array=sim.x, phase_name=phase_name, encoded_name=True)
+            if 'ttheta' in hkl.keys():
+                self.plotBraggDataSignal.emit((phase_index, hkl['ttheta'], hkl['h'], hkl['k'], hkl['l']))  # noqa: E501
+            if 'time' in hkl.keys():
+                self.plotBraggDataSignal.emit((phase_index, hkl['time'], hkl['h'], hkl['k'], hkl['l']))  # noqa: E501
 
 
 def defaultSimulationParams(exp_type='powder1DCW', jsonify=True):

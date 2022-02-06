@@ -1,3 +1,19 @@
+# Version 0.8.3-beta (27 Jan 2022)
+
+### Features
+
+- Simulating and fitting multi-phase data using the [CrysPy](https://github.com/ikibalin/cryspy) calculation engine is now supported.
+
+### Changes
+
+- The MacOS installer is now digitally signed allowing for safer and less intrusive installation process.
+
+### Bug Fixes
+
+- Adding a new atom is now case-insensitve.
+- Changing sample name in the Sample tab functionality has been fixed.
+- Performance of project load has been improved.
+
 # Version 0.8.2-beta (5 Nov 2021)
 
 ### Features

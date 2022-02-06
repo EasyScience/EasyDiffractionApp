@@ -1,6 +1,6 @@
-# SPDX-FileCopyrightText: 2021 easyDiffraction contributors <support@easydiffraction.org>
+# SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
 # SPDX-License-Identifier: BSD-3-Clause
-# © 2021 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+# © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
 import json
 
@@ -44,7 +44,7 @@ class LogicController(QObject):
         self.l_phase = PhaseLogic(self, interface=self.interface)
         self.l_sample = SampleLogic(self, interface=self.interface)
         self.l_fitting = FittingLogic(self, interface=self.interface)
-        self.l_plotting1d = Plotting1dLogic(self)
+        self.l_plotting1d = Plotting1dLogic(self, interface=self.interface)
         self.l_plotting3d = Plotting3dLogic(self)
         self.l_background = BackgroundLogic(self)
         self.l_project = ProjectLogic(self, interface=self.interface)
@@ -69,9 +69,9 @@ class LogicController(QObject):
         self.l_project.phasesAsObjChanged.connect(self.l_phase.phasesAsObjChanged)
         self.l_project.experimentDataAdded.connect(self.l_experiment._onExperimentDataAdded)
         self.l_project.structureParametersChanged.connect(self.l_phase.structureParametersChanged)
-        self.l_project.removePhaseSignal.connect(self.removePhase)
         self.l_project.experimentLoadedChanged.connect(self.l_experiment.experimentLoadedChanged)
 
+        # the following data update is required for undo/redo.
         self.parametersChanged.connect(self.l_parameters._updateCalculatedData)
         self.parametersChanged.connect(self.l_phase.structureParametersChanged)
         self.parametersChanged.connect(self.l_experiment._onPatternParametersChanged)
@@ -93,7 +93,7 @@ class LogicController(QObject):
         self.l_plotting1d.setCalculatedData(data[0], data[1])
 
     def plotBraggData(self, data):
-        self.l_plotting1d.setBraggData(data[0], data[1], data[2], data[3])  # noqa: E501
+        self.l_plotting1d.setBraggData(data[0], data[1], data[2], data[3], data[4])  # noqa: E501
 
     def initializeBorg(self):
         self.l_stack.initializeBorg()
@@ -103,11 +103,6 @@ class LogicController(QObject):
         self.l_plotting1d.clearFrontendState()
         self.l_stack.resetUndoRedoStack()
         self.l_stack.undoRedoChanged.emit()
-
-    def removePhase(self, phase_name: str):
-        if self.l_phase.removePhase(phase_name):
-            self.l_phase.structureParametersChanged.emit()
-            self.l_phase.phasesEnabled.emit()
 
     def statusModelAsObj(self):
         engine_name = self.l_fitting.fitter.current_engine.name

@@ -1,6 +1,6 @@
-// SPDX-FileCopyrightText: 2021 easyDiffraction contributors <support@easydiffraction.org>
+// SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
 // SPDX-License-Identifier: BSD-3-Clause
-// © 2021 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+// © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
 import QtQuick 2.14
 import QtQuick.Controls 2.14
@@ -28,19 +28,17 @@ EaComponents.SideBarColumn {
             spacing: EaStyle.Sizes.fontPixelSize
 
             EaElements.SideBarButton {
-                enabled: ExGlobals.Constants.proxy.phase.phasesAsObj.length === 0
-
+                enabled: true
                 fontIcon: "upload"
-                text: qsTr("Set new phase from CIF")
+                text: qsTr("Add new phase from CIF")
 
                 onClicked: loadPhaseFileDialog.open()
             }
 
             EaElements.SideBarButton {
-                enabled: ExGlobals.Constants.proxy.phase.phasesAsObj.length === 0
-
+                enabled: true
                 fontIcon: "plus-circle"
-                text: qsTr("Set new phase manually")
+                text: qsTr("Add new phase manually")
 
                 onClicked: ExGlobals.Constants.proxy.phase.addDefaultPhase()
 

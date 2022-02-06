@@ -1,6 +1,6 @@
-# SPDX-FileCopyrightText: 2021 easyDiffraction contributors <support@easydiffraction.org>
+# SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
 # SPDX-License-Identifier: BSD-3-Clause
-# © 2021 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+# © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
 from PySide2.QtCore import QObject, Signal, Slot, Property
 from easyCore.Utils.UndoRedo import property_stack_deco
@@ -18,6 +18,8 @@ class FittingProxy(QObject):
     calculatorListChanged = Signal()
     currentCalculatorChanged = Signal()
     constraintsChanged = Signal()
+    constraintsModified = Signal()
+
 
     def __init__(self, parent=None, logic=None):
         super().__init__(parent)
@@ -26,7 +28,7 @@ class FittingProxy(QObject):
         self.logic.fitStarted.connect(self.fitFinishedNotify)
         self.logic.fitFinished.connect(self.fitFinishedNotify)
         self.logic.fitFinished.connect(self.fitResultsChanged)
-        self.logic.constraintsChanged.connect(self.constraintsChanged)
+        self.logic.constraintsRemoved.connect(self.constraintsChanged)
         self.logic.currentMinimizerChanged.connect(self.currentMinimizerChanged)
         self.logic.currentMinimizerMethodChanged.connect(self.currentMinimizerMethodChanged)
         self.logic.currentCalculatorChanged.connect(self.currentCalculatorChanged)
@@ -105,6 +107,7 @@ class FittingProxy(QObject):
                       value, arithmetic_operator, independent_par_idx):
         self.logic.addConstraint(dependent_par_idx, relational_operator,
                                  value, arithmetic_operator, independent_par_idx)
+        self.constraintsModified.emit()
         self.constraintsChanged.emit()
 
     @Property(str, notify=constraintsChanged)
@@ -114,9 +117,11 @@ class FittingProxy(QObject):
     @Slot(int)
     def removeConstraintByIndex(self, index: int):
         self.logic.removeConstraintByIndex(index)
+        self.constraintsModified.emit()
         self.constraintsChanged.emit()
 
     @Slot(int, str)
     def toggleConstraintByIndex(self, index, enabled):
         self.logic.toggleConstraintByIndex(index, enabled)
+        self.constraintsModified.emit()
         self.constraintsChanged.emit()

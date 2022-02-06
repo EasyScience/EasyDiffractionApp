@@ -1,6 +1,6 @@
-# SPDX-FileCopyrightText: 2021 easyDiffraction contributors <support@easydiffraction.org>
+# SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
 # SPDX-License-Identifier: BSD-3-Clause
-# © 2021 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+# © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
 # noqa: E501
 from PySide2.QtCore import QObject, Signal, Property
@@ -56,9 +56,9 @@ class PyQmlProxy(QObject):
         self._fitting_proxy.currentMinimizerMethodChanged.connect(self.statusInfoChanged)
         self._project_proxy.removeExperiment.connect(self._experiment_proxy.removeExperiment)
         # Constraints
-        self._fitting_proxy.constraintsChanged.connect(self._parameters_proxy._setParametersAsObj)
-        self._fitting_proxy.constraintsChanged.connect(self._parameters_proxy._setParametersAsXml)
-        self._fitting_proxy.constraintsChanged.connect(self._parameters_proxy._onSimulationParametersChanged)
+        self._fitting_proxy.constraintsModified.connect(self._parameters_proxy._setParametersAsObj)
+        self._fitting_proxy.constraintsModified.connect(self._parameters_proxy._setParametersAsXml)
+        self._fitting_proxy.constraintsModified.connect(self._parameters_proxy._onSimulationParametersChanged)
 
         # start the undo/redo stack
         self.lc.initializeBorg()

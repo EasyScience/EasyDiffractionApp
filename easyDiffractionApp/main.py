@@ -1,6 +1,6 @@
-# SPDX-FileCopyrightText: 2021 easyDiffraction contributors <support@easydiffraction.org>
+# SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
 # SPDX-License-Identifier: BSD-3-Clause
-# © 2021 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+# © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
 import os
 import sys
@@ -91,7 +91,11 @@ def main():
     engine.rootContext().setContextProperty('_translator', translator)
     engine.rootContext().setContextProperty('_projectConfig', CONFIG)
     engine.rootContext().setContextProperty('_isTestMode', args.testmode)
-    engine.rootContext().setContextProperty('_isSystemThemeDark', darkdetect.isDark())
+    try:
+        isDark = darkdetect.isDark()
+    except FileNotFoundError:
+        isDark = False
+    engine.rootContext().setContextProperty('_isSystemThemeDark', isDark)
 
     # Register types to be instantiated in QML
     qmlRegisterType(Updater, 'easyApp.Logic.Maintenance', 1, 0, 'Updater')

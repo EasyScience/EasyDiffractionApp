@@ -1,6 +1,6 @@
-# SPDX-FileCopyrightText: 2021 easyDiffraction contributors <support@easydiffraction.org>
+# SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
 # SPDX-License-Identifier: BSD-3-Clause
-# © 2021 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+# © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
 # noqa: E501
 
@@ -126,7 +126,6 @@ class ExperimentLogic(QObject):
         if len(self.parent.l_sample._sample.pattern.backgrounds) == 0:
             self.parent.l_background.initializeContainer()
 
-        self.experimentDataChanged.emit()
         self.parent.l_project._project_info['experiments'] = \
             self.parent.l_parameters._data.experiments[0].name
 

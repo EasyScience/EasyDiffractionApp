@@ -1,7 +1,7 @@
 # noqa: E501
-# SPDX-FileCopyrightText: 2021 easyDiffraction contributors <support@easydiffraction.org>
+# SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
 # SPDX-License-Identifier: BSD-3-Clause
-# © 2021 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+# © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
 from dicttoxml import dicttoxml
 
@@ -47,3 +47,4 @@ class StateLogic(QObject):
         xml = dicttoxml(model, attr_type=False)
         xml = xml.decode()
         return xml
+

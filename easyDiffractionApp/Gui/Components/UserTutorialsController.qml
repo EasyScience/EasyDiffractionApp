@@ -1,6 +1,6 @@
-// SPDX-FileCopyrightText: 2021 easyDiffraction contributors <support@easydiffraction.org>
+// SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
 // SPDX-License-Identifier: BSD-3-Clause
-// © 2021 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+// © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
 import QtQuick 2.13
 import QtQuick.Controls 2.13
@@ -131,11 +131,11 @@ EaElements.RemoteController {
             rc.mouseClick(ExGlobals.Variables.preferencesButton)
             if (!was_tool_tips_checked) {
                 rc.mouseClick(ExGlobals.Variables.enableToolTipsCheckBox)
-                rc.wait(500)
+                rc.wait(1000)
             }
             if (!was_user_guides_checked) {
                 rc.mouseClick(ExGlobals.Variables.enableUserGuidesCheckBox)
-                rc.wait(500)
+                rc.wait(1000)
             }
             rc.mouseClick(ExGlobals.Variables.preferencesOkButton)
         }
@@ -165,7 +165,7 @@ EaElements.RemoteController {
         playPageUserGuides(EaGlobals.Variables.SummaryPageIndex)
         if (!was_user_guides_checked) {
             rc.mouseClick(ExGlobals.Variables.userGuidesLastDisableButton)
-            rc.wait(500)
+            rc.wait(2000)
         }
 
         // Restore app preferences
@@ -205,12 +205,12 @@ EaElements.RemoteController {
 
         if (!was_tool_tips_checked) {
             rc.mouseClick(ExGlobals.Variables.enableToolTipsCheckBox)
-            rc.wait(500)
+            rc.wait(2000)
         }
 
         if (was_user_guides_checked) {
             rc.mouseClick(ExGlobals.Variables.enableUserGuidesCheckBox)
-            rc.wait(500)
+            rc.wait(2000)
         }
 
         rc.mouseClick(ExGlobals.Variables.preferencesOkButton)
@@ -266,7 +266,7 @@ EaElements.RemoteController {
         rc.mouseClick(ExGlobals.Variables.zProjectionButton)
         rc.mouseClick(ExGlobals.Variables.defaultViewButton)
 
-        rc.wait(1000)
+        rc.wait(5000)
 
         // Experiment Tab
 
@@ -280,7 +280,7 @@ EaElements.RemoteController {
 
         rc.say("Now, you can switch to the analysis page to see and control the simulated diffraction pattern.")
         rc.mouseClick(ExGlobals.Variables.analysisTabButton)
-        rc.wait(1000)
+        rc.wait(3000)
         rc.say("In the advanced controls, you can choose between different calculation engines.")
         rc.mouseClick(ExGlobals.Variables.analysisAdvancedControlsTabButton)
         rc.mouseClick(ExGlobals.Variables.calculatorsGroup, 15)
@@ -289,13 +289,13 @@ EaElements.RemoteController {
         x_pos = undefined
         y_pos = EaStyle.Sizes.comboBoxHeight * 1.5
         rc.mouseClick(ExGlobals.Variables.calculatorSelector, x_pos, y_pos)
-        rc.wait(1000)
+        rc.wait(5000)
         // GSAS-II
         rc.mouseClick(ExGlobals.Variables.calculatorSelector)
         x_pos = undefined
         y_pos = EaStyle.Sizes.comboBoxHeight * 2.5
         rc.mouseClick(ExGlobals.Variables.calculatorSelector, x_pos, y_pos)
-        rc.wait(1000)
+        rc.wait(5000)
         // CrysPy
         rc.mouseClick(ExGlobals.Variables.calculatorSelector)
         rc.mouseClick(ExGlobals.Variables.calculatorSelector)
@@ -305,7 +305,7 @@ EaElements.RemoteController {
 
         rc.say("Now, you can see the interactive report generated on the summary page and export it in different formats.")
         rc.mouseClick(ExGlobals.Variables.summaryTabButton)
-        rc.wait(1000)
+        rc.wait(2000)
         //rc.pointerMove(ExGlobals.Variables.reportWebView)
         //rc.mouseMove(ExGlobals.Variables.reportWebView)
         //rc.mouseWheel(ExGlobals.Variables.reportWebView)
@@ -323,12 +323,12 @@ EaElements.RemoteController {
 
         if (!was_tool_tips_checked) {
             rc.mouseClick(ExGlobals.Variables.enableToolTipsCheckBox)
-            rc.wait(500)
+            rc.wait(2000)
         }
 
         if (was_user_guides_checked) {
             rc.mouseClick(ExGlobals.Variables.enableUserGuidesCheckBox)
-            rc.wait(500)
+            rc.wait(2000)
         }
 
         rc.mouseClick(ExGlobals.Variables.preferencesOkButton)
@@ -388,7 +388,7 @@ EaElements.RemoteController {
         rc.typeText("0")
         rc.keyClick(Qt.Key_Enter) // DOESN'T WORK ON CI XVFB ?
         rc.mouseClick(ExGlobals.Variables.fitResolutionYCheckBox)
-        rc.wait(1000)
+        rc.wait(5000)
         rc.mouseClick(ExGlobals.Variables.startFittingButton)
 
         isPreparationToFitDone = true
@@ -399,7 +399,7 @@ EaElements.RemoteController {
     function finishDataFittingTutorial() {
         print("* fitting finished")
 
-        rc.wait(1000)
+        rc.wait(2000)
         rc.mouseClick(ExGlobals.Variables.refinementResultsOkButton)
         rc.mouseClick(ExGlobals.Variables.summaryTabButton)
 
@@ -408,7 +408,7 @@ EaElements.RemoteController {
         //rc.mouseClick(ExGlobals.Variables.saveConfirmationOkButton)
 
         // Reset app state
-        rc.wait(1000)
+        rc.wait(5000)
         rc.mouseClick(ExGlobals.Variables.resetStateButton)
         rc.mouseClick(ExGlobals.Variables.resetStateOkButton)
 

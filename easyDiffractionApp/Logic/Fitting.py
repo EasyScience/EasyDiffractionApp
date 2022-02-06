@@ -1,6 +1,6 @@
-# SPDX-FileCopyrightText: 2021 easyDiffraction contributors <support@easydiffraction.org>
+# SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
 # SPDX-License-Identifier: BSD-3-Clause
-# © 2021 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+# © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
 from PySide2.QtCore import Signal, QObject, QThread
 
@@ -33,7 +33,7 @@ class FittingLogic(QObject):
     currentCalculatorChanged = Signal()
     finished = Signal(dict)
     failed = Signal(str)
-    constraintsChanged = Signal()
+    constraintsRemoved = Signal()
 
     def __init__(self, parent=None, interface=None):
         super().__init__(parent)
@@ -281,7 +281,7 @@ class FittingLogic(QObject):
     def removeAllConstraints(self):
         for _ in range(len(self.fitter.fit_constraints())):
             self.removeConstraintByIndex(0)
-        self.constraintsChanged.emit()
+        self.constraintsRemoved.emit()
 
 
 class Fitter(QThread):

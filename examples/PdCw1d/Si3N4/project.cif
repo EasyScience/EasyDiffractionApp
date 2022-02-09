@@ -1,0 +1,5 @@
+_name 'Si3N4'
+_short_description 'neutrons, powder, constant wavelength, multi-phase, 1D'
+_samples 'Si3N4_alpha, Si3N4_beta'
+_experiments '3T2@LLB'
+_modified '01.02.2022 10:16'

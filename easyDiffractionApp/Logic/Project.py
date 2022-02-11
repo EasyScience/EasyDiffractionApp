@@ -93,17 +93,17 @@ class ProjectLogic(QObject):
 
     def projectExamplesAsXml(self):
         model = [
-            {"name": "PbSO4", "description": "neutrons, powder, constant wavelength, 1D, D1@ILL",
+            {"name": "PbSO4", "description": "neutrons, powder, constant wavelength, D1@ILL",
              "path": "../Resources/Examples/PbSO4/project.json"},
-            {"name": "Co2SiO4", "description": "neutrons, powder, constant wavelength, 1D, D20@ILL",
+            {"name": "Co2SiO4", "description": "neutrons, powder, constant wavelength, D20@ILL",
              "path": "../Resources/Examples/Co2SiO4/project.json"},
-            {"name": "Dy3Al5O12", "description": "neutrons, powder, constant wavelength, 1D, G41@LLB",
+            {"name": "Dy3Al5O12", "description": "neutrons, powder, constant wavelength, G41@LLB",
              "path": "../Resources/Examples/Dy3Al5O12/project.json"},
-            {"name": "CeCuAl3", "description": "neutrons, powder, time-of-flight, 1D, Polaris@ISIS",
+            {"name": "CeCuAl3", "description": "neutrons, powder, time-of-flight, Polaris@ISIS",
              "path": "../Resources/Examples/CeCuAl3/project.json"},
-            {"name": "Na2Ca3Al2F14", "description": "neutrons, powder, time-of-flight, 1D, Osiris@ISIS",
+            {"name": "Na2Ca3Al2F14", "description": "neutrons, powder, time-of-flight, Osiris@ISIS",
              "path": "../Resources/Examples/Na2Ca3Al2F14/project.json"},
-            {"name": "Si3N4", "description": "neutrons, powder, multi-phase, 1D, 3T2@LLB",
+            {"name": "Si3N4", "description": "neutrons, powder, constant wavelength, multi-phase, 3T2@LLB",
              "path": "../Resources/Examples/Si3N4/project.json"}
         ]
         xml = dicttoxml(model, attr_type=False)

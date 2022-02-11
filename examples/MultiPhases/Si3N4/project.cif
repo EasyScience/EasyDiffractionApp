@@ -1,5 +1,0 @@
-_name Si3N4
-_short_description 'diffraction, powder, 1D'
-_samples 'Si3N4_alpha, Si3N4_beta'
-_experiments '3T2@LLB'
-_modified '02.12.2021 10:15'

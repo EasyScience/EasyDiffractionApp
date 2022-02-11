@@ -17,6 +17,7 @@ import Gui.Globals 1.0 as ExGlobals
 EaComponents.TableView {
     id: tableView
 
+    maxRowCountShow: 8
     defaultInfoText: qsTr("No Examples Available")
 
     // Table model

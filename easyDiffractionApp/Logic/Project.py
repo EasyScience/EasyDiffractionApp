@@ -1,10 +1,11 @@
-# SPDX-FileCopyrightText: 2021 easyDiffraction contributors <support@easydiffraction.org>
+# SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
 # SPDX-License-Identifier: BSD-3-Clause
-# © 2021 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+# © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
 # noqa: E501
 import os
 import datetime
+from timeit import default_timer as timer
 
 from dicttoxml import dicttoxml
 import json
@@ -26,7 +27,6 @@ class ProjectLogic(QObject):
     phasesEnabled = Signal()
     phasesAsObjChanged = Signal()
     structureParametersChanged = Signal()
-    removePhaseSignal = Signal(str)
     experimentDataAdded = Signal()
     removeExperiment = Signal()
     experimentLoadedChanged = Signal()
@@ -93,16 +93,18 @@ class ProjectLogic(QObject):
 
     def projectExamplesAsXml(self):
         model = [
-            {"name": "PbSO4", "description": "neutrons, powder, constant wavelength, 1D, D1@ILL",
+            {"name": "PbSO4", "description": "neutrons, powder, constant wavelength, D1@ILL",
              "path": "../Resources/Examples/PbSO4/project.json"},
-            {"name": "Co2SiO4", "description": "neutrons, powder, constant wavelength, 1D, D20@ILL",
+            {"name": "Co2SiO4", "description": "neutrons, powder, constant wavelength, D20@ILL",
              "path": "../Resources/Examples/Co2SiO4/project.json"},
-            {"name": "Dy3Al5O12", "description": "neutrons, powder, constant wavelength, 1D, G41@LLB",
+            {"name": "Dy3Al5O12", "description": "neutrons, powder, constant wavelength, G41@LLB",
              "path": "../Resources/Examples/Dy3Al5O12/project.json"},
-            {"name": "CeCuAl3", "description": "neutrons, powder, time-of-flight, 1D, Polaris@ISIS",
+            {"name": "CeCuAl3", "description": "neutrons, powder, time-of-flight, Polaris@ISIS",
              "path": "../Resources/Examples/CeCuAl3/project.json"},
-            {"name": "Na2Ca3Al2F14", "description": "neutrons, powder, time-of-flight, 1D, Osiris@ISIS",
-             "path": "../Resources/Examples/Na2Ca3Al2F14/project.json"}
+            {"name": "Na2Ca3Al2F14", "description": "neutrons, powder, time-of-flight, Osiris@ISIS",
+             "path": "../Resources/Examples/Na2Ca3Al2F14/project.json"},
+            {"name": "Si3N4", "description": "neutrons, powder, constant wavelength, multi-phase, 3T2@LLB",
+             "path": "../Resources/Examples/Si3N4/project.json"}
         ]
         xml = dicttoxml(model, attr_type=False)
         xml = xml.decode()
@@ -165,6 +167,7 @@ class ProjectLogic(QObject):
     def _loadProject(self):
         """
         """
+        start_time = timer()
         path = generalizePath(self.project_load_filepath)
         if not os.path.isfile(path):
             print("Failed to find project: '{0}'".format(path))
@@ -178,9 +181,10 @@ class ProjectLogic(QObject):
             if old_interface_name != interface_name:
                 self._interface.switch(interface_name)
 
+        descr['sample']['interface'] = self._interface
         self.parent.l_sample._sample = Sample.from_dict(descr['sample'])
+
         self.parent.l_phase.phases = self.parent.l_sample._sample._phases
-        self.parent.l_sample._sample.interface = self._interface
         self.parent.l_phase.phasesAsObjChanged.emit()
 
         self.parent.proxy.sample.updateExperimentType()
@@ -188,7 +192,7 @@ class ProjectLogic(QObject):
         # send signal to tell the proxy we changed phases
         self.phasesEnabled.emit()
         self.phasesAsObjChanged.emit()
-        self.structureParametersChanged.emit()
+        # self.structureParametersChanged.emit()
         self.parent.l_background._setAsXml()
 
         # experiment
@@ -232,6 +236,7 @@ class ProjectLogic(QObject):
         self.parent.l_stack.resetUndoRedoStack()
         self.parent.l_stack.undoRedoChanged.emit()
         self.setProjectCreated(True)
+        print("\nProject loading time: {0:.3f} s\n".format(timer() - start_time))
 
     def saveProject(self):
         """
@@ -276,7 +281,7 @@ class ProjectLogic(QObject):
         self.project_save_filepath = ""
         self.removeExperiment.emit()
         if self.parent.l_phase.samplesPresent():
-            self.removePhaseSignal.emit(self.parent.l_sample._sample.phases[self.parent.l_phase._current_phase_index].name)
+            self.parent.l_phase.removeAllPhases()
         self.reset.emit()
 
     def updateProjectInfo(self, key_value):

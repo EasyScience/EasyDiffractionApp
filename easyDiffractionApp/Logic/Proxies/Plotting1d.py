@@ -1,6 +1,6 @@
-# SPDX-FileCopyrightText: 2021 easyDiffraction contributors <support@easydiffraction.org>
+# SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
 # SPDX-License-Identifier: BSD-3-Clause
-# © 2021 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+# © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
 __author__ = 'github.com/andrewsazonov'
 __version__ = '0.0.1'
@@ -29,6 +29,7 @@ class Plotting1dProxy(QObject):
     bokehDifferenceDataObjChanged = Signal()
     bokehBraggDataObjChanged = Signal()
     bokehBackgroundDataObjChanged = Signal()
+    bokehPhasesDataObjChanged = Signal()
 
     qtchartsMeasuredDataObjChanged = Signal()
     qtchartsCalculatedDataObjChanged = Signal()
@@ -50,6 +51,7 @@ class Plotting1dProxy(QObject):
         # Data containers
         self.logic.bokehMeasuredDataObjChanged.connect(self.bokehMeasuredDataObjChanged)
         self.logic.bokehCalculatedDataObjChanged.connect(self.bokehCalculatedDataObjChanged)
+        self.logic.bokehPhasesDataObjChanged.connect(self.bokehPhasesDataObjChanged)
         self.logic.bokehDifferenceDataObjChanged.connect(self.bokehDifferenceDataObjChanged)
         self.logic.bokehBraggDataObjChanged.connect(self.bokehBraggDataObjChanged)
         self.logic.bokehBackgroundDataObjChanged.connect(self.bokehBackgroundDataObjChanged)
@@ -90,6 +92,10 @@ class Plotting1dProxy(QObject):
     @Property('QVariant', notify=bokehCalculatedDataObjChanged)
     def bokehCalculatedDataObj(self):
         return self.logic._bokeh_calculated_data_obj
+
+    @Property('QVariant', notify=bokehPhasesDataObjChanged)
+    def bokehPhasesDataObj(self):
+        return self.logic._bokeh_phases_data_obj
 
     @Property('QVariant', notify=bokehDifferenceDataObjChanged)
     def bokehDifferenceDataObj(self):

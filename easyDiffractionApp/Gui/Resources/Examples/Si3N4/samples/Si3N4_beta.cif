@@ -1,0 +1,22 @@
+data_Si3N4_beta
+
+_cell_length_a 7.60375657
+_cell_length_b 7.60375657
+_cell_length_c 2.9066949
+_cell_angle_alpha 90.0
+_cell_angle_beta 90.0
+_cell_angle_gamma 120.0
+_space_group_name_H-M_alt 'P 63/m'
+
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_occupancy
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_adp_type
+_atom_site_U_iso_or_equiv
+Si Si 1.0 0.17522 0.76977 0.25 Uiso 0.00301531
+N1 N 1.0 0.33131 0.0312 0.25 Uiso 0.00660646
+N2 N 1.0 0.33333333 0.66666667 0.25 Uiso 0.01067827

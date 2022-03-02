@@ -1,6 +1,6 @@
-# SPDX-FileCopyrightText: 2021 easyDiffraction contributors <support@easydiffraction.org>
+# SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
 # SPDX-License-Identifier: BSD-3-Clause
-# © 2021 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+# © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
 
 import re
@@ -10,7 +10,7 @@ from PySide2.QtCore import Signal, QObject
 
 from easyCore import np, borg
 from easyDiffractionLib import Phases, Phase, Lattice, Site, SpaceGroup
-from easyCore.Symmetry.tools import SpacegroupInfo
+from easyCrystallography.Symmetry.tools import SpacegroupInfo
 from easyApp.Logic.Utils.Utils import generalizePath
 
 
@@ -45,8 +45,16 @@ class PhaseLogic(QObject):
     def currentPhaseIndex(self, new_index: int):
         if self._current_phase_index == new_index or new_index == -1:
             return False
+        if len(self.phases) <= new_index:
+            return False # no phase at this index
         self._current_phase_index = new_index
         return True
+
+    def removeAllPhases(self):
+        for name in self.phases.phase_names:
+            del self.phases[name]
+        self.structureParametersChanged.emit()
+        self.phasesEnabled.emit()
 
     def removePhase(self, phase_name: str):
         if phase_name in self.phases.phase_names:
@@ -62,8 +70,8 @@ class PhaseLogic(QObject):
         if default_phase.name in known_phases:
             idx = known_phases.count(default_phase.name)
             default_phase.name = default_phase.name + str(idx)
-        print('Disabling scale')
-        default_phase.scale.enabled = False
+        # print('Disabling scale')
+        # default_phase.scale.enabled = False
         self.phases.append(default_phase)
         borg.stack.enabled = True
 
@@ -117,6 +125,7 @@ class PhaseLogic(QObject):
 
     def _setPhasesAsObj(self):
         self._phases_as_obj = self.phases.as_dict(skip=['interface'])['data']
+        self.parent.l_plotting1d.setCalculatedDataForPhase()
         # phase set - update xml so parameter table is also updated
         self.parent.l_parameters.parametersChanged.emit()
 
@@ -244,11 +253,11 @@ class PhaseLogic(QObject):
             cif_path = generalizePath(cif_file)
             borg.stack.enabled = False
             phases = Phases.from_cif_file(cif_path)
-            for phase in phases:
-                print('Disabling scale')
-                phase.scale.enabled = False
-                self.phases.append(phase)
             self.phases.interface = self._interface
+            for phase in phases:
+                # print('Disabling scale')
+                # phase.scale.enabled = False
+                self.phases.append(phase)
             self.phasesReplaced.emit()
             borg.stack.enabled = True
 

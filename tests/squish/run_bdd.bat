@@ -8,7 +8,9 @@ set PYTHONPATH=%userprofile%\Squish\python3
 
 cd %SQUISHPATH%\bin
 
-squishrunner --host %SQUISH_SERVER_HOST% --port %SQUISH_SERVER_PORT% --testsuite %TESTSUITE% --reportgen xml3,%REPORTPATH%/report.xml
+squishrunner --host %SQUISH_SERVER_HOST% --port %SQUISH_SERVER_PORT% --testsuite %TESTSUITE% --exitCodeOnFail 6 --reportgen xml3,%REPORTPATH%/report.xml
+
+echo %errorlevel%
 
 cd %REPORTPATH%
 

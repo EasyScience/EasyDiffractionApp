@@ -31,22 +31,23 @@
 import names
 import time
 
+#@Given("Application is open")
+#def step(context):
+#    startApplication("easyDiffraction")
+#    test.compare(waitForObjectExists(names.o_appContainer_Rectangle).visible, True)
+#    test.compare(waitForObjectExists(names.contentArea_Start_SideBarButton).enabled, True)
+#    test.compare(waitForObjectExists(names.contentArea_rocket_Label).enabled, True)
+#    mouseClick(waitForObject(names.contentArea_Start_SideBarButton), 98, 18, Qt.LeftButton)
+
 @Given("Application is open")
 def step(context):
     startApplication("easyDiffraction")
+    setWindowState(waitForObject(names.o_QQuickApplicationWindow), WindowState.Maximize)
     test.compare(waitForObjectExists(names.o_appContainer_Rectangle).visible, True)
     test.compare(waitForObjectExists(names.contentArea_Start_SideBarButton).enabled, True)
     test.compare(waitForObjectExists(names.contentArea_rocket_Label).enabled, True)
+    # mouseClick(waitForObject(names.contentArea_Start_Label))
     mouseClick(waitForObject(names.contentArea_Start_SideBarButton), 98, 18, Qt.LeftButton)
-
-#@When("Start is clicked")
-#def step(context):
-    # mouseClick(waitForObject(names.contentArea_Start_SideBarButton), 100, 20, Qt.LeftButton)
-    #mouseClick(waitForObject(names.contentArea_Start_SideBarButton))
-
-#@When("Start is clicked")
-#def step(context):
-#    mouseClick(waitForObject(names.contentArea_rocket_Label))
 
 @Then("User can open a new project")
 def step(context):

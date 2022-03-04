@@ -6,7 +6,7 @@ build-backend = 'poetry.masonry.api'
 
 [tool.poetry]
 name = 'easyDiffractionApp'
-version = '0.8.2-beta'
+version = '0.8.3-beta'
 description = 'Making diffraction data analysis and modelling easy.'
 license = 'BSD-3-Clause'
 authors = ['Andrew Sazonov', 'Simon Ward', 'Piotr Rozyczko']
@@ -27,9 +27,8 @@ darkdetect = '^0.3.1'
 pyobjc-core = { version = '^7.1', platform = 'darwin' }
 pyobjc-framework-cocoa = { version = '^7.1', platform = 'darwin' }
 # easyScience
-#easyDiffraction = { git = 'https://github.com/easyScience/easyDiffractionLib.git', rev = 'develop' }
-easyDiffraction = '>=0.0.3a0' # easyDiffractionLib from our custom PyPi server
-easyApp = { git = 'https://github.com/easyScience/easyApp.git', rev = 'develop' }
+easyDiffraction = { git = 'https://github.com/easyScience/easyDiffractionLib.git', rev = 'master' }
+easyApp = { git = 'https://github.com/easyScience/easyApp.git', rev = 'master' }
 
 #[tool.poetry.dev-dependencies]
 # PyInstaller

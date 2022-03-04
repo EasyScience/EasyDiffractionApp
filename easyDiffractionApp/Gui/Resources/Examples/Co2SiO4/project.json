@@ -4,18 +4,18 @@
         "@class": "Sample",
         "@version": "0.0.1",
         "phases": {
-            "@module": "easyCore.Elements.HigherLevel.Phase",
+            "@module": "easyCrystallography.Structures.Phase",
             "@class": "Phases",
             "@version": "0.1.0",
             "name": "Phases",
             "data": [
                 {
-                    "@module": "easyCore.Elements.HigherLevel.Phase",
+                    "@module": "easyCrystallography.Structures.Phase",
                     "@class": "Phase",
                     "@version": "0.1.0",
                     "name": "Co2SiO4",
                     "spacegroup": {
-                        "@module": "easyCore.Elements.Basic.SpaceGroup",
+                        "@module": "easyCrystallography.Components.SpaceGroup",
                         "@class": "SpaceGroup",
                         "@version": "0.1.0",
                         "_space_group_HM_name": {
@@ -35,7 +35,7 @@
                         "@id": "99980507236167308741922907311467866043"
                     },
                     "cell": {
-                        "@module": "easyCore.Elements.Basic.Lattice",
+                        "@module": "easyCrystallography.Components.Lattice",
                         "@class": "PeriodicLattice",
                         "@version": "0.1.0",
                         "length_a": {
@@ -135,7 +135,7 @@
                             "@id": "128821773429575136152608133488444882341"
                         },
                         "spacegroup": {
-                            "@module": "easyCore.Elements.Basic.SpaceGroup",
+                            "@module": "easyCrystallography.Components.SpaceGroup",
                             "@class": "SpaceGroup",
                             "@version": "0.1.0",
                             "_space_group_HM_name": {
@@ -157,13 +157,13 @@
                         "@id": "214237106813507181153435085643924893124"
                     },
                     "atoms": {
-                        "@module": "easyCore.Elements.Basic.Site",
+                        "@module": "easyCrystallography.Components.Site",
                         "@class": "Atoms",
                         "@version": "0.1.0",
                         "name": "atoms",
                         "data": [
                             {
-                                "@module": "easyCore.Elements.Basic.Site",
+                                "@module": "easyCrystallography.Components.Site",
                                 "@class": "Site",
                                 "@version": "0.1.0",
                                 "label": {
@@ -180,11 +180,11 @@
                                     "@id": "80346476329978868863613104054295480080"
                                 },
                                 "specie": {
-                                    "@module": "easyCore.Elements.Basic.Specie",
+                                    "@module": "easyCrystallography.Components.Specie",
                                     "@class": "Specie",
                                     "@version": "0.1.0",
                                     "specie": {
-                                        "@module": "easyCore.Elements.periodic_table",
+                                        "@module": "easyCrystallography.Elements.periodic_table",
                                         "@class": "Specie",
                                         "element": "Co",
                                         "oxidation_state": 0.0
@@ -258,7 +258,7 @@
                                     "@id": "218745199907417688572074287247277210368"
                                 },
                                 "adp": {
-                                    "@module": "easyCore.Elements.Basic.AtomicDisplacement",
+                                    "@module": "easyCrystallography.Components.AtomicDisplacement",
                                     "@class": "AtomicDisplacement",
                                     "@version": "0.1.0",
                                     "adp_type": {
@@ -275,7 +275,7 @@
                                         "@id": "134647736691744816073952510897427386670"
                                     },
                                     "adp_class": {
-                                        "@module": "easyCore.Elements.Basic.AtomicDisplacement",
+                                        "@module": "easyCrystallography.Components.AtomicDisplacement",
                                         "@class": "Isotropic",
                                         "@version": "0.1.0",
                                         "Uiso": {
@@ -301,7 +301,7 @@
                                 "@id": "13721075522041068377904273260551980524"
                             },
                             {
-                                "@module": "easyCore.Elements.Basic.Site",
+                                "@module": "easyCrystallography.Components.Site",
                                 "@class": "Site",
                                 "@version": "0.1.0",
                                 "label": {
@@ -318,11 +318,11 @@
                                     "@id": "159396446150166335272681644976592723215"
                                 },
                                 "specie": {
-                                    "@module": "easyCore.Elements.Basic.Specie",
+                                    "@module": "easyCrystallography.Components.Specie",
                                     "@class": "Specie",
                                     "@version": "0.1.0",
                                     "specie": {
-                                        "@module": "easyCore.Elements.periodic_table",
+                                        "@module": "easyCrystallography.Elements.periodic_table",
                                         "@class": "Specie",
                                         "element": "Co",
                                         "oxidation_state": 0.0
@@ -396,7 +396,7 @@
                                     "@id": "32152093064455511318024860478895091207"
                                 },
                                 "adp": {
-                                    "@module": "easyCore.Elements.Basic.AtomicDisplacement",
+                                    "@module": "easyCrystallography.Components.AtomicDisplacement",
                                     "@class": "AtomicDisplacement",
                                     "@version": "0.1.0",
                                     "adp_type": {
@@ -413,7 +413,7 @@
                                         "@id": "96906090070146054552894720982172289777"
                                     },
                                     "adp_class": {
-                                        "@module": "easyCore.Elements.Basic.AtomicDisplacement",
+                                        "@module": "easyCrystallography.Components.AtomicDisplacement",
                                         "@class": "Isotropic",
                                         "@version": "0.1.0",
                                         "Uiso": {
@@ -439,7 +439,7 @@
                                 "@id": "110329704401267917607181181730955952315"
                             },
                             {
-                                "@module": "easyCore.Elements.Basic.Site",
+                                "@module": "easyCrystallography.Components.Site",
                                 "@class": "Site",
                                 "@version": "0.1.0",
                                 "label": {
@@ -456,11 +456,11 @@
                                     "@id": "120796229715282113428621424467220165516"
                                 },
                                 "specie": {
-                                    "@module": "easyCore.Elements.Basic.Specie",
+                                    "@module": "easyCrystallography.Components.Specie",
                                     "@class": "Specie",
                                     "@version": "0.1.0",
                                     "specie": {
-                                        "@module": "easyCore.Elements.periodic_table",
+                                        "@module": "easyCrystallography.Elements.periodic_table",
                                         "@class": "Specie",
                                         "element": "Si",
                                         "oxidation_state": 0.0
@@ -534,7 +534,7 @@
                                     "@id": "29328767824851583705841412702295120371"
                                 },
                                 "adp": {
-                                    "@module": "easyCore.Elements.Basic.AtomicDisplacement",
+                                    "@module": "easyCrystallography.Components.AtomicDisplacement",
                                     "@class": "AtomicDisplacement",
                                     "@version": "0.1.0",
                                     "adp_type": {
@@ -551,7 +551,7 @@
                                         "@id": "287407415544177473089255986491907346853"
                                     },
                                     "adp_class": {
-                                        "@module": "easyCore.Elements.Basic.AtomicDisplacement",
+                                        "@module": "easyCrystallography.Components.AtomicDisplacement",
                                         "@class": "Isotropic",
                                         "@version": "0.1.0",
                                         "Uiso": {
@@ -577,7 +577,7 @@
                                 "@id": "275334614325955270490009608435012669891"
                             },
                             {
-                                "@module": "easyCore.Elements.Basic.Site",
+                                "@module": "easyCrystallography.Components.Site",
                                 "@class": "Site",
                                 "@version": "0.1.0",
                                 "label": {
@@ -594,11 +594,11 @@
                                     "@id": "220620792870975655508381437580383821519"
                                 },
                                 "specie": {
-                                    "@module": "easyCore.Elements.Basic.Specie",
+                                    "@module": "easyCrystallography.Components.Specie",
                                     "@class": "Specie",
                                     "@version": "0.1.0",
                                     "specie": {
-                                        "@module": "easyCore.Elements.periodic_table",
+                                        "@module": "easyCrystallography.Elements.periodic_table",
                                         "@class": "Specie",
                                         "element": "O",
                                         "oxidation_state": 0.0
@@ -672,7 +672,7 @@
                                     "@id": "20253374202132050471717521810736821925"
                                 },
                                 "adp": {
-                                    "@module": "easyCore.Elements.Basic.AtomicDisplacement",
+                                    "@module": "easyCrystallography.Components.AtomicDisplacement",
                                     "@class": "AtomicDisplacement",
                                     "@version": "0.1.0",
                                     "adp_type": {
@@ -689,7 +689,7 @@
                                         "@id": "210716010645715513699280368118946668453"
                                     },
                                     "adp_class": {
-                                        "@module": "easyCore.Elements.Basic.AtomicDisplacement",
+                                        "@module": "easyCrystallography.Components.AtomicDisplacement",
                                         "@class": "Isotropic",
                                         "@version": "0.1.0",
                                         "Uiso": {
@@ -715,7 +715,7 @@
                                 "@id": "91161203392162658308259781927247134540"
                             },
                             {
-                                "@module": "easyCore.Elements.Basic.Site",
+                                "@module": "easyCrystallography.Components.Site",
                                 "@class": "Site",
                                 "@version": "0.1.0",
                                 "label": {
@@ -732,11 +732,11 @@
                                     "@id": "1518257249283340603196475020715177211"
                                 },
                                 "specie": {
-                                    "@module": "easyCore.Elements.Basic.Specie",
+                                    "@module": "easyCrystallography.Components.Specie",
                                     "@class": "Specie",
                                     "@version": "0.1.0",
                                     "specie": {
-                                        "@module": "easyCore.Elements.periodic_table",
+                                        "@module": "easyCrystallography.Elements.periodic_table",
                                         "@class": "Specie",
                                         "element": "O",
                                         "oxidation_state": 0.0
@@ -810,7 +810,7 @@
                                     "@id": "62354687971648705331492285480764651563"
                                 },
                                 "adp": {
-                                    "@module": "easyCore.Elements.Basic.AtomicDisplacement",
+                                    "@module": "easyCrystallography.Components.AtomicDisplacement",
                                     "@class": "AtomicDisplacement",
                                     "@version": "0.1.0",
                                     "adp_type": {
@@ -827,7 +827,7 @@
                                         "@id": "213863480264190284900090191837573470279"
                                     },
                                     "adp_class": {
-                                        "@module": "easyCore.Elements.Basic.AtomicDisplacement",
+                                        "@module": "easyCrystallography.Components.AtomicDisplacement",
                                         "@class": "Isotropic",
                                         "@version": "0.1.0",
                                         "Uiso": {
@@ -853,7 +853,7 @@
                                 "@id": "30594874897682511090428173625413944237"
                             },
                             {
-                                "@module": "easyCore.Elements.Basic.Site",
+                                "@module": "easyCrystallography.Components.Site",
                                 "@class": "Site",
                                 "@version": "0.1.0",
                                 "label": {
@@ -870,11 +870,11 @@
                                     "@id": "297386207339337968082746994238118079443"
                                 },
                                 "specie": {
-                                    "@module": "easyCore.Elements.Basic.Specie",
+                                    "@module": "easyCrystallography.Components.Specie",
                                     "@class": "Specie",
                                     "@version": "0.1.0",
                                     "specie": {
-                                        "@module": "easyCore.Elements.periodic_table",
+                                        "@module": "easyCrystallography.Elements.periodic_table",
                                         "@class": "Specie",
                                         "element": "O",
                                         "oxidation_state": 0.0
@@ -948,7 +948,7 @@
                                     "@id": "250339040922094128030219182706364047612"
                                 },
                                 "adp": {
-                                    "@module": "easyCore.Elements.Basic.AtomicDisplacement",
+                                    "@module": "easyCrystallography.Components.AtomicDisplacement",
                                     "@class": "AtomicDisplacement",
                                     "@version": "0.1.0",
                                     "adp_type": {
@@ -965,7 +965,7 @@
                                         "@id": "152525106245315011849227762848856073147"
                                     },
                                     "adp_class": {
-                                        "@module": "easyCore.Elements.Basic.AtomicDisplacement",
+                                        "@module": "easyCrystallography.Components.AtomicDisplacement",
                                         "@class": "Isotropic",
                                         "@version": "0.1.0",
                                         "Uiso": {
@@ -998,13 +998,13 @@
                         "@class": "Parameter",
                         "@version": "0.1.0",
                         "name": "scale",
-                        "value": 1.0,
+                        "value": 543.9026783732604,
                         "error": 0.0,
                         "min": 0,
                         "max": Infinity,
                         "fixed": false,
                         "units": "dimensionless",
-                        "enabled": false,
+                        "enabled": true,
                         "@id": "5404848708250743440728390150653987361"
                     },
                     "enforce_sym": true,
@@ -1126,13 +1126,13 @@
                 "@class": "Parameter",
                 "@version": "0.1.0",
                 "name": "scale",
-                "value": 543.9026783732604,
+                "value": 1,
                 "error": 0.0,
                 "min": -Infinity,
                 "max": Infinity,
                 "fixed": true,
                 "units": "dimensionless",
-                "enabled": true,
+                "enabled": false,
                 "@id": "19937858366794143769941878578641607775"
             },
             "backgrounds": {

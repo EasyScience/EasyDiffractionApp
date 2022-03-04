@@ -1,6 +1,6 @@
-// SPDX-FileCopyrightText: 2021 easyDiffraction contributors <support@easydiffraction.org>
+// SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
 // SPDX-License-Identifier: BSD-3-Clause
-// © 2021 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+// © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
 import QtQuick 2.13
 import QtQuick.Controls 2.13
@@ -26,6 +26,9 @@ EaComponents.TableView {
         query: "/root/item"
 
         XmlRole { name: "label"; query: "name/string()" }
+        XmlRole { name: "scale"; query: "scale/value/number()" }
+        XmlRole { name: "scaleId"; query: "scale/key[4]/string()" }
+
     }
 
     // Table rows
@@ -56,8 +59,8 @@ EaComponents.TableView {
         EaComponents.TableViewTextInput {
             id: scaleColumn
             headerText: "Scale"
-            text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.parameters.patternParametersAsObj.scale.value)
-            onEditingFinished: editParameterValue(ExGlobals.Constants.proxy.parameters.patternParametersAsObj.scale["@id"], text)
+            text: EaLogic.Utils.toFixed(model.scale)
+            onEditingFinished: editParameterValue(model.scaleId, text)
         }
 
         EaComponents.TableViewCheckBox {

@@ -28,12 +28,12 @@ Project {
     // Include Module Definition Files (qmldir), as well as .ts and .qrc
     // from specified directory and its subdirectories
     Files {
-        filter: "qmldir;*.ts;*.qrc"
+        filter: "qmldir;*.ts;*.qrc;*.html"
         directory: "easyDiffractionApp"
         recursive: true
     }
     Files {
-        filter: "qmldir;*.ts;*.qrc"
+        filter: "qmldir;*.ts;*.qrc;*.html"
         directory: "../easyApp"
         recursive: true
     }

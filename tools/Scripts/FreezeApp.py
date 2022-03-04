@@ -1,6 +1,6 @@
-# SPDX-FileCopyrightText: 2021 easyDiffraction contributors <support@easydiffraction.org>
+# SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
 # SPDX-License-Identifier: BSD-3-Clause
-# © 2021 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+# © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
 __author__ = "github.com/AndrewSazonov"
 __version__ = '0.0.1'
@@ -10,7 +10,7 @@ import glob
 import site
 import PySide2, shiboken2
 import cryspy, GSASII
-import easyCore, easyDiffractionLib, easyApp
+import easyCore, easyCrystallography, easyDiffractionLib, easyApp
 import Functions, Config
 from PyInstaller.__main__ import run as pyInstallerMain
 
@@ -44,6 +44,7 @@ def addedData():
             {'from': GSASII.__path__[0], 'to': '.'},
             {'from': easyCore.__path__[0], 'to': 'easyCore'},
             {'from': easyDiffractionLib.__path__[0], 'to': 'easyDiffractionLib'},
+            {'from': easyCrystallography.__path__[0], 'to': 'easyCrystallography'},
             {'from': easyApp.__path__[0], 'to': 'easyApp'},
             {'from': 'utils.py', 'to': '.'},
             {'from': 'pyproject.toml', 'to': '.'}]

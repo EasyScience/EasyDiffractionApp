@@ -118,9 +118,7 @@ jobs:
         run: poetry run python ${{ env.SCRIPTS_PATH }}/InstallApp.py
 
       - name: Run app in testmode, record screen and quit
-        run: >
-          poetry run python ${{ env.SCRIPTS_PATH }}/RunApp.py
-          --testmode
+        run: poetry run python ${{ env.SCRIPTS_PATH }}/RunApp.py --testmode
 
       - name: Rename test videos
         run: >

@@ -1,6 +1,6 @@
-// SPDX-FileCopyrightText: 2021 easyDiffraction contributors <support@easydiffraction.org>
+// SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
 // SPDX-License-Identifier: BSD-3-Clause
-// © 2021 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+// © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
 import QtQuick 2.13
 import QtQuick.Controls 2.13
@@ -378,6 +378,7 @@ Item {
             {
                 measured: ExGlobals.Constants.proxy.plotting1d.bokehMeasuredDataObj,
                 calculated: ExGlobals.Constants.proxy.plotting1d.bokehCalculatedDataObj,
+                phase: ExGlobals.Constants.proxy.plotting1d.bokehPhasesDataObj,
                 difference: ExGlobals.Constants.proxy.plotting1d.bokehDifferenceDataObj,
                 bragg: ExGlobals.Constants.proxy.plotting1d.bokehBraggDataObj,
                 background: ExGlobals.Constants.proxy.plotting1d.bokehBackgroundDataObj,
@@ -385,6 +386,7 @@ Item {
 
                 hasMeasured: ExGlobals.Variables.analysisChart.hasMeasuredData,
                 hasCalculated: ExGlobals.Variables.analysisChart.hasCalculatedData,
+                hasPhase: ExGlobals.Constants.proxy.plotting1d.hasSinglePhaseData,
                 hasDifference: ExGlobals.Variables.analysisChart.hasDifferenceData,
                 hasBragg: ExGlobals.Variables.analysisChart.hasBraggData,
                 hasBackground: ExGlobals.Variables.analysisChart.hasBackgroundData,

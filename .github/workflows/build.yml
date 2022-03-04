@@ -126,6 +126,8 @@ jobs:
           ${{ env.BRANCH_NAME }}
 
       - name: Sign app installer
+        # if: github.event_name == 'push' && env.BRANCH_NAME == 'master'
+        # test on develop
         if: github.event_name == 'push' && env.BRANCH_NAME == 'master'
         run: >
           poetry run python ${{ env.SCRIPTS_PATH }}/SignAppInstaller.py

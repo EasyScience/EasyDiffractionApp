@@ -44,6 +44,11 @@ class ExperimentProxy(QObject):
     ####################################################################################################################
     ####################################################################################################################
 
+    @Slot(str)
+    def isSpinPolarized(self):
+        # placeholder for proper check
+        return True
+
     @Property(str, notify=experimentDataAsXmlChanged)
     def experimentDataAsXml(self):
         return self.logic._experiment_data_as_xml

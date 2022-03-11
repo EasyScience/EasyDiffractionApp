@@ -98,11 +98,25 @@ class Plotting1dLogic(QObject):
         self._qtcharts_bragg_data_obj = {}
         self._qtcharts_background_data_obj = {}
 
+        # Spin components to display
+        self._spin_components = ['Sum', 'Difference', 'Up', 'Down']
+        self._current_spin_component = 'Sum'
+
     def currentLib(self, lib):
         if self._current_lib == lib:
             return
         self._current_lib = lib
         self.currentLibChanged.emit()
+
+    def spinComponent(self):
+        return self._current_spin_component
+
+    def setSpinComponent(self, component):
+        if self._current_spin_component == component:
+            return
+        if component not in self._spin_components:
+            return
+        self._current_spin_component = component
 
     def clearBackendState(self):
 

@@ -13,6 +13,9 @@ EaCharts.BaseBokeh {
 
     plotRanges: ExGlobals.Constants.proxy.plotting1d.experimentPlotRangesObj
 
+    isSpinPolarized: ExGlobals.Constants.proxy.experiment.isSpinPolarized
+    setSpinComponent: ExGlobals.Constants.proxy.plotting1d.setSpinComponent
+
     xAxisTitle: {
         if (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DCW') {
             return "2θ (deg)"

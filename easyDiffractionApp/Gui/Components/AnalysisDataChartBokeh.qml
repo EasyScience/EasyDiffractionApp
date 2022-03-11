@@ -18,6 +18,8 @@ EaCharts.BaseBokeh {
     phaseData: ExGlobals.Constants.proxy.plotting1d.bokehPhasesDataObj
 
     plotRanges: ExGlobals.Constants.proxy.plotting1d.analysisPlotRangesObj
+    isSpinPolarized: ExGlobals.Constants.proxy.experiment.isSpinPolarized
+    setSpinComponent: ExGlobals.Constants.proxy.plotting1d.setSpinComponent
 
     xAxisTitle: {
         if (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DCW') {

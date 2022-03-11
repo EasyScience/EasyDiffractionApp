@@ -137,3 +137,7 @@ class Plotting1dProxy(QObject):
     @Slot(int, str, result='QBrush')
     def verticalLine(self, size, color):
         return self.logic.verticalLine(size, color)
+
+    @Slot('QVariant')
+    def setSpinComponent(self, component):
+        self.logic.setSpinComponent(component)

@@ -117,6 +117,18 @@ class Plotting1dLogic(QObject):
         if component not in self._spin_components:
             return
         self._current_spin_component = component
+        # need to change y's in the experiment layer
+        # so the library knows what to update
+        if self._current_spin_component == 'Sum':
+            self.parent.l_experiment.setSpinComponent(0)
+        elif self._current_spin_component == 'Difference':
+            self.parent.l_experiment.setSpinComponent(1)
+        elif self._current_spin_component == 'Up':
+            self.parent.l_experiment.setSpinComponent(2)
+        elif self._current_spin_component == 'Down':
+            self.parent.l_experiment.setSpinComponent(3)
+        else:
+            return
 
     def clearBackendState(self):
 

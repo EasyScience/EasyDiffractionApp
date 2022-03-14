@@ -37,6 +37,7 @@ class ExperimentLogic(QObject):
         self._experiment_skipped = False
         self.experiments = self._defaultExperiments()
         self.clearFrontendState.connect(self.onClearFrontendState)
+        self.spin_polarized = False
 
     def _defaultExperiment(self):
         return {
@@ -48,7 +49,14 @@ class ExperimentLogic(QObject):
         print("+ _loadExperimentData")
         file_path = generalizePath(file_url)
         data = self.state._data.experiments[0]
-        data.x, data.y, data.e = np.loadtxt(file_path, unpack=True)
+        try:
+            data.x, data.y, data.e, data.yb, data.eb = np.loadtxt(file_path, unpack=True)
+            self.spin_polarized = True
+        except Exception as e:
+            data.x, data.y, data.e = np.loadtxt(file_path, unpack=True)
+            data.yb = np.zeros(len(data.y))
+            data.eb = np.zeros(len(data.e))
+            self.spin_polarized = False
         return data
 
     def _experimentDataParameters(self, data):
@@ -61,9 +69,6 @@ class ExperimentLogic(QObject):
             "x_step": x_step
         }
         return parameters
-
-    def experimentDataXYZ(self):
-        return (self._experiment_data.x, self._experiment_data.y, self._experiment_data.e)  # noqa: E501
 
     def _defaultExperiments(self):
         return []
@@ -137,3 +142,21 @@ class ExperimentLogic(QObject):
 
     def onClearFrontendState(self):
         self.parent.l_plotting1d.clearFrontendState()
+
+    def setSpinComponent(self, component):
+        if component == 0:
+            y = self._experiment_data.y + self._experiment_data.yb
+            e = self._experiment_data.e + self._experiment_data.eb
+        elif component == 1:
+            y = self._experiment_data.y - self._experiment_data.yb
+            e = self._experiment_data.e - self._experiment_data.eb
+        elif component == 2:
+            y = self._experiment_data.y
+            e = self._experiment_data.e
+        elif component == 3:
+            y = self._experiment_data.yb
+            e = self._experiment_data.eb
+        else:
+            return
+        self.parent.l_plotting1d.setMeasuredData(self._experiment_data.x, y, e)
+

@@ -202,6 +202,13 @@ class ProjectLogic(QObject):
             self.parent.l_parameters._data.experiments[0].x = np.array(descr['experiments'][0])
             self.parent.l_parameters._data.experiments[0].y = np.array(descr['experiments'][1])
             self.parent.l_parameters._data.experiments[0].e = np.array(descr['experiments'][2])
+            if(len(descr['experiments']) > 3):
+                self.parent.l_parameters._data.experiments[0].yb = np.array(descr['experiments'][3])
+                self.parent.l_parameters._data.experiments[0].eb = np.array(descr['experiments'][4])
+            else:
+                length = len(self.parent.l_parameters._data.experiments[0].y)
+                self.parent.l_parameters._data.experiments[0].yb = np.zeros(length)
+                self.parent.l_parameters._data.experiments[0].eb = np.zeros(length)
             self.parent.l_experiment._experiment_data = self.parent.l_parameters._data.experiments[0]
             self.parent.l_experiment.experiments = [{'name': descr['project_info']['experiments']}]
             self.parent.l_experiment.setCurrentExperimentDatasetName(descr['project_info']['experiments'])
@@ -250,7 +257,9 @@ class ProjectLogic(QObject):
             experiments_x = self.parent.l_parameters._data.experiments[0].x
             experiments_y = self.parent.l_parameters._data.experiments[0].y
             experiments_e = self.parent.l_parameters._data.experiments[0].e
-            descr['experiments'] = [experiments_x, experiments_y, experiments_e]
+            experiments_yb = self.parent.l_parameters._data.experiments[0].yb
+            experiments_eb = self.parent.l_parameters._data.experiments[0].eb
+            descr['experiments'] = [experiments_x, experiments_y, experiments_e, experiments_yb, experiments_eb]
 
         descr['experiment_skipped'] = self.parent.l_experiment._experiment_skipped
         descr['project_info'] = self._project_info

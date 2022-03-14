@@ -69,24 +69,33 @@ class ParametersLogic(QObject):
         data.append(
             DataSet1D(
                 name='PND',
-                x=x_data, y=np.zeros_like(x_data),
-                x_label='2theta (deg)', y_label='Intensity',
+                x=x_data,
+                y=np.zeros_like(x_data),
+                yb=np.zeros_like(x_data),
+                x_label='2theta (deg)',
+                y_label='Intensity',
                 data_type='experiment'
             )
         )
         data.append(
             DataSet1D(
                 name='{:s} engine'.format(self._interface_name),
-                x=x_data, y=np.zeros_like(x_data),
-                x_label='2theta (deg)', y_label='Intensity',
+                x=x_data,
+                y=np.zeros_like(x_data),
+                yb=np.zeros_like(x_data),
+                x_label='2theta (deg)',
+                y_label='Intensity',
                 data_type='simulation'
             )
         )
         data.append(
             DataSet1D(
                 name='Difference',
-                x=x_data, y=np.zeros_like(x_data),
-                x_label='2theta (deg)', y_label='Difference',
+                x=x_data,
+                y=np.zeros_like(x_data),
+                yb=np.zeros_like(x_data),
+                x_label='2theta (deg)',
+                y_label='Difference',
                 data_type='simulation'
             )
         )

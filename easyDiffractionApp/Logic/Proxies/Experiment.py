@@ -49,7 +49,6 @@ class ExperimentProxy(QObject):
         return self.logic.spin_polarized
 
     @Property(str, notify=experimentLoadedChanged)
-    #@Slot()
     def spinComponent(self):
         return self.logic.spinComponent()
 

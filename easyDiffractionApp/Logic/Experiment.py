@@ -38,6 +38,9 @@ class ExperimentLogic(QObject):
         self.experiments = self._defaultExperiments()
         self.clearFrontendState.connect(self.onClearFrontendState)
         self.spin_polarized = False
+        # Spin components to display
+        self._spin_components = ['Sum', 'Difference', 'Up', 'Down']
+        self._current_spin_component = 'Sum'
 
     def _defaultExperiment(self):
         return {
@@ -143,20 +146,28 @@ class ExperimentLogic(QObject):
     def onClearFrontendState(self):
         self.parent.l_plotting1d.clearFrontendState()
 
+    def spinComponent(self):
+        return self._current_spin_component
+
     def setSpinComponent(self, component):
-        if component == 0:
+        if self._current_spin_component == component:
+            return
+        if component not in self._spin_components:
+            return
+        self._current_spin_component = component
+
+        if self._current_spin_component == 'Sum':
             y = self._experiment_data.y + self._experiment_data.yb
             e = self._experiment_data.e + self._experiment_data.eb
-        elif component == 1:
+        elif self._current_spin_component == 'Difference':
             y = self._experiment_data.y - self._experiment_data.yb
             e = self._experiment_data.e - self._experiment_data.eb
-        elif component == 2:
+        elif self._current_spin_component == 'Up':
             y = self._experiment_data.y
             e = self._experiment_data.e
-        elif component == 3:
+        elif self._current_spin_component == 'Down':
             y = self._experiment_data.yb
             e = self._experiment_data.eb
         else:
             return
         self.parent.l_plotting1d.setMeasuredData(self._experiment_data.x, y, e)
-

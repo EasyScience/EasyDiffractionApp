@@ -205,10 +205,12 @@ class ProjectLogic(QObject):
             if(len(descr['experiments']) > 3):
                 self.parent.l_parameters._data.experiments[0].yb = np.array(descr['experiments'][3])
                 self.parent.l_parameters._data.experiments[0].eb = np.array(descr['experiments'][4])
+                self.parent.l_experiment.spin_polarized = True
             else:
                 length = len(self.parent.l_parameters._data.experiments[0].y)
                 self.parent.l_parameters._data.experiments[0].yb = np.zeros(length)
                 self.parent.l_parameters._data.experiments[0].eb = np.zeros(length)
+                self.parent.l_experiment.spin_polarized = False
             self.parent.l_experiment._experiment_data = self.parent.l_parameters._data.experiments[0]
             self.parent.l_experiment.experiments = [{'name': descr['project_info']['experiments']}]
             self.parent.l_experiment.setCurrentExperimentDatasetName(descr['project_info']['experiments'])

@@ -44,10 +44,18 @@ class ExperimentProxy(QObject):
     ####################################################################################################################
     ####################################################################################################################
 
-    @Slot(str)
+    @Property(bool, notify=experimentLoadedChanged)
     def isSpinPolarized(self):
-        # placeholder for proper check
-        return True
+        return self.logic.spin_polarized
+
+    @Property(str, notify=experimentLoadedChanged)
+    #@Slot()
+    def spinComponent(self):
+        return self.logic.spinComponent()
+
+    @Slot('QVariant')
+    def setSpinComponent(self, component):
+        self.logic.setSpinComponent(component)
 
     @Property(str, notify=experimentDataAsXmlChanged)
     def experimentDataAsXml(self):

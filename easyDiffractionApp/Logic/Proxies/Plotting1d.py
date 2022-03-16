@@ -138,6 +138,3 @@ class Plotting1dProxy(QObject):
     def verticalLine(self, size, color):
         return self.logic.verticalLine(size, color)
 
-    @Slot('QVariant')
-    def setSpinComponent(self, component):
-        self.logic.setSpinComponent(component)

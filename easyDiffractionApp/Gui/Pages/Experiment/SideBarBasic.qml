@@ -207,6 +207,18 @@ EaComponents.SideBarColumn {
     }
 
     EaElements.GroupBox {
+        title: qsTr("Diffraction radiation")
+        enabled: ExGlobals.Constants.proxy.experiment.experimentLoaded &&
+                 ExGlobals.Constants.proxy.experiment.isSpinPolarized
+
+        Loader {
+            source: {
+                    return 'SideBarGroups/DiffractionRadiation.qml'
+            }
+        }
+    }
+
+    EaElements.GroupBox {
         title: qsTr("Peak profile")
         enabled: ExGlobals.Constants.proxy.experiment.experimentLoaded ||
                  ExGlobals.Constants.proxy.experiment.experimentSkipped

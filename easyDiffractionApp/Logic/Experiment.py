@@ -41,6 +41,8 @@ class ExperimentLogic(QObject):
         # Spin components to display
         self._spin_components = ['Sum', 'Difference', 'Up', 'Down']
         self._current_spin_component = 'Sum'
+        self._refine_sum = True
+        self._refine_diff = True
 
     def _defaultExperiment(self):
         return {
@@ -171,3 +173,15 @@ class ExperimentLogic(QObject):
         else:
             return
         self.parent.l_plotting1d.setMeasuredData(self._experiment_data.x, y, e)
+
+    def refineSum(self):
+        return self._refine_sum
+
+    def setRefineSum(self, value):
+        self._refine_sum = value
+
+    def refineDiff(self):
+        return self._refine_diff
+
+    def setRefineDiff(self, value):
+        self._refine_diff = value

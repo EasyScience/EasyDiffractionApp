@@ -104,7 +104,9 @@ class ProjectLogic(QObject):
             {"name": "Na2Ca3Al2F14", "description": "neutrons, powder, time-of-flight, Osiris@ISIS",
              "path": "../Resources/Examples/Na2Ca3Al2F14/project.json"},
             {"name": "Si3N4", "description": "neutrons, powder, constant wavelength, multi-phase, 3T2@LLB",
-             "path": "../Resources/Examples/Si3N4/project.json"}
+             "path": "../Resources/Examples/Si3N4/project.json"},
+            {"name": "Fe3O4", "description": "neutrons, powder, constant wavelength, polarized, 6T2@LLB",
+             "path": "../Resources/Examples/Fe3O4/project.json"}
         ]
         xml = dicttoxml(model, attr_type=False)
         xml = xml.decode()

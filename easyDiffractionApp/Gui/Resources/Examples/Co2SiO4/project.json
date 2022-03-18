@@ -1101,6 +1101,34 @@
                 "enabled": true,
                 "@id": "29697990294788785963549441050992490113"
             },
+           "polarization": {
+                "@module": "easyCore.Objects.Base",
+                "@class": "Parameter",
+                "@version": "0.1.0",
+                "name": "polarization",
+                "value": 0.0,
+                "error": 0.0,
+                "min": -Infinity,
+                "max": Infinity,
+                "fixed": true,
+                "units": "dimensionless",
+                "enabled": true,
+                "@id": "293388861148223030600745640397104688713"
+            },
+            "polarizing_efficiency": {
+                "@module": "easyCore.Objects.Base",
+                "@class": "Parameter",
+                "@version": "0.1.0",
+                "name": "polarizing_efficiency",
+                "value": 100.0,
+                "error": 0.0,
+                "min": -Infinity,
+                "max": Infinity,
+                "fixed": true,
+                "units": "dimensionless",
+                "enabled": true,
+                "@id": "61565739908799635002601859349311183930"
+            },
             "@id": "221603770247493723194492752626567712444"
         },
         "pattern": {

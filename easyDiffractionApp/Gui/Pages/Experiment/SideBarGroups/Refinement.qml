@@ -18,15 +18,15 @@ Grid {
 
     EaElements.CheckBox {
         id: refinementSumCheckBox
-        checked: ExGlobals.Constants.proxy.experiment.refine_sum
-        onCheckedChanged: ExGlobals.Constants.proxy.experiment.refine_sum = checked
+        checked: ExGlobals.Constants.proxy.experiment.refineSum
+        onCheckedChanged: ExGlobals.Constants.proxy.experiment.refineSum = checked
         text: qsTr("Up + Down")
     }
 
     EaElements.CheckBox {
         id: refinementDiffCheckBox
-        checked: ExGlobals.Constants.proxy.experiment.refine_diff
-        onCheckedChanged: ExGlobals.Constants.proxy.experiment.refine_diff = checked
+        checked: ExGlobals.Constants.proxy.experiment.refineDiff
+        onCheckedChanged: ExGlobals.Constants.proxy.experiment.refineDiff = checked
         text: qsTr("Up - Down")
     }
 

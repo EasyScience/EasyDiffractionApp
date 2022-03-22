@@ -153,9 +153,9 @@ class ExperimentLogic(QObject):
 
     def setSpinComponent(self, component):
         if self._current_spin_component == component:
-            return
+            return False
         if component not in self._spin_components:
-            return
+            return False
         self._current_spin_component = component
 
         if self._current_spin_component == 'Sum':
@@ -171,8 +171,9 @@ class ExperimentLogic(QObject):
             y = self._experiment_data.yb
             e = self._experiment_data.eb
         else:
-            return
+            return False
         self.parent.l_plotting1d.setMeasuredData(self._experiment_data.x, y, e)
+        return True
 
     def refineSum(self):
         return self._refine_sum

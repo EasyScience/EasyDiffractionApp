@@ -54,7 +54,8 @@ class ExperimentProxy(QObject):
 
     @Slot('QVariant')
     def setSpinComponent(self, component):
-        self.logic.setSpinComponent(component)
+        if self.logic.setSpinComponent(component):
+            self.experimentLoadedChanged.emit()
 
     @Property(bool)
     def refineSum(self):

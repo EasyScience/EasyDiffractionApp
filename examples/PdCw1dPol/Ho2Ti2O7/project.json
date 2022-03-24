@@ -825,34 +825,6 @@
                 "@id": "243685821177477374659968060114492604684",
                 "enabled": true
             },
-            "polarization": {
-                "@module": "easyCore.Objects.Variable",
-                "@class": "Parameter",
-                "@version": "0.1.0",
-                "name": "polarization",
-                "value": 0.0,
-                "error": 0.0,
-                "min": -Infinity,
-                "max": Infinity,
-                "fixed": true,
-                "units": "dimensionless",
-                "@id": "216627551887147260798421494172427303999",
-                "enabled": true
-            },
-            "polarizing_efficiency": {
-                "@module": "easyCore.Objects.Variable",
-                "@class": "Parameter",
-                "@version": "0.1.0",
-                "name": "polarizing_efficiency",
-                "value": 100.0,
-                "error": 0.0,
-                "min": -Infinity,
-                "max": Infinity,
-                "fixed": true,
-                "units": "dimensionless",
-                "@id": "327038790579329674440394066874296286782",
-                "enabled": true
-            },
             "@id": "106557879826635559313988282303279369855"
         },
         "pattern": {
@@ -888,12 +860,12 @@
                 "@id": "153876979996444913442017899983857171256"
             },
             "backgrounds": {
-                "@module": "easyDiffractionLib.Elements.Backgrounds.Background",
+                "@module": "easyDiffractionLib.elements.Backgrounds.Background",
                 "@class": "BackgroundContainer",
                 "@version": "0.0.1",
                 "data": [
                     {
-                        "@module": "easyDiffractionLib.Elements.Backgrounds.Point",
+                        "@module": "easyDiffractionLib.elements.Backgrounds.Point",
                         "@class": "PointBackground",
                         "@version": "0.0.1",
                         "data": [],

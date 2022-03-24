@@ -687,34 +687,6 @@
                 "enabled": true,
                 "@id": "323284581554847850775278019486436120718"
             },
-            "polarization": {
-                "@module": "easyCore.Objects.Variable",
-                "@class": "Parameter",
-                "@version": "0.1.0",
-                "name": "polarization",
-                "value": 0.0,
-                "error": 0.0,
-                "min": -Infinity,
-                "max": Infinity,
-                "fixed": true,
-                "units": "dimensionless",
-                "enabled": true,
-                "@id": "293388861148223030600745640397104688713"
-            },
-            "polarizing_efficiency": {
-                "@module": "easyCore.Objects.Variable",
-                "@class": "Parameter",
-                "@version": "0.1.0",
-                "name": "polarizing_efficiency",
-                "value": 100.0,
-                "error": 0.0,
-                "min": -Infinity,
-                "max": Infinity,
-                "fixed": true,
-                "units": "dimensionless",
-                "enabled": true,
-                "@id": "61565739908799635002601859349311183930"
-            },
             "@id": "312422338994732252451966070853866087232"
         },
         "pattern": {
@@ -750,12 +722,12 @@
                 "@id": "309784542834580936516890726790973350698"
             },
             "backgrounds": {
-                "@module": "easyDiffractionLib.Elements.Backgrounds.Background",
+                "@module": "easyDiffractionLib.elements.Backgrounds.Background",
                 "@class": "BackgroundContainer",
                 "@version": "0.0.1",
                 "data": [
                     {
-                        "@module": "easyDiffractionLib.Elements.Backgrounds.Point",
+                        "@module": "easyDiffractionLib.elements.Backgrounds.Point",
                         "@class": "PointBackground",
                         "@version": "0.0.1",
                         "data": [],

@@ -134,8 +134,8 @@ class ParametersLogic(QObject):
             "resolution_w": 0.01,
             "resolution_x": 0.0,
             "resolution_y": 0.0,
-            "polarization": 0.0,
-            "polarizing_efficiency": 100.0,
+            #"polarization": 0.0,
+            #"polarizing_efficiency": 100.0,
         }
 
     def _setInstrumentParametersAsObj(self):

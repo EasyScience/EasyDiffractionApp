@@ -1199,34 +1199,6 @@
                 "enabled": true,
                 "@id": "178510443261068684440484417585803833938"
             },
-           "polarization": {
-                "@module": "easyCore.Objects.Base",
-                "@class": "Parameter",
-                "@version": "0.1.0",
-                "name": "polarization",
-                "value": 0.0,
-                "error": 0.0,
-                "min": -Infinity,
-                "max": Infinity,
-                "fixed": true,
-                "units": "dimensionless",
-                "enabled": true,
-                "@id": "293388861148223030600745640397104688713"
-            },
-            "polarizing_efficiency": {
-                "@module": "easyCore.Objects.Base",
-                "@class": "Parameter",
-                "@version": "0.1.0",
-                "name": "polarizing_efficiency",
-                "value": 100.0,
-                "error": 0.0,
-                "min": -Infinity,
-                "max": Infinity,
-                "fixed": true,
-                "units": "dimensionless",
-                "enabled": true,
-                "@id": "61565739908799635002601859349311183930"
-            },
             "@id": "241465323035192560175539927272499852858"
         },
         "pattern": {
@@ -1262,17 +1234,17 @@
                 "@id": "41354641781274061368708506017829161187"
             },
             "backgrounds": {
-                "@module": "easyDiffractionLib.Elements.Backgrounds.Background",
+                "@module": "easyDiffractionLib.elements.Backgrounds.Background",
                 "@class": "BackgroundContainer",
                 "@version": "0.0.1",
                 "data": [
                     {
-                        "@module": "easyDiffractionLib.Elements.Backgrounds.Point",
+                        "@module": "easyDiffractionLib.elements.Backgrounds.Point",
                         "@class": "PointBackground",
                         "@version": "0.0.1",
                         "data": [
                             {
-                                "@module": "easyDiffractionLib.Elements.Backgrounds.Point",
+                                "@module": "easyDiffractionLib.elements.Backgrounds.Point",
                                 "@class": "BackgroundPoint",
                                 "@version": "0.0.1",
                                 "x": {
@@ -1306,7 +1278,7 @@
                                 "@id": "201430937492350730000645121331702349298"
                             },
                             {
-                                "@module": "easyDiffractionLib.Elements.Backgrounds.Point",
+                                "@module": "easyDiffractionLib.elements.Backgrounds.Point",
                                 "@class": "BackgroundPoint",
                                 "@version": "0.0.1",
                                 "x": {
@@ -1340,7 +1312,7 @@
                                 "@id": "52621278365240804668199452415614472855"
                             },
                             {
-                                "@module": "easyDiffractionLib.Elements.Backgrounds.Point",
+                                "@module": "easyDiffractionLib.elements.Backgrounds.Point",
                                 "@class": "BackgroundPoint",
                                 "@version": "0.0.1",
                                 "x": {
@@ -1374,7 +1346,7 @@
                                 "@id": "188767046947416736041480414634540460276"
                             },
                             {
-                                "@module": "easyDiffractionLib.Elements.Backgrounds.Point",
+                                "@module": "easyDiffractionLib.elements.Backgrounds.Point",
                                 "@class": "BackgroundPoint",
                                 "@version": "0.0.1",
                                 "x": {
@@ -1408,7 +1380,7 @@
                                 "@id": "189714495238539158175433444865854510384"
                             },
                             {
-                                "@module": "easyDiffractionLib.Elements.Backgrounds.Point",
+                                "@module": "easyDiffractionLib.elements.Backgrounds.Point",
                                 "@class": "BackgroundPoint",
                                 "@version": "0.0.1",
                                 "x": {
@@ -1442,7 +1414,7 @@
                                 "@id": "17483642123909377115965106838797394592"
                             },
                             {
-                                "@module": "easyDiffractionLib.Elements.Backgrounds.Point",
+                                "@module": "easyDiffractionLib.elements.Backgrounds.Point",
                                 "@class": "BackgroundPoint",
                                 "@version": "0.0.1",
                                 "x": {
@@ -1476,7 +1448,7 @@
                                 "@id": "273677484352121210296934134215485772443"
                             },
                             {
-                                "@module": "easyDiffractionLib.Elements.Backgrounds.Point",
+                                "@module": "easyDiffractionLib.elements.Backgrounds.Point",
                                 "@class": "BackgroundPoint",
                                 "@version": "0.0.1",
                                 "x": {
@@ -1510,7 +1482,7 @@
                                 "@id": "189412016896787715692850513546258845181"
                             },
                             {
-                                "@module": "easyDiffractionLib.Elements.Backgrounds.Point",
+                                "@module": "easyDiffractionLib.elements.Backgrounds.Point",
                                 "@class": "BackgroundPoint",
                                 "@version": "0.0.1",
                                 "x": {
@@ -1544,7 +1516,7 @@
                                 "@id": "129704182423767027075144544539323504044"
                             },
                             {
-                                "@module": "easyDiffractionLib.Elements.Backgrounds.Point",
+                                "@module": "easyDiffractionLib.elements.Backgrounds.Point",
                                 "@class": "BackgroundPoint",
                                 "@version": "0.0.1",
                                 "x": {
@@ -1578,7 +1550,7 @@
                                 "@id": "221430666615411437237026032678343779496"
                             },
                             {
-                                "@module": "easyDiffractionLib.Elements.Backgrounds.Point",
+                                "@module": "easyDiffractionLib.elements.Backgrounds.Point",
                                 "@class": "BackgroundPoint",
                                 "@version": "0.0.1",
                                 "x": {
@@ -1612,7 +1584,7 @@
                                 "@id": "32120942551516834518183775458263697761"
                             },
                             {
-                                "@module": "easyDiffractionLib.Elements.Backgrounds.Point",
+                                "@module": "easyDiffractionLib.elements.Backgrounds.Point",
                                 "@class": "BackgroundPoint",
                                 "@version": "0.0.1",
                                 "x": {
@@ -1646,7 +1618,7 @@
                                 "@id": "34557595143795459082399512568001843320"
                             },
                             {
-                                "@module": "easyDiffractionLib.Elements.Backgrounds.Point",
+                                "@module": "easyDiffractionLib.elements.Backgrounds.Point",
                                 "@class": "BackgroundPoint",
                                 "@version": "0.0.1",
                                 "x": {
@@ -1680,7 +1652,7 @@
                                 "@id": "109665638082250078377847237962999525212"
                             },
                             {
-                                "@module": "easyDiffractionLib.Elements.Backgrounds.Point",
+                                "@module": "easyDiffractionLib.elements.Backgrounds.Point",
                                 "@class": "BackgroundPoint",
                                 "@version": "0.0.1",
                                 "x": {
@@ -1714,7 +1686,7 @@
                                 "@id": "93686168357842534785464841868819166880"
                             },
                             {
-                                "@module": "easyDiffractionLib.Elements.Backgrounds.Point",
+                                "@module": "easyDiffractionLib.elements.Backgrounds.Point",
                                 "@class": "BackgroundPoint",
                                 "@version": "0.0.1",
                                 "x": {
@@ -1748,7 +1720,7 @@
                                 "@id": "243603774915118132219700846297722409656"
                             },
                             {
-                                "@module": "easyDiffractionLib.Elements.Backgrounds.Point",
+                                "@module": "easyDiffractionLib.elements.Backgrounds.Point",
                                 "@class": "BackgroundPoint",
                                 "@version": "0.0.1",
                                 "x": {

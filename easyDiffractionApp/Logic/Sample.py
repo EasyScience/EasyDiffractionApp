@@ -42,8 +42,8 @@ class SampleLogic(QObject):
         sample.parameters.resolution_w = 0.3864
         sample.parameters.resolution_x = 0.0
         sample.parameters.resolution_y = 0.0  # 0.0961
-        sample.parameters.polarization = 0.0
-        sample.parameters.polarizing_efficiency = 100.0
+        #sample.parameters.polarization = 0.0
+        #sample.parameters.polarizing_efficiency = 100.0
         return sample
 
     def _defaultTOFSample(self):
@@ -67,8 +67,8 @@ class SampleLogic(QObject):
         sample.parameters.resolution_alpha1 = 0
         sample.parameters.resolution_beta0 = 0
         sample.parameters.resolution_beta1 = 0
-        sample.parameters.polarization = 0.0
-        sample.parameters.polarizing_efficiency = 100.0
+        #sample.parameters.polarization = 0.0
+        #sample.parameters.polarizing_efficiency = 100.0
         return sample
 
     @property

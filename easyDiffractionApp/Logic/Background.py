@@ -6,7 +6,7 @@ from easyCore import np
 from dicttoxml import dicttoxml
 
 from PySide2.QtCore import QObject, Signal
-from easyDiffractionLib.Elements.Backgrounds.Point import PointBackground, BackgroundPoint
+from easyDiffractionLib.elements.Backgrounds.Point import PointBackground, BackgroundPoint
 
 
 class BackgroundLogic(QObject):

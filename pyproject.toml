@@ -27,7 +27,7 @@ darkdetect = '^0.3.1'
 pyobjc-core = { version = '^7.1', platform = 'darwin' }
 pyobjc-framework-cocoa = { version = '^7.1', platform = 'darwin' }
 # easyScience
-easyDiffraction = { git = 'https://github.com/easyScience/easyDiffractionLib.git', rev = 'polarized' }
+easyDiffraction = { git = 'https://github.com/easyScience/easyDiffractionLib.git', rev = 'polarizedV2' }
 easyApp = { git = 'https://github.com/easyScience/easyApp.git', rev = 'polarized' }
 
 #[tool.poetry.dev-dependencies]

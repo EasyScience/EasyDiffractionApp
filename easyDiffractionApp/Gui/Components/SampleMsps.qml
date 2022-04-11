@@ -38,20 +38,13 @@ EaComponents.TableView {
         XmlRole { name: "label"; query: "label/value/string()" }
         XmlRole { name: "mspType"; query: "msp/msp_type/value/string()" }
         XmlRole { name: "mspIso"; query: `msp/msp_class/Uiso/value/number()` }
-        XmlRole { name: "mspAni11"; query: "msp_ani_11/number()" }
-        XmlRole { name: "mspAni22"; query: "msp_ani_22/number()" }
-        XmlRole { name: "mspAni33"; query: "msp_ani_33/number()" }
-        XmlRole { name: "mspAni12"; query: "msp_ani_12/number()" }
-        XmlRole { name: "mspAni13"; query: "msp_ani_13/number()" }
-        XmlRole { name: "mspAni23"; query: "msp_ani_23/number()" }
+        XmlRole { name: "mspAni11"; query: "msp/msp_class/chi_11/value/number()" }
+        XmlRole { name: "mspAni22"; query: "msp/msp_class/chi_22/value/number()" }
+        XmlRole { name: "mspAni33"; query: "msp/msp_class/chi_33/value/number()" }
+        XmlRole { name: "mspAni12"; query: "msp/msp_class/chi_12/value/number()" }
+        XmlRole { name: "mspAni13"; query: "msp/msp_class/chi_13/value/number()" }
+        XmlRole { name: "mspAni23"; query: "msp/msp_class/chi_23/value/number()" }
 
-        XmlRole { name: "mspIsoId"; query: "msp/msp_class/Uiso/key[4]/string()" }
-        XmlRole { name: "mspAni11Id"; query: "msp_ani_11/key[4]/string()" }
-        XmlRole { name: "mspAni22Id"; query: "msp_ani_22/key[4]/string()" }
-        XmlRole { name: "mspAni33Id"; query: "msp_ani_33/key[4]/string()" }
-        XmlRole { name: "mspAni12Id"; query: "msp_ani_12/key[4]/string()" }
-        XmlRole { name: "mspAni13Id"; query: "msp_ani_13/key[4]/string()" }
-        XmlRole { name: "mspAni23Id"; query: "msp_ani_23/key[4]/string()" }
     }
 
     // Table rows

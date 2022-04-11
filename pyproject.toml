@@ -22,7 +22,7 @@ url = "https://easyscience.github.io/pypi/"
 secondary = true
 
 [tool.poetry.dependencies]
-python = '^3.7, <3.9'
+python = '^3.8, <3.9'
 darkdetect = '^0.3.1'
 pyobjc-core = { version = '^7.1', platform = 'darwin' }
 pyobjc-framework-cocoa = { version = '^7.1', platform = 'darwin' }

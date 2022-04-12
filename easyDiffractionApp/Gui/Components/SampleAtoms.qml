@@ -65,14 +65,6 @@ EaComponents.TableView {
             onEditingFinished: editDescriptorValue(model.labelId, text)
         }
 
-        /*
-        EaComponents.TableViewComboBox {
-            width: atomLabel.width
-            currentIndex: model.indexOf(modelType)
-            headerText: "Atom"
-            model: ["Mn", "Fe", "Co", "Ni", "Cu", "Si", "O"]
-        }
-        */
         EaComponents.TableViewTextInput {
             width: atomLabel.width
             horizontalAlignment: Text.AlignLeft

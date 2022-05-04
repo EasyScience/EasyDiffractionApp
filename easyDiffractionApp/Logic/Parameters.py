@@ -16,7 +16,6 @@ from easyCore.Utils.classTools import generatePath
 
 from easyDiffractionApp.Logic.DataStore import DataSet1D, DataStore
 
-
 class ParametersLogic(QObject):
     """
     """
@@ -347,7 +346,11 @@ class ParametersLogic(QObject):
             num_points = int((x_max - x_min) / x_step + 1)
             sim.x = np.linspace(x_min, x_max, num_points)
 
-        sim.y = self._interface.fit_func(sim.x)
+        fn = None
+        if self.parent.l_experiment.spin_polarized:
+            fn = self.parent.l_experiment.fn_aggregate
+        sim.y = self._interface.fit_func(sim.x, pol_fn=fn)
+
         self.plotCalculatedDataSignal.emit((sim.x, sim.y))
 
         for phase_index, phase_name in enumerate([str(phase._borg.map.convert_id(phase).int) for phase in self.parent.l_phase.phases]):
@@ -357,15 +360,14 @@ class ParametersLogic(QObject):
             if 'time' in hkl.keys():
                 self.plotBraggDataSignal.emit((phase_index, hkl['time'], hkl['h'], hkl['k'], hkl['l']))  # noqa: E501
 
-
 def defaultSimulationParams(exp_type='powder1DCW', jsonify=True):
-    if exp_type == 'powder1DCW':
+    if 'powder1DCW' in exp_type:
         params = {
             'x_min':  10,
             'x_max':  120,
             'x_step': 0.1
         }
-    elif exp_type == 'powder1DTOF':
+    elif 'powder1DTOF' in exp_type:
         params = {
             'x_min':  5000,
             'x_max':  60000,

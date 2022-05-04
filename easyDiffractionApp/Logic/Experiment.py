@@ -43,6 +43,7 @@ class ExperimentLogic(QObject):
         self._current_spin_component = 'Sum'
         self._refine_sum = True
         self._refine_diff = True
+        self.fn_aggregate = self.pol_sum
 
     def _defaultExperiment(self):
         return {
@@ -78,6 +79,29 @@ class ExperimentLogic(QObject):
     def _defaultExperiments(self):
         return []
 
+    def setPolarized(self, polarized: bool):
+        if self.spin_polarized == polarized:
+            return False
+        current_type = self.parent.l_sample.experimentType
+        if 'TOF' in current_type:
+            return False # no polarized for TOF
+
+        self.spin_polarized = polarized
+        if polarized:
+            if 'unp' in current_type:
+                current_type = current_type.replace('unp', 'pol')
+            elif 'pol' in current_type:
+                return False # no change
+            else:
+                # old style unpolarized
+                current_type = current_type + "pol"
+        else:
+            if 'pol' in current_type:
+                current_type = current_type.replace('pol', 'unp')
+
+        self.parent.l_sample.experimentType = current_type
+        return True
+
     def experimentLoaded(self, loaded: bool):
         if self._experiment_loaded == loaded:
             return
@@ -107,6 +131,7 @@ class ExperimentLogic(QObject):
         if len(self.parent.l_sample._sample.pattern.backgrounds) > 0:
             self.parent.l_background.removeAllPoints()
         self.parent.l_fitting.removeAllConstraints()
+        self.setPolarized(False)
         self.experiments.clear()
         self.experimentLoaded(False)
         self.experimentSkipped(False)
@@ -151,29 +176,51 @@ class ExperimentLogic(QObject):
     def spinComponent(self):
         return self._current_spin_component
 
-    def setSpinComponent(self, component):
+    def pol_sum(self, a, b):
+        return a + b
+    def pol_diff(self, a, b):
+        return a - b
+    def pol_up(self, a, b):
+        return a
+    def pol_down(self, a, b):
+        return b
+
+    def setSpinComponent(self, component=None):
         if self._current_spin_component == component:
             return False
-        if component not in self._spin_components:
-            return False
-        self._current_spin_component = component
+        if component is not None:
+            self._current_spin_component = component
 
+        self.fn_aggregate = self.pol_sum
         if self._current_spin_component == 'Sum':
-            y = self._experiment_data.y + self._experiment_data.yb
-            e = self._experiment_data.e + self._experiment_data.eb
+            if self._experiment_data is not None:
+                y = self._experiment_data.y + self._experiment_data.yb
+                e = self._experiment_data.e + self._experiment_data.eb
+            self.fn_aggregate = self.pol_sum
         elif self._current_spin_component == 'Difference':
-            y = self._experiment_data.y - self._experiment_data.yb
-            e = self._experiment_data.e - self._experiment_data.eb
+            if self._experiment_data is not None:
+                y = self._experiment_data.y - self._experiment_data.yb
+                e = self._experiment_data.e - self._experiment_data.eb
+            self.fn_aggregate = self.pol_diff
         elif self._current_spin_component == 'Up':
-            y = self._experiment_data.y
-            e = self._experiment_data.e
+            if self._experiment_data is not None:
+                y = self._experiment_data.y
+                e = self._experiment_data.e
+            self.fn_aggregate = self.pol_up
         elif self._current_spin_component == 'Down':
-            y = self._experiment_data.yb
-            e = self._experiment_data.eb
+            if self._experiment_data is not None:
+                y = self._experiment_data.yb
+                e = self._experiment_data.eb
+            self.fn_aggregate = self.pol_down
         else:
             return False
-        self.parent.l_plotting1d.setMeasuredData(self._experiment_data.x, y, e)
-        return True
+        if self._experiment_data is not None:
+            self.parent.l_plotting1d.setMeasuredData(self._experiment_data.x, y, e)
+        # recalculate the profile for the new spin case
+        self.parent.l_parameters._updateCalculatedData()
+        if self._experiment_data is not None:
+            return True
+        return False
 
     def refineSum(self):
         return self._refine_sum

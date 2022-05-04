@@ -53,6 +53,11 @@ class ExperimentProxy(QObject):
         return self.logic.spinComponent()
 
     @Slot('QVariant')
+    def setSpinPolarization(self, spin_polarized):
+        if self.logic.setPolarized(spin_polarized):
+            self.experimentLoadedChanged.emit()
+
+    @Slot('QVariant')
     def setSpinComponent(self, component):
         if self.logic.setSpinComponent(component):
             self.experimentLoadedChanged.emit()

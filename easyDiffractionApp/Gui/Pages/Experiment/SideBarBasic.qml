@@ -168,6 +168,43 @@ EaComponents.SideBarColumn {
                     }
                 }
             }
+            Row {
+                visible: true
+                spacing: EaStyle.Sizes.fontPixelSize
+
+                Column {
+                    EaElements.Label {
+                        enabled: true
+                        text: qsTr("Polarization")
+                    }
+
+                    EaElements.ComboBox {
+                        property bool experimentType: ExGlobals.Constants.proxy.experiment.isSpinPolarized
+                        enabled: !ExGlobals.Constants.proxy.experiment.experimentLoaded
+                        width: (EaStyle.Sizes.sideBarContentWidth - EaStyle.Sizes.fontPixelSize * 2 ) / 3
+
+                        textRole: "text"
+                        valueRole: "value"
+
+                        model: [
+                            { value: false, text: qsTr("Unpolarized") },
+                            { value: true, text: qsTr("Polarized") }
+                        ]
+
+                        onExperimentTypeChanged: {
+                            if (experimentType === false) {
+                                currentIndex = 0
+                            } else if (experimentType === true) {
+                                currentIndex = 1
+                            }
+                        }
+
+                        onActivated: {
+                            ExGlobals.Constants.proxy.experiment.setSpinPolarization(currentValue)
+                        }
+                    }
+                }
+            }
         }
     }
 

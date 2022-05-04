@@ -6,6 +6,7 @@ from PySide2.QtCore import Signal, QObject, QThread
 
 from threading import Thread
 
+from easyDiffractionLib.interface import InterfaceFactory as Calculator
 from easyCore.Fitting.Fitting import Fitter as CoreFitter
 from easyCore.Fitting.Constraints import ObjConstraint, NumericConstraint
 
@@ -39,7 +40,8 @@ class FittingLogic(QObject):
         super().__init__(parent)
 
         self.parent = parent
-        self.interface = interface
+        # self.interface = interface
+        self.interface = Calculator()
         self.fitter = CoreFitter(self.parent.l_sample._sample, self.interface.fit_func)
 
         # Multithreading

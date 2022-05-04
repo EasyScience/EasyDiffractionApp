@@ -216,7 +216,7 @@ class ProjectLogic(QObject):
             self.parent.l_experiment._experiment_data = self.parent.l_parameters._data.experiments[0]
             self.parent.l_experiment.experiments = [{'name': descr['project_info']['experiments']}]
             self.parent.l_experiment.setCurrentExperimentDatasetName(descr['project_info']['experiments'])
-
+            self.parent.l_experiment.setPolarized(self.parent.l_experiment.spin_polarized)
             # send signal to tell the proxy we changed experiment
             self.experimentDataAdded.emit()
             self.parent.parametersChanged.emit()

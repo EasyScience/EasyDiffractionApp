@@ -80,7 +80,7 @@ class PhaseLogic(QObject):
         space_group = SpaceGroup.from_pars('P 42/n c m')
         cell = Lattice.from_pars(8.56, 8.56, 6.12, 90, 90, 90)
         atom = Site.from_pars(label='Cl1', specie='Cl', fract_x=0.125, fract_y=0.167, fract_z=0.107)  # noqa: E501
-        atom.add_adp('Uiso', Uiso=0.0)
+        #atom.add_adp('Uiso', Uiso=0.0)
         phase = Phase('Dichlorine', spacegroup=space_group, cell=cell)
         phase.add_atom(atom)
         return phase

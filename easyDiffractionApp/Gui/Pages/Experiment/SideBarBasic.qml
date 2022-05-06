@@ -313,12 +313,12 @@ EaComponents.SideBarColumn {
 
     // Load experimental data file dialog
 
-    Dialogs1.FileDialog{
+    Dialogs1.FileDialog {
         id: loadExperimentDataFileDialog
 
-        nameFilters: [ qsTr("Data files") + " (*.xye *.xys *.xy)" ]
+        nameFilters: [ qsTr("CIF files (*.cif)"), qsTr("Data files (*.xye *.xys *.xy)") ]
 
-        onAccepted: ExGlobals.Constants.proxy.experiment.addExperimentDataFromXye(fileUrl)
+        onAccepted: ExGlobals.Constants.proxy.experiment.addExperimentData(fileUrl)
     }
 
     // Logic

@@ -5,6 +5,8 @@
 # noqa: E501
 
 from dicttoxml import dicttoxml
+from gemmi import cif
+import numpy as np
 import pathlib
 import json
 
@@ -50,6 +52,28 @@ class ExperimentLogic(QObject):
             "label": "D1A@ILL",
             "color": "#00a3e3"
         }
+
+    def _loadExperimentCif(self, file_url):
+        print("+ _loadExperimentCif")
+        file_path = generalizePath(file_url)
+        block = cif.read(file_path).sole_block()
+        data = self.state._data.experiments[0]
+        # Polarized case
+        data.x = np.fromiter(block.find_loop("_pd_meas_2theta"), float)
+        data.y = np.fromiter(block.find_loop("_pd_meas_intensity_up"), float)
+        data.e = np.fromiter(block.find_loop("_pd_meas_intensity_up_sigma"), float)
+        data.yb = np.fromiter(block.find_loop("_pd_meas_intensity_down"), float)
+        data.eb = np.fromiter(block.find_loop("_pd_meas_intensity_down_sigma"), float)
+        self.spin_polarized = True
+        # Unpolarized case
+        if not np.any(data.y):
+            data.x = np.fromiter(block.find_loop("_pd_meas_2theta"), float)
+            data.y = np.fromiter(block.find_loop("_pd_meas_intensity"), float)
+            data.e = np.fromiter(block.find_loop("_pd_meas_intensity_sigma"), float)
+            data.yb = np.zeros(len(data.y))
+            data.eb = np.zeros(len(data.e))
+            self.spin_polarized = False
+        return data
 
     def _loadExperimentData(self, file_url):
         print("+ _loadExperimentData")
@@ -119,6 +143,13 @@ class ExperimentLogic(QObject):
 
     def _setExperimentDataAsXml(self):
         self._experiment_data_as_xml = dicttoxml(self.experiments, attr_type=True).decode()  # noqa: E501
+
+    def addExperimentDataFromCif(self, file_url):
+        self._experiment_data = self._loadExperimentCif(file_url)
+        self.state._data.experiments[0].name = pathlib.Path(file_url).stem
+        self.experiments = [{'name': experiment.name} for experiment in self.state._data.experiments]
+        self.experimentLoaded(True)
+        self.experimentSkipped(False)
 
     def addExperimentDataFromXye(self, file_url):
         self._experiment_data = self._loadExperimentData(file_url)

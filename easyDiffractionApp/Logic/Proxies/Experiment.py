@@ -3,6 +3,8 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
+import os
+
 from PySide2.QtCore import QObject, Signal, Slot, Property
 
 
@@ -97,7 +99,25 @@ class ExperimentProxy(QObject):
     ####################################################################################################################
 
     @Slot(str)
-    def addExperimentDataFromXye(self, file_url):
+    def addExperimentData(self, file_url):
+        _, file_extension = os.path.splitext(file_url)
+        if file_extension == '.cif':
+            print(f"Reading '{file_extension}' file")
+            self._addExperimentDataFromCif(file_url)
+        elif file_extension in ('.xye', '.xys'):
+            print(f"Reading '{file_extension}' file")
+            self._addExperimentDataFromXye(file_url)
+        elif file_extension == '.xy':
+            print(f"We are working on supporting '{file_extension}' files")
+        else:
+            print(f"This file extension is not supported: '{file_extension}'")
+
+    def _addExperimentDataFromCif(self, file_url):
+        self.logic.addExperimentDataFromCif(file_url)
+        self.logic._onExperimentDataAdded()
+        self.experimentLoadedChanged.emit()
+
+    def _addExperimentDataFromXye(self, file_url):
         self.logic.addExperimentDataFromXye(file_url)
         self.logic._onExperimentDataAdded()
         self.experimentLoadedChanged.emit()

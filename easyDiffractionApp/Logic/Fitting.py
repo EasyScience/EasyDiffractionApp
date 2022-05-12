@@ -74,6 +74,9 @@ class FittingLogic(QObject):
             'weights': weights,
             'method': method
         }
+        pol_fn = self.parent.l_experiment.fn_aggregate
+        kwargs['pol_fn'] = pol_fn
+
         if method == 'least_squares':
             kwargs['minimizer_kwargs'] = {'diff_step': 1e-5}
         try:
@@ -201,6 +204,8 @@ class FittingLogic(QObject):
         self.interface.switch(new_name)
         # recreate the fitter object with the new interface
         self.fitter = CoreFitter(self.parent.l_sample._sample, self.interface.fit_func)
+        self.parent.l_sample._sample.interface = self.interface
+        self.parent.l_parameters._interface = self.interface
         self.parent.l_sample._sample.update_bindings()
         self.currentCalculatorChanged.emit()
         print("***** _onCurrentCalculatorChanged")

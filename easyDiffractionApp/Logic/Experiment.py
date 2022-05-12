@@ -57,12 +57,12 @@ class ExperimentLogic(QObject):
         data = self.state._data.experiments[0]
         try:
             data.x, data.y, data.e, data.yb, data.eb = np.loadtxt(file_path, unpack=True)
-            self.spin_polarized = True
+            self.setPolarized(True)
         except Exception as e:
             data.x, data.y, data.e = np.loadtxt(file_path, unpack=True)
             data.yb = np.zeros(len(data.y))
             data.eb = np.zeros(len(data.e))
-            self.spin_polarized = False
+            self.setPolarized(False)
         return data
 
     def _experimentDataParameters(self, data):

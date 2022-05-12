@@ -41,7 +41,6 @@ class SampleLogic(QObject):
         sample.parameters.resolution_y = 0.0  # 0.0961
         return sample
 
-
     def _defaultCWSample(self):
         sample = Sample(
             phases=self._phases.phases,

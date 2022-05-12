@@ -57,6 +57,28 @@ class ExperimentLogic(QObject):
         print("+ _loadExperimentCif")
         file_path = generalizePath(file_url)
         block = cif.read(file_path).sole_block()
+
+        # Get pattern parameters
+        pattern_parameters = self.parent.l_sample._sample.pattern
+        if (value := block.find_value("_setup_offset_2theta")) is not None:
+            pattern_parameters.zero_shift = float(value)
+
+        # Get instrumental parameters
+        instrument_parameters = self.parent.l_sample._sample.parameters
+        if (value := block.find_value("_setup_wavelength")) is not None:
+            instrument_parameters.wavelength = float(value)
+        if (value := block.find_value("_pd_instr_resolution_u")) is not None:
+            instrument_parameters.resolution_u = float(value)
+        if (value := block.find_value("_pd_instr_resolution_v")) is not None:
+            instrument_parameters.resolution_v = float(value)
+        if (value := block.find_value("_pd_instr_resolution_w")) is not None:
+            instrument_parameters.resolution_w = float(value)
+        if (value := block.find_value("_pd_instr_resolution_x")) is not None:
+            instrument_parameters.resolution_x = float(value)
+        if (value := block.find_value("_pd_instr_resolution_y")) is not None:
+            instrument_parameters.resolution_y = float(value)
+
+        # Get data
         data = self.state._data.experiments[0]
         # Polarized case
         data.x = np.fromiter(block.find_loop("_pd_meas_2theta"), float)

@@ -40,8 +40,7 @@ class FittingLogic(QObject):
         super().__init__(parent)
 
         self.parent = parent
-        # self.interface = interface
-        self.interface = Calculator()
+        self.interface = interface
         self.fitter = CoreFitter(self.parent.l_sample._sample, self.interface.fit_func)
 
         # Multithreading

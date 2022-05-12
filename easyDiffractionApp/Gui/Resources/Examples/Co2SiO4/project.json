@@ -19,7 +19,7 @@
                         "@class": "SpaceGroup",
                         "@version": "0.1.0",
                         "_space_group_HM_name": {
-                            "@module": "easyCore.Objects.Base",
+                            "@module": "easyCore.Objects.ObjectClasses",
                             "@class": "Descriptor",
                             "@version": "0.1.0",
                             "name": "_space_group_HM_name",
@@ -39,7 +39,7 @@
                         "@class": "PeriodicLattice",
                         "@version": "0.1.0",
                         "length_a": {
-                            "@module": "easyCore.Objects.Base",
+                            "@module": "easyCore.Objects.ObjectClasses",
                             "@class": "Parameter",
                             "@version": "0.1.0",
                             "name": "length_a",
@@ -55,7 +55,7 @@
                             "@id": "213551681157810189833132241890417492893"
                         },
                         "length_b": {
-                            "@module": "easyCore.Objects.Base",
+                            "@module": "easyCore.Objects.ObjectClasses",
                             "@class": "Parameter",
                             "@version": "0.1.0",
                             "name": "length_b",
@@ -71,7 +71,7 @@
                             "@id": "88673725206505719121908730235721961037"
                         },
                         "length_c": {
-                            "@module": "easyCore.Objects.Base",
+                            "@module": "easyCore.Objects.ObjectClasses",
                             "@class": "Parameter",
                             "@version": "0.1.0",
                             "name": "length_c",
@@ -87,7 +87,7 @@
                             "@id": "226860020197755094192485326454468434125"
                         },
                         "angle_alpha": {
-                            "@module": "easyCore.Objects.Base",
+                            "@module": "easyCore.Objects.ObjectClasses",
                             "@class": "Parameter",
                             "@version": "0.1.0",
                             "name": "angle_alpha",
@@ -103,7 +103,7 @@
                             "@id": "61299912367388436731837912702802729702"
                         },
                         "angle_beta": {
-                            "@module": "easyCore.Objects.Base",
+                            "@module": "easyCore.Objects.ObjectClasses",
                             "@class": "Parameter",
                             "@version": "0.1.0",
                             "name": "angle_beta",
@@ -119,7 +119,7 @@
                             "@id": "269187520564152347998704032454919563169"
                         },
                         "angle_gamma": {
-                            "@module": "easyCore.Objects.Base",
+                            "@module": "easyCore.Objects.ObjectClasses",
                             "@class": "Parameter",
                             "@version": "0.1.0",
                             "name": "angle_gamma",
@@ -139,7 +139,7 @@
                             "@class": "SpaceGroup",
                             "@version": "0.1.0",
                             "_space_group_HM_name": {
-                                "@module": "easyCore.Objects.Base",
+                                "@module": "easyCore.Objects.ObjectClasses",
                                 "@class": "Descriptor",
                                 "@version": "0.1.0",
                                 "name": "_space_group_HM_name",
@@ -167,7 +167,7 @@
                                 "@class": "Site",
                                 "@version": "0.1.0",
                                 "label": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Descriptor",
                                     "@version": "0.1.0",
                                     "name": "label",
@@ -194,7 +194,7 @@
                                     "@id": "40261956679953359495192736991124917525"
                                 },
                                 "occupancy": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Parameter",
                                     "@version": "0.1.0",
                                     "name": "occupancy",
@@ -210,7 +210,7 @@
                                     "@id": "114976262811639994215475111605758583876"
                                 },
                                 "fract_x": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Parameter",
                                     "@version": "0.1.0",
                                     "name": "fract_x",
@@ -226,7 +226,7 @@
                                     "@id": "262680280771916622919831454554761755810"
                                 },
                                 "fract_y": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Parameter",
                                     "@version": "0.1.0",
                                     "name": "fract_y",
@@ -242,7 +242,7 @@
                                     "@id": "284073291020335088001238978951733569962"
                                 },
                                 "fract_z": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Parameter",
                                     "@version": "0.1.0",
                                     "name": "fract_z",
@@ -262,7 +262,7 @@
                                     "@class": "AtomicDisplacement",
                                     "@version": "0.1.0",
                                     "adp_type": {
-                                        "@module": "easyCore.Objects.Base",
+                                        "@module": "easyCore.Objects.ObjectClasses",
                                         "@class": "Descriptor",
                                         "@version": "0.1.0",
                                         "name": "adp_type",
@@ -279,7 +279,7 @@
                                         "@class": "Isotropic",
                                         "@version": "0.1.0",
                                         "Uiso": {
-                                            "@module": "easyCore.Objects.Base",
+                                            "@module": "easyCore.Objects.ObjectClasses",
                                             "@class": "Parameter",
                                             "@version": "0.1.0",
                                             "name": "Uiso",
@@ -305,7 +305,7 @@
                                 "@class": "Site",
                                 "@version": "0.1.0",
                                 "label": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Descriptor",
                                     "@version": "0.1.0",
                                     "name": "label",
@@ -332,7 +332,7 @@
                                     "@id": "92275054976841806801691037030073774148"
                                 },
                                 "occupancy": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Parameter",
                                     "@version": "0.1.0",
                                     "name": "occupancy",
@@ -348,7 +348,7 @@
                                     "@id": "284033267202591306783028255215513434095"
                                 },
                                 "fract_x": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Parameter",
                                     "@version": "0.1.0",
                                     "name": "fract_x",
@@ -364,7 +364,7 @@
                                     "@id": "314216247355731071681717978453852662183"
                                 },
                                 "fract_y": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Parameter",
                                     "@version": "0.1.0",
                                     "name": "fract_y",
@@ -380,7 +380,7 @@
                                     "@id": "261388819531195740133597276651336780177"
                                 },
                                 "fract_z": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Parameter",
                                     "@version": "0.1.0",
                                     "name": "fract_z",
@@ -400,7 +400,7 @@
                                     "@class": "AtomicDisplacement",
                                     "@version": "0.1.0",
                                     "adp_type": {
-                                        "@module": "easyCore.Objects.Base",
+                                        "@module": "easyCore.Objects.ObjectClasses",
                                         "@class": "Descriptor",
                                         "@version": "0.1.0",
                                         "name": "adp_type",
@@ -417,7 +417,7 @@
                                         "@class": "Isotropic",
                                         "@version": "0.1.0",
                                         "Uiso": {
-                                            "@module": "easyCore.Objects.Base",
+                                            "@module": "easyCore.Objects.ObjectClasses",
                                             "@class": "Parameter",
                                             "@version": "0.1.0",
                                             "name": "Uiso",
@@ -443,7 +443,7 @@
                                 "@class": "Site",
                                 "@version": "0.1.0",
                                 "label": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Descriptor",
                                     "@version": "0.1.0",
                                     "name": "label",
@@ -470,7 +470,7 @@
                                     "@id": "80239908997508526581628654194205381221"
                                 },
                                 "occupancy": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Parameter",
                                     "@version": "0.1.0",
                                     "name": "occupancy",
@@ -486,7 +486,7 @@
                                     "@id": "286440726270277498918102054368240527539"
                                 },
                                 "fract_x": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Parameter",
                                     "@version": "0.1.0",
                                     "name": "fract_x",
@@ -502,7 +502,7 @@
                                     "@id": "132165998023282738476729426345198620677"
                                 },
                                 "fract_y": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Parameter",
                                     "@version": "0.1.0",
                                     "name": "fract_y",
@@ -518,7 +518,7 @@
                                     "@id": "35813111456602448188257129853994380899"
                                 },
                                 "fract_z": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Parameter",
                                     "@version": "0.1.0",
                                     "name": "fract_z",
@@ -538,7 +538,7 @@
                                     "@class": "AtomicDisplacement",
                                     "@version": "0.1.0",
                                     "adp_type": {
-                                        "@module": "easyCore.Objects.Base",
+                                        "@module": "easyCore.Objects.ObjectClasses",
                                         "@class": "Descriptor",
                                         "@version": "0.1.0",
                                         "name": "adp_type",
@@ -555,7 +555,7 @@
                                         "@class": "Isotropic",
                                         "@version": "0.1.0",
                                         "Uiso": {
-                                            "@module": "easyCore.Objects.Base",
+                                            "@module": "easyCore.Objects.ObjectClasses",
                                             "@class": "Parameter",
                                             "@version": "0.1.0",
                                             "name": "Uiso",
@@ -581,7 +581,7 @@
                                 "@class": "Site",
                                 "@version": "0.1.0",
                                 "label": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Descriptor",
                                     "@version": "0.1.0",
                                     "name": "label",
@@ -608,7 +608,7 @@
                                     "@id": "107252070760526859931306216708280276285"
                                 },
                                 "occupancy": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Parameter",
                                     "@version": "0.1.0",
                                     "name": "occupancy",
@@ -624,7 +624,7 @@
                                     "@id": "322422929408609566312999826995226032623"
                                 },
                                 "fract_x": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Parameter",
                                     "@version": "0.1.0",
                                     "name": "fract_x",
@@ -640,7 +640,7 @@
                                     "@id": "2459938536151137487231061903957956248"
                                 },
                                 "fract_y": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Parameter",
                                     "@version": "0.1.0",
                                     "name": "fract_y",
@@ -656,7 +656,7 @@
                                     "@id": "70069697771417083227708433505414266285"
                                 },
                                 "fract_z": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Parameter",
                                     "@version": "0.1.0",
                                     "name": "fract_z",
@@ -676,7 +676,7 @@
                                     "@class": "AtomicDisplacement",
                                     "@version": "0.1.0",
                                     "adp_type": {
-                                        "@module": "easyCore.Objects.Base",
+                                        "@module": "easyCore.Objects.ObjectClasses",
                                         "@class": "Descriptor",
                                         "@version": "0.1.0",
                                         "name": "adp_type",
@@ -693,7 +693,7 @@
                                         "@class": "Isotropic",
                                         "@version": "0.1.0",
                                         "Uiso": {
-                                            "@module": "easyCore.Objects.Base",
+                                            "@module": "easyCore.Objects.ObjectClasses",
                                             "@class": "Parameter",
                                             "@version": "0.1.0",
                                             "name": "Uiso",
@@ -719,7 +719,7 @@
                                 "@class": "Site",
                                 "@version": "0.1.0",
                                 "label": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Descriptor",
                                     "@version": "0.1.0",
                                     "name": "label",
@@ -746,7 +746,7 @@
                                     "@id": "242832208373578684445054828395800025914"
                                 },
                                 "occupancy": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Parameter",
                                     "@version": "0.1.0",
                                     "name": "occupancy",
@@ -762,7 +762,7 @@
                                     "@id": "300930983069561035707163104893842076641"
                                 },
                                 "fract_x": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Parameter",
                                     "@version": "0.1.0",
                                     "name": "fract_x",
@@ -778,7 +778,7 @@
                                     "@id": "12777236640899518352290901315147032934"
                                 },
                                 "fract_y": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Parameter",
                                     "@version": "0.1.0",
                                     "name": "fract_y",
@@ -794,7 +794,7 @@
                                     "@id": "37678557321153690406127603491498585631"
                                 },
                                 "fract_z": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Parameter",
                                     "@version": "0.1.0",
                                     "name": "fract_z",
@@ -814,7 +814,7 @@
                                     "@class": "AtomicDisplacement",
                                     "@version": "0.1.0",
                                     "adp_type": {
-                                        "@module": "easyCore.Objects.Base",
+                                        "@module": "easyCore.Objects.ObjectClasses",
                                         "@class": "Descriptor",
                                         "@version": "0.1.0",
                                         "name": "adp_type",
@@ -831,7 +831,7 @@
                                         "@class": "Isotropic",
                                         "@version": "0.1.0",
                                         "Uiso": {
-                                            "@module": "easyCore.Objects.Base",
+                                            "@module": "easyCore.Objects.ObjectClasses",
                                             "@class": "Parameter",
                                             "@version": "0.1.0",
                                             "name": "Uiso",
@@ -857,7 +857,7 @@
                                 "@class": "Site",
                                 "@version": "0.1.0",
                                 "label": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Descriptor",
                                     "@version": "0.1.0",
                                     "name": "label",
@@ -884,7 +884,7 @@
                                     "@id": "10943820123508921060697935586768992454"
                                 },
                                 "occupancy": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Parameter",
                                     "@version": "0.1.0",
                                     "name": "occupancy",
@@ -900,7 +900,7 @@
                                     "@id": "314656379265327363475888964898099751746"
                                 },
                                 "fract_x": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Parameter",
                                     "@version": "0.1.0",
                                     "name": "fract_x",
@@ -916,7 +916,7 @@
                                     "@id": "284936278129636142429313602660608891469"
                                 },
                                 "fract_y": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Parameter",
                                     "@version": "0.1.0",
                                     "name": "fract_y",
@@ -932,7 +932,7 @@
                                     "@id": "120500049313607960558279955319720046424"
                                 },
                                 "fract_z": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Parameter",
                                     "@version": "0.1.0",
                                     "name": "fract_z",
@@ -952,7 +952,7 @@
                                     "@class": "AtomicDisplacement",
                                     "@version": "0.1.0",
                                     "adp_type": {
-                                        "@module": "easyCore.Objects.Base",
+                                        "@module": "easyCore.Objects.ObjectClasses",
                                         "@class": "Descriptor",
                                         "@version": "0.1.0",
                                         "name": "adp_type",
@@ -969,7 +969,7 @@
                                         "@class": "Isotropic",
                                         "@version": "0.1.0",
                                         "Uiso": {
-                                            "@module": "easyCore.Objects.Base",
+                                            "@module": "easyCore.Objects.ObjectClasses",
                                             "@class": "Parameter",
                                             "@version": "0.1.0",
                                             "name": "Uiso",
@@ -994,7 +994,7 @@
                         "@id": "106287109757345889146714361193986942451"
                     },
                     "scale": {
-                        "@module": "easyCore.Objects.Base",
+                        "@module": "easyCore.Objects.ObjectClasses",
                         "@class": "Parameter",
                         "@version": "0.1.0",
                         "name": "scale",
@@ -1018,7 +1018,7 @@
             "@class": "Instrument1DCWParameters",
             "@version": "0.0.1",
             "wavelength": {
-                "@module": "easyCore.Objects.Base",
+                "@module": "easyCore.Objects.ObjectClasses",
                 "@class": "Parameter",
                 "@version": "0.1.0",
                 "name": "wavelength",
@@ -1032,7 +1032,7 @@
                 "@id": "327123410877431203730178241492205006568"
             },
             "resolution_u": {
-                "@module": "easyCore.Objects.Base",
+                "@module": "easyCore.Objects.ObjectClasses",
                 "@class": "Parameter",
                 "@version": "0.1.0",
                 "name": "resolution_u",
@@ -1046,7 +1046,7 @@
                 "@id": "262421262389677545586647105900347933896"
             },
             "resolution_v": {
-                "@module": "easyCore.Objects.Base",
+                "@module": "easyCore.Objects.ObjectClasses",
                 "@class": "Parameter",
                 "@version": "0.1.0",
                 "name": "resolution_v",
@@ -1060,7 +1060,7 @@
                 "@id": "82812511754471202061555755875884366263"
             },
             "resolution_w": {
-                "@module": "easyCore.Objects.Base",
+                "@module": "easyCore.Objects.ObjectClasses",
                 "@class": "Parameter",
                 "@version": "0.1.0",
                 "name": "resolution_w",
@@ -1074,7 +1074,7 @@
                 "@id": "308263529685354854394561700890326196077"
             },
             "resolution_x": {
-                "@module": "easyCore.Objects.Base",
+                "@module": "easyCore.Objects.ObjectClasses",
                 "@class": "Parameter",
                 "@version": "0.1.0",
                 "name": "resolution_x",
@@ -1088,7 +1088,7 @@
                 "@id": "300568371887656951658987091266416481959"
             },
             "resolution_y": {
-                "@module": "easyCore.Objects.Base",
+                "@module": "easyCore.Objects.ObjectClasses",
                 "@class": "Parameter",
                 "@version": "0.1.0",
                 "name": "resolution_y",
@@ -1107,7 +1107,7 @@
             "@class": "Powder1DParameters",
             "@version": "0.0.1",
             "zero_shift": {
-                "@module": "easyCore.Objects.Base",
+                "@module": "easyCore.Objects.ObjectClasses",
                 "@class": "Parameter",
                 "@version": "0.1.0",
                 "name": "zero_shift",
@@ -1121,7 +1121,7 @@
                 "@id": "164617303255001072426215715272527475766"
             },
             "scale": {
-                "@module": "easyCore.Objects.Base",
+                "@module": "easyCore.Objects.ObjectClasses",
                 "@class": "Parameter",
                 "@version": "0.1.0",
                 "name": "scale",
@@ -1149,7 +1149,7 @@
                                 "@class": "BackgroundPoint",
                                 "@version": "0.0.1",
                                 "x": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Descriptor",
                                     "@version": "0.1.0",
                                     "name": "x",
@@ -1162,7 +1162,7 @@
                                     "@id": "312201247905091537365078520470734074965"
                                 },
                                 "y": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Parameter",
                                     "@version": "0.1.0",
                                     "name": "intensity",
@@ -1183,7 +1183,7 @@
                                 "@class": "BackgroundPoint",
                                 "@version": "0.0.1",
                                 "x": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Descriptor",
                                     "@version": "0.1.0",
                                     "name": "x",
@@ -1196,7 +1196,7 @@
                                     "@id": "113034021639090741383809615477599842524"
                                 },
                                 "y": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Parameter",
                                     "@version": "0.1.0",
                                     "name": "intensity",
@@ -1217,7 +1217,7 @@
                                 "@class": "BackgroundPoint",
                                 "@version": "0.0.1",
                                 "x": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Descriptor",
                                     "@version": "0.1.0",
                                     "name": "x",
@@ -1230,7 +1230,7 @@
                                     "@id": "324110727388910388733247490918823276975"
                                 },
                                 "y": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Parameter",
                                     "@version": "0.1.0",
                                     "name": "intensity",
@@ -1251,7 +1251,7 @@
                                 "@class": "BackgroundPoint",
                                 "@version": "0.0.1",
                                 "x": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Descriptor",
                                     "@version": "0.1.0",
                                     "name": "x",
@@ -1264,7 +1264,7 @@
                                     "@id": "280122378024296436896313912094493393373"
                                 },
                                 "y": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Parameter",
                                     "@version": "0.1.0",
                                     "name": "intensity",
@@ -1285,7 +1285,7 @@
                                 "@class": "BackgroundPoint",
                                 "@version": "0.0.1",
                                 "x": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Descriptor",
                                     "@version": "0.1.0",
                                     "name": "x",
@@ -1298,7 +1298,7 @@
                                     "@id": "339082404857979559629142790204545411053"
                                 },
                                 "y": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Parameter",
                                     "@version": "0.1.0",
                                     "name": "intensity",
@@ -1319,7 +1319,7 @@
                                 "@class": "BackgroundPoint",
                                 "@version": "0.0.1",
                                 "x": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Descriptor",
                                     "@version": "0.1.0",
                                     "name": "x",
@@ -1332,7 +1332,7 @@
                                     "@id": "88441968629984519481783832879337886034"
                                 },
                                 "y": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Parameter",
                                     "@version": "0.1.0",
                                     "name": "intensity",
@@ -1353,7 +1353,7 @@
                                 "@class": "BackgroundPoint",
                                 "@version": "0.0.1",
                                 "x": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Descriptor",
                                     "@version": "0.1.0",
                                     "name": "x",
@@ -1366,7 +1366,7 @@
                                     "@id": "87130000838606463751063406631100155478"
                                 },
                                 "y": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Parameter",
                                     "@version": "0.1.0",
                                     "name": "intensity",
@@ -1387,7 +1387,7 @@
                                 "@class": "BackgroundPoint",
                                 "@version": "0.0.1",
                                 "x": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Descriptor",
                                     "@version": "0.1.0",
                                     "name": "x",
@@ -1400,7 +1400,7 @@
                                     "@id": "312608449872662330188123556273893301563"
                                 },
                                 "y": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Parameter",
                                     "@version": "0.1.0",
                                     "name": "intensity",
@@ -1421,7 +1421,7 @@
                                 "@class": "BackgroundPoint",
                                 "@version": "0.0.1",
                                 "x": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Descriptor",
                                     "@version": "0.1.0",
                                     "name": "x",
@@ -1434,7 +1434,7 @@
                                     "@id": "224591719367137281496648787056572542109"
                                 },
                                 "y": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Parameter",
                                     "@version": "0.1.0",
                                     "name": "intensity",
@@ -1455,7 +1455,7 @@
                                 "@class": "BackgroundPoint",
                                 "@version": "0.0.1",
                                 "x": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Descriptor",
                                     "@version": "0.1.0",
                                     "name": "x",
@@ -1468,7 +1468,7 @@
                                     "@id": "125176377067413984349379931214088025455"
                                 },
                                 "y": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Parameter",
                                     "@version": "0.1.0",
                                     "name": "intensity",
@@ -1489,7 +1489,7 @@
                                 "@class": "BackgroundPoint",
                                 "@version": "0.0.1",
                                 "x": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Descriptor",
                                     "@version": "0.1.0",
                                     "name": "x",
@@ -1502,7 +1502,7 @@
                                     "@id": "29482549252459557373516730800215354320"
                                 },
                                 "y": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Parameter",
                                     "@version": "0.1.0",
                                     "name": "intensity",
@@ -1523,7 +1523,7 @@
                                 "@class": "BackgroundPoint",
                                 "@version": "0.0.1",
                                 "x": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Descriptor",
                                     "@version": "0.1.0",
                                     "name": "x",
@@ -1536,7 +1536,7 @@
                                     "@id": "210431626135516543707740425031104063655"
                                 },
                                 "y": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Parameter",
                                     "@version": "0.1.0",
                                     "name": "intensity",
@@ -1557,7 +1557,7 @@
                                 "@class": "BackgroundPoint",
                                 "@version": "0.0.1",
                                 "x": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Descriptor",
                                     "@version": "0.1.0",
                                     "name": "x",
@@ -1570,7 +1570,7 @@
                                     "@id": "116156364575968311573133738301379748479"
                                 },
                                 "y": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Parameter",
                                     "@version": "0.1.0",
                                     "name": "intensity",
@@ -1591,7 +1591,7 @@
                                 "@class": "BackgroundPoint",
                                 "@version": "0.0.1",
                                 "x": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Descriptor",
                                     "@version": "0.1.0",
                                     "name": "x",
@@ -1604,7 +1604,7 @@
                                     "@id": "312052603052470437612325698427905444658"
                                 },
                                 "y": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Parameter",
                                     "@version": "0.1.0",
                                     "name": "intensity",
@@ -1625,7 +1625,7 @@
                                 "@class": "BackgroundPoint",
                                 "@version": "0.0.1",
                                 "x": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Descriptor",
                                     "@version": "0.1.0",
                                     "name": "x",
@@ -1638,7 +1638,7 @@
                                     "@id": "114212264447162548854818842583625597465"
                                 },
                                 "y": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Parameter",
                                     "@version": "0.1.0",
                                     "name": "intensity",
@@ -1659,7 +1659,7 @@
                                 "@class": "BackgroundPoint",
                                 "@version": "0.0.1",
                                 "x": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Descriptor",
                                     "@version": "0.1.0",
                                     "name": "x",
@@ -1672,7 +1672,7 @@
                                     "@id": "149995472148816087947421510637904483856"
                                 },
                                 "y": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Parameter",
                                     "@version": "0.1.0",
                                     "name": "intensity",
@@ -1693,7 +1693,7 @@
                                 "@class": "BackgroundPoint",
                                 "@version": "0.0.1",
                                 "x": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Descriptor",
                                     "@version": "0.1.0",
                                     "name": "x",
@@ -1706,7 +1706,7 @@
                                     "@id": "209674031100068578923614312767812147278"
                                 },
                                 "y": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Parameter",
                                     "@version": "0.1.0",
                                     "name": "intensity",
@@ -1727,7 +1727,7 @@
                                 "@class": "BackgroundPoint",
                                 "@version": "0.0.1",
                                 "x": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Descriptor",
                                     "@version": "0.1.0",
                                     "name": "x",
@@ -1740,7 +1740,7 @@
                                     "@id": "91638845779798680019213566043898576747"
                                 },
                                 "y": {
-                                    "@module": "easyCore.Objects.Base",
+                                    "@module": "easyCore.Objects.ObjectClasses",
                                     "@class": "Parameter",
                                     "@version": "0.1.0",
                                     "name": "intensity",

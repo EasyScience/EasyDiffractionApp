@@ -1,7 +1,7 @@
 data_NPD
 
 _setup_wavelength     1.87
-_setup_offset_2theta  0.0()
+_setup_offset_2theta  0.0
 
 _pd_instr_resolution_u   0.241
 _pd_instr_resolution_v  -0.528
@@ -13,7 +13,7 @@ loop_
 _phase_label
 _phase_scale
 _phase_igsize
-Co2SiO4  1.0() 0.0
+Co2SiO4  1.0 0.0
 
 loop_
 _pd_background_2theta

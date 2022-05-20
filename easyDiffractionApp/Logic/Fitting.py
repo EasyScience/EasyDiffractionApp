@@ -73,11 +73,18 @@ class FittingLogic(QObject):
             'weights': weights,
             'method': method
         }
-        pol_fn = self.parent.l_experiment.fn_aggregate
-        kwargs['pol_fn'] = pol_fn
+
+        local_kwargs = {}
+        if self.parent.l_experiment.spin_polarized:
+            fn = self.parent.l_experiment.fn_aggregate
+            refinement = self.parent.l_experiment.refinement()
+            local_kwargs["pol_fn"] = fn
+            local_kwargs["pol_refinement"] = refinement
 
         if method == 'least_squares':
             kwargs['minimizer_kwargs'] = {'diff_step': 1e-5}
+
+        self.interface._InterfaceFactoryTemplate__interface_obj.saved_kwargs = local_kwargs
         try:
             res = self.fitter.fit(x, y, **kwargs)
         except Exception as ex:

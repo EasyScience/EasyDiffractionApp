@@ -78,6 +78,22 @@ class ExperimentProxy(QObject):
     def refineDiff(self, value):
         self.logic.setRefineDiff(value)
 
+    @Property(bool)
+    def refineUp(self):
+        return self.logic.refineUp()
+
+    @refineUp.setter
+    def refineUp(self, value):
+        self.logic.setRefineUp(value)
+
+    @Property(bool)
+    def refineDown(self):
+        return self.logic.refineDown()
+
+    @refineDown.setter
+    def refineDown(self, value):
+        self.logic.setRefineDown(value)
+
     @Property(str, notify=experimentDataAsXmlChanged)
     def experimentDataAsXml(self):
         return self.logic._experiment_data_as_xml

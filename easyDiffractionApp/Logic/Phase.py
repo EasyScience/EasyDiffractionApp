@@ -10,6 +10,8 @@ from PySide2.QtCore import Signal, QObject
 
 from easyCore import np, borg
 from easyDiffractionLib import Phases, Phase, Lattice, Site, SpaceGroup
+from easyCrystallography.Components.AtomicDisplacement import AtomicDisplacement
+from easyCrystallography.Components.Susceptibility import MagneticSusceptibility
 from easyCrystallography.Symmetry.tools import SpacegroupInfo
 from easyApp.Logic.Utils.Utils import generalizePath
 
@@ -79,8 +81,10 @@ class PhaseLogic(QObject):
     def _defaultPhase():
         space_group = SpaceGroup.from_pars('P 42/n c m')
         cell = Lattice.from_pars(8.56, 8.56, 6.12, 90, 90, 90)
-        atom = Site.from_pars(label='Cl1', specie='Cl', fract_x=0.125, fract_y=0.167, fract_z=0.107)  # noqa: E501
-        atom.add_adp('Uiso', Uiso=0.0)
+        adp = AtomicDisplacement("Uiso")
+        msp = MagneticSusceptibility("Cani")
+        atom = Site(label='Cl1', specie='Cl', fract_x=0.125, fract_y=0.167, fract_z=0.107, adp=adp, msp=msp)
+
         phase = Phase('Dichlorine', spacegroup=space_group, cell=cell)
         phase.add_atom(atom)
         return phase
@@ -228,12 +232,15 @@ class PhaseLogic(QObject):
     def addDefaultAtom(self):
         index = len(self.phases[0].atoms.atom_labels) + 1
         label = f'Label{index}'
-        atom = Site.from_pars(label=label,
-                              specie='O',
-                              fract_x=0.05,
-                              fract_y=0.05,
-                              fract_z=0.05)
-        atom.add_adp('Uiso', Uiso=0.0)
+        adp = AtomicDisplacement("Uiso")
+        msp = MagneticSusceptibility("Cani")
+        atom = Site(label=label,
+                    specie='O',
+                    fract_x=0.05,
+                    fract_y=0.05,
+                    fract_z=0.05,
+                    adp=adp,
+                    msp=msp)
         self.phases[self._current_phase_index].add_atom(atom)
         self.updateParameters()
 

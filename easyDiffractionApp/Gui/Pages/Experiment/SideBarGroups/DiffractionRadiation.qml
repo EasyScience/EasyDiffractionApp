@@ -25,11 +25,13 @@ Grid {
         EaElements.Parameter {
             width: inputFieldWidth()
             units: "%"
-            text: "0.0"
-            // text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.parameters.instrumentParametersAsObj.polarization.value)
-            // onEditingFinished: editParameterValue(ExGlobals.Constants.proxy.parameters.instrumentParametersAsObj.polarization["@id"], text)
-            text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.parameters.simulationParametersAsObj.polarization.value)
-            onEditingFinished: editParameterValue(ExGlobals.Constants.proxy.parameters.simulationParametersAsObj.polarization["@id"], text)
+            text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.parameters.patternParametersAsObj.polarization.value * 100.0)
+            onEditingFinished:{
+                var value = Number(text)/100.0;
+                var value_string = value.toString();
+                editParameterValue(ExGlobals.Constants.proxy.parameters.patternParametersAsObj.polarization["@id"], value_string)
+            }
+
         }
     }
 
@@ -42,9 +44,12 @@ Grid {
         EaElements.Parameter {
             width: inputFieldWidth()
             units: "%"
-            text: "100.0"
-            text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.parameters.simulationParametersAsObj.polarizing_efficiency.value)
-            onEditingFinished: editParameterValue(ExGlobals.Constants.proxy.parameters.simulationParametersAsObj.polarizing_efficiency["@id"], text)
+            text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.parameters.patternParametersAsObj.efficiency.value * 100.0)
+            onEditingFinished: {
+                var value = Number(text)/100.0;
+                var value_string = value.toString();
+                editParameterValue(ExGlobals.Constants.proxy.parameters.patternParametersAsObj.efficiency["@id"], value_string)
+            }
         }
     }
 

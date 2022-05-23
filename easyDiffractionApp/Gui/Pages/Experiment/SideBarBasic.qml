@@ -174,7 +174,7 @@ EaComponents.SideBarColumn {
 
                 Column {
                     EaElements.Label {
-                        enabled: true
+                        enabled: false
                         text: qsTr("Polarization")
                     }
 

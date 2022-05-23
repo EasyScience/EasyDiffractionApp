@@ -101,7 +101,6 @@ class SampleLogic(QObject):
 
     @experimentType.setter
     def experimentType(self, new_exp_type: str):
-        phases = self._phases.phases
         if new_exp_type == 'powder1DCWpol':
             self._sample = self._defaultCWPolSample()
         elif new_exp_type == 'powder1DCWunp' or new_exp_type == 'powder1DCW':

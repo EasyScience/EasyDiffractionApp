@@ -346,10 +346,13 @@ class ParametersLogic(QObject):
             num_points = int((x_max - x_min) / x_step + 1)
             sim.x = np.linspace(x_min, x_max, num_points)
 
-        fn = None
         if self.parent.l_experiment.spin_polarized:
             fn = self.parent.l_experiment.fn_aggregate
-        sim.y = self._interface.fit_func(sim.x, pol_fn=fn)
+            local_kwargs = {"pol_fn" : fn}
+            # save some kwargs on the interface object for use in the calculator
+            self._interface._InterfaceFactoryTemplate__interface_obj.saved_kwargs = local_kwargs
+
+        sim.y = self._interface.fit_func(sim.x)
 
         self.plotCalculatedDataSignal.emit((sim.x, sim.y))
 

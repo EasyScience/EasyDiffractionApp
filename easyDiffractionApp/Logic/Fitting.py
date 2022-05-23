@@ -84,6 +84,7 @@ class FittingLogic(QObject):
         if method == 'least_squares':
             kwargs['minimizer_kwargs'] = {'diff_step': 1e-5}
 
+        # save some kwargs on the interface object for use in the calculator
         self.interface._InterfaceFactoryTemplate__interface_obj.saved_kwargs = local_kwargs
         try:
             res = self.fitter.fit(x, y, **kwargs)

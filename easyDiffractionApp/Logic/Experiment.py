@@ -38,14 +38,11 @@ class ExperimentLogic(QObject):
         self.experiments = self._defaultExperiments()
         self.clearFrontendState.connect(self.onClearFrontendState)
         self.spin_polarized = False
-        # Spin components to display
-        self._spin_components = ['Sum', 'Difference', 'Up', 'Down']
         self._current_spin_component = 'Sum'
         self._refine_sum = True
         self._refine_diff = True
         self._refine_up = False
         self._refine_down = False
-        self._refinement = {"Sum": self._refine_sum, "Diff": self._refine_diff, "Up": self._refine_up, "Down": self._refine_down}
         self.fn_aggregate = self.pol_sum
 
     def _defaultExperiment(self):
@@ -83,7 +80,7 @@ class ExperimentLogic(QObject):
         return []
 
     def refinement(self):
-        return self._refinement
+        return {"sum": self._refine_sum, "diff": self._refine_diff, "up": self._refine_up, "down": self._refine_down}
 
     def setPolarized(self, polarized: bool):
         if self.spin_polarized == polarized:

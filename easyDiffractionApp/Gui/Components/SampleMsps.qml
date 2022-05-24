@@ -37,7 +37,7 @@ EaComponents.TableView {
 
         XmlRole { name: "label"; query: "label/value/string()" }
         XmlRole { name: "mspType"; query: "msp/msp_type/value/string()" }
-        XmlRole { name: "mspIso"; query: `msp/msp_class/Uiso/value/number()` }
+        XmlRole { name: "mspIso"; query:   "msp/msp_class/chi/value/number()" }
         XmlRole { name: "mspAni11"; query: "msp/msp_class/chi_11/value/number()" }
         XmlRole { name: "mspAni22"; query: "msp/msp_class/chi_22/value/number()" }
         XmlRole { name: "mspAni33"; query: "msp/msp_class/chi_33/value/number()" }

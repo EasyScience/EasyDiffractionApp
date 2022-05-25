@@ -45,6 +45,13 @@ EaComponents.TableView {
         XmlRole { name: "mspAni13"; query: "msp/msp_class/chi_13/value/number()" }
         XmlRole { name: "mspAni23"; query: "msp/msp_class/chi_23/value/number()" }
 
+        XmlRole { name: "mspIsoId"; query: "msp/msp_class/chi/key[4]/string()" }
+        XmlRole { name: "mspAni11Id"; query: "msp/msp_class/chi_11/key[4]/string()" }
+        XmlRole { name: "mspAni22Id"; query: "msp/msp_class/chi_22/key[4]/string()" }
+        XmlRole { name: "mspAni33Id"; query: "msp/msp_class/chi_33/key[4]/string()" }
+        XmlRole { name: "mspAni12Id"; query: "msp/msp_class/chi_12/key[4]/string()" }
+        XmlRole { name: "mspAni13Id"; query: "msp/msp_class/chi_13/key[4]/string()" }
+        XmlRole { name: "mspAni23Id"; query: "msp/msp_class/chi_23/key[4]/string()" }
     }
 
     // Table rows

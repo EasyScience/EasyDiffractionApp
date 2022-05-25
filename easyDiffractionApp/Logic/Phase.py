@@ -82,7 +82,7 @@ class PhaseLogic(QObject):
         space_group = SpaceGroup.from_pars('P 42/n c m')
         cell = Lattice.from_pars(8.56, 8.56, 6.12, 90, 90, 90)
         adp = AtomicDisplacement("Uiso")
-        msp = MagneticSusceptibility("Cani")
+        msp = MagneticSusceptibility("Ciso")
         atom = Site(label='Cl1', specie='Cl', fract_x=0.125, fract_y=0.167, fract_z=0.107, adp=adp, msp=msp)
 
         phase = Phase('Dichlorine', spacegroup=space_group, cell=cell)
@@ -233,7 +233,7 @@ class PhaseLogic(QObject):
         index = len(self.phases[0].atoms.atom_labels) + 1
         label = f'Label{index}'
         adp = AtomicDisplacement("Uiso")
-        msp = MagneticSusceptibility("Cani")
+        msp = MagneticSusceptibility("Ciso")
         atom = Site(label=label,
                     specie='O',
                     fract_x=0.05,

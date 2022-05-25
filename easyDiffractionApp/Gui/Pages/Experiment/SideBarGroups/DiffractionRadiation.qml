@@ -25,7 +25,9 @@ Grid {
         EaElements.Parameter {
             width: inputFieldWidth()
             units: "%"
-            text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.parameters.patternParametersAsObj.polarization.value * 100.0)
+            text: (ExGlobals.Constants.proxy.experiment.isSpinPolarized ?
+                EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.parameters.patternParametersAsObj.polarization.value * 100.0) :
+                qsTr(""))
             onEditingFinished:{
                 var value = Number(text)/100.0;
                 var value_string = value.toString();
@@ -44,7 +46,9 @@ Grid {
         EaElements.Parameter {
             width: inputFieldWidth()
             units: "%"
-            text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.parameters.patternParametersAsObj.efficiency.value * 100.0)
+            text: (ExGlobals.Constants.proxy.experiment.isSpinPolarized ?
+                EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.parameters.patternParametersAsObj.efficiency.value * 100.0) :
+                qsTr(""))
             onEditingFinished: {
                 var value = Number(text)/100.0;
                 var value_string = value.toString();

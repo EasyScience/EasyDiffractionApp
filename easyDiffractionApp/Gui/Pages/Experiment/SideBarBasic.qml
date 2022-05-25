@@ -245,7 +245,8 @@ EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
         title: qsTr("Diffraction radiation")
-        enabled: ExGlobals.Constants.proxy.experiment.experimentLoaded &&
+        enabled: (ExGlobals.Constants.proxy.experiment.experimentLoaded ||
+                 ExGlobals.Constants.proxy.experiment.experimentSkipped ) &&
                  ExGlobals.Constants.proxy.experiment.isSpinPolarized
 
         Loader {
@@ -300,7 +301,8 @@ EaComponents.SideBarColumn {
     EaElements.GroupBox {
         title: qsTr("Refinement")
         last: true
-        enabled: ExGlobals.Constants.proxy.experiment.experimentLoaded &&
+        enabled: (ExGlobals.Constants.proxy.experiment.experimentLoaded ||
+                 ExGlobals.Constants.proxy.experiment.experimentSkipped) &&
                  ExGlobals.Constants.proxy.experiment.isSpinPolarized
         Loader {
             source: {

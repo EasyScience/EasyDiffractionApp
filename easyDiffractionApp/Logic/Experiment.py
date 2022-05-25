@@ -103,6 +103,7 @@ class ExperimentLogic(QObject):
                 current_type = current_type.replace('pol', 'unp')
 
         self.parent.l_sample.experimentType = current_type
+        self._onPatternParametersChanged()
         return True
 
     def experimentLoaded(self, loaded: bool):

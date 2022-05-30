@@ -1,5 +1,5 @@
-_name piotr
-_short_description 'diffraction, powder, 1D'
+_name polar_test
+_short_description 'polar, diffraction, powder, 1D'
 _samples 'Not loaded'
 _experiments 'Not loaded'
-_modified '17.03.2022 21:02'
+_modified '24.05.2022 09:52'

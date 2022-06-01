@@ -261,9 +261,11 @@ class ProjectLogic(QObject):
             experiments_x = self.parent.l_parameters._data.experiments[0].x
             experiments_y = self.parent.l_parameters._data.experiments[0].y
             experiments_e = self.parent.l_parameters._data.experiments[0].e
-            experiments_yb = self.parent.l_parameters._data.experiments[0].yb
-            experiments_eb = self.parent.l_parameters._data.experiments[0].eb
-            descr['experiments'] = [experiments_x, experiments_y, experiments_e, experiments_yb, experiments_eb]
+            descr['experiments'] = [experiments_x, experiments_y, experiments_e]
+            if self.parent.l_experiment.spin_polarized:
+                experiments_yb = self.parent.l_parameters._data.experiments[0].yb
+                experiments_eb = self.parent.l_parameters._data.experiments[0].eb
+                descr['experiments'] += [experiments_yb, experiments_eb]
 
         descr['experiment_skipped'] = self.parent.l_experiment._experiment_skipped
         descr['project_info'] = self._project_info

@@ -2942,10 +2942,10 @@
     ],
     "experiment_skipped": false,
     "project_info": {
-        "name": "Example Project",
-        "short_description": "diffraction, powder, 1D",
+        "name": "Fe3O4",
+        "short_description": "diffraction, powder, constant wavelength, 1D, polarized",
         "samples": "Fe3O4",
-        "experiments": "experiments",
+        "experiments": "6T2@LLB",
         "modified": "30.05.2022 13:11"
     },
     "interface": "CrysPy",

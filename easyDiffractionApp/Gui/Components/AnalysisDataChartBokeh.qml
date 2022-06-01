@@ -23,7 +23,7 @@ EaCharts.BaseBokeh {
     spinComponent: ExGlobals.Constants.proxy.experiment.spinComponent
 
     xAxisTitle: {
-        if (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DCW') {
+        if ((ExGlobals.Constants.proxy.sample.experimentType === 'powder1DCW') || (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DCWpol')) {
             return "2θ (deg)"
         } else if (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DTOF') {
             return "TOF (μs)"

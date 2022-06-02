@@ -78,10 +78,18 @@ class ExperimentLogic(QObject):
         if (value := block.find_value("_pd_instr_resolution_y")) is not None:
             instrument_parameters.resolution_y = float(value)
 
+        # Get phase parameters
+        sample_phase_labels = self.parent.l_phase.phases.phase_names
+        experiment_phase_labels = list(block.find_loop("_phase_label"))
+        experiment_phase_scales = np.fromiter(block.find_loop("_phase_scale"), float)
+        for (phase_label, phase_scale) in zip(experiment_phase_labels, experiment_phase_scales):
+            if phase_label in sample_phase_labels:
+                self.parent.l_phase.phases[phase_label].scale = phase_scale
+
         # Get background
-        tthetas = np.fromiter(block.find_loop("_pd_background_2theta"), float)
-        intensities = np.fromiter(block.find_loop("_pd_background_intensity"), float)
-        for (x, y) in zip(tthetas, intensities):
+        background_2thetas = np.fromiter(block.find_loop("_pd_background_2theta"), float)
+        background_intensities = np.fromiter(block.find_loop("_pd_background_intensity"), float)
+        for (x, y) in zip(background_2thetas, background_intensities):
             self.parent.l_background.addPoint(x, y, silently=True)
 
         # Get data

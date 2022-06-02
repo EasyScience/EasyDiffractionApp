@@ -86,18 +86,23 @@ class BackgroundLogic(QObject):
         )
         self._background_as_obj = self._background_obj()
 
-    def addDefaultPoint(self):
-        print(f"+ addBackgroundPoint")
+    def addPoint(self, x: float, y: float, silently: bool = False):
+        print(f"+ add background point ({x}, {y})")
         if self._background_as_obj is None:
             # TODO THIS IS NOT HOW TO DO THINGS!!!
             self.initializeContainer()
-        x = 0.0
-        y = 100.0
-        if self._background_as_obj.x_sorted_points.size:
-            x = self._background_as_obj.x_sorted_points[-1] + 10.0
         point = BackgroundPoint.from_pars(x=x, y=y)
         self._background_as_obj.append(point)
-        self.asObjChanged.emit(self._background_as_obj)
+        if not silently:
+            self.asObjChanged.emit(self._background_as_obj)
+
+    def addDefaultPoint(self):
+        print(f"+ add default background point")
+        x = 0.0
+        y = 100.0
+        if self._background_as_obj is not None and self._background_as_obj.x_sorted_points.size:
+            x = self._background_as_obj.x_sorted_points[-1] + 10.0
+        self.addPoint(x, y)
 
     def removePoint(self, point_name: str):
         print(f"+ removeBackgroundPoint for point_name: {point_name}")

@@ -78,6 +78,12 @@ class ExperimentLogic(QObject):
         if (value := block.find_value("_pd_instr_resolution_y")) is not None:
             instrument_parameters.resolution_y = float(value)
 
+        # Get background
+        tthetas = np.fromiter(block.find_loop("_pd_background_2theta"), float)
+        intensities = np.fromiter(block.find_loop("_pd_background_intensity"), float)
+        for (x, y) in zip(tthetas, intensities):
+            self.parent.l_background.addPoint(x, y, silently=True)
+
         # Get data
         data = self.state._data.experiments[0]
         # Polarized case

@@ -86,7 +86,7 @@ class BackgroundLogic(QObject):
         )
         self._background_as_obj = self._background_obj()
 
-    def addPoint(self):
+    def addDefaultPoint(self):
         print(f"+ addBackgroundPoint")
         if self._background_as_obj is None:
             # TODO THIS IS NOT HOW TO DO THINGS!!!

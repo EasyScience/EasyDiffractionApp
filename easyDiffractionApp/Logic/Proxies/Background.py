@@ -32,8 +32,8 @@ class BackgroundProxy(QObject):
         self.logic.setDefaultPoints()
 
     @Slot()
-    def addPoint(self):
-        self.logic.addPoint()
+    def addDefaultPoint(self):
+        self.logic.addDefaultPoint()
 
     @Slot(str)
     def removePoint(self, point_name: str):

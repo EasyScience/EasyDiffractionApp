@@ -198,8 +198,8 @@ class ExperimentLogic(QObject):
         self.fn_aggregate = self.pol_sum
         if self._current_spin_component == 'Sum':
             if self._experiment_data is not None:
-                y = self._experiment_data.y + self._experiment_data.yb
-                e = self._experiment_data.e + self._experiment_data.eb
+                y = 0.5*(self._experiment_data.y + self._experiment_data.yb)
+                e = 0.5*(self._experiment_data.e + self._experiment_data.eb)
             self.fn_aggregate = self.pol_sum
         elif self._current_spin_component == 'Difference':
             if self._experiment_data is not None:

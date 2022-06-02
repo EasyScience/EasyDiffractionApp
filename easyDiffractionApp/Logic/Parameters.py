@@ -133,8 +133,6 @@ class ParametersLogic(QObject):
             "resolution_w": 0.01,
             "resolution_x": 0.0,
             "resolution_y": 0.0,
-            #"polarization": 0.0,
-            #"polarizing_efficiency": 100.0,
         }
 
     def _setInstrumentParametersAsObj(self):
@@ -163,6 +161,7 @@ class ParametersLogic(QObject):
             # Modify current label
             label = label.replace(".background.", ".")
             label = label.replace("Uiso.Uiso", "Uiso")
+            label = label.replace("Ciso.chi", "Ciso")
             label = label.replace("fract_", "fract.")
             label = label.replace("length_", "length.")
             label = label.replace("angle_", "angle.")
@@ -171,6 +170,7 @@ class ParametersLogic(QObject):
             # Modify previous label
             previousLabel = previousLabel.replace(".background.", ".")
             previousLabel = previousLabel.replace("Uiso.Uiso", "Uiso")
+            previousLabel = previousLabel.replace("Ciso.chi", "Ciso")
             previousLabel = previousLabel.replace("fract_", "fract.")
             previousLabel = previousLabel.replace("length_", "length.")
             previousLabel = previousLabel.replace("angle_", "angle.")
@@ -201,6 +201,7 @@ class ParametersLogic(QObject):
                     list[i] = list[i].replace("angle", f'<font color={iconColor} face="{iconsFamily}">less-than</font>')
                     list[i] = list[i].replace("atoms", f'<font color={iconColor} face="{iconsFamily}">atom</font>')
                     list[i] = list[i].replace("adp", f'<font color={iconColor} face="{iconsFamily}">arrows-alt</font>')
+                    list[i] = list[i].replace("msp", f'<font color={iconColor} face="{iconsFamily}">arrows-alt</font>')
                     list[i] = list[i].replace("fract", f'<font color={iconColor} face="{iconsFamily}">map-marker-alt</font>')
                     list[i] = list[i].replace("resolution", f'<font color={iconColor} face="{iconsFamily}">grip-lines-vertical</font>')
                     list[i] = list[i].replace("point_background", f'<font color={iconColor} face="{iconsFamily}">wave-square</font>')
@@ -210,6 +211,7 @@ class ParametersLogic(QObject):
                     list[i] = list[i].replace("angle", f'<font face="{iconsFamily}">less-than</font>')
                     list[i] = list[i].replace("atoms", f'<font face="{iconsFamily}">atom</font>')
                     list[i] = list[i].replace("adp", f'<font face="{iconsFamily}">arrows-alt</font>')
+                    list[i] = list[i].replace("msp", f'<font face="{iconsFamily}">arrows-alt</font>')
                     list[i] = list[i].replace("fract", f'<font face="{iconsFamily}">map-marker-alt</font>')
                     list[i] = list[i].replace("resolution", f'<font face="{iconsFamily}">grip-lines-vertical</font>')
                     list[i] = list[i].replace("point_background", f'<font face="{iconsFamily}">wave-square</font>')
@@ -241,8 +243,10 @@ class ParametersLogic(QObject):
                 continue
 
             # rename some groups of parameters and add experimental dataset name
+            par_path = par_path.replace('Instrument1DCWPolParameters.', f'Instrument.{self.parent.l_experiment.experimentDataAsObj()[0]["name"]}.')
             par_path = par_path.replace('Instrument1DCWParameters.', f'Instrument.{self.parent.l_experiment.experimentDataAsObj()[0]["name"]}.')
             par_path = par_path.replace('Instrument1DTOFParameters.', f'Instrument.{self.parent.l_experiment.experimentDataAsObj()[0]["name"]}.')
+            par_path = par_path.replace('PolPowder1DParameters.', f'Instrument.{self.parent.l_experiment.experimentDataAsObj()[0]["name"]}.')
             par_path = par_path.replace('Powder1DParameters.', f'Instrument.{self.parent.l_experiment.experimentDataAsObj()[0]["name"]}.')
             par_path = par_path.replace('.sigma0', '.resolution_sigma0')
             par_path = par_path.replace('.sigma1', '.resolution_sigma1')
@@ -346,10 +350,13 @@ class ParametersLogic(QObject):
             num_points = int((x_max - x_min) / x_step + 1)
             sim.x = np.linspace(x_min, x_max, num_points)
 
-        fn = None
         if self.parent.l_experiment.spin_polarized:
             fn = self.parent.l_experiment.fn_aggregate
-        sim.y = self._interface.fit_func(sim.x, pol_fn=fn)
+            local_kwargs = {"pol_fn" : fn}
+            # save some kwargs on the interface object for use in the calculator
+            self._interface._InterfaceFactoryTemplate__interface_obj.saved_kwargs = local_kwargs
+
+        sim.y = self._interface.fit_func(sim.x)
 
         self.plotCalculatedDataSignal.emit((sim.x, sim.y))
 

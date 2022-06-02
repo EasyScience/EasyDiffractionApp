@@ -58,8 +58,8 @@ class SampleLogic(QObject):
             pattern=PolPowder1DParameters.default(),
             interface=self._interface)
         self._defaultParameters(sample)
-        sample.parameters.polarization = 0.0
-        sample.parameters.polarizing_efficiency = 100.0
+        sample.pattern.polarization = 0.0
+        sample.pattern.polarizing_efficiency = 100.0
         return sample
 
     def _defaultTOFSample(self):
@@ -100,17 +100,13 @@ class SampleLogic(QObject):
 
     @experimentType.setter
     def experimentType(self, new_exp_type: str):
-        phases = self._phases.phases
         if new_exp_type == 'powder1DCWpol':
-            params = Instrument1DCWPolParameters.default()
             self._sample = self._defaultCWPolSample()
         elif new_exp_type == 'powder1DCWunp' or new_exp_type == 'powder1DCW':
-            params = Instrument1DCWParameters.default()
             self._sample = self._defaultCWSample()
             if new_exp_type == 'powder1DCW':
                 new_exp_type = 'powder1DCWunp'
         elif new_exp_type == 'powder1DTOFunp' or new_exp_type == 'powder1DTOF':
-            params = Instrument1DTOFParameters.default()
             self._sample = self._defaultTOFSample()
             if new_exp_type == 'powder1DTOF':
                 new_exp_type = 'powder1DTOFunp'
@@ -123,12 +119,7 @@ class SampleLogic(QObject):
             interfaces = self._interface.interface_compatability(test_str)
             interface.switch(interfaces[0])
 
-        self._sample = Sample(
-            phases=phases,
-            parameters=params,
-            pattern=self._sample.pattern,
-            interface=self._interface)
+        self._sample.interface = interface
         self.parent.l_phase.phasesAsObjChanged.emit()
         self.parent.proxy.fitting.calculatorListChanged.emit()
-        #self.parent.parametersChanged.emit()
 

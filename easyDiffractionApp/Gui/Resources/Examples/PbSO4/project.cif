@@ -2,4 +2,4 @@ _name PbSO4
 _short_description 'neutrons, powder, constant wavelength, 1D'
 _samples 'PbSO4'
 _experiments 'D1A@ILL'
-_modified '24.08.2021 13:37'
+_modified '01.06.2022 13:37'

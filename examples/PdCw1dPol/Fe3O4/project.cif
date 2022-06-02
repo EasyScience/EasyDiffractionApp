@@ -1,5 +1,5 @@
-_name Fe3O4
+_name polar_Fe
 _short_description 'diffraction, powder, 1D'
 _samples 'Not loaded'
 _experiments 'Not loaded'
-_modified '18.03.2022 10:20'
+_modified '30.05.2022 10:53'

@@ -40,11 +40,11 @@ class ExperimentLogic(QObject):
         self.experiments = self._defaultExperiments()
         self.clearFrontendState.connect(self.onClearFrontendState)
         self.spin_polarized = False
-        # Spin components to display
-        self._spin_components = ['Sum', 'Difference', 'Up', 'Down']
         self._current_spin_component = 'Sum'
         self._refine_sum = True
         self._refine_diff = True
+        self._refine_up = False
+        self._refine_down = False
         self.fn_aggregate = self.pol_sum
 
     def _defaultExperiment(self):
@@ -125,6 +125,9 @@ class ExperimentLogic(QObject):
     def _defaultExperiments(self):
         return []
 
+    def refinement(self):
+        return {"sum": self._refine_sum, "diff": self._refine_diff, "up": self._refine_up, "down": self._refine_down}
+
     def setPolarized(self, polarized: bool):
         if self.spin_polarized == polarized:
             return False
@@ -146,6 +149,7 @@ class ExperimentLogic(QObject):
                 current_type = current_type.replace('pol', 'unp')
 
         self.parent.l_sample.experimentType = current_type
+        self._onPatternParametersChanged()
         return True
 
     def experimentLoaded(self, loaded: bool):
@@ -247,8 +251,8 @@ class ExperimentLogic(QObject):
         self.fn_aggregate = self.pol_sum
         if self._current_spin_component == 'Sum':
             if self._experiment_data is not None:
-                y = self._experiment_data.y + self._experiment_data.yb
-                e = self._experiment_data.e + self._experiment_data.eb
+                y = 0.5*(self._experiment_data.y + self._experiment_data.yb)
+                e = 0.5*(self._experiment_data.e + self._experiment_data.eb)
             self.fn_aggregate = self.pol_sum
         elif self._current_spin_component == 'Difference':
             if self._experiment_data is not None:
@@ -286,3 +290,15 @@ class ExperimentLogic(QObject):
 
     def setRefineDiff(self, value):
         self._refine_diff = value
+
+    def refineUp(self):
+        return self._refine_up
+
+    def setRefineUp(self, value):
+        self._refine_up = value
+
+    def refineDown(self):
+        return self._refine_down
+
+    def setRefineDown(self, value):
+        self._refine_down = value

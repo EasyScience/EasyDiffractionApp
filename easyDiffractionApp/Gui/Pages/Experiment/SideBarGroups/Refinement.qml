@@ -29,5 +29,20 @@ Grid {
         onCheckedChanged: ExGlobals.Constants.proxy.experiment.refineDiff = checked
         text: qsTr("Up - Down")
     }
+    EaElements.CheckBox {
+        id: refinementUpCheckBox
+        checked: ExGlobals.Constants.proxy.experiment.refineUp
+        onCheckedChanged: {
+            ExGlobals.Constants.proxy.experiment.refineUp = checked;
 
+        }
+        text: qsTr("Up")
+    }
+
+    EaElements.CheckBox {
+        id: refinementDownCheckBox
+        checked: ExGlobals.Constants.proxy.experiment.refineDown
+        onCheckedChanged: ExGlobals.Constants.proxy.experiment.refineDown = checked
+        text: qsTr("Down")
+    }
 }

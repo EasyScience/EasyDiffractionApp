@@ -174,7 +174,7 @@ EaComponents.SideBarColumn {
 
                 Column {
                     EaElements.Label {
-                        enabled: true
+                        enabled: false
                         text: qsTr("Polarization")
                     }
 
@@ -218,7 +218,7 @@ EaComponents.SideBarColumn {
 
         Loader {
             source: {
-                if (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DCW') {
+                if ((ExGlobals.Constants.proxy.sample.experimentType === 'powder1DCW') || (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DCWpol')) {
                     return 'SideBarGroups/RangesPdCw1d.qml'
                 } else if (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DTOF') {
                     return 'SideBarGroups/RangesPdTof1d.qml'
@@ -234,7 +234,7 @@ EaComponents.SideBarColumn {
 
         Loader {
             source: {
-                if (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DCW') {
+                if ((ExGlobals.Constants.proxy.sample.experimentType === 'powder1DCW') || (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DCWpol')) {
                     return 'SideBarGroups/InstrumentSetupPdCw1d.qml'
                 } else if (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DTOF') {
                     return 'SideBarGroups/InstrumentSetupPdTof1d.qml'
@@ -245,7 +245,8 @@ EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
         title: qsTr("Diffraction radiation")
-        enabled: ExGlobals.Constants.proxy.experiment.experimentLoaded &&
+        enabled: (ExGlobals.Constants.proxy.experiment.experimentLoaded ||
+                 ExGlobals.Constants.proxy.experiment.experimentSkipped ) &&
                  ExGlobals.Constants.proxy.experiment.isSpinPolarized
 
         Loader {
@@ -262,7 +263,7 @@ EaComponents.SideBarColumn {
 
         Loader {
             source: {
-                if (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DCW') {
+                if ((ExGlobals.Constants.proxy.sample.experimentType === 'powder1DCW') || (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DCWpol')) {
                     return 'SideBarGroups/PeakProfilePdCw1d.qml'
                 } else if (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DTOF') {
                     return 'SideBarGroups/PeakProfilePdTof1d.qml'
@@ -278,7 +279,7 @@ EaComponents.SideBarColumn {
 
         Loader {
             source: {
-                if (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DCW') {
+                if ((ExGlobals.Constants.proxy.sample.experimentType === 'powder1DCW') || (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DCWpol')) {
                     return 'SideBarGroups/BackgroundPdCw1d.qml'
                 } else if (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DTOF') {
                     return 'SideBarGroups/BackgroundPdTof1d.qml'
@@ -300,7 +301,8 @@ EaComponents.SideBarColumn {
     EaElements.GroupBox {
         title: qsTr("Refinement")
         last: true
-        enabled: ExGlobals.Constants.proxy.experiment.experimentLoaded &&
+        enabled: (ExGlobals.Constants.proxy.experiment.experimentLoaded ||
+                 ExGlobals.Constants.proxy.experiment.experimentSkipped) &&
                  ExGlobals.Constants.proxy.experiment.isSpinPolarized
         Loader {
             source: {

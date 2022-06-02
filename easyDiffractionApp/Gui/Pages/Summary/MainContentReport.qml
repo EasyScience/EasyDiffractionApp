@@ -525,13 +525,16 @@ Item {
     property string fittingInfo: {
         if (!isFitting)
             return ''
-        const redchi2 = ExGlobals.Constants.proxy.fitResults.redchi2.toFixed(2)
-        let list = [
-                '<p>',
-                `<b>Goodness-of-fit (reduced \u03c7\u00b2):</b> ${redchi2}<br>`,
-                '</p>'
-            ]
-        return list.join('\n')
+        if (typeof ExGlobals.Constants.proxy.fitResults !== 'undefined') {
+            const redchi2 = ExGlobals.Constants.proxy.fitResults.redchi2.toFixed(2)
+            let list = [
+                    '<p>',
+                    `<b>Goodness-of-fit (reduced \u03c7\u00b2):</b> ${redchi2}<br>`,
+                    '</p>'
+                ]
+            return list.join('\n')
+        }
+        return ''
     }
 
     property string analysisSection: {

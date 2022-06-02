@@ -64,7 +64,7 @@ class ExperimentProxy(QObject):
         if self.logic.setSpinComponent(component):
             self.experimentLoadedChanged.emit()
 
-    @Property(bool)
+    @Property(bool, notify=experimentLoadedChanged)
     def refineSum(self):
         return self.logic.refineSum()
 
@@ -72,13 +72,29 @@ class ExperimentProxy(QObject):
     def refineSum(self, value):
         self.logic.setRefineSum(value)
 
-    @Property(bool)
+    @Property(bool, notify=experimentLoadedChanged)
     def refineDiff(self):
         return self.logic.refineDiff()
 
     @refineDiff.setter
     def refineDiff(self, value):
         self.logic.setRefineDiff(value)
+
+    @Property(bool, notify=experimentLoadedChanged)
+    def refineUp(self):
+        return self.logic.refineUp()
+
+    @refineUp.setter
+    def refineUp(self, value):
+        self.logic.setRefineUp(value)
+
+    @Property(bool, notify=experimentLoadedChanged)
+    def refineDown(self):
+        return self.logic.refineDown()
+
+    @refineDown.setter
+    def refineDown(self, value):
+        self.logic.setRefineDown(value)
 
     @Property(str, notify=experimentDataAsXmlChanged)
     def experimentDataAsXml(self):

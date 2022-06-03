@@ -5,6 +5,8 @@
 # noqa: E501
 
 from dicttoxml import dicttoxml
+from gemmi import cif
+import numpy as np
 import pathlib
 import json
 
@@ -50,6 +52,64 @@ class ExperimentLogic(QObject):
             "label": "D1A@ILL",
             "color": "#00a3e3"
         }
+
+    def _loadExperimentCif(self, file_url):
+        print("+ _loadExperimentCif")
+        file_path = generalizePath(file_url)
+        block = cif.read(file_path).sole_block()
+
+        # Get pattern parameters
+        pattern_parameters = self.parent.l_sample._sample.pattern
+        if (value := block.find_value("_setup_offset_2theta")) is not None:
+            pattern_parameters.zero_shift = float(value)
+
+        # Get instrumental parameters
+        instrument_parameters = self.parent.l_sample._sample.parameters
+        if (value := block.find_value("_setup_wavelength")) is not None:
+            instrument_parameters.wavelength = float(value)
+        if (value := block.find_value("_pd_instr_resolution_u")) is not None:
+            instrument_parameters.resolution_u = float(value)
+        if (value := block.find_value("_pd_instr_resolution_v")) is not None:
+            instrument_parameters.resolution_v = float(value)
+        if (value := block.find_value("_pd_instr_resolution_w")) is not None:
+            instrument_parameters.resolution_w = float(value)
+        if (value := block.find_value("_pd_instr_resolution_x")) is not None:
+            instrument_parameters.resolution_x = float(value)
+        if (value := block.find_value("_pd_instr_resolution_y")) is not None:
+            instrument_parameters.resolution_y = float(value)
+
+        # Get phase parameters
+        sample_phase_labels = self.parent.l_phase.phases.phase_names
+        experiment_phase_labels = list(block.find_loop("_phase_label"))
+        experiment_phase_scales = np.fromiter(block.find_loop("_phase_scale"), float)
+        for (phase_label, phase_scale) in zip(experiment_phase_labels, experiment_phase_scales):
+            if phase_label in sample_phase_labels:
+                self.parent.l_phase.phases[phase_label].scale = phase_scale
+
+        # Get background
+        background_2thetas = np.fromiter(block.find_loop("_pd_background_2theta"), float)
+        background_intensities = np.fromiter(block.find_loop("_pd_background_intensity"), float)
+        for (x, y) in zip(background_2thetas, background_intensities):
+            self.parent.l_background.addPoint(x, y, silently=True)
+
+        # Get data
+        data = self.state._data.experiments[0]
+        # Polarized case
+        data.x = np.fromiter(block.find_loop("_pd_meas_2theta"), float)
+        data.y = np.fromiter(block.find_loop("_pd_meas_intensity_up"), float)
+        data.e = np.fromiter(block.find_loop("_pd_meas_intensity_up_sigma"), float)
+        data.yb = np.fromiter(block.find_loop("_pd_meas_intensity_down"), float)
+        data.eb = np.fromiter(block.find_loop("_pd_meas_intensity_down_sigma"), float)
+        self.spin_polarized = True
+        # Unpolarized case
+        if not np.any(data.y):
+            data.x = np.fromiter(block.find_loop("_pd_meas_2theta"), float)
+            data.y = np.fromiter(block.find_loop("_pd_meas_intensity"), float)
+            data.e = np.fromiter(block.find_loop("_pd_meas_intensity_sigma"), float)
+            data.yb = np.zeros(len(data.y))
+            data.eb = np.zeros(len(data.e))
+            self.spin_polarized = False
+        return data
 
     def _loadExperimentData(self, file_url):
         print("+ _loadExperimentData")
@@ -123,6 +183,13 @@ class ExperimentLogic(QObject):
 
     def _setExperimentDataAsXml(self):
         self._experiment_data_as_xml = dicttoxml(self.experiments, attr_type=True).decode()  # noqa: E501
+
+    def addExperimentDataFromCif(self, file_url):
+        self._experiment_data = self._loadExperimentCif(file_url)
+        self.state._data.experiments[0].name = pathlib.Path(file_url).stem
+        self.experiments = [{'name': experiment.name} for experiment in self.state._data.experiments]
+        self.experimentLoaded(True)
+        self.experimentSkipped(False)
 
     def addExperimentDataFromXye(self, file_url):
         self._experiment_data = self._loadExperimentData(file_url)

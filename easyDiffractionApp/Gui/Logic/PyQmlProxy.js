@@ -103,7 +103,7 @@ class Plotting1d {
 class BackgroundProxy {
     get asXml() { return "<root><item><x>10</x><y>183</y></item><item><x>15</x><y>189.36</y></item><item><x>20</x><y>210.12</y></item></root>" }
 
-    addPoint() {}
+    addDefaultPoint() {}
     removePoint() {}
     setDefaultPoints() {}
 }

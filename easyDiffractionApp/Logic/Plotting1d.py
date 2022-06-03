@@ -192,6 +192,8 @@ class Plotting1dLogic(QObject):
             self._setQtChartsMeasuredDataObj()
 
     def setCalculatedData(self, xarray, yarray):
+        if self.parent.l_experiment.spinComponent() == "Difference":
+            yarray = yarray - self._background_yarray
         self._setCalculatedDataArrays(xarray, yarray)
         self._setCalculatedDataRanges()
         self._setAnalysisPlotRanges()
@@ -306,7 +308,8 @@ class Plotting1dLogic(QObject):
             # skip this step with try-except block until instrumental parameters are defined/loaded
             try:
                 yarray = self._interface.get_calculated_y_for_phase(phase_index)
-                if self._background_yarray.size:
+                is_diff_plot = self.parent.l_experiment.spinComponent() == "Difference"
+                if self._background_yarray.size and not is_diff_plot:
                     self._bokeh_phases_data_obj[f'{phase_index}'] = {
                         'x': Plotting1dLogic.aroundX(self._calculated_xarray),
                         'y_upper': Plotting1dLogic.aroundY(yarray + self._background_yarray),

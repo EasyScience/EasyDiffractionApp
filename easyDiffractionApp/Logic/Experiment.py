@@ -60,22 +60,29 @@ class ExperimentLogic(QObject):
 
         # Get pattern parameters
         pattern_parameters = self.parent.l_sample._sample.pattern
-        if (value := block.find_value("_setup_offset_2theta")) is not None:
+        value = block.find_value("_setup_offset_2theta")
+        if value is not None:
             pattern_parameters.zero_shift = float(value)
 
         # Get instrumental parameters
         instrument_parameters = self.parent.l_sample._sample.parameters
-        if (value := block.find_value("_setup_wavelength")) is not None:
+        value = block.find_value("_setup_wavelength")
+        if value is not None:
             instrument_parameters.wavelength = float(value)
-        if (value := block.find_value("_pd_instr_resolution_u")) is not None:
+        value = block.find_value("_pd_instr_resolution_u")
+        if value is not None:
             instrument_parameters.resolution_u = float(value)
-        if (value := block.find_value("_pd_instr_resolution_v")) is not None:
+        value = block.find_value("_pd_instr_resolution_v")
+        if value is not None:
             instrument_parameters.resolution_v = float(value)
-        if (value := block.find_value("_pd_instr_resolution_w")) is not None:
+        value = block.find_value("_pd_instr_resolution_w")
+        if value is not None:
             instrument_parameters.resolution_w = float(value)
-        if (value := block.find_value("_pd_instr_resolution_x")) is not None:
+        value = block.find_value("_pd_instr_resolution_x")
+        if value is not None:
             instrument_parameters.resolution_x = float(value)
-        if (value := block.find_value("_pd_instr_resolution_y")) is not None:
+        value = block.find_value("_pd_instr_resolution_y")
+        if value is not None:
             instrument_parameters.resolution_y = float(value)
 
         # Get phase parameters
@@ -85,12 +92,6 @@ class ExperimentLogic(QObject):
         for (phase_label, phase_scale) in zip(experiment_phase_labels, experiment_phase_scales):
             if phase_label in sample_phase_labels:
                 self.parent.l_phase.phases[phase_label].scale = phase_scale
-
-        # Get background
-        background_2thetas = np.fromiter(block.find_loop("_pd_background_2theta"), float)
-        background_intensities = np.fromiter(block.find_loop("_pd_background_intensity"), float)
-        for (x, y) in zip(background_2thetas, background_intensities):
-            self.parent.l_background.addPoint(x, y, silently=True)
 
         # Get data
         data = self.state._data.experiments[0]
@@ -109,6 +110,7 @@ class ExperimentLogic(QObject):
             data.yb = np.zeros(len(data.y))
             data.eb = np.zeros(len(data.e))
             self.spin_polarized = False
+        self.setPolarized(self.spin_polarized)
         return data
 
     def _loadExperimentData(self, file_url):
@@ -197,6 +199,16 @@ class ExperimentLogic(QObject):
         self.experiments = [{'name': experiment.name} for experiment in self.state._data.experiments]
         self.experimentLoaded(True)
         self.experimentSkipped(False)
+
+    def addBackgroundDataFromCif(self, file_url):
+        file_path = generalizePath(file_url)
+        block = cif.read(file_path).sole_block()
+        # Get background
+        background_2thetas = np.fromiter(block.find_loop("_pd_background_2theta"), float)
+        background_intensities = np.fromiter(block.find_loop("_pd_background_intensity"), float)
+        self.parent.l_background.addPoints(background_2thetas, background_intensities)
+        self.parent.l_background._setAsXml()
+        self.parent.l_plotting1d.bokehBackgroundDataObjChanged.emit()
 
     def removeExperiment(self):
         if len(self.parent.l_sample._sample.pattern.backgrounds) > 0:

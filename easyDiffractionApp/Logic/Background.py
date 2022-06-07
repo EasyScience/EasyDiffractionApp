@@ -96,6 +96,15 @@ class BackgroundLogic(QObject):
         if not silently:
             self.asObjChanged.emit(self._background_as_obj)
 
+    def addPoints(self, xarray, yarray):
+        if self._background_as_obj is None:
+            self.initializeContainer()
+        for x, y in zip(xarray, yarray):
+            print(f"+ add background point ({x}, {y})")
+            point = BackgroundPoint.from_pars(x=x, y=y)
+            self._background_as_obj.append(point)
+        self.asObjChanged.emit(self._background_as_obj)
+
     def addDefaultPoint(self):
         print(f"+ add default background point")
         x = 0.0

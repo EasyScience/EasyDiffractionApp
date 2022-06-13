@@ -73,7 +73,7 @@ class PhaseLogic(QObject):
             idx = known_phases.count(default_phase.name)
             default_phase.name = default_phase.name + str(idx)
         # print('Disabling scale')
-        # default_phase.scale.enabled = False
+        default_phase.scale.fixed = True
         self.phases.append(default_phase)
         borg.stack.enabled = True
 
@@ -263,7 +263,7 @@ class PhaseLogic(QObject):
             self.phases.interface = self._interface
             for phase in phases:
                 # print('Disabling scale')
-                # phase.scale.enabled = False
+                phase.scale.fixed = True
                 self.phases.append(phase)
             self.phasesReplaced.emit()
             borg.stack.enabled = True

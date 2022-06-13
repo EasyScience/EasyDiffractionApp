@@ -192,6 +192,8 @@ class ExperimentLogic(QObject):
         self.experiments = [{'name': experiment.name} for experiment in self.state._data.experiments]
         self.experimentLoaded(True)
         self.experimentSkipped(False)
+        # need to update parameters in all the places.
+        self.parent.l_phase.structureParametersChanged.emit()
 
     def addExperimentDataFromXye(self, file_url):
         self._experiment_data = self._loadExperimentData(file_url)

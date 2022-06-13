@@ -161,7 +161,7 @@ class ParametersLogic(QObject):
             # Modify current label
             label = label.replace(".background.", ".")
             label = label.replace("Uiso.Uiso", "Uiso")
-            label = label.replace("Ciso.chi", "Ciso")
+            label = label.replace("Ciso.chi_11", "Ciso")
             label = label.replace("fract_", "fract.")
             label = label.replace("length_", "length.")
             label = label.replace("angle_", "angle.")
@@ -170,7 +170,7 @@ class ParametersLogic(QObject):
             # Modify previous label
             previousLabel = previousLabel.replace(".background.", ".")
             previousLabel = previousLabel.replace("Uiso.Uiso", "Uiso")
-            previousLabel = previousLabel.replace("Ciso.chi", "Ciso")
+            previousLabel = previousLabel.replace("Ciso.chi_11", "Ciso")
             previousLabel = previousLabel.replace("fract_", "fract.")
             previousLabel = previousLabel.replace("length_", "length.")
             previousLabel = previousLabel.replace("angle_", "angle.")

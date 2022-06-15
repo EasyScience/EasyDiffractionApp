@@ -58,7 +58,7 @@ EaComponents.TableView {
             text: model.name
         }
 
-        EaComponents.TableViewLabel {
+        EaComponents.TableViewLabelControl {
             id: descriptionColumn
 
             width: EaStyle.Sizes.fontPixelSize * 24
@@ -67,6 +67,7 @@ EaComponents.TableView {
 
             headerText: "Description"
             text: model.description
+            ToolTip.text: model.description
         }
 
         EaComponents.TableViewButton {

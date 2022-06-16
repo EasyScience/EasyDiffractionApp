@@ -16,7 +16,7 @@ import Gui.Globals 1.0 as ExGlobals
 
 EaComponents.TableView {
     property int numColumnWidth: EaStyle.Sizes.fontPixelSize * 2.5
-    property int labelColumnWidth: EaStyle.Sizes.fontPixelSize * 2.0
+    property int labelColumnWidth: EaStyle.Sizes.fontPixelSize * 2.5
     property int typeColumnWidth: EaStyle.Sizes.fontPixelSize * 4.0
     property int numFixedColumn: 3
     property int numFlexColumn: 7

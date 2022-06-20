@@ -37,6 +37,7 @@ class PhaseLogic(QObject):
         self._phases_as_xml = ""
         self._phases_as_cif = ""
         self._current_phase_index = 0
+        self.has_msp = False
 
     ####################################################################################################################
     ####################################################################################################################
@@ -262,14 +263,19 @@ class PhaseLogic(QObject):
             phases = Phases.from_cif_file(cif_path)
             self.phases.interface = self._interface
             for phase in phases:
-                # print('Disabling scale')
                 phase.scale.fixed = True
                 self.phases.append(phase)
+                # see if MSP is present (or just default)
+                msps = [atom.msp.default for atom in phase.atoms if hasattr(atom.msp, 'default')]  # noqa: E501
+                self.has_msp = not all(msps)
             self.phasesReplaced.emit()
             borg.stack.enabled = True
 
     def getCurrentPhaseName(self):
         return self.phases[self._current_phase_index].name
+
+    def hasMsp(self):
+        return self.has_msp
 
     def setCurrentPhaseName(self, name):
         if self.phases[self._current_phase_index].name == name:

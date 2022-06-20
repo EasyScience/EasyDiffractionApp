@@ -106,7 +106,8 @@ EaComponents.SideBarColumn {
     EaElements.GroupBox {
         title: qsTr("Magnetic susceptibility parameters")
         last: true
-        enabled: ExGlobals.Constants.proxy.phase.samplesPresent
+        enabled: ExGlobals.Constants.proxy.phase.samplesPresent &&
+            (ExGlobals.Constants.proxy.experiment.isSpinPolarized || ExGlobals.Constants.proxy.phase.hasMsp)
         ExComponents.SampleMsps{}
     }
 

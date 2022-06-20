@@ -192,7 +192,8 @@ class Plotting1dLogic(QObject):
             self._setQtChartsMeasuredDataObj()
 
     def setCalculatedData(self, xarray, yarray):
-        if self.parent.l_experiment.spinComponent() == "Difference":
+        if self.parent.l_experiment.spinComponent() == "Difference" and \
+            len(yarray) == len(self._background_xarray):
             yarray = yarray - self._background_yarray
         self._setCalculatedDataArrays(xarray, yarray)
         self._setCalculatedDataRanges()

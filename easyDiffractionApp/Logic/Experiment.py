@@ -58,6 +58,27 @@ class ExperimentLogic(QObject):
         file_path = generalizePath(file_url)
         block = cif.read(file_path).sole_block()
 
+        # Get experiment type
+        # Set default experiment type: powder1DCWunp
+        self.parent.l_sample.experimentType = 'powder1DCWunp'
+        # Check if powder1DCWpol
+        value = block.find_value("_diffrn_radiation_polarization")
+        if value is not None:
+            self.parent.l_sample.experimentType = 'powder1DCWpol'
+        # Check if powder1DTOFunp
+        # ...
+        # Check if powder1DTOFpol
+        # ...
+
+        # Get diffraction radiation parameters
+        pattern_parameters = self.parent.l_sample._sample.pattern
+        value = block.find_value("_diffrn_radiation_polarization")
+        if value is not None:
+            pattern_parameters.polarization = float(value)
+        value = block.find_value("_diffrn_radiation_efficiency")
+        if value is not None:
+            pattern_parameters.efficiency = float(value)
+
         # Get pattern parameters
         pattern_parameters = self.parent.l_sample._sample.pattern
         value = block.find_value("_setup_offset_2theta")

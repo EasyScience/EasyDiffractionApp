@@ -1,7 +1,7 @@
 data_Co2SiO4
 
-_space_group_name_H-M_ref 'P n m a'
-_space_group_IT_coordinate_system_code abc
+_space_group_name_H-M_alt 'P n m a'
+_space_group.IT_coordinate_system_code abc
 
 _cell_length_a     10.28()
 _cell_length_b      6.03()

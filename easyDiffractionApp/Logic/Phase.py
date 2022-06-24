@@ -266,8 +266,8 @@ class PhaseLogic(QObject):
                 phase.scale.fixed = True
                 self.phases.append(phase)
                 # see if MSP is present (or just default)
-                msps = [atom.msp.default for atom in phase.atoms if hasattr(atom.msp, 'default')]  # noqa: E501
-                self.has_msp = not all(msps)
+                msps = [hasattr(atom, 'msp') for atom in phase.atoms]  # noqa: E501
+                self.has_msp = any(msps)
             self.phasesReplaced.emit()
             borg.stack.enabled = True
 

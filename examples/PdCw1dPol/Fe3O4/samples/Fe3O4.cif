@@ -3,9 +3,9 @@ data_Fe3O4
 _space_group_name_H-M_alt 'F d -3 m'
 _space_group.IT_coordinate_system_code 2
 
-_cell_length_a     8.57()
-_cell_length_b     8.57
-_cell_length_c     8.57
+_cell_length_a     8.56212
+_cell_length_b     8.56212
+_cell_length_c     8.56212
 _cell_angle_alpha 90.0
 _cell_angle_beta  90.0
 _cell_angle_gamma 90.0
@@ -32,8 +32,8 @@ _atom_site_susceptibility_chi_33
 _atom_site_susceptibility_chi_12
 _atom_site_susceptibility_chi_13
 _atom_site_susceptibility_chi_23
-Fe3A Cani -0.08601() -0.08601 -0.08601 0.0 0.0 0.0
-Fe3B Cani  0.07840()  0.07840  0.07840 0.0 0.0 0.0
+Fe3A Cani  -4.0380 -4.0380 -4.0380  0.0 0.0 0.0
+Fe3B Cani   3.9318  3.9318  3.9318  0.0 0.0 0.0
 
 loop_
 _atom_site_scat_label

@@ -44,8 +44,8 @@ class SampleLogic(QObject):
     def _defaultCWSample(self):
         sample = Sample(
             phases=self._phases.phases,
-            parameters=Instrument1DCWParameters.default(),
-            pattern=Powder1DParameters.default(),
+            parameters=Instrument1DCWParameters(),
+            pattern=Powder1DParameters(),
             interface=self._interface)
         self._defaultParameters(sample)
         return sample
@@ -54,8 +54,8 @@ class SampleLogic(QObject):
         # sample = super()._defaultCWSample()
         sample = Sample(
             phases=self._phases.phases,
-            parameters=Instrument1DCWPolParameters.default(),
-            pattern=PolPowder1DParameters.default(),
+            parameters=Instrument1DCWPolParameters(),
+            pattern=PolPowder1DParameters(),
             interface=self._interface)
         self._defaultParameters(sample)
         sample.pattern.polarization = 0.0
@@ -65,8 +65,8 @@ class SampleLogic(QObject):
     def _defaultTOFSample(self):
         sample = Sample(
             phases=self._phases.phases,
-            parameters=Instrument1DTOFParameters.default(),
-            pattern=Powder1DParameters.default(),
+            parameters=Instrument1DTOFParameters(),
+            pattern=Powder1DParameters(),
             interface=self._interface)
         sample.pattern.zero_shift = 0.0
         sample.pattern.scale = 100.0

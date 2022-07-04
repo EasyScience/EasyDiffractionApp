@@ -282,13 +282,20 @@ class ExperimentLogic(QObject):
     def spinComponent(self):
         return self._current_spin_component
 
-    def pol_sum(self, a, b):
+    @staticmethod
+    def pol_sum(a, b):
         return a + b
-    def pol_diff(self, a, b):
+
+    @staticmethod
+    def pol_diff(a, b):
         return a - b
-    def pol_up(self, a, b):
+
+    @staticmethod
+    def pol_up(a, b):
         return a
-    def pol_down(self, a, b):
+
+    @staticmethod
+    def pol_down(a, b):
         return b
 
     def setSpinComponent(self, component=None):
@@ -300,8 +307,8 @@ class ExperimentLogic(QObject):
         self.fn_aggregate = self.pol_sum
         if self._current_spin_component == 'Sum':
             if self._experiment_data is not None:
-                y = 0.5*(self._experiment_data.y + self._experiment_data.yb)
-                e = 0.5*(self._experiment_data.e + self._experiment_data.eb)
+                y = self._experiment_data.y + self._experiment_data.yb
+                e = self._experiment_data.e + self._experiment_data.eb
             self.fn_aggregate = self.pol_sum
         elif self._current_spin_component == 'Difference':
             if self._experiment_data is not None:

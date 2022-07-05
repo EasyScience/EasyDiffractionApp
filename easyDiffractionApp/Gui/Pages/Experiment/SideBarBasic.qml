@@ -301,7 +301,8 @@ EaComponents.SideBarColumn {
     EaElements.GroupBox {
         title: qsTr("Refinement")
         last: true
-        visible: ExGlobals.Constants.proxy.experiment.isSpinPolarized
+        visible: false
+        // visible: ExGlobals.Constants.proxy.experiment.isSpinPolarized
         enabled: ExGlobals.Constants.proxy.experiment.experimentLoaded ||
                  ExGlobals.Constants.proxy.experiment.experimentSkipped
 

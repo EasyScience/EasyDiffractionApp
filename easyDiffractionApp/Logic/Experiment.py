@@ -26,11 +26,11 @@ class ExperimentLogic(QObject):
     patternParametersAsObjChanged = Signal()
     clearFrontendState = Signal()
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, interface=None):
         super().__init__(parent)
         self.parent = parent
         self.state = parent.l_parameters
-
+        self._interface = interface
         self._experiment_parameters = None
         self._experiment_data_as_xml = ""
         self.experiment_data = None
@@ -253,10 +253,11 @@ class ExperimentLogic(QObject):
 
     def _onExperimentDataAdded(self):
         print("***** _onExperimentDataAdded")
+        # default settings are up+down
         self.parent.l_plotting1d.setMeasuredData(
                                           self._experiment_data.x,
-                                          self._experiment_data.y,
-                                          self._experiment_data.e)
+                                          self._experiment_data.y + self._experiment_data.yb,
+                                          self._experiment_data.e + self._experiment_data.eb)
         self._experiment_parameters = \
             self._experimentDataParameters(self._experiment_data)
 
@@ -313,7 +314,7 @@ class ExperimentLogic(QObject):
         elif self._current_spin_component == 'Difference':
             if self._experiment_data is not None:
                 y = self._experiment_data.y - self._experiment_data.yb
-                e = self._experiment_data.e - self._experiment_data.eb
+                e = self._experiment_data.e + self._experiment_data.eb
             self.fn_aggregate = self.pol_diff
         elif self._current_spin_component == 'Up':
             if self._experiment_data is not None:
@@ -329,8 +330,10 @@ class ExperimentLogic(QObject):
             return False
         if self._experiment_data is not None:
             self.parent.l_plotting1d.setMeasuredData(self._experiment_data.x, y, e)
-        # recalculate the profile for the new spin case
+        # TODO: replace the profile calculation with pulling out correct components from
+        # phase components on the calculator.
         self.parent.l_parameters._updateCalculatedData()
+
         if self._experiment_data is not None:
             return True
         return False

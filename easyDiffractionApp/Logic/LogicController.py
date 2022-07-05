@@ -40,7 +40,7 @@ class LogicController(QObject):
     def initializeLogics(self):
         self.l_state = StateLogic(self, interface=self.interface)
         self.l_parameters = ParametersLogic(self, interface=self.interface)
-        self.l_experiment = ExperimentLogic(self)
+        self.l_experiment = ExperimentLogic(self, interface=self.interface)
         self.l_phase = PhaseLogic(self, interface=self.interface)
         self.l_sample = SampleLogic(self, interface=self.interface)
         self.l_fitting = FittingLogic(self, interface=self.interface)

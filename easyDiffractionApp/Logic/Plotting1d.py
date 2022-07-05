@@ -192,9 +192,6 @@ class Plotting1dLogic(QObject):
             self._setQtChartsMeasuredDataObj()
 
     def setCalculatedData(self, xarray, yarray):
-        if self.parent.l_experiment.spinComponent() == "Difference" and \
-            len(yarray) == len(self._background_xarray):
-            yarray = yarray - self._background_yarray
         self._setCalculatedDataArrays(xarray, yarray)
         self._setCalculatedDataRanges()
         self._setAnalysisPlotRanges()
@@ -308,9 +305,23 @@ class Plotting1dLogic(QObject):
         for phase_index in range(len(self.parent.l_phase.phases)):
             # skip this step with try-except block until instrumental parameters are defined/loaded
             try:
-                yarray = self._interface.get_calculated_y_for_phase(phase_index)
-                is_diff_plot = self.parent.l_experiment.spinComponent() == "Difference"
-                if self._background_yarray.size and not is_diff_plot:
+                if not self.parent.l_experiment.spin_polarized:
+                    yarray = self._interface.get_calculated_y_for_phase(phase_index)
+                else:
+                    phases_y = list(self._interface.get_component('phases').values())[phase_index]
+                    component = self.parent.l_experiment.spinComponent()
+                    is_diff = False
+                    if component == "Sum":
+                        yarray = phases_y["profile"]
+                    elif component == "Difference":
+                        yarray = phases_y["components"]["up"] - phases_y["components"]["down"]
+                        is_diff = True
+                    elif component == "Up":
+                        yarray = phases_y["components"]["up"]
+                    elif component == "Down":
+                        yarray = phases_y["components"]["down"]
+
+                if self._background_yarray.size and not is_diff:
                     self._bokeh_phases_data_obj[f'{phase_index}'] = {
                         'x': Plotting1dLogic.aroundX(self._calculated_xarray),
                         'y_upper': Plotting1dLogic.aroundY(yarray + self._background_yarray),

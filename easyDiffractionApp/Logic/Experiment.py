@@ -305,34 +305,42 @@ class ExperimentLogic(QObject):
         if component is not None:
             self._current_spin_component = component
 
+        phase_label = self.parent.l_phase.phases.phase_names[0]
+        components = self._interface.get_phase_components(phase_label)
+        calc_y = components['components']['up']
+        calc_yb = components['components']['down']
+        bg = self._interface.get_component('background')
+
         self.fn_aggregate = self.pol_sum
         if self._current_spin_component == 'Sum':
             if self._experiment_data is not None:
                 y = self._experiment_data.y + self._experiment_data.yb
                 e = self._experiment_data.e + self._experiment_data.eb
+            sim_y = calc_y + calc_yb + bg
             self.fn_aggregate = self.pol_sum
         elif self._current_spin_component == 'Difference':
             if self._experiment_data is not None:
                 y = self._experiment_data.y - self._experiment_data.yb
                 e = self._experiment_data.e + self._experiment_data.eb
+            sim_y = calc_y - calc_yb
             self.fn_aggregate = self.pol_diff
         elif self._current_spin_component == 'Up':
             if self._experiment_data is not None:
                 y = self._experiment_data.y
                 e = self._experiment_data.e
+            sim_y = calc_y + bg
             self.fn_aggregate = self.pol_up
         elif self._current_spin_component == 'Down':
             if self._experiment_data is not None:
                 y = self._experiment_data.yb
                 e = self._experiment_data.eb
+            sim_y = calc_yb + bg
             self.fn_aggregate = self.pol_down
         else:
             return False
         if self._experiment_data is not None:
             self.parent.l_plotting1d.setMeasuredData(self._experiment_data.x, y, e)
-        # TODO: replace the profile calculation with pulling out correct components from
-        # phase components on the calculator.
-        self.parent.l_parameters._updateCalculatedData()
+        self.parent.l_plotting1d.setCalculatedData(self._experiment_data.x, sim_y)
 
         if self._experiment_data is not None:
             return True

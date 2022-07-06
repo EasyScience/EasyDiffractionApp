@@ -128,13 +128,9 @@ def excludeFiles():
 
 def runPyInstaller():
     try:
+        hidden_imports = 'gemmi' # test assignment. to be moved to config
         message = 'freeze app'
         main_py_path = os.path.join(CONFIG.package_name, 'main.py')
-        Functions.printNeutralMessage(f'main_py_path:  {main_py_path}')
-        is_present = os.path.isdir(CONFIG.package_name)
-        Functions.printNeutralMessage(f'Is directory present? {is_present}')
-        dir_content = str(os.listdir())
-        Functions.printNeutralMessage(f'Main dir content: {dir_content}')
         pyInstallerMain([
             main_py_path,                           # Application main file
             f'--name={CONFIG.app_name}',            # Name to assign to the bundled app and spec file (default: first script’s basename)
@@ -146,6 +142,7 @@ def runPyInstaller():
             #'--specpath', workDirPath(),           # Folder to store the generated spec file (default: current directory)
             '--distpath', CONFIG.dist_dir,          # Where to put the bundled app (default: ./dist)
             '--workpath', CONFIG.build_dir,         # Where to put all the temporary work files, .log, .pyz and etc. (default: ./build)
+            '--hidden-import', hidden_imports,      # Import modules that are not found directly by pyinstaller
             *excludedModules(),                     # Exclude modules
             *addedData(),                           # Add data
             appIcon()                               # Application icon

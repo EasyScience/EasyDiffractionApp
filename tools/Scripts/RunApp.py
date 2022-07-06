@@ -34,6 +34,9 @@ def runApp():
         sys.exit(1)
     else:
         Functions.printSuccessMessage(message)
+        ldir = str(os.listdir())
+        Functions.printNeutralMessage(f'content: {ldir}')
+
 
 if __name__ == "__main__":
     runApp()

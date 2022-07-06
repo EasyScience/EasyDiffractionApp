@@ -307,6 +307,7 @@ class Plotting1dLogic(QObject):
             try:
                 if not self.parent.l_experiment.spin_polarized:
                     yarray = self._interface.get_calculated_y_for_phase(phase_index)
+                    is_diff = False
                 else:
                     phases_y = list(self._interface.get_component('phases').values())[phase_index]
                     component = self.parent.l_experiment.spinComponent()

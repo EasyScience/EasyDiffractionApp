@@ -251,6 +251,16 @@ class ExperimentLogic(QObject):
     def setCurrentExperimentDatasetName(self, name):
         self.parent.l_phase.setCurrentExperimentDatasetName(name)
 
+    def initializeBackground(self):
+        self.parent.l_plotting1d.setMeasuredData(
+                                          self._experiment_data.x,
+                                          self._experiment_data.y + self._experiment_data.yb,
+                                          self._experiment_data.e + self._experiment_data.eb)
+
+        self.parent.proxy.parameters.simulationParametersAsObj = \
+            json.dumps(self._experiment_parameters)
+        self.parent.l_background.initializeContainer()
+
     def _onExperimentDataAdded(self):
         print("***** _onExperimentDataAdded")
         # default settings are up+down

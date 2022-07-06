@@ -130,8 +130,9 @@ class ExperimentProxy(QObject):
 
     def _addExperimentDataFromCif(self, file_url):
         self.logic.addExperimentDataFromCif(file_url)
-        self.logic._onExperimentDataAdded()
+        self.logic.initializeBackground()
         self.logic.addBackgroundDataFromCif(file_url)
+        self.logic._onExperimentDataAdded()
         self.experimentLoadedChanged.emit()
 
     def _addExperimentDataFromXye(self, file_url):

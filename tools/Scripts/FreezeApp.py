@@ -10,6 +10,7 @@ import glob
 import site
 import PySide2, shiboken2
 import cryspy, GSASII
+import gemmi
 import easyCore, easyCrystallography, easyDiffractionLib, easyApp
 import Functions, Config
 from PyInstaller.__main__ import run as pyInstallerMain
@@ -47,7 +48,8 @@ def addedData():
             {'from': easyCrystallography.__path__[0], 'to': 'easyCrystallography'},
             {'from': easyApp.__path__[0], 'to': 'easyApp'},
             {'from': 'utils.py', 'to': '.'},
-            {'from': 'pyproject.toml', 'to': '.'}]
+            {'from': 'pyproject.toml', 'to': '.'},
+            {'from': gemmi.__file__, 'to': '.'}, ]
     # Add other missing libs
     missing_other_libraries = CONFIG['ci']['pyinstaller']['missing_other_libraries'][CONFIG.os]
     if missing_other_libraries:
@@ -128,7 +130,6 @@ def excludeFiles():
 
 def runPyInstaller():
     try:
-        hidden_imports = 'gemmi' # test assignment. to be moved to config
         message = 'freeze app'
         main_py_path = os.path.join(CONFIG.package_name, 'main.py')
         pyInstallerMain([
@@ -142,7 +143,6 @@ def runPyInstaller():
             #'--specpath', workDirPath(),           # Folder to store the generated spec file (default: current directory)
             '--distpath', CONFIG.dist_dir,          # Where to put the bundled app (default: ./dist)
             '--workpath', CONFIG.build_dir,         # Where to put all the temporary work files, .log, .pyz and etc. (default: ./build)
-            '--hidden-import', hidden_imports,      # Import modules that are not found directly by pyinstaller
             *excludedModules(),                     # Exclude modules
             *addedData(),                           # Add data
             appIcon()                               # Application icon

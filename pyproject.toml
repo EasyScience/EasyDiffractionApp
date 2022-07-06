@@ -45,8 +45,9 @@ ffmpeg-python = '^0.2.0'
 mss = '^6.1.0'
 #opencv-python = '^4.5.1'
 opencv-python = '4.5.1.48'
-google-trans-new = "^1.1.9"
+google-trans-new = '^1.1.9'
 gTTS = '^2.2.2'
+gemmi = '^0.5.4'
 
 [tool.poetry.scripts]
 easyDiffraction = 'easyDiffractionApp.main:main'
@@ -54,7 +55,7 @@ easyDiffraction = 'easyDiffractionApp.main:main'
 # CUSTOM CONFIG
 
 [release]
-app_name = 'EasyDiffraction'
+app_name = 'easyDiffraction'
 tag_template = 'v{VERSION}'
 title_template = 'Version {VERSION} ({DATE})'
 description_file = 'RELEASE.md'

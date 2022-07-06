@@ -10,7 +10,6 @@ import glob
 import site
 import PySide2, shiboken2
 import cryspy, GSASII
-import gemmi
 import easyCore, easyCrystallography, easyDiffractionLib, easyApp
 import Functions, Config
 from PyInstaller.__main__ import run as pyInstallerMain
@@ -48,8 +47,7 @@ def addedData():
             {'from': easyCrystallography.__path__[0], 'to': 'easyCrystallography'},
             {'from': easyApp.__path__[0], 'to': 'easyApp'},
             {'from': 'utils.py', 'to': '.'},
-            {'from': 'pyproject.toml', 'to': '.'},
-            {'from': gemmi.__file__, 'to': '.'}, ]
+            {'from': 'pyproject.toml', 'to': '.'}]
     # Add other missing libs
     missing_other_libraries = CONFIG['ci']['pyinstaller']['missing_other_libraries'][CONFIG.os]
     if missing_other_libraries:

@@ -121,6 +121,7 @@ jobs:
         run: poetry run python ${{ env.SCRIPTS_PATH }}/RunApp.py --testmode
 
       - name: Rename test videos
+        if: False
         run: >
           poetry run python ${{ env.SCRIPTS_PATH }}/RenameTestVideos.py
           ${{ env.BRANCH_NAME }}
@@ -147,7 +148,7 @@ jobs:
           allowUpdates: true
           replacesArtifacts: true
           token: ${{ secrets.GITHUB_TOKEN }}
-          artifacts: "${{ env.DISTRIBUTION_PATH }}/*.zip,${{ env.DISTRIBUTION_PATH }}/*.mp4"
+          artifacts: "${{ env.DISTRIBUTION_PATH }}/*.zip" #,${{ env.DISTRIBUTION_PATH }}/*.mp4"
           tag: ${{ env.BRANCH_NAME }}
           name: ${{ env.BRANCH_NAME }}
           bodyFile: "RELEASE.md"

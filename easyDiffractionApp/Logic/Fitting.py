@@ -67,6 +67,16 @@ class FittingLogic(QObject):
 
         x = exp_data.x
         y = exp_data.y
+        component = self.parent.l_experiment.spinComponent()
+        if component == "Sum":
+            y = exp_data.y + exp_data.yb
+        elif component == "Difference":
+            y = exp_data.y - exp_data.yb
+        elif component == "Up":
+            y = exp_data.y
+        elif component == "Down":
+            y = exp_data.yb
+
         weights = 1 / exp_data.e
 
         kwargs = {

@@ -29,10 +29,10 @@
                             "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Ispace_group_name_H-M_alt.html",
                             "display_name": "_space_group_HM_name",
                             "enabled": true,
-                            "@id": "3618265093881642291964477774881725129"
+                            "@id": "207511915027620885652973466039249003277"
                         },
-                        "setting": "",
-                        "@id": "193095830086316098430065786377875931299"
+                        "setting": ":2",
+                        "@id": "186625486167669304225117668053982508755"
                     },
                     "cell": {
                         "@module": "easyCrystallography.Components.Lattice",
@@ -50,8 +50,8 @@
                             "description": "Unit-cell length of the selected structure in angstroms.",
                             "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Icell_length_.html",
                             "units": "angstrom",
-                            "value": 8.57,
-                            "@id": "33736182995079934537828090666208519224",
+                            "value": 8.56212,
+                            "@id": "50560958397369501841066206442170964969",
                             "enabled": true
                         },
                         "length_b": {
@@ -66,8 +66,8 @@
                             "description": "Unit-cell length of the selected structure in angstroms.",
                             "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Icell_length_.html",
                             "units": "angstrom",
-                            "value": 8.57,
-                            "@id": "21930638090945783991874279934400107283",
+                            "value": 8.56212,
+                            "@id": "325913555619973885163308624729764030790",
                             "enabled": false
                         },
                         "length_c": {
@@ -82,8 +82,8 @@
                             "description": "Unit-cell length of the selected structure in angstroms.",
                             "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Icell_length_.html",
                             "units": "angstrom",
-                            "value": 8.57,
-                            "@id": "67155214271984907124710321857331036524",
+                            "value": 8.56212,
+                            "@id": "196461003103236339056806976453613516657",
                             "enabled": false
                         },
                         "angle_alpha": {
@@ -99,7 +99,7 @@
                             "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Icell_angle_.html",
                             "units": "degree",
                             "value": 90.0,
-                            "@id": "311374067592503942502142772670512211329",
+                            "@id": "196371895816831797712102226723855852022",
                             "enabled": false
                         },
                         "angle_beta": {
@@ -115,7 +115,7 @@
                             "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Icell_angle_.html",
                             "units": "degree",
                             "value": 90.0,
-                            "@id": "132034182371728159615523799582721148585",
+                            "@id": "228625074998750460312329519869995339294",
                             "enabled": false
                         },
                         "angle_gamma": {
@@ -131,7 +131,7 @@
                             "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Icell_angle_.html",
                             "units": "degree",
                             "value": 90.0,
-                            "@id": "215403914129551633438372776776960771866",
+                            "@id": "4939505905192297506422759094914170898",
                             "enabled": false
                         },
                         "spacegroup": {
@@ -149,12 +149,12 @@
                                 "display_name": "_space_group_HM_name",
                                 "enabled": true,
                                 "value": "F d -3 m:2",
-                                "@id": "3618265093881642291964477774881725129"
+                                "@id": "207511915027620885652973466039249003277"
                             },
-                            "setting": "",
-                            "@id": "193095830086316098430065786377875931299"
+                            "setting": ":2",
+                            "@id": "186625486167669304225117668053982508755"
                         },
-                        "@id": "299632192877438244219952488446357290330"
+                        "@id": "99161065630966990782588279961897262998"
                     },
                     "atoms": {
                         "@module": "easyDiffractionLib.components.site",
@@ -177,7 +177,7 @@
                                     "display_name": "label",
                                     "enabled": true,
                                     "value": "Fe3A",
-                                    "@id": "189735655834246289978070286713565012795"
+                                    "@id": "79382692849855486978354468865253903323"
                                 },
                                 "specie": {
                                     "@module": "easyCrystallography.Components.Specie",
@@ -186,7 +186,7 @@
                                     "specie": "Fe3+",
                                     "value": "Fe3+",
                                     "units": "dimensionless",
-                                    "@id": "53387223999207647817037769708285397756"
+                                    "@id": "231053886521211231822408858374792607871"
                                 },
                                 "occupancy": {
                                     "@module": "easyCore.Objects.Variable",
@@ -199,10 +199,10 @@
                                     "fixed": true,
                                     "description": "The fraction of the atom type present at this site.",
                                     "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_occupancy.html",
-                                    "value": 1.0,
                                     "units": "dimensionless",
-                                    "@id": "220303059406610681596644118534431285038",
-                                    "enabled": true
+                                    "enabled": true,
+                                    "value": 1.0,
+                                    "@id": "4477872794019120243521215789158235556"
                                 },
                                 "fract_x": {
                                     "@module": "easyCore.Objects.Variable",
@@ -215,10 +215,10 @@
                                     "fixed": true,
                                     "description": "Atom-site coordinate as fractions of the unit cell length.",
                                     "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_fract_.html",
-                                    "value": 0.125,
                                     "units": "dimensionless",
-                                    "@id": "259195236168236168983929619624384277781",
-                                    "enabled": true
+                                    "enabled": true,
+                                    "value": 0.125,
+                                    "@id": "214599725595140884610297138555062992322"
                                 },
                                 "fract_y": {
                                     "@module": "easyCore.Objects.Variable",
@@ -231,10 +231,10 @@
                                     "fixed": true,
                                     "description": "Atom-site coordinate as fractions of the unit cell length.",
                                     "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_fract_.html",
-                                    "value": 0.125,
                                     "units": "dimensionless",
-                                    "@id": "87867429726042919489625291903107198900",
-                                    "enabled": true
+                                    "enabled": true,
+                                    "value": 0.125,
+                                    "@id": "31526049746595720761996847168103273311"
                                 },
                                 "fract_z": {
                                     "@module": "easyCore.Objects.Variable",
@@ -247,10 +247,10 @@
                                     "fixed": true,
                                     "description": "Atom-site coordinate as fractions of the unit cell length.",
                                     "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_fract_.html",
-                                    "value": 0.125,
                                     "units": "dimensionless",
-                                    "@id": "4617624496169410573762168140649107235",
-                                    "enabled": true
+                                    "enabled": true,
+                                    "value": 0.125,
+                                    "@id": "255151774591989967737136375165745009135"
                                 },
                                 "adp": {
                                     "@module": "easyCrystallography.Components.AtomicDisplacement",
@@ -267,7 +267,7 @@
                                         "display_name": "adp_type",
                                         "enabled": true,
                                         "value": "Uiso",
-                                        "@id": "213749237088777439529086401939415270641"
+                                        "@id": "95035101737683442245948098526521933693"
                                     },
                                     "adp_class": {
                                         "@module": "easyCrystallography.Components.AtomicDisplacement",
@@ -285,13 +285,13 @@
                                             "description": "The standard anisotropic atomic displacement components in angstroms squared which appear in the structure-factor term.",
                                             "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_U_iso_or_equiv.html",
                                             "units": "angstrom ** 2",
+                                            "enabled": true,
                                             "value": 0.0,
-                                            "@id": "189035040687631230826114240181719982000",
-                                            "enabled": true
+                                            "@id": "64608927915471711021053919757750402975"
                                         },
-                                        "@id": "168574290246335053846689288708374969952"
+                                        "@id": "87782624759999862057760022783897161965"
                                     },
-                                    "@id": "128855201758866619365765696090158258746"
+                                    "@id": "23084046212044388047096664902065723695"
                                 },
                                 "msp": {
                                     "@module": "easyCrystallography.Components.Susceptibility",
@@ -308,7 +308,7 @@
                                         "display_name": "msp_type",
                                         "enabled": true,
                                         "value": "Cani",
-                                        "@id": "228085965822838219689886458006650387298"
+                                        "@id": "176944189945274340571521134227562926183"
                                     },
                                     "msp_class": {
                                         "@module": "easyCrystallography.Components.Susceptibility",
@@ -322,12 +322,12 @@
                                             "error": 0.0,
                                             "min": -Infinity,
                                             "max": Infinity,
-                                            "fixed": false,
+                                            "fixed": true,
                                             "description": "The standard anisotropic magnetic susceptibility components in inverse teslas which appear in the structure-factor term.",
                                             "units": "1 / tesla",
-                                            "value": -0.08601,
-                                            "@id": "276381061842579689956396830489393136829",
-                                            "enabled": true
+                                            "enabled": true,
+                                            "value": -4.038,
+                                            "@id": "195094510853064627693264612223651979552"
                                         },
                                         "chi_12": {
                                             "@module": "easyCore.Objects.Variable",
@@ -340,9 +340,9 @@
                                             "fixed": true,
                                             "description": "The standard anisotropic magnetic susceptibility components in inverse teslas which appear in the structure-factor term.",
                                             "units": "1 / tesla",
-                                            "value": -0.08601,
-                                            "@id": "153227623316355182525513517200426117128",
-                                            "enabled": true
+                                            "enabled": true,
+                                            "value": 0.0,
+                                            "@id": "156895243975178993836085025708945243254"
                                         },
                                         "chi_13": {
                                             "@module": "easyCore.Objects.Variable",
@@ -355,9 +355,9 @@
                                             "fixed": true,
                                             "description": "The standard anisotropic magnetic susceptibility components in inverse teslas which appear in the structure-factor term.",
                                             "units": "1 / tesla",
-                                            "value": -0.08601,
-                                            "@id": "190140516669841068761145583102468368977",
-                                            "enabled": true
+                                            "enabled": true,
+                                            "value": 0.0,
+                                            "@id": "308306396174785254274764550998188735062"
                                         },
                                         "chi_22": {
                                             "@module": "easyCore.Objects.Variable",
@@ -370,9 +370,9 @@
                                             "fixed": true,
                                             "description": "The standard anisotropic magnetic susceptibility components in inverse teslas which appear in the structure-factor term.",
                                             "units": "1 / tesla",
-                                            "value": 0.0,
-                                            "@id": "308541627527792250512639254144680098105",
-                                            "enabled": true
+                                            "enabled": true,
+                                            "value": -4.038,
+                                            "@id": "107750768670680768008766596329464184924"
                                         },
                                         "chi_23": {
                                             "@module": "easyCore.Objects.Variable",
@@ -385,9 +385,9 @@
                                             "fixed": true,
                                             "description": "The standard anisotropic magnetic susceptibility components in inverse teslas which appear in the structure-factor term.",
                                             "units": "1 / tesla",
+                                            "enabled": true,
                                             "value": 0.0,
-                                            "@id": "179999324493619393037513759261495507474",
-                                            "enabled": true
+                                            "@id": "257333448946233003553382655906430555304"
                                         },
                                         "chi_33": {
                                             "@module": "easyCore.Objects.Variable",
@@ -400,15 +400,15 @@
                                             "fixed": true,
                                             "description": "The standard anisotropic magnetic susceptibility components in inverse teslas which appear in the structure-factor term.",
                                             "units": "1 / tesla",
-                                            "value": 0.0,
-                                            "@id": "254522426048099112249422214056394018886",
-                                            "enabled": true
+                                            "enabled": true,
+                                            "value": -4.038,
+                                            "@id": "193626975930799758290170404447016041184"
                                         },
-                                        "@id": "315002938700341469364482760853371912531"
+                                        "@id": "305336306401795628602241835987042728699"
                                     },
-                                    "@id": "68866491602713223860628861703526093959"
+                                    "@id": "104507346910853196758995813643453195251"
                                 },
-                                "@id": "214238031070871798138416982820220355099"
+                                "@id": "136401033449032004270451779314137619397"
                             },
                             {
                                 "@module": "easyDiffractionLib.components.site",
@@ -425,7 +425,7 @@
                                     "display_name": "label",
                                     "enabled": true,
                                     "value": "Fe3B",
-                                    "@id": "158608090167632750977838591933021644283"
+                                    "@id": "6646618938115918297530039047733711608"
                                 },
                                 "specie": {
                                     "@module": "easyCrystallography.Components.Specie",
@@ -434,7 +434,7 @@
                                     "specie": "Fe3+",
                                     "value": "Fe3+",
                                     "units": "dimensionless",
-                                    "@id": "289672928520107962672482804319096659606"
+                                    "@id": "45700614137617822639744256758479754088"
                                 },
                                 "occupancy": {
                                     "@module": "easyCore.Objects.Variable",
@@ -447,10 +447,10 @@
                                     "fixed": true,
                                     "description": "The fraction of the atom type present at this site.",
                                     "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_occupancy.html",
-                                    "value": 1.0,
                                     "units": "dimensionless",
-                                    "@id": "117047066560930273941294497957694134097",
-                                    "enabled": true
+                                    "enabled": true,
+                                    "value": 1.0,
+                                    "@id": "314556624758610499931260934848434740010"
                                 },
                                 "fract_x": {
                                     "@module": "easyCore.Objects.Variable",
@@ -463,10 +463,10 @@
                                     "fixed": true,
                                     "description": "Atom-site coordinate as fractions of the unit cell length.",
                                     "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_fract_.html",
-                                    "value": 0.5,
                                     "units": "dimensionless",
-                                    "@id": "95864138312790593876260879497800295866",
-                                    "enabled": true
+                                    "enabled": true,
+                                    "value": 0.5,
+                                    "@id": "286978780663391668611155252507712952970"
                                 },
                                 "fract_y": {
                                     "@module": "easyCore.Objects.Variable",
@@ -479,10 +479,10 @@
                                     "fixed": true,
                                     "description": "Atom-site coordinate as fractions of the unit cell length.",
                                     "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_fract_.html",
-                                    "value": 0.5,
                                     "units": "dimensionless",
-                                    "@id": "10771588099738088965150971318626105297",
-                                    "enabled": true
+                                    "enabled": true,
+                                    "value": 0.5,
+                                    "@id": "244955553174075215679576114473390499061"
                                 },
                                 "fract_z": {
                                     "@module": "easyCore.Objects.Variable",
@@ -495,10 +495,10 @@
                                     "fixed": true,
                                     "description": "Atom-site coordinate as fractions of the unit cell length.",
                                     "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_fract_.html",
-                                    "value": 0.5,
                                     "units": "dimensionless",
-                                    "@id": "144571538778904853406554577252216377974",
-                                    "enabled": true
+                                    "enabled": true,
+                                    "value": 0.5,
+                                    "@id": "103703421536210281338157763542353445314"
                                 },
                                 "adp": {
                                     "@module": "easyCrystallography.Components.AtomicDisplacement",
@@ -515,7 +515,7 @@
                                         "display_name": "adp_type",
                                         "enabled": true,
                                         "value": "Uiso",
-                                        "@id": "39674715572628823072621984320559545915"
+                                        "@id": "130485840317832580456714068889120147526"
                                     },
                                     "adp_class": {
                                         "@module": "easyCrystallography.Components.AtomicDisplacement",
@@ -533,13 +533,13 @@
                                             "description": "The standard anisotropic atomic displacement components in angstroms squared which appear in the structure-factor term.",
                                             "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_U_iso_or_equiv.html",
                                             "units": "angstrom ** 2",
+                                            "enabled": true,
                                             "value": 0.0,
-                                            "@id": "80800065233468775575429251543968835266",
-                                            "enabled": true
+                                            "@id": "226587944044937127081131927274937030416"
                                         },
-                                        "@id": "177301977506386951192127035405719389854"
+                                        "@id": "265634552239010882109478109152505063382"
                                     },
-                                    "@id": "22162277061417531647164852071833197896"
+                                    "@id": "125347608676354702033310252371236927201"
                                 },
                                 "msp": {
                                     "@module": "easyCrystallography.Components.Susceptibility",
@@ -556,7 +556,7 @@
                                         "display_name": "msp_type",
                                         "enabled": true,
                                         "value": "Cani",
-                                        "@id": "50581393290889169490262595408140588365"
+                                        "@id": "168407114490046185028801344989392794381"
                                     },
                                     "msp_class": {
                                         "@module": "easyCrystallography.Components.Susceptibility",
@@ -570,12 +570,12 @@
                                             "error": 0.0,
                                             "min": -Infinity,
                                             "max": Infinity,
-                                            "fixed": false,
+                                            "fixed": true,
                                             "description": "The standard anisotropic magnetic susceptibility components in inverse teslas which appear in the structure-factor term.",
                                             "units": "1 / tesla",
-                                            "value": 0.0784,
-                                            "@id": "148827983733239766970184679114365927516",
-                                            "enabled": true
+                                            "enabled": true,
+                                            "value": 3.9318,
+                                            "@id": "24499294744699006858489376482547455746"
                                         },
                                         "chi_12": {
                                             "@module": "easyCore.Objects.Variable",
@@ -588,9 +588,9 @@
                                             "fixed": true,
                                             "description": "The standard anisotropic magnetic susceptibility components in inverse teslas which appear in the structure-factor term.",
                                             "units": "1 / tesla",
-                                            "value": 0.0784,
-                                            "@id": "268434088416358831095929237652334188296",
-                                            "enabled": true
+                                            "enabled": true,
+                                            "value": 0.0,
+                                            "@id": "272964591217340218691463041137852787404"
                                         },
                                         "chi_13": {
                                             "@module": "easyCore.Objects.Variable",
@@ -603,9 +603,9 @@
                                             "fixed": true,
                                             "description": "The standard anisotropic magnetic susceptibility components in inverse teslas which appear in the structure-factor term.",
                                             "units": "1 / tesla",
-                                            "value": 0.0784,
-                                            "@id": "221878802407223449089192058287204522944",
-                                            "enabled": true
+                                            "enabled": true,
+                                            "value": 0.0,
+                                            "@id": "200046530319760460390995035874217048325"
                                         },
                                         "chi_22": {
                                             "@module": "easyCore.Objects.Variable",
@@ -618,9 +618,9 @@
                                             "fixed": true,
                                             "description": "The standard anisotropic magnetic susceptibility components in inverse teslas which appear in the structure-factor term.",
                                             "units": "1 / tesla",
-                                            "value": 0.0,
-                                            "@id": "90911895443322448253423348231734362688",
-                                            "enabled": true
+                                            "enabled": true,
+                                            "value": 3.9318,
+                                            "@id": "335878917905579417342832302949491052927"
                                         },
                                         "chi_23": {
                                             "@module": "easyCore.Objects.Variable",
@@ -633,9 +633,9 @@
                                             "fixed": true,
                                             "description": "The standard anisotropic magnetic susceptibility components in inverse teslas which appear in the structure-factor term.",
                                             "units": "1 / tesla",
+                                            "enabled": true,
                                             "value": 0.0,
-                                            "@id": "23681135114251133441923087540970020204",
-                                            "enabled": true
+                                            "@id": "65618966086208482031451121855564747202"
                                         },
                                         "chi_33": {
                                             "@module": "easyCore.Objects.Variable",
@@ -648,15 +648,15 @@
                                             "fixed": true,
                                             "description": "The standard anisotropic magnetic susceptibility components in inverse teslas which appear in the structure-factor term.",
                                             "units": "1 / tesla",
-                                            "value": 0.0,
-                                            "@id": "89059719470207809523499887647848591186",
-                                            "enabled": true
+                                            "enabled": true,
+                                            "value": 3.9318,
+                                            "@id": "216736420550802349178577928582082854111"
                                         },
-                                        "@id": "51499811392348539504858667462543189789"
+                                        "@id": "267014660432986295756135196938107583191"
                                     },
-                                    "@id": "79599552785929550238736748503270485275"
+                                    "@id": "206092167578866848054088267858250297034"
                                 },
-                                "@id": "323581657019956445713572751845771974205"
+                                "@id": "232249950481511834193114779968605096599"
                             },
                             {
                                 "@module": "easyDiffractionLib.components.site",
@@ -673,7 +673,7 @@
                                     "display_name": "label",
                                     "enabled": true,
                                     "value": "O",
-                                    "@id": "109787423479169774908945593000598719546"
+                                    "@id": "158689159207888681472662769727372101251"
                                 },
                                 "specie": {
                                     "@module": "easyCrystallography.Components.Specie",
@@ -682,7 +682,7 @@
                                     "specie": "O2-",
                                     "value": "O2-",
                                     "units": "dimensionless",
-                                    "@id": "183547026205685134506047173228129917707"
+                                    "@id": "253551125698785725251048677616053191713"
                                 },
                                 "occupancy": {
                                     "@module": "easyCore.Objects.Variable",
@@ -695,10 +695,10 @@
                                     "fixed": true,
                                     "description": "The fraction of the atom type present at this site.",
                                     "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_occupancy.html",
-                                    "value": 1.0,
                                     "units": "dimensionless",
-                                    "@id": "296387499275081912001933370212098128401",
-                                    "enabled": true
+                                    "enabled": true,
+                                    "value": 1.0,
+                                    "@id": "68379199303189984567072252580811628177"
                                 },
                                 "fract_x": {
                                     "@module": "easyCore.Objects.Variable",
@@ -711,10 +711,10 @@
                                     "fixed": true,
                                     "description": "Atom-site coordinate as fractions of the unit cell length.",
                                     "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_fract_.html",
-                                    "value": 0.25521,
                                     "units": "dimensionless",
-                                    "@id": "122434915228920268525773190046163493558",
-                                    "enabled": true
+                                    "enabled": true,
+                                    "value": 0.25521,
+                                    "@id": "330483352460816464411619676494723762940"
                                 },
                                 "fract_y": {
                                     "@module": "easyCore.Objects.Variable",
@@ -727,10 +727,10 @@
                                     "fixed": true,
                                     "description": "Atom-site coordinate as fractions of the unit cell length.",
                                     "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_fract_.html",
-                                    "value": 0.25521,
                                     "units": "dimensionless",
-                                    "@id": "39775633188998446902399969394929048720",
-                                    "enabled": true
+                                    "enabled": true,
+                                    "value": 0.25521,
+                                    "@id": "7144429018590480713134266851590756785"
                                 },
                                 "fract_z": {
                                     "@module": "easyCore.Objects.Variable",
@@ -743,10 +743,10 @@
                                     "fixed": true,
                                     "description": "Atom-site coordinate as fractions of the unit cell length.",
                                     "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_fract_.html",
-                                    "value": 0.25521,
                                     "units": "dimensionless",
-                                    "@id": "87073520901067977984774654025766811546",
-                                    "enabled": true
+                                    "enabled": true,
+                                    "value": 0.25521,
+                                    "@id": "198912768608249229068839514994460756078"
                                 },
                                 "adp": {
                                     "@module": "easyCrystallography.Components.AtomicDisplacement",
@@ -763,7 +763,7 @@
                                         "display_name": "adp_type",
                                         "enabled": true,
                                         "value": "Uiso",
-                                        "@id": "302372895809962086177430072434953999861"
+                                        "@id": "26254358469367611547178093019162695120"
                                     },
                                     "adp_class": {
                                         "@module": "easyCrystallography.Components.AtomicDisplacement",
@@ -781,153 +781,38 @@
                                             "description": "The standard anisotropic atomic displacement components in angstroms squared which appear in the structure-factor term.",
                                             "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Iatom_site_U_iso_or_equiv.html",
                                             "units": "angstrom ** 2",
+                                            "enabled": true,
                                             "value": 0.0,
-                                            "@id": "271073807187693060882359723897665444815",
-                                            "enabled": true
+                                            "@id": "59958969511140217358909813499795395562"
                                         },
-                                        "@id": "118411217862561102692409960877215550564"
+                                        "@id": "264369658545376470256610881621973375625"
                                     },
-                                    "@id": "311604266669335919805293307786150251324"
+                                    "@id": "18015328897035721170975300122299897961"
                                 },
-                                "msp": {
-                                    "@module": "easyCrystallography.Components.Susceptibility",
-                                    "@class": "MagneticSusceptibility",
-                                    "@version": "0.1.0",
-                                    "msp_type": {
-                                        "@module": "easyCore.Objects.Variable",
-                                        "@class": "Descriptor",
-                                        "@version": "0.2.2",
-                                        "name": "msp_type",
-                                        "units": "dimensionless",
-                                        "description": "",
-                                        "url": "",
-                                        "display_name": "msp_type",
-                                        "enabled": true,
-                                        "value": "Cani",
-                                        "@id": "16960762384275393789169278961295671128"
-                                    },
-                                    "msp_class": {
-                                        "@module": "easyCrystallography.Components.Susceptibility",
-                                        "@class": "Cani",
-                                        "@version": "0.1.0",
-                                        "chi_11": {
-                                            "@module": "easyCore.Objects.Variable",
-                                            "@class": "Parameter",
-                                            "@version": "0.2.2",
-                                            "name": "chi_11",
-                                            "error": 0.0,
-                                            "min": -Infinity,
-                                            "max": Infinity,
-                                            "fixed": true,
-                                            "description": "The standard anisotropic magnetic susceptibility components in inverse teslas which appear in the structure-factor term.",
-                                            "units": "1 / tesla",
-                                            "value": 0.0,
-                                            "@id": "132107470821880459617496514075830128122",
-                                            "enabled": true
-                                        },
-                                        "chi_12": {
-                                            "@module": "easyCore.Objects.Variable",
-                                            "@class": "Parameter",
-                                            "@version": "0.2.2",
-                                            "name": "chi_12",
-                                            "error": 0.0,
-                                            "min": -Infinity,
-                                            "max": Infinity,
-                                            "fixed": true,
-                                            "description": "The standard anisotropic magnetic susceptibility components in inverse teslas which appear in the structure-factor term.",
-                                            "units": "1 / tesla",
-                                            "value": 0.0,
-                                            "@id": "163969260403507556159901115480115179193",
-                                            "enabled": true
-                                        },
-                                        "chi_13": {
-                                            "@module": "easyCore.Objects.Variable",
-                                            "@class": "Parameter",
-                                            "@version": "0.2.2",
-                                            "name": "chi_13",
-                                            "error": 0.0,
-                                            "min": -Infinity,
-                                            "max": Infinity,
-                                            "fixed": true,
-                                            "description": "The standard anisotropic magnetic susceptibility components in inverse teslas which appear in the structure-factor term.",
-                                            "units": "1 / tesla",
-                                            "value": 0.0,
-                                            "@id": "194634782821226039898754768080282941512",
-                                            "enabled": true
-                                        },
-                                        "chi_22": {
-                                            "@module": "easyCore.Objects.Variable",
-                                            "@class": "Parameter",
-                                            "@version": "0.2.2",
-                                            "name": "chi_22",
-                                            "error": 0.0,
-                                            "min": -Infinity,
-                                            "max": Infinity,
-                                            "fixed": true,
-                                            "description": "The standard anisotropic magnetic susceptibility components in inverse teslas which appear in the structure-factor term.",
-                                            "units": "1 / tesla",
-                                            "value": 0.0,
-                                            "@id": "135596731411621269076463592220950500689",
-                                            "enabled": true
-                                        },
-                                        "chi_23": {
-                                            "@module": "easyCore.Objects.Variable",
-                                            "@class": "Parameter",
-                                            "@version": "0.2.2",
-                                            "name": "chi_23",
-                                            "error": 0.0,
-                                            "min": -Infinity,
-                                            "max": Infinity,
-                                            "fixed": true,
-                                            "description": "The standard anisotropic magnetic susceptibility components in inverse teslas which appear in the structure-factor term.",
-                                            "units": "1 / tesla",
-                                            "value": 0.0,
-                                            "@id": "280919569064092148591278834153425380475",
-                                            "enabled": true
-                                        },
-                                        "chi_33": {
-                                            "@module": "easyCore.Objects.Variable",
-                                            "@class": "Parameter",
-                                            "@version": "0.2.2",
-                                            "name": "chi_33",
-                                            "error": 0.0,
-                                            "min": -Infinity,
-                                            "max": Infinity,
-                                            "fixed": true,
-                                            "description": "The standard anisotropic magnetic susceptibility components in inverse teslas which appear in the structure-factor term.",
-                                            "units": "1 / tesla",
-                                            "value": 0.0,
-                                            "@id": "103382304025149268720286795457252078781",
-                                            "enabled": true
-                                        },
-                                        "@id": "184774354699674678365128280812975105460"
-                                    },
-                                    "@id": "36026309549094864204285733088141557296"
-                                },
-                                "@id": "200697131888640332299373994847468831761"
+                                "@id": "224588169700980384788256538843679561541"
                             }
                         ],
-                        "@id": "124100404984233754374646419344959723114"
+                        "@id": "42644515736641417848563252017436389360"
                     },
                     "scale": {
                         "@module": "easyCore.Objects.Variable",
                         "@class": "Parameter",
                         "@version": "0.2.2",
                         "name": "scale",
-                        "error": 6.146132786912584,
+                        "error": 0.007634200426861034,
                         "min": 0,
                         "max": Infinity,
                         "fixed": false,
-                        "value": 106.54828212731177,
                         "units": "dimensionless",
-                        "@id": "319032943316849955910664306505556813595",
-                        "enabled": true
+                        "enabled": true,
+                        "value": 0.3163581516021446,
+                        "@id": "68434738445458092384252335629587272104"
                     },
                     "enforce_sym": true,
-                    "@id": "249499578898251711393190095204311134977"
+                    "@id": "8231800663475731989010836159811489551"
                 }
             ],
-            "@id": "8239386801755296266182245422594963278"
+            "@id": "290352170443735535033536461789714881331"
         },
         "parameters": {
             "@module": "easyDiffractionLib.Profiles.P1D",
@@ -943,9 +828,9 @@
                 "max": Infinity,
                 "fixed": true,
                 "units": "angstrom",
+                "enabled": true,
                 "value": 2.4,
-                "@id": "158622526402719462927610995911391479544",
-                "enabled": true
+                "@id": "37083256760510529770813750659962417983"
             },
             "resolution_u": {
                 "@module": "easyCore.Objects.Variable",
@@ -956,10 +841,10 @@
                 "min": -Infinity,
                 "max": Infinity,
                 "fixed": true,
-                "value": 11.34,
                 "units": "dimensionless",
-                "@id": "263484083653654675845096647343087166219",
-                "enabled": true
+                "enabled": true,
+                "value": 11.34,
+                "@id": "35640919550406315083854386479275196094"
             },
             "resolution_v": {
                 "@module": "easyCore.Objects.Variable",
@@ -970,10 +855,10 @@
                 "min": -Infinity,
                 "max": Infinity,
                 "fixed": true,
-                "value": -2.983,
                 "units": "dimensionless",
-                "@id": "284359089853896217761221882782551212545",
-                "enabled": true
+                "enabled": true,
+                "value": -2.983,
+                "@id": "252922893262812500796413576232062975098"
             },
             "resolution_w": {
                 "@module": "easyCore.Objects.Variable",
@@ -984,10 +869,10 @@
                 "min": -Infinity,
                 "max": Infinity,
                 "fixed": true,
-                "value": 1.141,
                 "units": "dimensionless",
-                "@id": "245338445478162773998484160829140930818",
-                "enabled": true
+                "enabled": true,
+                "value": 1.141,
+                "@id": "114807498482639169644163653796197492882"
             },
             "resolution_x": {
                 "@module": "easyCore.Objects.Variable",
@@ -998,10 +883,10 @@
                 "min": -Infinity,
                 "max": Infinity,
                 "fixed": true,
-                "value": 0.0,
                 "units": "dimensionless",
-                "@id": "335867869720338689030891306016767723790",
-                "enabled": true
+                "enabled": true,
+                "value": 0.0,
+                "@id": "206440583291808272123154855808922876310"
             },
             "resolution_y": {
                 "@module": "easyCore.Objects.Variable",
@@ -1012,12 +897,12 @@
                 "min": -Infinity,
                 "max": Infinity,
                 "fixed": true,
-                "value": 0.404,
                 "units": "dimensionless",
-                "@id": "206582942248878780441703183635213087796",
-                "enabled": true
+                "enabled": true,
+                "value": 0.404,
+                "@id": "184749535991632617582416817612015507223"
             },
-            "@id": "317366458585011958161710808486665976839"
+            "@id": "2209771225374459482216741523909969889"
         },
         "pattern": {
             "@module": "easyDiffractionLib.Profiles.P1D",
@@ -1031,11 +916,11 @@
                 "error": 0.0,
                 "min": -Infinity,
                 "max": Infinity,
-                "fixed": false,
+                "fixed": true,
                 "units": "degree",
-                "value": 0.0,
-                "@id": "192475424980256928141560054776001802805",
-                "enabled": true
+                "enabled": true,
+                "value": -0.36,
+                "@id": "197658673880270533829611458557584065296"
             },
             "scale": {
                 "@module": "easyCore.Objects.Variable",
@@ -1047,9 +932,9 @@
                 "max": Infinity,
                 "fixed": true,
                 "enabled": false,
-                "value": 1.0,
                 "units": "dimensionless",
-                "@id": "28338591284103119866572707339296064807"
+                "value": 1.0,
+                "@id": "161530327266380033775607288686484317707"
             },
             "backgrounds": {
                 "@module": "easyDiffractionLib.elements.Backgrounds.Background",
@@ -1076,24 +961,24 @@
                                     "display_name": "x",
                                     "enabled": true,
                                     "value": 10.0,
-                                    "@id": "290155531355131953200356101357828202833"
+                                    "@id": "35112402076516697989834458209628341545"
                                 },
                                 "y": {
                                     "@module": "easyCore.Objects.Variable",
                                     "@class": "Parameter",
                                     "@version": "0.2.2",
                                     "name": "intensity",
-                                    "error": 0.0,
+                                    "error": 124.13402017637513,
                                     "min": -Infinity,
                                     "max": Infinity,
-                                    "fixed": true,
-                                    "value": 183.0,
+                                    "fixed": false,
                                     "units": "dimensionless",
-                                    "@id": "88095495501570130679055117396801548986",
-                                    "enabled": true
+                                    "enabled": true,
+                                    "value": 370.57008193938117,
+                                    "@id": "258635299196070630339996979488964904247"
                                 },
                                 "name": "10,0_deg",
-                                "@id": "40818912472458059158137597859735976497"
+                                "@id": "64033933582231653368311252770229216784"
                             },
                             {
                                 "@module": "easyDiffractionLib.elements.Backgrounds.Point",
@@ -1110,24 +995,24 @@
                                     "display_name": "x",
                                     "enabled": true,
                                     "value": 15.0,
-                                    "@id": "14954386760537489619256113338278799559"
+                                    "@id": "212493517372904115755726967319531387726"
                                 },
                                 "y": {
                                     "@module": "easyCore.Objects.Variable",
                                     "@class": "Parameter",
                                     "@version": "0.2.2",
                                     "name": "intensity",
-                                    "error": 0.0,
+                                    "error": 69.66160276771349,
                                     "min": -Infinity,
                                     "max": Infinity,
-                                    "fixed": true,
-                                    "value": 189.36,
+                                    "fixed": false,
                                     "units": "dimensionless",
-                                    "@id": "293316549542715932949543162834102499312",
-                                    "enabled": true
+                                    "enabled": true,
+                                    "value": 355.21319213768834,
+                                    "@id": "86226353742862806956353926530139305173"
                                 },
                                 "name": "15,0_deg",
-                                "@id": "114233041012579024763680518832600807634"
+                                "@id": "333539928544442784646698950920628662679"
                             },
                             {
                                 "@module": "easyDiffractionLib.elements.Backgrounds.Point",
@@ -1144,24 +1029,24 @@
                                     "display_name": "x",
                                     "enabled": true,
                                     "value": 20.0,
-                                    "@id": "172917844257849831502341777758942144042"
+                                    "@id": "287974079005256797141591560548070204838"
                                 },
                                 "y": {
                                     "@module": "easyCore.Objects.Variable",
                                     "@class": "Parameter",
                                     "@version": "0.2.2",
                                     "name": "intensity",
-                                    "error": 0.0,
+                                    "error": 34.14453033910304,
                                     "min": -Infinity,
                                     "max": Infinity,
-                                    "fixed": true,
-                                    "value": 210.12,
+                                    "fixed": false,
                                     "units": "dimensionless",
-                                    "@id": "94186485272469760066220510015342929890",
-                                    "enabled": true
+                                    "enabled": true,
+                                    "value": 478.3240675414222,
+                                    "@id": "58421788904867888143417733561363594816"
                                 },
                                 "name": "20,0_deg",
-                                "@id": "173256326589194420607992387473245118885"
+                                "@id": "239016815614194274672154144239114099098"
                             },
                             {
                                 "@module": "easyDiffractionLib.elements.Backgrounds.Point",
@@ -1178,24 +1063,24 @@
                                     "display_name": "x",
                                     "enabled": true,
                                     "value": 35.0,
-                                    "@id": "191752556695146303326848552349316697944"
+                                    "@id": "336562262540281871127376451557560202905"
                                 },
                                 "y": {
                                     "@module": "easyCore.Objects.Variable",
                                     "@class": "Parameter",
                                     "@version": "0.2.2",
                                     "name": "intensity",
-                                    "error": 0.0,
+                                    "error": 24.66269020320691,
                                     "min": -Infinity,
                                     "max": Infinity,
-                                    "fixed": true,
-                                    "value": 253.0,
+                                    "fixed": false,
                                     "units": "dimensionless",
-                                    "@id": "246638491808785731268405826118433281307",
-                                    "enabled": true
+                                    "enabled": true,
+                                    "value": 487.98276027941046,
+                                    "@id": "325833176445971278115560755130003646655"
                                 },
                                 "name": "35,0_deg",
-                                "@id": "16921060927568617862432480939115549707"
+                                "@id": "120553127918339157114650590469356178101"
                             },
                             {
                                 "@module": "easyDiffractionLib.elements.Backgrounds.Point",
@@ -1212,24 +1097,24 @@
                                     "display_name": "x",
                                     "enabled": true,
                                     "value": 40.0,
-                                    "@id": "121323411485588649904588422507835245249"
+                                    "@id": "10432993697877584339278944312403495020"
                                 },
                                 "y": {
                                     "@module": "easyCore.Objects.Variable",
                                     "@class": "Parameter",
                                     "@version": "0.2.2",
                                     "name": "intensity",
-                                    "error": 0.0,
+                                    "error": 24.233190944817075,
                                     "min": -Infinity,
                                     "max": Infinity,
-                                    "fixed": true,
-                                    "value": 258.1,
+                                    "fixed": false,
                                     "units": "dimensionless",
-                                    "@id": "74213374668741900682657895908695074564",
-                                    "enabled": true
+                                    "enabled": true,
+                                    "value": 527.6889636329136,
+                                    "@id": "300225049520849395025341031556004264114"
                                 },
                                 "name": "40,0_deg",
-                                "@id": "235397551675231859651880508394101977641"
+                                "@id": "235362467143501317697980124324517633889"
                             },
                             {
                                 "@module": "easyDiffractionLib.elements.Backgrounds.Point",
@@ -1246,24 +1131,58 @@
                                     "display_name": "x",
                                     "enabled": true,
                                     "value": 50.0,
-                                    "@id": "286565751727645029318316727851947180691"
+                                    "@id": "136268553867033834344716096875703396815"
                                 },
                                 "y": {
                                     "@module": "easyCore.Objects.Variable",
                                     "@class": "Parameter",
                                     "@version": "0.2.2",
                                     "name": "intensity",
-                                    "error": 0.0,
+                                    "error": 21.203370552537944,
                                     "min": -Infinity,
                                     "max": Infinity,
-                                    "fixed": true,
-                                    "value": 285.44,
+                                    "fixed": false,
                                     "units": "dimensionless",
-                                    "@id": "200142373449295729349317305618031677698",
-                                    "enabled": true
+                                    "enabled": true,
+                                    "value": 606.5316853233033,
+                                    "@id": "280513804082753764719645066367855434974"
                                 },
                                 "name": "50,0_deg",
-                                "@id": "30861068319382040939526994134417690141"
+                                "@id": "135778331817039849016892185785773281002"
+                            },
+                            {
+                                "@module": "easyDiffractionLib.elements.Backgrounds.Point",
+                                "@class": "BackgroundPoint",
+                                "@version": "0.0.1",
+                                "x": {
+                                    "@module": "easyCore.Objects.Variable",
+                                    "@class": "Descriptor",
+                                    "@version": "0.2.2",
+                                    "name": "x",
+                                    "units": "dimensionless",
+                                    "description": "",
+                                    "url": "",
+                                    "display_name": "x",
+                                    "enabled": true,
+                                    "value": 62.0,
+                                    "@id": "77827077979982621586737819061884331997"
+                                },
+                                "y": {
+                                    "@module": "easyCore.Objects.Variable",
+                                    "@class": "Parameter",
+                                    "@version": "0.2.2",
+                                    "name": "intensity",
+                                    "error": 28.495206738500084,
+                                    "min": -Infinity,
+                                    "max": Infinity,
+                                    "fixed": false,
+                                    "units": "dimensionless",
+                                    "enabled": true,
+                                    "value": 766.2210710993425,
+                                    "@id": "74633229315651605587570507756964561031"
+                                },
+                                "name": "62,0_deg",
+                                "@id": "315912140050325722572992811273827899768"
                             },
                             {
                                 "@module": "easyDiffractionLib.elements.Backgrounds.Point",
@@ -1280,24 +1199,24 @@
                                     "display_name": "x",
                                     "enabled": true,
                                     "value": 64.0,
-                                    "@id": "314661057006527109415855520653292942648"
+                                    "@id": "87887370216683899023255130384258722297"
                                 },
                                 "y": {
                                     "@module": "easyCore.Objects.Variable",
                                     "@class": "Parameter",
                                     "@version": "0.2.2",
                                     "name": "intensity",
-                                    "error": 0.0,
+                                    "error": 41.04226682646585,
                                     "min": -Infinity,
                                     "max": Infinity,
-                                    "fixed": true,
-                                    "value": 385.0,
+                                    "fixed": false,
                                     "units": "dimensionless",
-                                    "@id": "116709671944201231550751224806824354329",
-                                    "enabled": true
+                                    "enabled": true,
+                                    "value": 787.6281551291237,
+                                    "@id": "232188903352208141720349171707109167658"
                                 },
                                 "name": "64,0_deg",
-                                "@id": "9474398682068807755201746952741213216"
+                                "@id": "36210166979489215510470068066706695410"
                             },
                             {
                                 "@module": "easyDiffractionLib.elements.Backgrounds.Point",
@@ -1314,31 +1233,31 @@
                                     "display_name": "x",
                                     "enabled": true,
                                     "value": 72.0,
-                                    "@id": "26914742345942042556273678387241036484"
+                                    "@id": "172644372099999344100836579779833789726"
                                 },
                                 "y": {
                                     "@module": "easyCore.Objects.Variable",
                                     "@class": "Parameter",
                                     "@version": "0.2.2",
                                     "name": "intensity",
-                                    "error": 0.0,
+                                    "error": 63.00005075324222,
                                     "min": -Infinity,
                                     "max": Infinity,
-                                    "fixed": true,
-                                    "value": 361.0,
+                                    "fixed": false,
                                     "units": "dimensionless",
-                                    "@id": "58639541728429659182092744278251015680",
-                                    "enabled": true
+                                    "enabled": true,
+                                    "value": 716.0702476767092,
+                                    "@id": "24446694255841136254420861205750218631"
                                 },
                                 "name": "72,0_deg",
-                                "@id": "74756292039541850591266824284435926662"
+                                "@id": "268888539015356549612479038799230766702"
                             }
                         ],
-                        "@id": "28299554835235712237700109594991620628",
+                        "@id": "217685232680607525355768339798314652311",
                         "linked_experiment": "current_exp"
                     }
                 ],
-                "@id": "63247069102657942307625196509045354778"
+                "@id": "186405525903393502003560694994563041838"
             },
             "polarization": {
                 "@module": "easyCore.Objects.Variable",
@@ -1348,11 +1267,11 @@
                 "error": 0.0,
                 "min": 0.0,
                 "max": 1.0,
-                "fixed": false,
-                "value": 0.6234,
+                "fixed": true,
                 "units": "dimensionless",
-                "@id": "96270960088902330664352298457671837260",
-                "enabled": true
+                "enabled": true,
+                "value": 0.6243,
+                "@id": "121619384328740045063756387179017227673"
             },
             "efficiency": {
                 "@module": "easyCore.Objects.Variable",
@@ -1363,15 +1282,29 @@
                 "min": 0.0,
                 "max": 1.0,
                 "fixed": true,
-                "value": 1.0,
                 "units": "dimensionless",
-                "@id": "71520079066039188939628606259787042985",
-                "enabled": true
+                "enabled": true,
+                "value": 1.0,
+                "@id": "296624713808556502561569992409640448096"
             },
-            "@id": "64317901137098581059538480470221367015"
+            "field": {
+                "@module": "easyCore.Objects.Variable",
+                "@class": "Parameter",
+                "@version": "0.2.2",
+                "name": "magnetic_field",
+                "error": 0.0,
+                "min": -Infinity,
+                "max": Infinity,
+                "fixed": true,
+                "units": "tesla",
+                "enabled": true,
+                "value": 1.0,
+                "@id": "46254219113430323623839597829895858222"
+            },
+            "@id": "65840646290520873221647624707756551407"
         },
         "name": "easySample",
-        "@id": "53914999102757985940532177661726690157"
+        "@id": "277049711311508746459285033563598895614"
     },
     "experiments": [
         [
@@ -2943,10 +2876,10 @@
     "experiment_skipped": false,
     "project_info": {
         "name": "Fe3O4",
-        "short_description": "diffraction, powder, constant wavelength, 1D, polarized",
+        "short_description": "diffraction, powder, 1D, polarized",
         "samples": "Fe3O4",
-        "experiments": "6T2@LLB",
-        "modified": "30.05.2022 13:11"
+        "experiments": "PolNPD5T",
+        "modified": "06.07.2022 13:09"
     },
     "interface": "CrysPy",
     "minimizer": {

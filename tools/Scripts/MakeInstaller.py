@@ -251,6 +251,15 @@ def installQtInstallerFramework():
         Functions.printSuccessMessage(message)
 
 def createInstallerSourceDir():
+    print("----------------------- 1")
+    Functions.run('ls', '/home/runner')
+    print("----------------------- 2")
+    Functions.run('ls', '/home/runner/Qt')
+    print("----------------------- 3")
+    Functions.run('ls', '/home/runner/Qt/QtIFW-4.4.1')
+    print("----------------------- 4")
+    Functions.run('ls', '/home/runner/Qt/QtIFW-4.4.1/bin')
+    print("----------------------- 5")
     try:
         message = f'create installer source directory {setupBuildDirPath()}'
         # base
@@ -306,10 +315,6 @@ def createInstallerSourceDir():
         Functions.printSuccessMessage(message)
 
 def createOfflineInstaller():
-    Functions.run('ls', '/home/runner')
-    Functions.run('ls', '/home/runner/Qt')
-    Functions.run('ls', '/home/runner/Qt/QtIFW-4.4.1')
-    Functions.run('ls', '/home/runner/Qt/QtIFW-4.4.1/bin')
     try:
         message = 'create installer'
         qtifw_bin_dir_path = os.path.join(qtifwDirPath(), 'bin')

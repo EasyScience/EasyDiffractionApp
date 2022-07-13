@@ -186,7 +186,8 @@ class ExperimentLogic(QObject):
                 current_type = current_type.replace('pol', 'unp')
 
         self.parent.l_sample.experimentType = current_type
-        self._onPatternParametersChanged()
+        # need to recalculate the profile
+        self.state._updateCalculatedData()
         return True
 
     def experimentLoaded(self, loaded: bool):
@@ -238,6 +239,7 @@ class ExperimentLogic(QObject):
             self.parent.l_background.removeAllPoints()
         self.parent.l_fitting.removeAllConstraints()
         self.setPolarized(False)
+        self._current_spin_component = 'Sum'
         self.experiments.clear()
         self.experimentLoaded(False)
         self.experimentSkipped(False)
@@ -348,11 +350,14 @@ class ExperimentLogic(QObject):
             self.fn_aggregate = self.pol_down
         else:
             return False
-        if self._experiment_data is not None:
-            self.parent.l_plotting1d.setMeasuredData(self._experiment_data.x, y, e)
-        self.parent.l_plotting1d.setCalculatedData(self._experiment_data.x, sim_y)
+        if self._experiment_data is None:
+            sim_x = self.state.sim_x()
+        else:
+            sim_x = self._experiment_data.x
+        self.parent.l_plotting1d.setCalculatedData(sim_x, sim_y)
 
         if self._experiment_data is not None:
+            self.parent.l_plotting1d.setMeasuredData(self._experiment_data.x, y, e)
             return True
         return False
 

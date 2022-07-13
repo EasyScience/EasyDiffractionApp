@@ -326,6 +326,19 @@ class ParametersLogic(QObject):
         obj = borg.map.get_item_by_key(obj_id)
         return obj
 
+    def sim_x(self):
+        """
+        Rerurn the x-axis of the simulated data.
+        """
+        params = self._simulation_parameters_as_obj
+        x_min = float(params['x_min'])
+        x_max = float(params['x_max'])
+        x_step = float(params['x_step'])
+        num_points = int((x_max - x_min) / x_step + 1)
+        simx = np.linspace(x_min, x_max, num_points)
+        return simx
+
+
     ####################################################################################################################
     # Calculated data
     ####################################################################################################################
@@ -343,12 +356,7 @@ class ParametersLogic(QObject):
             sim.x = exp.x
 
         elif self.parent.l_experiment._experiment_skipped:
-            params = self._simulation_parameters_as_obj
-            x_min = float(params['x_min'])
-            x_max = float(params['x_max'])
-            x_step = float(params['x_step'])
-            num_points = int((x_max - x_min) / x_step + 1)
-            sim.x = np.linspace(x_min, x_max, num_points)
+            sim.x = self.sim_x()
 
         kwargs = {}
         if self.parent.l_experiment.spin_polarized:

@@ -122,7 +122,6 @@ jobs:
         run: poetry run python ${{ env.SCRIPTS_PATH }}/RunApp.py --testmode
 
       - name: Rename test videos
-        if: runner.os != 'Linux'
         run: >
           poetry run python ${{ env.SCRIPTS_PATH }}/RenameTestVideos.py
           ${{ env.BRANCH_NAME }}

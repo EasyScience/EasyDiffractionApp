@@ -17,9 +17,9 @@ import Gui.Globals 1.0 as ExGlobals
 EaComponents.TableView {
     property int numColumnWidth: EaStyle.Sizes.fontPixelSize * 2.5
     property int labelColumnWidth: EaStyle.Sizes.fontPixelSize * 2.5
-    property int typeColumnWidth: EaStyle.Sizes.fontPixelSize * 4.0
+    property int typeColumnWidth: EaStyle.Sizes.fontPixelSize * 4.5
     property int numFixedColumn: 3
-    property int numFlexColumn: 7
+    property int numFlexColumn: 6
     property int flexColumnWidth: (width -
                                     numColumnWidth -
                                     labelColumnWidth -
@@ -76,17 +76,24 @@ EaComponents.TableView {
             enabled: false
             width: typeColumnWidth
             headerText: "Type"
-            model: ["Cani", "Ciso"]
+            model: ["None", "Cani", "Ciso"]
             //currentIndex: model.indexOf(modelMspType)
-            Component.onCompleted: currentIndex = model.indexOf(modelMspType)
+            Component.onCompleted: {
+                currentIndex = model.indexOf(modelMspType)
+                if (currentIndex === -1) {
+                    currentIndex = 0
+                }
+            }
         }
 
+        /*
         EaComponents.TableViewTextInput {
             width: flexColumnWidth
-            headerText: "\u03C7Iso"
+            headerText: "Iso"//"\u03C7Iso"
             text: EaLogic.Utils.toFixed(model.mspIso)
             onEditingFinished: editParameterValue(model.mspIsoId, text)
         }
+        */
 
         EaComponents.TableViewTextInput {
             width: flexColumnWidth

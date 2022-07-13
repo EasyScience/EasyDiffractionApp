@@ -32,7 +32,7 @@ class PhaseLogic(QObject):
         self.parent = parent
         self._interface = interface
         self.state = parent.l_parameters
-        self.phases = Phases(interface=interface)
+        self.phases = Phases()
         self._phases_as_obj = []
         self._phases_as_xml = ""
         self._phases_as_cif = ""

@@ -233,17 +233,38 @@ def osDependentPreparation():
         Functions.printNeutralMessage(f'No preparation needed for os {CONFIG.os}')
 
 def installQtInstallerFramework():
-    if os.path.exists(qtifwDirPath()):
-        Functions.printNeutralMessage(f'QtInstallerFramework was already installed to {qtifwDirPath()}')
-        return
+    #if os.path.exists(qtifwDirPath()):
+    #    Functions.printNeutralMessage(f'QtInstallerFramework was already installed to {qtifwDirPath()}')
+    #    return
     try:
+        print("========================== 1")
+        print("----------------------- 0")
+        Functions.run('ls', '~')
+        print("----------------------- 1")
+        Functions.run('ls', '/home/runner')
+
         message = f'install QtInstallerFramework to {qtifwDirPath()}'
         silent_script = os.path.join(CONFIG.scripts_dir, CONFIG['ci']['scripts']['silent_install'])
         Functions.installSilently(
             installer=qtifwSetupExe(),
             silent_script=silent_script
         )
-        time.sleep(10)
+        time.sleep(30)
+
+        print("========================== 2")
+        print("----------------------- 0")
+        Functions.run('ls', '~')
+        print("----------------------- 1")
+        Functions.run('ls', '/home/runner')
+        print("----------------------- 2")
+        Functions.run('ls', '/home/runner/Qt')
+        print("----------------------- 3")
+        Functions.run('ls', '/home/runner/Qt/QtIFW-4.4.1')
+        print("----------------------- 4")
+        Functions.run('ls', '/home/runner/Qt/QtIFW-4.4.1/bin')
+        print("----------------------- 5")
+
+
     except Exception as exception:
         Functions.printFailMessage(message, exception)
         sys.exit(1)
@@ -251,15 +272,6 @@ def installQtInstallerFramework():
         Functions.printSuccessMessage(message)
 
 def createInstallerSourceDir():
-    print("----------------------- 1")
-    Functions.run('ls', '/home/runner')
-    print("----------------------- 2")
-    Functions.run('ls', '/home/runner/Qt')
-    print("----------------------- 3")
-    Functions.run('ls', '/home/runner/Qt/QtIFW-4.4.1')
-    print("----------------------- 4")
-    Functions.run('ls', '/home/runner/Qt/QtIFW-4.4.1/bin')
-    print("----------------------- 5")
     try:
         message = f'create installer source directory {setupBuildDirPath()}'
         # base

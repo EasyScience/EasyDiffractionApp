@@ -38,7 +38,4 @@ def runInstallerSilently():
 
 
 if __name__ == "__main__":
-    Functions.run('ls', '/home/runner')
-    Functions.run('ls', '/home/runner/EasyDiffraction')
-    Functions.run('ls', '/home/runner/EasyDiffraction/EasyDiffraction')
     runInstallerSilently()

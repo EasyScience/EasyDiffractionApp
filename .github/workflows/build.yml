@@ -118,13 +118,13 @@ jobs:
       - name: Install app
         run: poetry run python ${{ env.SCRIPTS_PATH }}/InstallApp.py
 
-      #- name: Run app in testmode, record screen and quit
-      #  run: poetry run python ${{ env.SCRIPTS_PATH }}/RunApp.py --testmode
+      - name: Run app in testmode, record screen and quit
+        run: poetry run python ${{ env.SCRIPTS_PATH }}/RunApp.py --testmode
 
-      #- name: Rename test videos
-      #  run: >
-      #    poetry run python ${{ env.SCRIPTS_PATH }}/RenameTestVideos.py
-      #    ${{ env.BRANCH_NAME }}
+      - name: Rename test videos
+        run: >
+          poetry run python ${{ env.SCRIPTS_PATH }}/RenameTestVideos.py
+          ${{ env.BRANCH_NAME }}
 
       - name: Sign app installer
         if: github.event_name == 'push' && env.BRANCH_NAME == 'master'

@@ -334,31 +334,38 @@ class ExperimentLogic(QObject):
             if self._experiment_data is not None:
                 y = self._experiment_data.y - self._experiment_data.yb
                 e = self._experiment_data.e + self._experiment_data.eb
+            bg = np.zeros_like(bg)
             sim_y = calc_y - calc_yb
             self.fn_aggregate = self.pol_diff
         elif self._current_spin_component == 'Up':
             if self._experiment_data is not None:
                 y = self._experiment_data.y
                 e = self._experiment_data.e
+            bg = bg / 2
             sim_y = calc_y + bg
             self.fn_aggregate = self.pol_up
         elif self._current_spin_component == 'Down':
             if self._experiment_data is not None:
                 y = self._experiment_data.yb
                 e = self._experiment_data.eb
+            bg = bg / 2
             sim_y = calc_yb + bg
             self.fn_aggregate = self.pol_down
         else:
             return False
+
         if self._experiment_data is None:
             sim_x = self.state.sim_x()
         else:
             sim_x = self._experiment_data.x
+
         self.parent.l_plotting1d.setCalculatedData(sim_x, sim_y)
+        self.parent.l_plotting1d.setBackgroundData(sim_x, bg)
 
         if self._experiment_data is not None:
             self.parent.l_plotting1d.setMeasuredData(self._experiment_data.x, y, e)
             return True
+
         return False
 
     def refineSum(self):

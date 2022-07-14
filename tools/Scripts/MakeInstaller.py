@@ -243,7 +243,7 @@ def installQtInstallerFramework():
             installer=qtifwSetupExe(),
             silent_script=silent_script
         )
-        time.sleep(30)
+        time.sleep(10)
     except Exception as exception:
         Functions.printFailMessage(message, exception)
         sys.exit(1)

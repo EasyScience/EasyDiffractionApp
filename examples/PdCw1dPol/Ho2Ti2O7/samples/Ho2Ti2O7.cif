@@ -3,9 +3,9 @@ data_Ho2Ti2O7
 _space_group_name_H-M_alt               'F d -3 m'
 _space_group.IT_coordinate_system_code  2
 
-_cell_length_a 	   10.26594(88)
-_cell_length_b     10.26594(88)
-_cell_length_c     10.26594(88)
+_cell_length_a 	   10.26593
+_cell_length_b     10.26593
+_cell_length_c     10.26593
 _cell_angle_alpha  90.0
 _cell_angle_beta   90.0
 _cell_angle_gamma  90.0
@@ -33,7 +33,7 @@ _atom_site_susceptibility_chi_33
 _atom_site_susceptibility_chi_12
 _atom_site_susceptibility_chi_13
 _atom_site_susceptibility_chi_23
-Ho Cani 0.1() 0.1 0.1 0.1() 0.1 0.1
+Ho Cani 3.826 3.826 3.826 3.738 3.738 3.738
 
 loop_
 _atom_site_scat_label

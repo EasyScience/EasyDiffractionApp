@@ -291,7 +291,8 @@ EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
         title: qsTr("Associated phases")
-        last: !ExGlobals.Constants.proxy.experiment.isSpinPolarized
+        //last: !ExGlobals.Constants.proxy.experiment.isSpinPolarized
+        last: true
         enabled: ExGlobals.Constants.proxy.experiment.experimentLoaded ||
                  ExGlobals.Constants.proxy.experiment.experimentSkipped
 

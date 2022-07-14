@@ -84,6 +84,9 @@ class ExperimentLogic(QObject):
         value = block.find_value("_setup_offset_2theta")
         if value is not None:
             pattern_parameters.zero_shift = float(value)
+        value = block.find_value("_setup_field")
+        if value is not None:
+            pattern_parameters.field = float(value)
 
         # Get instrumental parameters
         instrument_parameters = self.parent.l_sample._sample.parameters

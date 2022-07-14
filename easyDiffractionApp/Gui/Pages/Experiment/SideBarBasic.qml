@@ -54,7 +54,7 @@ EaComponents.SideBarColumn {
     }
 
     EaElements.GroupBox {
-        title: qsTr("Instrument and experiment type")
+        title: qsTr("Experiment type") // qsTr("Instrument and experiment type")
         enabled: ExGlobals.Constants.proxy.experiment.experimentLoaded ||
                  ExGlobals.Constants.proxy.experiment.experimentSkipped
 
@@ -116,7 +116,7 @@ EaComponents.SideBarColumn {
 
                     EaElements.ComboBox {
                         enabled: !ExGlobals.Constants.proxy.experiment.experimentLoaded
-                        width: (EaStyle.Sizes.sideBarContentWidth - EaStyle.Sizes.fontPixelSize * 2 ) / 3
+                        width: (EaStyle.Sizes.sideBarContentWidth - EaStyle.Sizes.fontPixelSize) / 2
                         model: ["Neutron"]
                     }
                 }
@@ -131,7 +131,7 @@ EaComponents.SideBarColumn {
                         property string experimentType: ExGlobals.Constants.proxy.sample.experimentType
 
                         enabled: !ExGlobals.Constants.proxy.experiment.experimentLoaded
-                        width: (EaStyle.Sizes.sideBarContentWidth - EaStyle.Sizes.fontPixelSize * 2 ) / 3
+                        width: (EaStyle.Sizes.sideBarContentWidth - EaStyle.Sizes.fontPixelSize) / 2
 
                         textRole: "text"
                         valueRole: "value"
@@ -154,6 +154,11 @@ EaComponents.SideBarColumn {
                         }
                     }
                 }
+            }
+
+            Row {
+                visible: true
+                spacing: EaStyle.Sizes.fontPixelSize
 
                 Column {
                     EaElements.Label {
@@ -163,14 +168,10 @@ EaComponents.SideBarColumn {
 
                     EaElements.ComboBox {
                         enabled: !ExGlobals.Constants.proxy.experiment.experimentLoaded
-                        width: (EaStyle.Sizes.sideBarContentWidth - EaStyle.Sizes.fontPixelSize * 2 ) / 3
+                        width: (EaStyle.Sizes.sideBarContentWidth - EaStyle.Sizes.fontPixelSize) / 2
                         model: ["Powder"]
                     }
                 }
-            }
-            Row {
-                visible: true
-                spacing: EaStyle.Sizes.fontPixelSize
 
                 Column {
                     EaElements.Label {
@@ -181,7 +182,7 @@ EaComponents.SideBarColumn {
                     EaElements.ComboBox {
                         property bool experimentType: ExGlobals.Constants.proxy.experiment.isSpinPolarized
                         enabled: !ExGlobals.Constants.proxy.experiment.experimentLoaded
-                        width: (EaStyle.Sizes.sideBarContentWidth - EaStyle.Sizes.fontPixelSize * 2 ) / 3
+                        width: (EaStyle.Sizes.sideBarContentWidth - EaStyle.Sizes.fontPixelSize) / 2
 
                         textRole: "text"
                         valueRole: "value"
@@ -290,6 +291,7 @@ EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
         title: qsTr("Associated phases")
+        last: !ExGlobals.Constants.proxy.experiment.isSpinPolarized
         enabled: ExGlobals.Constants.proxy.experiment.experimentLoaded ||
                  ExGlobals.Constants.proxy.experiment.experimentSkipped
 

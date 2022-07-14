@@ -295,6 +295,7 @@ class ProjectLogic(QObject):
         self.projectInfoChanged.emit()
         self.project_save_filepath = ""
         self.removeExperiment.emit()
+        self.parent.l_fitting.setCurrentCalculatorIndex(0)
         if self.parent.l_phase.samplesPresent():
             self.parent.l_phase.removeAllPhases()
         self.reset.emit()

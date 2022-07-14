@@ -1,4 +1,4 @@
-### Changes
+### Bug Fixes
 
-- The application installer on macOS is now signed.
-- The Python-based backend framework has been updated from version 3.7 to 3.8.
+- CI for all 3 platforms now works, including making a test video.
+- CrysFML simulation now shows Bragg peaks.

@@ -307,7 +307,7 @@ def createInstallerSourceDir():
 
 def createOfflineInstaller():
     try:
-        message = 'create installer'
+        message = 'create offline installer'
         qtifw_bin_dir_path = os.path.join(qtifwDirPath(), 'bin')
         qtifw_binarycreator_path = os.path.join(qtifw_bin_dir_path, 'binarycreator')
         qtifw_installerbase_path = os.path.join(qtifw_bin_dir_path, 'installerbase')

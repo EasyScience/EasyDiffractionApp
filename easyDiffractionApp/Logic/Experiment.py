@@ -362,14 +362,14 @@ class ExperimentLogic(QObject):
         else:
             sim_x = self._experiment_data.x
 
+        has_experiment = self._experiment_data is not None
+        if self._experiment_data is not None:
+            self.parent.l_plotting1d.setMeasuredData(self._experiment_data.x, y, e)
+
         self.parent.l_plotting1d.setCalculatedData(sim_x, sim_y)
         self.parent.l_plotting1d.setBackgroundData(sim_x, bg)
 
-        if self._experiment_data is not None:
-            self.parent.l_plotting1d.setMeasuredData(self._experiment_data.x, y, e)
-            return True
-
-        return False
+        return has_experiment
 
     def refineSum(self):
         return self._refine_sum

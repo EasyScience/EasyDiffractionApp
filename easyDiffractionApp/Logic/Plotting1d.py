@@ -219,7 +219,7 @@ class Plotting1dLogic(QObject):
         extrapolated_y = interp_func(self._measured_xarray)
         if len(extrapolated_y) == 0:
             return
-        self._setBackgroundDataArrays(self._measured_xarray, interp_func(self._measured_xarray))
+        self._setBackgroundDataArrays(self._measured_xarray, extrapolated_y)
         self._setBokehBackgroundDataObj()
         self._setBokehPhasesDataObj()
         if self.currentLib == 'qtcharts':

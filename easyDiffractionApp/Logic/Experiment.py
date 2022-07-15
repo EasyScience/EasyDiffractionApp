@@ -327,28 +327,29 @@ class ExperimentLogic(QObject):
         bg = self._interface.get_component('background')
 
         self.fn_aggregate = self.pol_sum
+        has_experiment = self._experiment_data is not None
         if self._current_spin_component == 'Sum':
-            if self._experiment_data is not None:
+            if has_experiment:
                 y = self._experiment_data.y + self._experiment_data.yb
                 e = self._experiment_data.e + self._experiment_data.eb
             sim_y = calc_y + calc_yb + bg
             self.fn_aggregate = self.pol_sum
         elif self._current_spin_component == 'Difference':
-            if self._experiment_data is not None:
+            if has_experiment:
                 y = self._experiment_data.y - self._experiment_data.yb
                 e = self._experiment_data.e + self._experiment_data.eb
             bg = np.zeros_like(bg)
             sim_y = calc_y - calc_yb
             self.fn_aggregate = self.pol_diff
         elif self._current_spin_component == 'Up':
-            if self._experiment_data is not None:
+            if has_experiment:
                 y = self._experiment_data.y
                 e = self._experiment_data.e
             bg = bg / 2
             sim_y = calc_y + bg
             self.fn_aggregate = self.pol_up
         elif self._current_spin_component == 'Down':
-            if self._experiment_data is not None:
+            if has_experiment:
                 y = self._experiment_data.yb
                 e = self._experiment_data.eb
             bg = bg / 2
@@ -357,13 +358,12 @@ class ExperimentLogic(QObject):
         else:
             return False
 
-        if self._experiment_data is None:
-            sim_x = self.state.sim_x()
-        else:
+        if has_experiment:
             sim_x = self._experiment_data.x
+        else:
+            sim_x = self.state.sim_x()
 
-        has_experiment = self._experiment_data is not None
-        if self._experiment_data is not None:
+        if has_experiment:
             self.parent.l_plotting1d.setMeasuredData(self._experiment_data.x, y, e)
 
         self.parent.l_plotting1d.setCalculatedData(sim_x, sim_y)

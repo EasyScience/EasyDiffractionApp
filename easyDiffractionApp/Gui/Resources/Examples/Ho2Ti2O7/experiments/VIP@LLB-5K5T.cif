@@ -14,7 +14,7 @@ _diffrn_radiation_polarization  0.6909
 _diffrn_radiation_efficiency    1.0
 
 _chi2_sum  True
-_chi2_diff False
+_chi2_diff True
 _chi2_up   False
 _chi2_down False
 

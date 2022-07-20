@@ -93,7 +93,7 @@ class ProjectLogic(QObject):
 
     def projectExamplesAsXml(self):
         model = [
-            {"name": "PbSO4", "description": "neutrons, powder, constant wavelength, D1@ILL",
+            {"name": "PbSO4", "description": "neutrons, powder, constant wavelength, D1A@ILL",
              "path": "../Resources/Examples/PbSO4/project.json"},
             {"name": "Co2SiO4", "description": "neutrons, powder, constant wavelength, D20@ILL",
              "path": "../Resources/Examples/Co2SiO4/project.json"},
@@ -105,8 +105,10 @@ class ProjectLogic(QObject):
              "path": "../Resources/Examples/Na2Ca3Al2F14/project.json"},
             {"name": "Si3N4", "description": "neutrons, powder, constant wavelength, multi-phase, 3T2@LLB",
              "path": "../Resources/Examples/Si3N4/project.json"},
-            {"name": "Fe3O4", "description": "neutrons, powder, constant wavelength, polarized, 6T2@LLB",
-             "path": "../Resources/Examples/Fe3O4/project.json"}
+            {"name": "Fe3O4", "description": "neutrons, powder, constant wavelength, polarised, 6T2@LLB",
+             "path": "../Resources/Examples/Fe3O4/project.json"},
+            {"name": "Ho2Ti2O7", "description": "neutrons, powder, constant wavelength, polarised, VIP@LLB",
+             "path": "../Resources/Examples/Ho2Ti2O7/project.json"}
         ]
         xml = dicttoxml(model, attr_type=False)
         xml = xml.decode()

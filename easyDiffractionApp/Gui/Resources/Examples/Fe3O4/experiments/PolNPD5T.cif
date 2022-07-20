@@ -1,3 +1,48 @@
+data_PolNPD5T
+
+_setup_wavelength 2.4
+_setup_field 5.0
+_setup_offset_2theta 0.360
+
+_pd_instr_resolution_u 11.34
+_pd_instr_resolution_v -2.983
+_pd_instr_resolution_w 1.141
+_pd_instr_resolution_x 0.000
+_pd_instr_resolution_y 0.404
+
+_diffrn_radiation_polarization 0.6243
+_diffrn_radiation_efficiency 1.0
+
+_chi2_sum True
+_chi2_diff False
+_chi2_up False
+_chi2_down False
+
+loop_
+_phase_label
+_phase_scale
+_phase_igsize
+Fe3O4 0.3684 0.0
+
+loop_
+_pd_background_2theta
+_pd_background_intensity
+10.0 365.9
+15.0 378.7
+20.0 441.2
+35.0 507.6
+40.0 512.9
+50.0 571.2
+62.0 707.6
+64.0 770.0
+72.0 722.0
+
+loop_
+_pd_meas_2theta
+_pd_meas_intensity_up
+_pd_meas_intensity_up_sigma
+_pd_meas_intensity_down
+_pd_meas_intensity_down_sigma
 10.0 180.31984 28.49124 184.6922 28.47456
 10.2 182.67721 26.8855 176.10072 26.8625
 10.4 192.40581 26.33115 160.49695 26.28884

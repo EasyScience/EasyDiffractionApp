@@ -3,9 +3,9 @@ data_Ho2Ti2O7
 _space_group_name_H-M_alt               'F d -3 m'
 _space_group.IT_coordinate_system_code  2
 
-_cell_length_a 	   10.2670
-_cell_length_b     10.2670
-_cell_length_c     10.2670
+_cell_length_a 	   10.26593
+_cell_length_b     10.26593
+_cell_length_c     10.26593
 _cell_angle_alpha  90.0
 _cell_angle_beta   90.0
 _cell_angle_gamma  90.0

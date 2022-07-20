@@ -234,10 +234,10 @@ class PhaseLogic(QObject):
         adp = AtomicDisplacement("Uiso")
         msp = MagneticSusceptibility("Ciso")
         atom = Site(label=label,
-                    specie='O',
-                    fract_x=0.05,
-                    fract_y=0.05,
-                    fract_z=0.05,
+                    specie='Cl',
+                    fract_x=0.5,
+                    fract_y=0.5,
+                    fract_z=0.5,
                     adp=adp,
                     msp=msp)
         self.phases[self._current_phase_index].add_atom(atom)

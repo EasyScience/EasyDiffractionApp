@@ -379,15 +379,15 @@ class ParametersLogic(QObject):
 def defaultSimulationParams(exp_type='powder1DCW', jsonify=True):
     if 'powder1DCW' in exp_type:
         params = {
-            'x_min':  10,
-            'x_max':  120,
+            'x_min':  20,
+            'x_max':  140,
             'x_step': 0.1
         }
     elif 'powder1DTOF' in exp_type:
         params = {
             'x_min':  5000,
-            'x_max':  60000,
-            'x_step': 50
+            'x_max':  17000,
+            'x_step': 10
         }
     else:
         raise AttributeError('Unknown Experiment type')

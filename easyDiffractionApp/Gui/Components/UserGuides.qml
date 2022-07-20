@@ -65,9 +65,15 @@ Item {
         }
 
         EaComponents.GuideWindow {
+            property var loadExampleProjectButton: ExGlobals.Variables.loadExampleProjectButton
             container: projectPageGuidesContainer
-            parent: ExGlobals.Variables.loadExampleProjectButton
             text: qsTr("Or click this button to load one of the examples.")
+            //parent: ExGlobals.Variables.loadExampleProjectButton // This generates a QML warning because the loadExampleProjectButton is still not defined when this window is created
+            onLoadExampleProjectButtonChanged: {
+                if (typeof loadExampleProjectButton !== "undefined") {
+                    parent = loadExampleProjectButton
+                }
+            }
         }
 
         EaComponents.GuideWindow {

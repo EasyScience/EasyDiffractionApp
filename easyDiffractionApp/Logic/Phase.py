@@ -76,12 +76,11 @@ class PhaseLogic(QObject):
         # print('Disabling scale')
         default_phase.scale.fixed = True
         self.phases.append(default_phase)
-        self.setCurrentSpaceGroupSetting(1)
         borg.stack.enabled = True
 
     @staticmethod
     def _defaultPhase():
-        space_group = SpaceGroup.from_pars('P n m a')
+        space_group = SpaceGroup.from_pars('F d -3:2')
         cell = Lattice.from_pars(5.0, 3.0, 4.0, 90, 90, 90)
         adp = AtomicDisplacement("Uiso")
         atom = Site(label='O', specie='O', fract_x=0.0, fract_y=0.0, fract_z=0.0, adp=adp)

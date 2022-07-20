@@ -13,8 +13,8 @@ loop_
 _phase_label
 _phase_scale
 _phase_igsize
-Si3N4_alpha  77.84  0.0
-Si3N4_beta   22.49  0.0
+Si3N4_alpha  0.1845  0.0
+Si3N4_beta   0.0586  0.0
 
 loop_
 _pd_background_2theta

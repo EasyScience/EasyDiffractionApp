@@ -2,7 +2,7 @@ data_PolNPD5T
 
 _setup_wavelength 2.4
 _setup_field 5.0
-_setup_offset_2theta -0.360
+_setup_offset_2theta 0.360
 
 _pd_instr_resolution_u 11.34
 _pd_instr_resolution_v -2.983
@@ -14,7 +14,7 @@ _diffrn_radiation_polarization 0.6243
 _diffrn_radiation_efficiency 1.0
 
 _chi2_sum True
-_chi2_diff True
+_chi2_diff False
 _chi2_up False
 _chi2_down False
 
@@ -22,20 +22,20 @@ loop_
 _phase_label
 _phase_scale
 _phase_igsize
-Fe3O4 0.162 0.0
+Fe3O4 0.3684 0.0
 
 loop_
 _pd_background_2theta
 _pd_background_intensity
-10.0 183.0
-15.0 189.36
-20.0 210.12
-35.0 253.0
-40.0 258.1
-50.0 285.44
-62.0 369.43
-64.0 385.0
-72.0 361.0
+10.0 365.9
+15.0 378.7
+20.0 441.2
+35.0 507.6
+40.0 512.9
+50.0 571.2
+62.0 707.6
+64.0 770.0
+72.0 722.0
 
 loop_
 _pd_meas_2theta

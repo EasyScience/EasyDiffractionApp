@@ -76,17 +76,15 @@ class PhaseLogic(QObject):
         # print('Disabling scale')
         default_phase.scale.fixed = True
         self.phases.append(default_phase)
-        self.setCurrentSpaceGroupSetting(1)
         borg.stack.enabled = True
 
     @staticmethod
     def _defaultPhase():
-        space_group = SpaceGroup.from_pars('P 42/n c m')
-        cell = Lattice.from_pars(8.56, 8.56, 6.12, 90, 90, 90)
+        space_group = SpaceGroup.from_pars('F d -3:2')
+        cell = Lattice.from_pars(5.0, 3.0, 4.0, 90, 90, 90)
         adp = AtomicDisplacement("Uiso")
-        msp = MagneticSusceptibility("Ciso")
-        atom = Site(label='Cl1', specie='Cl', fract_x=0.125, fract_y=0.167, fract_z=0.107, adp=adp, msp=msp)
-        phase = Phase('Dichlorine', spacegroup=space_group, cell=cell)
+        atom = Site(label='O', specie='O', fract_x=0.0, fract_y=0.0, fract_z=0.0, adp=adp)
+        phase = Phase('Test', spacegroup=space_group, cell=cell)
         phase.add_atom(atom)
         return phase
 
@@ -237,10 +235,10 @@ class PhaseLogic(QObject):
         adp = AtomicDisplacement("Uiso")
         msp = MagneticSusceptibility("Ciso")
         atom = Site(label=label,
-                    specie='O',
-                    fract_x=0.05,
-                    fract_y=0.05,
-                    fract_z=0.05,
+                    specie='Cl',
+                    fract_x=0.5,
+                    fract_y=0.5,
+                    fract_z=0.5,
                     adp=adp,
                     msp=msp)
         self.phases[self._current_phase_index].add_atom(atom)

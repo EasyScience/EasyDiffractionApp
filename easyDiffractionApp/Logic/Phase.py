@@ -143,6 +143,7 @@ class PhaseLogic(QObject):
         if phases[self._current_phase_index].spacegroup.space_group_HM_name == new_name:  # noqa: E501
             return
         phases[self._current_phase_index].spacegroup.space_group_HM_name = new_name  # noqa: E501
+        self._updateCalculatedData()
 
     def updateParameters(self):
         self.parent.parametersChanged.emit()

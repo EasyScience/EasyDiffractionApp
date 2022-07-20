@@ -74,10 +74,10 @@ class ExperimentLogic(QObject):
         pattern_parameters = self.parent.l_sample._sample.pattern
         value = block.find_value("_diffrn_radiation_polarization")
         if value is not None:
-            pattern_parameters.polarization = float(value)
+            pattern_parameters.beam.polarization = float(value)
         value = block.find_value("_diffrn_radiation_efficiency")
         if value is not None:
-            pattern_parameters.efficiency = float(value)
+            pattern_parameters.beam.efficiency = float(value)
 
         # Get pattern parameters
         pattern_parameters = self.parent.l_sample._sample.pattern

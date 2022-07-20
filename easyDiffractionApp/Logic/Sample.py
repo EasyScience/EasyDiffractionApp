@@ -58,8 +58,8 @@ class SampleLogic(QObject):
             pattern=PolPowder1DParameters(),
             interface=self._interface)
         self._defaultParameters(sample)
-        sample.pattern.polarization = 0.0
-        sample.pattern.polarizing_efficiency = 100.0
+        sample.pattern.beam.polarization = 0.0
+        sample.pattern.beam.efficiency = 100.0
         return sample
 
     def _defaultTOFSample(self):

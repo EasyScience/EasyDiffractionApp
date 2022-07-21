@@ -324,7 +324,7 @@ class ExperimentLogic(QObject):
         components = self._interface.get_phase_components(phase_label)
         calc_y = components['components']['up']
         calc_yb = components['components']['down']
-        bg = self._interface.get_component('background')
+        bg = self._interface.get_component('f_background')
 
         self.fn_aggregate = self.pol_sum
         has_experiment = self._experiment_data is not None

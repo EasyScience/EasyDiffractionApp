@@ -20,7 +20,8 @@ EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
         title: qsTr("Export report")
-        enabled: ExGlobals.Constants.proxy.project.projectCreated
+        enabled: ExGlobals.Constants.proxy.project.projectCreated &&
+        !ExGlobals.Constants.proxy.project.readOnly
         collapsible: false
         last: true
 

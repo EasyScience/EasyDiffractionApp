@@ -34,7 +34,8 @@ EaComponents.ApplicationWindow {
 
         EaElements.ToolButton {
             enabled: ExGlobals.Constants.proxy.project.stateHasChanged &&
-                     ExGlobals.Constants.proxy.project.projectCreated
+                     ExGlobals.Constants.proxy.project.projectCreated &&
+                     !ExGlobals.Constants.proxy.project.readOnly
             highlighted: true
             fontIcon: "save"
             ToolTip.text: qsTr("Save current state of the project")

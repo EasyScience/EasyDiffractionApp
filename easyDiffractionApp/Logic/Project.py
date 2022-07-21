@@ -41,6 +41,7 @@ class ProjectLogic(QObject):
         self._project_info = self._defaultProjectInfo()
         self._project_created = False
         self._state_changed = False
+        self._read_only = False
 
         self._report = ""
         self._currentProjectPath = os.path.join(os.path.expanduser("~"), 'TestProject')
@@ -199,6 +200,12 @@ class ProjectLogic(QObject):
         # self.structureParametersChanged.emit()
         self.parent.l_background._setAsXml()
 
+        # project info
+        self._project_info = descr['project_info']
+
+        # read only flag
+        self._read_only = descr['read_only']
+
         # experiment
         if 'experiments' in descr:
             self.parent.l_experiment.experimentLoaded(True)
@@ -232,8 +239,6 @@ class ProjectLogic(QObject):
                 self.parent.l_experiment.experimentSkipped(True)
                 self.parent.l_experiment.experimentSkippedChanged.emit()
 
-        # project info
-        self._project_info = descr['project_info']
 
         new_minimizer_settings = descr.get('minimizer', None)
         if new_minimizer_settings is not None:
@@ -270,6 +275,7 @@ class ProjectLogic(QObject):
                 descr['experiments'] += [experiments_yb, experiments_eb]
 
         descr['experiment_skipped'] = self.parent.l_experiment._experiment_skipped
+        descr['read_only'] = self._read_only
         descr['project_info'] = self._project_info
 
         descr['interface'] = self._interface.current_interface_name

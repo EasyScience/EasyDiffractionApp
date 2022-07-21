@@ -12927,6 +12927,7 @@
         ]
     ],
     "experiment_skipped": false,
+    "read_only": true,
     "project_info": {
         "name": "CeCuAl3",
         "short_description": "neutrons, powder, time-of-flight, Polaris@ISIS",

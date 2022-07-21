@@ -104,6 +104,10 @@ class ProjectProxy(QObject):
         self.logic.stateHasChanged(False)
         self.stateChanged.emit(False)
 
+    @Property(bool, notify=projectCreatedChanged)
+    def readOnly(self):
+        return self.logic._read_only
+
     @Property(bool, notify=stateChanged)
     def stateHasChanged(self):
         return self.logic._state_changed

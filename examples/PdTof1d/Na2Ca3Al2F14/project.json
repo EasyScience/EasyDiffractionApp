@@ -18298,6 +18298,7 @@
         ]
     ],
     "experiment_skipped": false,
+    "read_only": true,
     "project_info": {
         "name": "Na2Ca3Al2F14",
         "short_description": "neutrons, powder, time-of-flight, Osiris@ISIS",

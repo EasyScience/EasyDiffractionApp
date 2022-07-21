@@ -9387,6 +9387,7 @@
         ]
     ],
     "experiment_skipped": false,
+    "read_only": true,
     "project_info": {
         "name": "Si3N4",
         "short_description": "neutrons, powder, constant wavelength, multi-phase, 3T2@LLB",

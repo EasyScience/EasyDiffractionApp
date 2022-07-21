@@ -5866,6 +5866,7 @@
         ]
     ],
     "experiment_skipped": false,
+    "read_only": true,
     "project_info": {
         "name": "Co2SiO4",
         "short_description": "neutrons, powder, constant wavelength, D20@ILL",

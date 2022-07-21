@@ -365,12 +365,11 @@ class ExperimentLogic(QObject):
             sim_x = self._experiment_data.x
         else:
             sim_x = self.state.sim_x()
-
+        self.parent.l_plotting1d.setBackgroundData(sim_x, bg)
         if has_experiment:
             self.parent.l_plotting1d.setMeasuredData(self._experiment_data.x, y, e)
 
         self.parent.l_plotting1d.setCalculatedData(sim_x, sim_y)
-        self.parent.l_plotting1d.setBackgroundData(sim_x, bg)
 
         return has_experiment
 

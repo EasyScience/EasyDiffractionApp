@@ -368,11 +368,9 @@ class ParametersLogic(QObject):
 
         sim.y = self._interface.fit_func(sim.x, **kwargs)
         if self.parent.l_experiment.spin_polarized:
-            bg = self._interface.get_component('f_background')
-            bg_new = self._interface.get_component('background')
-            sim.y += bg - bg_new
-
-        self.plotCalculatedDataSignal.emit((sim.x, sim.y))
+            self.parent.l_experiment.setSpinComponent()
+        else:
+            self.plotCalculatedDataSignal.emit((sim.x, sim.y))
 
         for phase_index, phase_name in enumerate([str(phase._borg.map.convert_id(phase).int) for phase in self.parent.l_phase.phases]):
             hkl = self._interface.get_hkl(x_array=sim.x, phase_name=phase_name, encoded_name=True)

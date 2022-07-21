@@ -175,6 +175,9 @@ class FittingLogic(QObject):
     def finishFit(self):
         self._fit_finished = True
         self.fitFinished.emit()
+        # TODO: remove once background is correctly implemented in polarized
+        if self.parent.l_experiment.spin_polarized:
+            self.parent.l_experiment.setSpinComponent()
         # must re-instantiate the thread object
         self.fit_thread = Thread(target=self.fit_threading)
 

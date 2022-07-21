@@ -316,7 +316,7 @@ class Plotting1dLogic(QObject):
                     component = self.parent.l_experiment.spinComponent()
                     is_diff = False
                     if component == "Sum":
-                        yarray = phases_y["profile"]
+                        yarray = phases_y["components"]["up"] + phases_y["components"]["down"]
                     elif component == "Difference":
                         yarray = phases_y["components"]["up"] - phases_y["components"]["down"]
                         is_diff = True

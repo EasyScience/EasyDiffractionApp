@@ -43,7 +43,7 @@ class ProjectLogic(QObject):
         self._state_changed = False
 
         self._report = ""
-        self._currentProjectPath = os.path.expanduser("~")
+        self._currentProjectPath = os.path.join(os.path.expanduser("~"), 'TestProject')
 
     ####################################################################################################################
     ####################################################################################################################

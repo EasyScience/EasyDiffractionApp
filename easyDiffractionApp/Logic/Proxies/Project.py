@@ -83,7 +83,6 @@ class ProjectProxy(QObject):
     @Slot(str)
     def loadExampleProject(self, filepath):
         self.logic._loadProjectAs(filepath)
-        self.currentProjectPath = '--- EXAMPLE ---'
         self.stateChanged.emit(False)
         self.parent.fitting.calculatorListChanged.emit()
 

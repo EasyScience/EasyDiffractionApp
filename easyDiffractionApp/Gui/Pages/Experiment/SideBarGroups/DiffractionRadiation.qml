@@ -26,12 +26,12 @@ Grid {
             width: inputFieldWidth()
             units: "%"
             text: (ExGlobals.Constants.proxy.experiment.isSpinPolarized ?
-                EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.parameters.patternParametersAsObj.polarization.value * 100.0) :
+                EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.parameters.patternParametersAsObj.beam.polarization.value * 100.0) :
                 qsTr(""))
             onEditingFinished:{
                 var value = Number(text)/100.0;
                 var value_string = value.toString();
-                editParameterValue(ExGlobals.Constants.proxy.parameters.patternParametersAsObj.polarization["@id"], value_string)
+                editParameterValue(ExGlobals.Constants.proxy.parameters.patternParametersAsObj.beam.polarization["@id"], value_string)
             }
 
         }
@@ -47,12 +47,12 @@ Grid {
             width: inputFieldWidth()
             units: "%"
             text: (ExGlobals.Constants.proxy.experiment.isSpinPolarized ?
-                EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.parameters.patternParametersAsObj.efficiency.value * 100.0) :
+                EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.parameters.patternParametersAsObj.beam.efficiency.value * 100.0) :
                 qsTr(""))
             onEditingFinished: {
                 var value = Number(text)/100.0;
                 var value_string = value.toString();
-                editParameterValue(ExGlobals.Constants.proxy.parameters.patternParametersAsObj.efficiency["@id"], value_string)
+                editParameterValue(ExGlobals.Constants.proxy.parameters.patternParametersAsObj.beam.efficiency["@id"], value_string)
             }
         }
     }

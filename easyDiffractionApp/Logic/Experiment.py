@@ -168,6 +168,9 @@ class ExperimentLogic(QObject):
     def refinement(self):
         return {"sum": self._refine_sum, "diff": self._refine_diff, "up": self._refine_up, "down": self._refine_down}
 
+    def refinement_methods(self):
+        return {self.pol_sum: self._refine_sum, self.pol_diff: self._refine_diff, self.pol_up: self._refine_up, self.pol_down: self._refine_down}
+
     def setPolarized(self, polarized: bool):
         if self.spin_polarized == polarized:
             return False

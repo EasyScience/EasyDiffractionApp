@@ -4,6 +4,8 @@
 
 from PySide2.QtCore import Signal, QObject, QThread
 
+import numpy as np
+
 from threading import Thread
 
 from easyDiffractionLib.interface import InterfaceFactory as Calculator
@@ -57,7 +59,7 @@ class FittingLogic(QObject):
         self.finished.connect(self.onSuccess)
         self.failed.connect(self.onFailed)
 
-    def fit_threading(self):
+    def fit_nonpolar(self):
         data = self.data
         method = self._current_minimizer_method_name
 
@@ -67,17 +69,6 @@ class FittingLogic(QObject):
 
         x = exp_data.x
         y = exp_data.y
-        component = self.parent.l_experiment.spinComponent()
-        is_polar = self.parent.l_experiment.spin_polarized
-        y = exp_data.y + exp_data.yb
-        if is_polar:
-            if component == "Difference":
-                y = exp_data.y - exp_data.yb
-            elif component == "Up":
-                y = exp_data.y
-            elif component == "Down":
-                y = exp_data.yb
-
         weights = 1 / exp_data.e
 
         kwargs = {
@@ -86,12 +77,6 @@ class FittingLogic(QObject):
         }
 
         local_kwargs = {}
-        if self.parent.l_experiment.spin_polarized:
-            fn = self.parent.l_experiment.fn_aggregate
-            refinement = self.parent.l_experiment.refinement()
-            local_kwargs["pol_fn"] = fn
-            local_kwargs["pol_refinement"] = refinement
-
         if method == 'least_squares':
             kwargs['minimizer_kwargs'] = {'diff_step': 1e-5}
 
@@ -99,10 +84,63 @@ class FittingLogic(QObject):
         self.interface._InterfaceFactoryTemplate__interface_obj.saved_kwargs = local_kwargs
         try:
             res = self.fitter.fit(x, y, **kwargs)
+
         except Exception as ex:
             self.failed.emit(str(ex))
             return
         self.finished.emit(res)
+
+    def fit_polar(self):
+        from easyDiffractionLib.Jobs import PolPowder1DCW
+        import xarray as xr
+
+        data = self.data
+        method = self._current_minimizer_method_name
+        self._fit_finished = False
+        self.fitStarted.emit()
+        exp_data = data.experiments[0]
+
+        phases = self.parent.l_phase.phases
+        ds = xr.Dataset()
+        job = PolPowder1DCW('pol2', ds, phases=phases)
+        x = exp_data.x
+        y_list = [exp_data.y, exp_data.yb]
+        e_list = [exp_data.e, exp_data.eb]
+        job.add_experiment_data(x, y_list, e_list, experiment_name='pol_exp')
+
+        refinement = self.parent.l_experiment.refinement_methods()
+        targets = [component for component in targets if refinement[component]]
+
+        x_, y_, functions = job.interface().generate_pol_fit_func(x, exp_data.y, exp_data.yb, targets)
+
+        weights = 1/exp_data.e
+        weights = np.tile(weights, len(targets))
+
+        kwargs = {
+            'weights': weights,
+            'method': method
+        }
+
+        local_kwargs = {}
+        if method == 'least_squares':
+            kwargs['minimizer_kwargs'] = {'diff_step': 1e-5}
+
+        # save some kwargs on the interface object for use in the calculator
+        self.interface._InterfaceFactoryTemplate__interface_obj.saved_kwargs = local_kwargs
+        try:
+            fitter = CoreFitter(job, functions)
+            res = fitter.fit(x_, y_, **kwargs)
+
+        except Exception as ex:
+            self.failed.emit(str(ex))
+            return
+        self.finished.emit(res)
+
+    def fit_threading(self):
+        if self.parent.l_experiment.spin_polarized:
+            self.fit_polar()
+        else:
+            self.fit_nonpolar()
 
     def setFailedFitResults(self):
         self._fit_results = _defaultFitResults()

@@ -386,7 +386,7 @@ Item {
 
                 hasMeasured: ExGlobals.Variables.analysisChart.hasMeasuredData,
                 hasCalculated: ExGlobals.Variables.analysisChart.hasCalculatedData,
-                hasPhase: ExGlobals.Constants.proxy.plotting1d.hasSinglePhaseData,
+                hasPhase: typeof ExGlobals.Constants.proxy.plotting1d.hasSinglePhaseData !== "undefined" ? ExGlobals.Constants.proxy.plotting1d.hasSinglePhaseData : false,
                 hasDifference: ExGlobals.Variables.analysisChart.hasDifferenceData,
                 hasBragg: ExGlobals.Variables.analysisChart.hasBraggData,
                 hasBackground: ExGlobals.Variables.analysisChart.hasBackgroundData,

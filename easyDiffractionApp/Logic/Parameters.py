@@ -114,7 +114,8 @@ class ParametersLogic(QObject):
     def _defaultPatternParameters(self):
         return {
             "scale":      1.0,
-            "zero_shift": 0.0
+            "zero_shift": 0.0,
+            "field":      0.0
         }
 
     def _setPatternParametersAsObj(self):

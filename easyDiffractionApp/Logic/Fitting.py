@@ -109,7 +109,7 @@ class FittingLogic(QObject):
         job.add_experiment_data(x, y_list, e_list, experiment_name='pol_exp')
 
         refinement = self.parent.l_experiment.refinement_methods()
-        targets = [component for component in targets if refinement[component]]
+        targets = [component for component in refinement if refinement[component]]
 
         x_, y_, functions = job.interface().generate_pol_fit_func(x, exp_data.y, exp_data.yb, targets)
 

@@ -367,6 +367,10 @@ class ParametersLogic(QObject):
             # self._interface._InterfaceFactoryTemplate__interface_obj.saved_kwargs = local_kwargs
 
         sim.y = self._interface.fit_func(sim.x, **kwargs)
+        if self.parent.l_experiment.spin_polarized:
+            bg = self._interface.get_component('f_background')
+            bg_new = self._interface.get_component('background')
+            sim.y += bg - bg_new
 
         self.plotCalculatedDataSignal.emit((sim.x, sim.y))
 

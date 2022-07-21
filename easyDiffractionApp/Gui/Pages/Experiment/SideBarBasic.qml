@@ -291,28 +291,11 @@ EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
         title: qsTr("Associated phases")
-        //last: !ExGlobals.Constants.proxy.experiment.isSpinPolarized
         last: true
         enabled: ExGlobals.Constants.proxy.experiment.experimentLoaded ||
                  ExGlobals.Constants.proxy.experiment.experimentSkipped
 
         ExComponents.ExperimentAssociatedPhases {}
-
-        Component.onCompleted: ExGlobals.Variables.associatedPhasesGroup = this
-    }
-
-    EaElements.GroupBox {
-        title: qsTr("Refinement")
-        last: true
-        visible: ExGlobals.Constants.proxy.experiment.isSpinPolarized
-        enabled: ExGlobals.Constants.proxy.experiment.experimentLoaded ||
-                 ExGlobals.Constants.proxy.experiment.experimentSkipped
-
-        Loader {
-            source: {
-                    return 'SideBarGroups/Refinement.qml'
-            }
-        }
 
         Component.onCompleted: ExGlobals.Variables.associatedPhasesGroup = this
     }

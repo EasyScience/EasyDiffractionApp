@@ -11,38 +11,46 @@ import easyApp.Gui.Logic 1.0 as EaLogic
 
 import Gui.Globals 1.0 as ExGlobals
 
-Grid {
-    columns: 2
-    columnSpacing: 2 * EaStyle.Sizes.fontPixelSize
-    verticalItemAlignment: Grid.AlignVCenter
+Row {
+    spacing: 2 * EaStyle.Sizes.fontPixelSize
 
     EaElements.CheckBox {
-        id: refinementSumCheckBox
+        topPadding: 0
+
+        text: "\u2191 + \u2193"
+        ToolTip.text: qsTr("Sum: spin-up \uff0b spin-down component")
+
         checked: ExGlobals.Constants.proxy.experiment.refineSum
         onCheckedChanged: ExGlobals.Constants.proxy.experiment.refineSum = checked
-        text: qsTr("Up + Down")
     }
 
     EaElements.CheckBox {
-        id: refinementDiffCheckBox
+        topPadding: 0
+
+        text: "\u2191 \u2212 \u2193"
+        ToolTip.text: qsTr("Difference: spin-up \uff0d spin-down component")
+
         checked: ExGlobals.Constants.proxy.experiment.refineDiff
         onCheckedChanged: ExGlobals.Constants.proxy.experiment.refineDiff = checked
-        text: qsTr("Up - Down")
     }
+
     EaElements.CheckBox {
-        id: refinementUpCheckBox
+        topPadding: 0
+
+        text: "\u2191"
+        ToolTip.text: qsTr("Spin-up component")
+
         checked: ExGlobals.Constants.proxy.experiment.refineUp
-        onCheckedChanged: {
-            ExGlobals.Constants.proxy.experiment.refineUp = checked;
-
-        }
-        text: qsTr("Up")
+        onCheckedChanged: ExGlobals.Constants.proxy.experiment.refineUp = checked
     }
 
     EaElements.CheckBox {
-        id: refinementDownCheckBox
+        topPadding: 0
+
+        text: "\u2193"
+        ToolTip.text: qsTr("Spin-down component")
+
         checked: ExGlobals.Constants.proxy.experiment.refineDown
         onCheckedChanged: ExGlobals.Constants.proxy.experiment.refineDown = checked
-        text: qsTr("Down")
     }
 }

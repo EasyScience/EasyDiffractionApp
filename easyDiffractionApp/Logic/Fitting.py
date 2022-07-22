@@ -91,28 +91,19 @@ class FittingLogic(QObject):
         self.finished.emit(res)
 
     def fit_polar(self):
-        from easyDiffractionLib.Jobs import PolPowder1DCW
-        import xarray as xr
-
         data = self.data
         method = self._current_minimizer_method_name
         self._fit_finished = False
         self.fitStarted.emit()
         exp_data = data.experiments[0]
-
-        phases = self.parent.l_phase.phases
-        ds = xr.Dataset()
-        job = PolPowder1DCW('pol2', ds, phases=phases)
         x = exp_data.x
-        y_list = [exp_data.y, exp_data.yb]
-        e_list = [exp_data.e, exp_data.eb]
-        job.add_experiment_data(x, y_list, e_list, experiment_name='pol_exp')
 
         refinement = self.parent.l_experiment.refinement_methods()
         targets = [component for component in refinement if refinement[component]]
-
-        x_, y_, functions = job.interface().generate_pol_fit_func(x, exp_data.y, exp_data.yb, targets)
-
+        try:
+            x_, y_, fit_func = self.interface().generate_pol_fit_func(x, exp_data.y, exp_data.yb, targets)
+        except Exception as ex:
+            raise NotImplementedError('This is not implemented for this calculator yet')
         weights = 1/exp_data.e
         weights = np.tile(weights, len(targets))
 
@@ -126,11 +117,12 @@ class FittingLogic(QObject):
             kwargs['minimizer_kwargs'] = {'diff_step': 1e-5}
 
         # save some kwargs on the interface object for use in the calculator
+        # TODO FIX THIS THIS IS NOT THE WAY TO DO IT :-/
         self.interface._InterfaceFactoryTemplate__interface_obj.saved_kwargs = local_kwargs
         try:
-            fitter = CoreFitter(job, functions)
+            obj = self.fitter.fit_object
+            fitter = CoreFitter(obj, fit_func)
             res = fitter.fit(x_, y_, **kwargs)
-
         except Exception as ex:
             self.failed.emit(str(ex))
             return

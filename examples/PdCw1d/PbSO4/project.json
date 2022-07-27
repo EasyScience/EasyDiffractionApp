@@ -10073,7 +10073,7 @@
         ]
     ],
     "experiment_skipped": false,
-    "read_only": true,
+    "read_only": false,
     "project_info": {
         "name": "PbSO4",
         "short_description": "neutrons, powder, constant wavelength, D1A",

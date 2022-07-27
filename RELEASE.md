@@ -1,15 +1,17 @@
-### Features
+### New Features
 
-- Simulating and fitting polarized data using the [CrysPy](https://github.com/ikibalin/cryspy) calculation engine is now supported.
-- Reading instrument parameters from a CIF file is now supported.
-- General performance has been improved.
+- Simulating and fitting polarised data using the [CrysPy](https://github.com/ikibalin/cryspy) calculation engine.
+- Reading CIF files with experimental data and instrumental parameters.
 
 ### Changes
-- Modified the default phase from Cl2 to O2.
+
+- Default example with experimental phase is modified.
+- Added example projects with polarised data.
 
 ### Bug Fixes
 
-- CI for all 3 platforms now works, including making a test video.
 - CrysFML simulation now shows Bragg peaks.
-- Changing space group setting now works correctly.
-- Calculator is now set to default on state reset.
+- Inclusion of the space group setting in calculations.
+- The `Project save` button is now disabled for read-only example projects.
+- The `Reset state` functionality now resets calculator choice.
+- Overall performance has been improved.

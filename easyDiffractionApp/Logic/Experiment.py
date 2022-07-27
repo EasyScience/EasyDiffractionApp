@@ -247,6 +247,7 @@ class ExperimentLogic(QObject):
         self.setPolarized(False)
         self._current_spin_component = 'Sum'
         self.experiments.clear()
+        self._experiment_data = None
         self.experimentLoaded(False)
         self.experimentSkipped(False)
 

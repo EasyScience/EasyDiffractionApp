@@ -197,8 +197,6 @@ class ProjectLogic(QObject):
         # send signal to tell the proxy we changed phases
         self.phasesEnabled.emit()
         self.phasesAsObjChanged.emit()
-        # self.structureParametersChanged.emit()
-        self.parent.l_background._setAsXml()
 
         # project info
         self._project_info = descr['project_info']
@@ -228,9 +226,10 @@ class ProjectLogic(QObject):
             self.parent.l_experiment.setPolarized(self.parent.l_experiment.spin_polarized)
             # send signal to tell the proxy we changed experiment
             self.experimentDataAdded.emit()
-            self.parent.parametersChanged.emit()
+            self.parent.l_background.onAsObjChanged()
+            if self.parent.l_experiment.spin_polarized:
+                self.parent.l_experiment.setSpinComponent()
             self.experimentLoadedChanged.emit()
-
         else:
             # delete existing experiment
             self.parent.l_experiment.removeExperiment()

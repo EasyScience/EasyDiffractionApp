@@ -29,10 +29,10 @@
                             "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Ispace_group_name_H-M_alt.html",
                             "display_name": "_space_group_HM_name",
                             "enabled": true,
-                            "@id": "162999872705003415334957612061526609708"
+                            "@id": "219841028233863035543081015246575640282"
                         },
                         "setting": ":2",
-                        "@id": "230508088516123160176009105200079045187"
+                        "@id": "172315156609622316519523923135092058387"
                     },
                     "cell": {
                         "@module": "easyCrystallography.Components.Lattice",
@@ -43,15 +43,15 @@
                             "@class": "Parameter",
                             "@version": "0.2.2",
                             "name": "length_a",
-                            "error": 0.0009298127222970603,
+                            "error": 0.0,
                             "min": 0,
                             "max": Infinity,
-                            "fixed": false,
+                            "fixed": true,
                             "description": "Unit-cell length of the selected structure in angstroms.",
                             "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Icell_length_.html",
                             "units": "angstrom",
                             "value": 8.464079509473846,
-                            "@id": "254864715652526720238210461573105417258",
+                            "@id": "279636054532298221135319312084276849295",
                             "enabled": true
                         },
                         "length_b": {
@@ -67,7 +67,7 @@
                             "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Icell_length_.html",
                             "units": "angstrom",
                             "value": 8.464079509473846,
-                            "@id": "221349939961352293670256926675334637476",
+                            "@id": "19361579010998153724130082881370957615",
                             "enabled": false
                         },
                         "length_c": {
@@ -83,7 +83,7 @@
                             "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Icell_length_.html",
                             "units": "angstrom",
                             "value": 8.464079509473846,
-                            "@id": "287725156084292146221918908099418616893",
+                            "@id": "33564838560188579927093500589871461919",
                             "enabled": false
                         },
                         "angle_alpha": {
@@ -99,7 +99,7 @@
                             "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Icell_angle_.html",
                             "units": "degree",
                             "value": 90.0,
-                            "@id": "128693066683040768222215120906197457035",
+                            "@id": "291461557157854384899330096028568365343",
                             "enabled": false
                         },
                         "angle_beta": {
@@ -115,7 +115,7 @@
                             "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Icell_angle_.html",
                             "units": "degree",
                             "value": 90.0,
-                            "@id": "222529477836052478582325470210643368126",
+                            "@id": "186699780014441587253802716386072055291",
                             "enabled": false
                         },
                         "angle_gamma": {
@@ -131,7 +131,7 @@
                             "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Icell_angle_.html",
                             "units": "degree",
                             "value": 90.0,
-                            "@id": "338665097030117669199006793428874678427",
+                            "@id": "290752205759096404964498886083664152682",
                             "enabled": false
                         },
                         "spacegroup": {
@@ -149,12 +149,12 @@
                                 "display_name": "_space_group_HM_name",
                                 "enabled": true,
                                 "value": "F d -3 m:2",
-                                "@id": "162999872705003415334957612061526609708"
+                                "@id": "219841028233863035543081015246575640282"
                             },
                             "setting": ":2",
-                            "@id": "230508088516123160176009105200079045187"
+                            "@id": "172315156609622316519523923135092058387"
                         },
-                        "@id": "103769174798119041634304472807339136245"
+                        "@id": "5342169677319385732573558586529529060"
                     },
                     "atoms": {
                         "@module": "easyDiffractionLib.components.site",
@@ -177,7 +177,7 @@
                                     "display_name": "label",
                                     "enabled": true,
                                     "value": "Fe3A",
-                                    "@id": "99923507172249571713740418946165869349"
+                                    "@id": "231241607084506097121249137188767857838"
                                 },
                                 "specie": {
                                     "@module": "easyCrystallography.Components.Specie",
@@ -186,7 +186,7 @@
                                     "specie": "Fe3+",
                                     "value": "Fe3+",
                                     "units": "dimensionless",
-                                    "@id": "163945704632711751526562907783111966034"
+                                    "@id": "173882452165126972322733036415440031649"
                                 },
                                 "occupancy": {
                                     "@module": "easyCore.Objects.Variable",
@@ -202,7 +202,7 @@
                                     "units": "dimensionless",
                                     "enabled": true,
                                     "value": 1.0,
-                                    "@id": "186229627650247877813011510744638822671"
+                                    "@id": "2627503385189590238505461819606681481"
                                 },
                                 "fract_x": {
                                     "@module": "easyCore.Objects.Variable",
@@ -218,7 +218,7 @@
                                     "units": "dimensionless",
                                     "enabled": true,
                                     "value": 0.125,
-                                    "@id": "154723498566953706723966676442920355433"
+                                    "@id": "238152828479183644869849499089609084043"
                                 },
                                 "fract_y": {
                                     "@module": "easyCore.Objects.Variable",
@@ -234,7 +234,7 @@
                                     "units": "dimensionless",
                                     "enabled": true,
                                     "value": 0.125,
-                                    "@id": "293347009322032124302309165823141919428"
+                                    "@id": "335597954666919012886885868497252307006"
                                 },
                                 "fract_z": {
                                     "@module": "easyCore.Objects.Variable",
@@ -250,7 +250,7 @@
                                     "units": "dimensionless",
                                     "enabled": true,
                                     "value": 0.125,
-                                    "@id": "12265566797143525596423616091074295865"
+                                    "@id": "145023689641970438621994329917950202529"
                                 },
                                 "adp": {
                                     "@module": "easyCrystallography.Components.AtomicDisplacement",
@@ -267,7 +267,7 @@
                                         "display_name": "adp_type",
                                         "enabled": true,
                                         "value": "Uiso",
-                                        "@id": "321023381213514777824284112675005012474"
+                                        "@id": "296896411283249905586275543994031135968"
                                     },
                                     "adp_class": {
                                         "@module": "easyCrystallography.Components.AtomicDisplacement",
@@ -287,11 +287,11 @@
                                             "units": "angstrom ** 2",
                                             "enabled": true,
                                             "value": 0.0,
-                                            "@id": "233327212307201490169829457785711044604"
+                                            "@id": "223493224948519881870863785957701714157"
                                         },
-                                        "@id": "227151071531013398960399210535844671590"
+                                        "@id": "128478673285041903786587509374637007127"
                                     },
-                                    "@id": "189168455032085418900218860682211944604"
+                                    "@id": "192620803375467210749775857565620073643"
                                 },
                                 "msp": {
                                     "@module": "easyCrystallography.Components.Susceptibility",
@@ -308,7 +308,7 @@
                                         "display_name": "msp_type",
                                         "enabled": true,
                                         "value": "Cani",
-                                        "@id": "28097803284843468742948988972950208760"
+                                        "@id": "321757676817933441218869714581994709658"
                                     },
                                     "msp_class": {
                                         "@module": "easyCrystallography.Components.Susceptibility",
@@ -327,7 +327,7 @@
                                             "units": "1 / tesla",
                                             "enabled": true,
                                             "value": -0.8463357951324826,
-                                            "@id": "290800838758950953516682227152537044588"
+                                            "@id": "191004810365990972212735043513807401783"
                                         },
                                         "chi_12": {
                                             "@module": "easyCore.Objects.Variable",
@@ -342,7 +342,7 @@
                                             "units": "1 / tesla",
                                             "enabled": true,
                                             "value": 0.0,
-                                            "@id": "325189756561828508555266783097953742799"
+                                            "@id": "133493679996176704874642053348124196887"
                                         },
                                         "chi_13": {
                                             "@module": "easyCore.Objects.Variable",
@@ -357,7 +357,7 @@
                                             "units": "1 / tesla",
                                             "enabled": true,
                                             "value": 0.0,
-                                            "@id": "264941717595790519508309337223539690966"
+                                            "@id": "188380251363419006688879912849595236138"
                                         },
                                         "chi_22": {
                                             "@module": "easyCore.Objects.Variable",
@@ -372,7 +372,7 @@
                                             "units": "1 / tesla",
                                             "enabled": false,
                                             "value": -0.8463357951324826,
-                                            "@id": "132760828933826466197509308563261863121"
+                                            "@id": "67486194027933218417764385639318183983"
                                         },
                                         "chi_23": {
                                             "@module": "easyCore.Objects.Variable",
@@ -387,7 +387,7 @@
                                             "units": "1 / tesla",
                                             "enabled": true,
                                             "value": 0.0,
-                                            "@id": "66846772673041298262808233303312616533"
+                                            "@id": "114344389903867444928215014726550842390"
                                         },
                                         "chi_33": {
                                             "@module": "easyCore.Objects.Variable",
@@ -402,13 +402,13 @@
                                             "units": "1 / tesla",
                                             "enabled": false,
                                             "value": -0.8463357951324826,
-                                            "@id": "155488646786120229113563624992210582176"
+                                            "@id": "186794787436069179119492996948504994869"
                                         },
-                                        "@id": "96526811938508421263155212458224151135"
+                                        "@id": "72656590714117417762487628268619596918"
                                     },
-                                    "@id": "131387985567031262675924919418565003119"
+                                    "@id": "161706088811897026052852661838171219316"
                                 },
-                                "@id": "132185918820074810299947938631361451185"
+                                "@id": "338176539891739297142945241317453928883"
                             },
                             {
                                 "@module": "easyDiffractionLib.components.site",
@@ -425,7 +425,7 @@
                                     "display_name": "label",
                                     "enabled": true,
                                     "value": "Fe3B",
-                                    "@id": "304553979616414758347506767514372851125"
+                                    "@id": "329834139905955443168660377874670821220"
                                 },
                                 "specie": {
                                     "@module": "easyCrystallography.Components.Specie",
@@ -434,7 +434,7 @@
                                     "specie": "Fe3+",
                                     "value": "Fe3+",
                                     "units": "dimensionless",
-                                    "@id": "214065692329142814146201003280748882569"
+                                    "@id": "72616185455069083253968529092790613230"
                                 },
                                 "occupancy": {
                                     "@module": "easyCore.Objects.Variable",
@@ -450,7 +450,7 @@
                                     "units": "dimensionless",
                                     "enabled": true,
                                     "value": 1.0,
-                                    "@id": "322032551740110600705963879502554512324"
+                                    "@id": "198947764227611806648940541686350766143"
                                 },
                                 "fract_x": {
                                     "@module": "easyCore.Objects.Variable",
@@ -466,7 +466,7 @@
                                     "units": "dimensionless",
                                     "enabled": true,
                                     "value": 0.5,
-                                    "@id": "28540738895096887142601497832257469831"
+                                    "@id": "187570479204878450371481249116029530260"
                                 },
                                 "fract_y": {
                                     "@module": "easyCore.Objects.Variable",
@@ -482,7 +482,7 @@
                                     "units": "dimensionless",
                                     "enabled": true,
                                     "value": 0.5,
-                                    "@id": "274375486477283409429811770755376251075"
+                                    "@id": "7379487595041971034352943509850132945"
                                 },
                                 "fract_z": {
                                     "@module": "easyCore.Objects.Variable",
@@ -498,7 +498,7 @@
                                     "units": "dimensionless",
                                     "enabled": true,
                                     "value": 0.5,
-                                    "@id": "322003440201294813075356789749533491492"
+                                    "@id": "77145831520542823451179898292320427620"
                                 },
                                 "adp": {
                                     "@module": "easyCrystallography.Components.AtomicDisplacement",
@@ -515,7 +515,7 @@
                                         "display_name": "adp_type",
                                         "enabled": true,
                                         "value": "Uiso",
-                                        "@id": "263248170349614926619950396063669188846"
+                                        "@id": "263012334812094473391489542095100865457"
                                     },
                                     "adp_class": {
                                         "@module": "easyCrystallography.Components.AtomicDisplacement",
@@ -535,11 +535,11 @@
                                             "units": "angstrom ** 2",
                                             "enabled": true,
                                             "value": 0.0,
-                                            "@id": "293117932725761189905592347374901280110"
+                                            "@id": "260653621227875911011241028758581691986"
                                         },
-                                        "@id": "246637077536325495443751651779137568565"
+                                        "@id": "54714842360163344093055699412815981194"
                                     },
-                                    "@id": "208381689895675945871592580482124681779"
+                                    "@id": "339220054046966933515631793116763585276"
                                 },
                                 "msp": {
                                     "@module": "easyCrystallography.Components.Susceptibility",
@@ -556,7 +556,7 @@
                                         "display_name": "msp_type",
                                         "enabled": true,
                                         "value": "Cani",
-                                        "@id": "40608684059063218922982271472512118802"
+                                        "@id": "332643479917536134458734772468156693169"
                                     },
                                     "msp_class": {
                                         "@module": "easyCrystallography.Components.Susceptibility",
@@ -575,7 +575,7 @@
                                             "units": "1 / tesla",
                                             "enabled": true,
                                             "value": 0.7651222359685333,
-                                            "@id": "211019709497806214456123271172716237328"
+                                            "@id": "17311062014584311336953876562116984571"
                                         },
                                         "chi_12": {
                                             "@module": "easyCore.Objects.Variable",
@@ -590,7 +590,7 @@
                                             "units": "1 / tesla",
                                             "enabled": true,
                                             "value": 0.0,
-                                            "@id": "284086553958055693385092912071625157053"
+                                            "@id": "154010018075697462867146929027640162553"
                                         },
                                         "chi_13": {
                                             "@module": "easyCore.Objects.Variable",
@@ -605,7 +605,7 @@
                                             "units": "1 / tesla",
                                             "enabled": true,
                                             "value": 0.0,
-                                            "@id": "75059788917921501097092802945854761109"
+                                            "@id": "220115489843549801191643246718136949841"
                                         },
                                         "chi_22": {
                                             "@module": "easyCore.Objects.Variable",
@@ -620,7 +620,7 @@
                                             "units": "1 / tesla",
                                             "enabled": false,
                                             "value": 0.7651222359685333,
-                                            "@id": "181309338299271192144681635500819994632"
+                                            "@id": "61572380176282498632423716600391022937"
                                         },
                                         "chi_23": {
                                             "@module": "easyCore.Objects.Variable",
@@ -635,7 +635,7 @@
                                             "units": "1 / tesla",
                                             "enabled": true,
                                             "value": 0.0,
-                                            "@id": "125184814930177092316810692082294073600"
+                                            "@id": "91732731148242282451673899092717564076"
                                         },
                                         "chi_33": {
                                             "@module": "easyCore.Objects.Variable",
@@ -650,13 +650,13 @@
                                             "units": "1 / tesla",
                                             "enabled": false,
                                             "value": 0.7651222359685333,
-                                            "@id": "35948986998682832657790289793272882300"
+                                            "@id": "179976680359788484725867978193991421701"
                                         },
-                                        "@id": "133070720618219126361919411743680752869"
+                                        "@id": "128126376973245425778541963896590643107"
                                     },
-                                    "@id": "231642339402788934839354197559665810180"
+                                    "@id": "222374772399079008080452996655166346522"
                                 },
-                                "@id": "213846525681335977637648292556777447566"
+                                "@id": "40144807365711211779934492826253892873"
                             },
                             {
                                 "@module": "easyDiffractionLib.components.site",
@@ -673,7 +673,7 @@
                                     "display_name": "label",
                                     "enabled": true,
                                     "value": "O",
-                                    "@id": "95360559364458697809501693151616923737"
+                                    "@id": "293643895107597240121151390370196854786"
                                 },
                                 "specie": {
                                     "@module": "easyCrystallography.Components.Specie",
@@ -682,7 +682,7 @@
                                     "specie": "O2-",
                                     "value": "O2-",
                                     "units": "dimensionless",
-                                    "@id": "37924304008157855287599067009147876430"
+                                    "@id": "135542777747869107310849823206043426863"
                                 },
                                 "occupancy": {
                                     "@module": "easyCore.Objects.Variable",
@@ -698,7 +698,7 @@
                                     "units": "dimensionless",
                                     "enabled": true,
                                     "value": 1.0,
-                                    "@id": "253407329103561038763900221866431307155"
+                                    "@id": "194157901115213288657213649296617874289"
                                 },
                                 "fract_x": {
                                     "@module": "easyCore.Objects.Variable",
@@ -714,7 +714,7 @@
                                     "units": "dimensionless",
                                     "enabled": true,
                                     "value": 0.25521,
-                                    "@id": "94046192106544633156802432186077845564"
+                                    "@id": "253474121684614686425846080112610828362"
                                 },
                                 "fract_y": {
                                     "@module": "easyCore.Objects.Variable",
@@ -730,7 +730,7 @@
                                     "units": "dimensionless",
                                     "enabled": true,
                                     "value": 0.25521,
-                                    "@id": "274133711684542922220136767800266284339"
+                                    "@id": "308370931787584773470770933149147206747"
                                 },
                                 "fract_z": {
                                     "@module": "easyCore.Objects.Variable",
@@ -746,7 +746,7 @@
                                     "units": "dimensionless",
                                     "enabled": true,
                                     "value": 0.25521,
-                                    "@id": "145077104458278384100959843658033237895"
+                                    "@id": "98283379575166902689724623532656934929"
                                 },
                                 "adp": {
                                     "@module": "easyCrystallography.Components.AtomicDisplacement",
@@ -763,7 +763,7 @@
                                         "display_name": "adp_type",
                                         "enabled": true,
                                         "value": "Uiso",
-                                        "@id": "136579207954799379518382234991128739309"
+                                        "@id": "93586521388534867420295467071356276808"
                                     },
                                     "adp_class": {
                                         "@module": "easyCrystallography.Components.AtomicDisplacement",
@@ -783,36 +783,36 @@
                                             "units": "angstrom ** 2",
                                             "enabled": true,
                                             "value": 0.0,
-                                            "@id": "296768722448565978808931389264791991488"
+                                            "@id": "176321501021307320898664767486874855911"
                                         },
-                                        "@id": "301913519514654361182573287749421698447"
+                                        "@id": "152421794312183225136677105266190299141"
                                     },
-                                    "@id": "277931892056734089080152079521878856766"
+                                    "@id": "242644115800686052216966114631889090629"
                                 },
-                                "@id": "166999045188179755130261689803268500009"
+                                "@id": "242466092995187123555113712516474269281"
                             }
                         ],
-                        "@id": "72274892482078935132298480632134571056"
+                        "@id": "5062793947569462297624641933635520488"
                     },
                     "scale": {
                         "@module": "easyCore.Objects.Variable",
                         "@class": "Parameter",
                         "@version": "0.2.2",
                         "name": "scale",
-                        "error": 0.0,
+                        "error": 0.0012115915838783466,
                         "min": 0,
                         "max": Infinity,
-                        "fixed": true,
+                        "fixed": false,
                         "units": "dimensionless",
                         "enabled": true,
-                        "value": 0.36838904619857493,
-                        "@id": "326021154870520070719811471267635654469"
+                        "value": 0.368582025721355,
+                        "@id": "339609490838828813894666428213825913472"
                     },
                     "enforce_sym": true,
-                    "@id": "106752702916441293705195719902934427448"
+                    "@id": "93852038476181692570271499953814442306"
                 }
             ],
-            "@id": "195468884224592524215578875361768212432"
+            "@id": "216570336406122021891937023125597459523"
         },
         "parameters": {
             "@module": "easyDiffractionLib.Profiles.P1D",
@@ -830,7 +830,7 @@
                 "units": "angstrom",
                 "enabled": true,
                 "value": 2.4,
-                "@id": "205780328689754247627102710760192701692"
+                "@id": "1159743689598148755968263805995682268"
             },
             "resolution_u": {
                 "@module": "easyCore.Objects.Variable",
@@ -844,7 +844,7 @@
                 "units": "dimensionless",
                 "enabled": true,
                 "value": 11.34,
-                "@id": "212376454514376653181422210988605923276"
+                "@id": "315516973999716610243073395822401395181"
             },
             "resolution_v": {
                 "@module": "easyCore.Objects.Variable",
@@ -858,7 +858,7 @@
                 "units": "dimensionless",
                 "enabled": true,
                 "value": -2.983,
-                "@id": "223110242864847429587794248555138200475"
+                "@id": "178384349043867370774763302489503462790"
             },
             "resolution_w": {
                 "@module": "easyCore.Objects.Variable",
@@ -872,7 +872,7 @@
                 "units": "dimensionless",
                 "enabled": true,
                 "value": 1.141,
-                "@id": "306031692727197626611639773796773364504"
+                "@id": "78140792729812269075427041252184709608"
             },
             "resolution_x": {
                 "@module": "easyCore.Objects.Variable",
@@ -886,7 +886,7 @@
                 "units": "dimensionless",
                 "enabled": true,
                 "value": 0.0,
-                "@id": "125936854066089608477613923971830972979"
+                "@id": "36284648002512466319735077166284189332"
             },
             "resolution_y": {
                 "@module": "easyCore.Objects.Variable",
@@ -900,9 +900,9 @@
                 "units": "dimensionless",
                 "enabled": true,
                 "value": 0.404,
-                "@id": "12286269563240927987143751517952493076"
+                "@id": "71340929962457550444723403217104283699"
             },
-            "@id": "174648491003578829427461722716720088054"
+            "@id": "317418762453061385148016987291579666122"
         },
         "pattern": {
             "@module": "easyDiffractionLib.Profiles.P1D",
@@ -913,14 +913,14 @@
                 "@class": "Parameter",
                 "@version": "0.2.2",
                 "name": "zero_shift",
-                "error": 0.0,
+                "error": 0.003144908404014122,
                 "min": -Infinity,
                 "max": Infinity,
-                "fixed": true,
+                "fixed": false,
                 "units": "degree",
                 "enabled": true,
-                "value": 0.36,
-                "@id": "142709468257719503737810070626738898792"
+                "value": 0.3619196818205609,
+                "@id": "231530005689147833826094381839921276664"
             },
             "scale": {
                 "@module": "easyCore.Objects.Variable",
@@ -934,7 +934,7 @@
                 "enabled": false,
                 "units": "dimensionless",
                 "value": 1.0,
-                "@id": "278152560140803020501606629695794370566"
+                "@id": "229822489047375153777886490587637999991"
             },
             "backgrounds": {
                 "@module": "easyDiffractionLib.elements.Backgrounds.Background",
@@ -961,7 +961,7 @@
                                     "display_name": "x",
                                     "enabled": true,
                                     "value": 10.0,
-                                    "@id": "271086003728930719653637314695506959158"
+                                    "@id": "305875044015804265194834380883920315812"
                                 },
                                 "y": {
                                     "@module": "easyCore.Objects.Variable",
@@ -974,11 +974,11 @@
                                     "fixed": true,
                                     "units": "dimensionless",
                                     "enabled": true,
-                                    "value": 365.8935144390812,
-                                    "@id": "188907670836311972433885232598106967593"
+                                    "value": 182.95,
+                                    "@id": "322266561320901630657011038301750100318"
                                 },
                                 "name": "10,0_deg",
-                                "@id": "269416368379182416294007957717627746975"
+                                "@id": "70453193995892017137203758363581647848"
                             },
                             {
                                 "@module": "easyDiffractionLib.elements.Backgrounds.Point",
@@ -995,7 +995,7 @@
                                     "display_name": "x",
                                     "enabled": true,
                                     "value": 15.0,
-                                    "@id": "111641805670670436878841811492012226511"
+                                    "@id": "50861251250015500312286986239577978923"
                                 },
                                 "y": {
                                     "@module": "easyCore.Objects.Variable",
@@ -1008,11 +1008,11 @@
                                     "fixed": true,
                                     "units": "dimensionless",
                                     "enabled": true,
-                                    "value": 378.72,
-                                    "@id": "313758621249834247269492744128544508317"
+                                    "value": 189.35,
+                                    "@id": "257594816897059051797144816716190661657"
                                 },
                                 "name": "15,0_deg",
-                                "@id": "137550765021163091300518266961954325309"
+                                "@id": "127143590500222371432804496221160763839"
                             },
                             {
                                 "@module": "easyDiffractionLib.elements.Backgrounds.Point",
@@ -1029,7 +1029,7 @@
                                     "display_name": "x",
                                     "enabled": true,
                                     "value": 20.0,
-                                    "@id": "233832223268357462617315935259476822866"
+                                    "@id": "137009533379003076849769818702089156757"
                                 },
                                 "y": {
                                     "@module": "easyCore.Objects.Variable",
@@ -1042,11 +1042,11 @@
                                     "fixed": true,
                                     "units": "dimensionless",
                                     "enabled": true,
-                                    "value": 441.1830453569009,
-                                    "@id": "220187836748306545689250108336698073652"
+                                    "value": 220.6,
+                                    "@id": "289158455398178069897939738590068559368"
                                 },
                                 "name": "20,0_deg",
-                                "@id": "322495092916415689135330761970906041681"
+                                "@id": "171893785960972545726600222215417539563"
                             },
                             {
                                 "@module": "easyDiffractionLib.elements.Backgrounds.Point",
@@ -1063,7 +1063,7 @@
                                     "display_name": "x",
                                     "enabled": true,
                                     "value": 35.0,
-                                    "@id": "90302978759075665900878734280139429131"
+                                    "@id": "258551094209121012843398959972160396314"
                                 },
                                 "y": {
                                     "@module": "easyCore.Objects.Variable",
@@ -1076,11 +1076,11 @@
                                     "fixed": true,
                                     "units": "dimensionless",
                                     "enabled": true,
-                                    "value": 507.61893983059,
-                                    "@id": "210191173650890374950031422252190186111"
+                                    "value": 253.8,
+                                    "@id": "76593908770113572700917260569868950318"
                                 },
                                 "name": "35,0_deg",
-                                "@id": "231606427112552449012594727932053763838"
+                                "@id": "246403929527635125405169032051189294474"
                             },
                             {
                                 "@module": "easyDiffractionLib.elements.Backgrounds.Point",
@@ -1097,7 +1097,7 @@
                                     "display_name": "x",
                                     "enabled": true,
                                     "value": 40.0,
-                                    "@id": "46448711740912809377811708524651347398"
+                                    "@id": "22288310286927036154121236755555251848"
                                 },
                                 "y": {
                                     "@module": "easyCore.Objects.Variable",
@@ -1110,11 +1110,11 @@
                                     "fixed": true,
                                     "units": "dimensionless",
                                     "enabled": true,
-                                    "value": 512.8638863472224,
-                                    "@id": "57306525267919579078407979187669608454"
+                                    "value": 256.45,
+                                    "@id": "126315837052212174664314003718897076375"
                                 },
                                 "name": "40,0_deg",
-                                "@id": "250891628133085758876416460322200510752"
+                                "@id": "12596940041008658917281229440400179980"
                             },
                             {
                                 "@module": "easyDiffractionLib.elements.Backgrounds.Point",
@@ -1131,7 +1131,7 @@
                                     "display_name": "x",
                                     "enabled": true,
                                     "value": 50.0,
-                                    "@id": "151983911464303032697724314665420794325"
+                                    "@id": "282598778845091361425571235571266143949"
                                 },
                                 "y": {
                                     "@module": "easyCore.Objects.Variable",
@@ -1144,11 +1144,11 @@
                                     "fixed": true,
                                     "units": "dimensionless",
                                     "enabled": true,
-                                    "value": 571.1816957642003,
-                                    "@id": "336755088725852997792325028092857651241"
+                                    "value": 285.6,
+                                    "@id": "251706252374826852734623859326009545034"
                                 },
                                 "name": "50,0_deg",
-                                "@id": "177293562577739677282821371784842453345"
+                                "@id": "268631475865148379325422522138042679615"
                             },
                             {
                                 "@module": "easyDiffractionLib.elements.Backgrounds.Point",
@@ -1165,7 +1165,7 @@
                                     "display_name": "x",
                                     "enabled": true,
                                     "value": 62.0,
-                                    "@id": "54315321205195723656269680790024611084"
+                                    "@id": "278409546234316362985868134350568201292"
                                 },
                                 "y": {
                                     "@module": "easyCore.Objects.Variable",
@@ -1178,11 +1178,11 @@
                                     "fixed": true,
                                     "units": "dimensionless",
                                     "enabled": true,
-                                    "value": 707.6111946641448,
-                                    "@id": "272949674631153676934203694872476657816"
+                                    "value": 353.8,
+                                    "@id": "21515426648915046531637754797632752012"
                                 },
                                 "name": "62,0_deg",
-                                "@id": "78274398607682059150782855751920334363"
+                                "@id": "278292701523098227190121230134590235107"
                             },
                             {
                                 "@module": "easyDiffractionLib.elements.Backgrounds.Point",
@@ -1199,7 +1199,7 @@
                                     "display_name": "x",
                                     "enabled": true,
                                     "value": 64.0,
-                                    "@id": "234603419895346986538868230372010803779"
+                                    "@id": "144839242419546905481518132877657001852"
                                 },
                                 "y": {
                                     "@module": "easyCore.Objects.Variable",
@@ -1212,11 +1212,11 @@
                                     "fixed": true,
                                     "units": "dimensionless",
                                     "enabled": true,
-                                    "value": 770.0,
-                                    "@id": "261942106401218500971405601717834151007"
+                                    "value": 385.0,
+                                    "@id": "216939035148993572630890586181842357956"
                                 },
                                 "name": "64,0_deg",
-                                "@id": "18197711745879787512667827230506521785"
+                                "@id": "260440255160179726752874604223318850447"
                             },
                             {
                                 "@module": "easyDiffractionLib.elements.Backgrounds.Point",
@@ -1233,7 +1233,7 @@
                                     "display_name": "x",
                                     "enabled": true,
                                     "value": 72.0,
-                                    "@id": "296120983702692474372836323138626876313"
+                                    "@id": "325827195221203753512361682995324266259"
                                 },
                                 "y": {
                                     "@module": "easyCore.Objects.Variable",
@@ -1246,46 +1246,52 @@
                                     "fixed": true,
                                     "units": "dimensionless",
                                     "enabled": true,
-                                    "value": 722.0,
-                                    "@id": "271725396004544690343986378488985556230"
+                                    "value": 361.0,
+                                    "@id": "223680531272089059327158477651990615633"
                                 },
                                 "name": "72,0_deg",
-                                "@id": "107667356788963602068721749068724842642"
+                                "@id": "298667901083811534922645608120954186950"
                             }
                         ],
-                        "@id": "8724403719953764361313728786375731130",
+                        "@id": "119014678283473665697302472634393495498",
                         "linked_experiment": "current_exp"
                     }
                 ],
-                "@id": "8704765471950279820555104195170423617"
+                "@id": "39817975197499965679614732193670664333"
             },
-            "polarization": {
-                "@module": "easyCore.Objects.Variable",
-                "@class": "Parameter",
-                "@version": "0.2.2",
-                "name": "polarization",
-                "error": 0.0,
-                "min": 0.0,
-                "max": 1.0,
-                "fixed": true,
-                "units": "dimensionless",
-                "enabled": true,
-                "value": 0.6243,
-                "@id": "291973374218908742415053557472299880321"
-            },
-            "efficiency": {
-                "@module": "easyCore.Objects.Variable",
-                "@class": "Parameter",
-                "@version": "0.2.2",
-                "name": "efficiency",
-                "error": 0.0,
-                "min": 0.0,
-                "max": 1.0,
-                "fixed": true,
-                "units": "dimensionless",
-                "enabled": true,
-                "value": 1.0,
-                "@id": "160807573239233794970420693013150727419"
+            "beam": {
+                "@module": "easyDiffractionLib.components.polarization",
+                "@class": "PolarizedBeam",
+                "@version": "0.0.1",
+                "polarization": {
+                    "@module": "easyCore.Objects.Variable",
+                    "@class": "Parameter",
+                    "@version": "0.2.2",
+                    "name": "polarization",
+                    "error": 0.0,
+                    "min": 0.0,
+                    "max": 1.0,
+                    "fixed": true,
+                    "units": "dimensionless",
+                    "enabled": true,
+                    "value": 0.6243,
+                    "@id": "249093943605842684279537601877085882004"
+                },
+                "efficiency": {
+                    "@module": "easyCore.Objects.Variable",
+                    "@class": "Parameter",
+                    "@version": "0.2.2",
+                    "name": "efficiency",
+                    "error": 0.0,
+                    "min": 0.0,
+                    "max": 1.0,
+                    "fixed": true,
+                    "units": "dimensionless",
+                    "enabled": true,
+                    "value": 1.0,
+                    "@id": "75626741955949771020084117259415763140"
+                },
+                "@id": "7119551989671124059747692978665877826"
             },
             "field": {
                 "@module": "easyCore.Objects.Variable",
@@ -1299,12 +1305,12 @@
                 "units": "tesla",
                 "enabled": true,
                 "value": 5.0,
-                "@id": "66188829282536489303757862411162702820"
+                "@id": "327243244903833287571494630260626405099"
             },
-            "@id": "30972824033717149528336924018804010360"
+            "@id": "185341709827505201720654127519306559377"
         },
         "name": "easySample",
-        "@id": "103569672626147570217486993947241440550"
+        "@id": "293622138492110977593648547185201461939"
     },
     "experiments": [
         [

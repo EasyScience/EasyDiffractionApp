@@ -1,0 +1,5 @@
+_name Na2Ca3Al2F14
+_short_description 'neutrons, powder, time-of-flight, Osiris@ISIS'
+_samples 'Na2Ca3Al2F14'
+_experiments 'Osiris@ISIS'
+_modified '25.08.2021 14:05'

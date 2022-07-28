@@ -12,10 +12,11 @@ import Functions
 
 
 class Config():
-    def __init__(self):
+    def __init__(self, branch_name=None):
         # Main
         self.__dict__ = Functions.config()
         self.os = Functions.osName()
+        self.branch_name = branch_name
 
         # Application
         self.app_version = self.__dict__['tool']['poetry']['version']
@@ -41,22 +42,18 @@ class Config():
         self.setup_file_ext = self.__dict__['ci']['app']['setup']['file_ext'][self.os]
         self.setup_full_name = f'{self.setup_name}{self.setup_file_ext}'
         self.setup_exe_path = os.path.join(self.dist_dir, self.setup_full_name)
-        self.maintenancetool_file = os.path.join(self.__dict__['ci']['project']['subdirs']['certificates_path'],
-                                                 self.__dict__['ci']['app']['setup']['maintenance_file'])
+
+        # Artifacts
+        self.setup_zip_path_short = self.setupZipPathShort()
+        self.setup_zip_path = self.setupZipPath()
+        self.video_tutorial_path = self.videoTutorialPath()
 
         # Application repository
         self.repository_dir_suffix = self.__dict__['ci']['app']['setup']['repository_dir_suffix']
 
         # Project
-        self.package_name = f'{self.app_name}App'
+        self.package_name = self.__dict__['tool']['poetry']['name']
         self.license_file = self.__dict__['ci']['project']['license_file']
-
-        # Certificates
-        self.certificate_path = os.path.join(self.__dict__['ci']['project']['subdirs']['certificates_path'],
-                                             self.__dict__['ci']['scripts']['certificate_name'] + "_" +
-                                             Functions.osName()[0:3])
-        self.certificate_zip_path = os.path.join(self.__dict__['ci']['project']['subdirs']['certificates_path'],
-                                                 'Codesigning.zip')
 
     def __getitem__(self, key):
         return self.__dict__[key]
@@ -89,6 +86,29 @@ class Config():
             dir_shortcut = '/Applications'  # @ApplicationsDir@ = @ApplicationsDirUser@ [BUG in QTIFW?]
         dir = os.path.join(dir_shortcut, self.app_name)
         return dir
+
+    def artifactsFileSuffix(self):
+        if self.branch_name != 'master' and self.branch_name is not None:
+            return f'_{self.branch_name}'
+        return ''
+
+    def setupZipPathShort(self):
+        setup_zip_name = f'{self.setup_name}.zip'
+        setup_zip_path = os.path.join(self.dist_dir, setup_zip_name)
+        return setup_zip_path
+
+    def setupZipPath(self):
+        file_suffix = self.artifactsFileSuffix()
+        setup_zip_name = f'{self.setup_name}{file_suffix}.zip'
+        setup_zip_path = os.path.join(self.dist_dir, setup_zip_name)
+        return setup_zip_path
+
+    def videoTutorialPath(self):
+        file_suffix = self.artifactsFileSuffix()
+        video_tutorial_name = f'tutorial_{self.setup_name}{file_suffix}.mp4'
+        video_tutorial_path = os.path.join(self.dist_dir, video_tutorial_name)
+        return video_tutorial_path
+
 
 if __name__ == "__main__":
     Config()

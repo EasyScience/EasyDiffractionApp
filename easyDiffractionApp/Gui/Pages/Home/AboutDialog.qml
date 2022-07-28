@@ -16,8 +16,8 @@ EaComponents.AboutDialog {
     appIconPath: ExGlobals.Constants.appLogo
     appUrl: ExGlobals.Constants.appUrl
 
-    appPrefixName: ExGlobals.Constants.appPrefixName
-    appSuffixName: ExGlobals.Constants.appSuffixName
+    appPrefixName: ExGlobals.Constants.appPrefixNameLogo
+    appSuffixName: ExGlobals.Constants.appSuffixNameLogo
     appVersion: ExGlobals.Constants.appVersion
     appDate: ExGlobals.Constants.appDate
 

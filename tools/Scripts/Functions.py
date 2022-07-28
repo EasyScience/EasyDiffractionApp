@@ -326,9 +326,3 @@ def zip(source, destination):
         sys.exit()
     else:
         printSuccessMessage(message)
-
-
-def artifactsFileSuffix(branch_name):
-    if branch_name != 'master':
-        return f'_{branch_name}'
-    return ''

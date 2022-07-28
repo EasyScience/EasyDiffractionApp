@@ -216,7 +216,10 @@ class Plotting1dLogic(QObject):
         if not xarray.size:
             return
         interp_func = scipy.interpolate.interp1d(xarray, yarray, fill_value="extrapolate")
-        self._setBackgroundDataArrays(self._measured_xarray, interp_func(self._measured_xarray))
+        extrapolated_y = interp_func(self._measured_xarray)
+        if len(extrapolated_y) == 0:
+            return
+        self._setBackgroundDataArrays(self._measured_xarray, extrapolated_y)
         self._setBokehBackgroundDataObj()
         self._setBokehPhasesDataObj()
         if self.currentLib == 'qtcharts':
@@ -305,8 +308,24 @@ class Plotting1dLogic(QObject):
         for phase_index in range(len(self.parent.l_phase.phases)):
             # skip this step with try-except block until instrumental parameters are defined/loaded
             try:
-                yarray = self._interface.get_calculated_y_for_phase(phase_index)
-                if self._background_yarray.size:
+                if not self.parent.l_experiment.spin_polarized:
+                    yarray = self._interface.get_calculated_y_for_phase(phase_index)
+                    is_diff = False
+                else:
+                    phases_y = list(self._interface.get_component('phases').values())[phase_index]
+                    component = self.parent.l_experiment.spinComponent()
+                    is_diff = False
+                    if component == "Sum":
+                        yarray = phases_y["components"]["up"] + phases_y["components"]["down"]
+                    elif component == "Difference":
+                        yarray = phases_y["components"]["up"] - phases_y["components"]["down"]
+                        is_diff = True
+                    elif component == "Up":
+                        yarray = phases_y["components"]["up"]
+                    elif component == "Down":
+                        yarray = phases_y["components"]["down"]
+
+                if self._background_yarray.size and not is_diff:
                     self._bokeh_phases_data_obj[f'{phase_index}'] = {
                         'x': Plotting1dLogic.aroundX(self._calculated_xarray),
                         'y_upper': Plotting1dLogic.aroundY(yarray + self._background_yarray),

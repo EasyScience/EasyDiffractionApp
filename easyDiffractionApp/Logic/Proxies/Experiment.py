@@ -3,6 +3,8 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
+import os
+
 from PySide2.QtCore import QObject, Signal, Slot, Property
 
 
@@ -44,6 +46,56 @@ class ExperimentProxy(QObject):
     ####################################################################################################################
     ####################################################################################################################
 
+    @Property(bool, notify=experimentLoadedChanged)
+    def isSpinPolarized(self):
+        return self.logic.spin_polarized
+
+    @Property(str, notify=experimentLoadedChanged)
+    def spinComponent(self):
+        return self.logic.spinComponent()
+
+    @Slot('QVariant')
+    def setSpinPolarization(self, spin_polarized):
+        if self.logic.setPolarized(spin_polarized):
+            self.experimentLoadedChanged.emit()
+
+    @Slot('QVariant')
+    def setSpinComponent(self, component):
+        if self.logic.setSpinComponent(component):
+            self.experimentLoadedChanged.emit()
+
+    @Property(bool, notify=experimentLoadedChanged)
+    def refineSum(self):
+        return self.logic.refineSum()
+
+    @refineSum.setter
+    def refineSum(self, value):
+        self.logic.setRefineSum(value)
+
+    @Property(bool, notify=experimentLoadedChanged)
+    def refineDiff(self):
+        return self.logic.refineDiff()
+
+    @refineDiff.setter
+    def refineDiff(self, value):
+        self.logic.setRefineDiff(value)
+
+    @Property(bool, notify=experimentLoadedChanged)
+    def refineUp(self):
+        return self.logic.refineUp()
+
+    @refineUp.setter
+    def refineUp(self, value):
+        self.logic.setRefineUp(value)
+
+    @Property(bool, notify=experimentLoadedChanged)
+    def refineDown(self):
+        return self.logic.refineDown()
+
+    @refineDown.setter
+    def refineDown(self, value):
+        self.logic.setRefineDown(value)
+
     @Property(str, notify=experimentDataAsXmlChanged)
     def experimentDataAsXml(self):
         return self.logic._experiment_data_as_xml
@@ -63,7 +115,27 @@ class ExperimentProxy(QObject):
     ####################################################################################################################
 
     @Slot(str)
-    def addExperimentDataFromXye(self, file_url):
+    def addExperimentData(self, file_url):
+        _, file_extension = os.path.splitext(file_url)
+        if file_extension == '.cif':
+            print(f"Reading '{file_extension}' file")
+            self._addExperimentDataFromCif(file_url)
+        elif file_extension in ('.xye', '.xys'):
+            print(f"Reading '{file_extension}' file")
+            self._addExperimentDataFromXye(file_url)
+        elif file_extension == '.xy':
+            print(f"We are working on supporting '{file_extension}' files")
+        else:
+            print(f"This file extension is not supported: '{file_extension}'")
+
+    def _addExperimentDataFromCif(self, file_url):
+        self.logic.addExperimentDataFromCif(file_url)
+        self.logic.initializeBackground()
+        self.logic.addBackgroundDataFromCif(file_url)
+        self.logic._onExperimentDataAdded()
+        self.experimentLoadedChanged.emit()
+
+    def _addExperimentDataFromXye(self, file_url):
         self.logic.addExperimentDataFromXye(file_url)
         self.logic._onExperimentDataAdded()
         self.experimentLoadedChanged.emit()

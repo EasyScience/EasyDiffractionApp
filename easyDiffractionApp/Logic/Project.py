@@ -41,9 +41,10 @@ class ProjectLogic(QObject):
         self._project_info = self._defaultProjectInfo()
         self._project_created = False
         self._state_changed = False
+        self._read_only = False
 
         self._report = ""
-        self._currentProjectPath = os.path.expanduser("~")
+        self._currentProjectPath = os.path.join(os.path.expanduser("~"), 'TestProject')
 
     ####################################################################################################################
     ####################################################################################################################
@@ -93,18 +94,22 @@ class ProjectLogic(QObject):
 
     def projectExamplesAsXml(self):
         model = [
-            {"name": "PbSO4", "description": "neutrons, powder, constant wavelength, 1D, D1@ILL",
+            {"name": "PbSO4", "description": "neutrons, powder, constant wavelength, D1A@ILL",
              "path": "../Resources/Examples/PbSO4/project.json"},
-            {"name": "Co2SiO4", "description": "neutrons, powder, constant wavelength, 1D, D20@ILL",
+            {"name": "Co2SiO4", "description": "neutrons, powder, constant wavelength, D20@ILL",
              "path": "../Resources/Examples/Co2SiO4/project.json"},
-            {"name": "Dy3Al5O12", "description": "neutrons, powder, constant wavelength, 1D, G41@LLB",
+            {"name": "Dy3Al5O12", "description": "neutrons, powder, constant wavelength, G41@LLB",
              "path": "../Resources/Examples/Dy3Al5O12/project.json"},
-            {"name": "CeCuAl3", "description": "neutrons, powder, time-of-flight, 1D, Polaris@ISIS",
+            {"name": "CeCuAl3", "description": "neutrons, powder, time-of-flight, Polaris@ISIS",
              "path": "../Resources/Examples/CeCuAl3/project.json"},
-            {"name": "Na2Ca3Al2F14", "description": "neutrons, powder, time-of-flight, 1D, Osiris@ISIS",
+            {"name": "Na2Ca3Al2F14", "description": "neutrons, powder, time-of-flight, Osiris@ISIS",
              "path": "../Resources/Examples/Na2Ca3Al2F14/project.json"},
-            {"name": "Si3N4", "description": "neutrons, powder, multi-phase, 1D, 3T2@LLB",
-             "path": "../Resources/Examples/Si3N4/project.json"}
+            {"name": "Si3N4", "description": "neutrons, powder, constant wavelength, multi-phase, 3T2@LLB",
+             "path": "../Resources/Examples/Si3N4/project.json"},
+            {"name": "Fe3O4", "description": "neutrons, powder, constant wavelength, polarised, 6T2@LLB",
+             "path": "../Resources/Examples/Fe3O4/project.json"},
+            {"name": "Ho2Ti2O7", "description": "neutrons, powder, constant wavelength, polarised, VIP@LLB",
+             "path": "../Resources/Examples/Ho2Ti2O7/project.json"}
         ]
         xml = dicttoxml(model, attr_type=False)
         xml = xml.decode()
@@ -192,8 +197,12 @@ class ProjectLogic(QObject):
         # send signal to tell the proxy we changed phases
         self.phasesEnabled.emit()
         self.phasesAsObjChanged.emit()
-        # self.structureParametersChanged.emit()
-        self.parent.l_background._setAsXml()
+
+        # project info
+        self._project_info = descr['project_info']
+
+        # read only flag
+        self._read_only = descr['read_only']
 
         # experiment
         if 'experiments' in descr:
@@ -202,15 +211,25 @@ class ProjectLogic(QObject):
             self.parent.l_parameters._data.experiments[0].x = np.array(descr['experiments'][0])
             self.parent.l_parameters._data.experiments[0].y = np.array(descr['experiments'][1])
             self.parent.l_parameters._data.experiments[0].e = np.array(descr['experiments'][2])
+            if(len(descr['experiments']) > 3):
+                self.parent.l_parameters._data.experiments[0].yb = np.array(descr['experiments'][3])
+                self.parent.l_parameters._data.experiments[0].eb = np.array(descr['experiments'][4])
+                self.parent.l_experiment.spin_polarized = True
+            else:
+                length = len(self.parent.l_parameters._data.experiments[0].y)
+                self.parent.l_parameters._data.experiments[0].yb = np.zeros(length)
+                self.parent.l_parameters._data.experiments[0].eb = np.zeros(length)
+                self.parent.l_experiment.spin_polarized = False
             self.parent.l_experiment._experiment_data = self.parent.l_parameters._data.experiments[0]
             self.parent.l_experiment.experiments = [{'name': descr['project_info']['experiments']}]
             self.parent.l_experiment.setCurrentExperimentDatasetName(descr['project_info']['experiments'])
-
+            self.parent.l_experiment.setPolarized(self.parent.l_experiment.spin_polarized)
             # send signal to tell the proxy we changed experiment
             self.experimentDataAdded.emit()
-            self.parent.parametersChanged.emit()
+            self.parent.l_background.onAsObjChanged()
+            if self.parent.l_experiment.spin_polarized:
+                self.parent.l_experiment.setSpinComponent()
             self.experimentLoadedChanged.emit()
-
         else:
             # delete existing experiment
             self.parent.l_experiment.removeExperiment()
@@ -219,8 +238,6 @@ class ProjectLogic(QObject):
                 self.parent.l_experiment.experimentSkipped(True)
                 self.parent.l_experiment.experimentSkippedChanged.emit()
 
-        # project info
-        self._project_info = descr['project_info']
 
         new_minimizer_settings = descr.get('minimizer', None)
         if new_minimizer_settings is not None:
@@ -251,8 +268,13 @@ class ProjectLogic(QObject):
             experiments_y = self.parent.l_parameters._data.experiments[0].y
             experiments_e = self.parent.l_parameters._data.experiments[0].e
             descr['experiments'] = [experiments_x, experiments_y, experiments_e]
+            if self.parent.l_experiment.spin_polarized:
+                experiments_yb = self.parent.l_parameters._data.experiments[0].yb
+                experiments_eb = self.parent.l_parameters._data.experiments[0].eb
+                descr['experiments'] += [experiments_yb, experiments_eb]
 
         descr['experiment_skipped'] = self.parent.l_experiment._experiment_skipped
+        descr['read_only'] = self._read_only
         descr['project_info'] = self._project_info
 
         descr['interface'] = self._interface.current_interface_name
@@ -280,6 +302,7 @@ class ProjectLogic(QObject):
         self.projectInfoChanged.emit()
         self.project_save_filepath = ""
         self.removeExperiment.emit()
+        self.parent.l_fitting.setCurrentCalculatorIndex(0)
         if self.parent.l_phase.samplesPresent():
             self.parent.l_phase.removeAllPhases()
         self.reset.emit()

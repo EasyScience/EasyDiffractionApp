@@ -72,18 +72,19 @@ class ProjectProxy(QObject):
     def loadProjectAs(self, filepath):
         self.logic._loadProjectAs(filepath)
         self.stateChanged.emit(False)
+        self.parent.fitting.calculatorListChanged.emit()
 
     @Slot()
     def loadProject(self):
         self.logic._loadProject()
-        # self._background_proxy.onAsObjChanged()
         self.stateChanged.emit(False)
+        self.parent.fitting.calculatorListChanged.emit()
 
     @Slot(str)
     def loadExampleProject(self, filepath):
         self.logic._loadProjectAs(filepath)
-        self.currentProjectPath = '--- EXAMPLE ---'
         self.stateChanged.emit(False)
+        self.parent.fitting.calculatorListChanged.emit()
 
     @Property(str, notify=dummySignal)
     def projectFilePath(self):
@@ -102,6 +103,10 @@ class ProjectProxy(QObject):
         self.logic.resetState()
         self.logic.stateHasChanged(False)
         self.stateChanged.emit(False)
+
+    @Property(bool, notify=projectCreatedChanged)
+    def readOnly(self):
+        return self.logic._read_only
 
     @Property(bool, notify=stateChanged)
     def stateHasChanged(self):

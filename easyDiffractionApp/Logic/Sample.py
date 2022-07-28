@@ -7,7 +7,8 @@ from PySide2.QtCore import Signal, QObject
 from easyDiffractionLib.sample import Sample
 from easyDiffractionLib.Profiles.P1D import Instrument1DCWParameters
 from easyDiffractionLib.Profiles.P1D import Instrument1DTOFParameters
-from easyDiffractionLib.Profiles.P1D import Powder1DParameters
+from easyDiffractionLib.Profiles.P1D import Instrument1DCWPolParameters
+from easyDiffractionLib.Profiles.P1D import Powder1DParameters, PolPowder1DParameters
 
 
 class SampleLogic(QObject):
@@ -28,12 +29,8 @@ class SampleLogic(QObject):
     ####################################################################################################################
     ####################################################################################################################
 
-    def _defaultCWSample(self):
-        sample = Sample(
-            phases=self._phases.phases,
-            parameters=Instrument1DCWParameters.default(),
-            pattern=Powder1DParameters.default(),
-            interface=self._interface)
+    def _defaultParameters(self, sample):
+        # return Instrument1DCWParameters.default()
         sample.pattern.zero_shift = 0.0
         sample.pattern.scale = 100.0
         sample.parameters.wavelength = 1.912
@@ -44,11 +41,32 @@ class SampleLogic(QObject):
         sample.parameters.resolution_y = 0.0  # 0.0961
         return sample
 
+    def _defaultCWSample(self):
+        sample = Sample(
+            phases=self._phases.phases,
+            parameters=Instrument1DCWParameters(),
+            pattern=Powder1DParameters(),
+            interface=self._interface)
+        self._defaultParameters(sample)
+        return sample
+
+    def _defaultCWPolSample(self):
+        # sample = super()._defaultCWSample()
+        sample = Sample(
+            phases=self._phases.phases,
+            parameters=Instrument1DCWPolParameters(),
+            pattern=PolPowder1DParameters(),
+            interface=self._interface)
+        self._defaultParameters(sample)
+        sample.pattern.beam.polarization = 0.0
+        sample.pattern.beam.efficiency = 100.0
+        return sample
+
     def _defaultTOFSample(self):
         sample = Sample(
             phases=self._phases.phases,
-            parameters=Instrument1DTOFParameters.default(),
-            pattern=Powder1DParameters.default(),
+            parameters=Instrument1DTOFParameters(),
+            pattern=Powder1DParameters(),
             interface=self._interface)
         sample.pattern.zero_shift = 0.0
         sample.pattern.scale = 100.0
@@ -70,7 +88,9 @@ class SampleLogic(QObject):
     @property
     def experimentType(self):
         exp_type = None
-        if issubclass(type(self._sample.parameters), Instrument1DCWParameters):
+        if issubclass(type(self._sample.parameters), Instrument1DCWPolParameters):
+            exp_type = 'powder1DCWpol'
+        elif issubclass(type(self._sample.parameters), Instrument1DCWParameters):
             exp_type = 'powder1DCW'
         elif issubclass(type(self._sample.parameters), Instrument1DTOFParameters):
             exp_type = 'powder1DTOF'
@@ -80,15 +100,16 @@ class SampleLogic(QObject):
 
     @experimentType.setter
     def experimentType(self, new_exp_type: str):
-        phases = self._phases.phases
-        pattern = self._sample.pattern
-
-        if new_exp_type == 'powder1DCW':
-            params = Instrument1DCWParameters.default()
+        if new_exp_type == 'powder1DCWpol':
+            self._sample = self._defaultCWPolSample()
+        elif new_exp_type == 'powder1DCWunp' or new_exp_type == 'powder1DCW':
             self._sample = self._defaultCWSample()
-        elif new_exp_type == 'powder1DTOF':
-            params = Instrument1DTOFParameters.default()
+            if new_exp_type == 'powder1DCW':
+                new_exp_type = 'powder1DCWunp'
+        elif new_exp_type == 'powder1DTOFunp' or new_exp_type == 'powder1DTOF':
             self._sample = self._defaultTOFSample()
+            if new_exp_type == 'powder1DTOF':
+                new_exp_type = 'powder1DTOFunp'
         else:
             raise AttributeError('Unknown Experiment type')
 
@@ -98,12 +119,7 @@ class SampleLogic(QObject):
             interfaces = self._interface.interface_compatability(test_str)
             interface.switch(interfaces[0])
 
-        self._sample = Sample(
-            phases=phases,
-            parameters=params,
-            pattern=pattern,
-            interface=self._interface)
+        self._sample.interface = interface
         self.parent.l_phase.phasesAsObjChanged.emit()
         self.parent.proxy.fitting.calculatorListChanged.emit()
-        #self.parent.parametersChanged.emit()
 

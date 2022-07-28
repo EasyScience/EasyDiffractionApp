@@ -6,7 +6,7 @@ build-backend = 'poetry.masonry.api'
 
 [tool.poetry]
 name = 'easyDiffractionApp'
-version = '0.8.3-beta'
+version = '0.8.4-beta'
 description = 'Making diffraction data analysis and modelling easy.'
 license = 'BSD-3-Clause'
 authors = ['Andrew Sazonov', 'Simon Ward', 'Piotr Rozyczko']
@@ -22,7 +22,7 @@ url = "https://easyscience.github.io/pypi/"
 secondary = true
 
 [tool.poetry.dependencies]
-python = '^3.7, <3.9'
+python = '^3.8, <3.9'
 darkdetect = '^0.3.1'
 pyobjc-core = { version = '^7.1', platform = 'darwin' }
 pyobjc-framework-cocoa = { version = '^7.1', platform = 'darwin' }
@@ -32,21 +32,21 @@ easyApp = { git = 'https://github.com/easyScience/easyApp.git', rev = 'master' }
 
 #[tool.poetry.dev-dependencies]
 # PyInstaller
-pyinstaller = '4.5.1'  # 4.6-4.7 give "ModuleNotFoundError: No module named 'pip'" on Ubuntu, when run app
+pyinstaller = '4.5.1'  # 4.6-5.2 give "ModuleNotFoundError: No module named 'pip'" on Ubuntu, when run app
 #pyinstaller = { git = 'https://github.com/pyinstaller/pyinstaller.git', rev = 'develop' }
 pywin32-ctypes = { version = '^0.2.0', platform = 'win32' }
 pypiwin32 = { version = '^223', platform = 'win32' }
-pefile = { version = '^2019.4.18', platform = 'win32' }
+pefile = { version = '^2022.5.30', platform = 'win32' }
 # Misc
 toml = '^0.10.2'
 requests = '^2.25.1'
 dephell_licenses = '^0.1.7'
 ffmpeg-python = '^0.2.0'
 mss = '^6.1.0'
-#opencv-python = '^4.5.1'
 opencv-python = '4.5.1.48'
-google-trans-new = "^1.1.9"
+google-trans-new = '^1.1.9'
 gTTS = '^2.2.2'
+gemmi = '^0.5.4'
 
 [tool.poetry.scripts]
 easyDiffraction = 'easyDiffractionApp.main:main'
@@ -54,7 +54,7 @@ easyDiffraction = 'easyDiffractionApp.main:main'
 # CUSTOM CONFIG
 
 [release]
-app_name = 'easyDiffraction'
+app_name = 'EasyDiffraction'
 tag_template = 'v{VERSION}'
 title_template = 'Version {VERSION} ({DATE})'
 description_file = 'RELEASE.md'
@@ -94,7 +94,7 @@ file_ext = { macos = '.icns', ubuntu = '.png', windows = '.ico' }
 build_dir_suffix = 'Setup'
 repository_dir_suffix = 'Repos'
 os = { macos = 'macOS', ubuntu = 'Linux', windows = 'Windows' }  # Should be the same as GH actions ${{ runner.os }}
-arch = { macos = 'x86-64', ubuntu = 'x86-64', windows = 'x86-32' }
+arch = { macos = 'x64', ubuntu = 'x64', windows = 'x64' }
 file_ext = { macos = '.app', ubuntu = '', windows = '.exe' }
 maintenance_tool_suffix = 'MaintenanceTool'
 maintenance_file = 'signedmaintenancetool.exe'
@@ -164,16 +164,16 @@ manual_exclude = [ 'mfc*', 'msvcp*', 'VCRUNTIME*',
                    '*Qt*Scxml*', '*Qt*Sensors*', '*Qt*Sql*', '*Qt*VirtualKeyboard*', '*Qt*Wayland*' ]
 
 [ci.qtifw.setup]
-version = '4.1.0'
+version = '4.4.1'
 https_mirrors = ['download.qt.io', 'ftp.fau.de/qtproject', 'mirrors.dotsrc.org/qtproject']
 base_path = 'official_releases/qt-installer-framework'
 file_name_base = 'QtInstallerFramework'
-file_platform = { macos = 'macOS-x86_64', ubuntu = 'linux-x64', windows = 'windows-x86' }
+file_platform = { macos = 'macOS-x64', ubuntu = 'linux-x64', windows = 'windows-x64' }
 file_ext = { macos = 'dmg', ubuntu = 'run', windows = 'exe' }
 installation_path = { macOS = '/Users/runner/Qt', Linux = '/home/runner/Qt', Windows = 'C:\Qt' }
 
 [ci.ffmpeg.macos]  # https://evermeet.cx/ffmpeg/ffmpeg-4.3.zip
-version = '4.3.1'
+version = '5.0.1'
 base_url = 'https://evermeet.cx/ffmpeg'
 file_name_base = 'ffmpeg-'
 file_ext = '.zip'

@@ -7,8 +7,9 @@
 
 ### Changes
 
-- Default example with experimental phase is modified.
+- Default example with experimental phase has been modified.
 - Added example projects with polarised data.
+- Windows installer is now 64-bit.
 
 ### Bug Fixes
 

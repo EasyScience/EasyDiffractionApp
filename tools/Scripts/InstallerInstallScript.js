@@ -52,12 +52,11 @@ Component.prototype.installVCRedist = function()
             doInstall = true;
         }
     }
-    var dir2 = installer.value("TargetDir") + "/VC_redist.x64.exe";
-    QMessageBox.information("vcRedist.install", install_str, dir2, QMessageBox.OK);
     if (doInstall)
     {
         QMessageBox.information("vcRedist.install", "Install VS Redistributables", "The application requires Visual Studio 2017 Redistributables. Please follow the steps to install it now.", QMessageBox.OK);
-        var dir = installer.value("TargetDir");
+        var dir = installer.value("TargetDir") + "/" + installer.value("ProductName");
+        QMessageBox.information("vcRedist.install", "Install VS Redistributables", "TargetDir: " + dir, QMessageBox.OK);
         installer.execute(dir + "/VC_redist.x64.exe", "/norestart", "/passive");
     }
 }

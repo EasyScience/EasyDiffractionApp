@@ -31,22 +31,17 @@ Component.prototype.onInstallationStarted = function()
 Component.prototype.installVCRedist = function()
 {
     var registryVC2017x64 = installer.execute("reg", new Array("QUERY", "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Microsoft\\VisualStudio\\14.0\\VC\\Runtimes\\x64", "/v", "Installed"))[0];
-    QMessageBox.information("vcRedist.install", "start", "1", QMessageBox.OK);
     var install_str = "No";
     var doInstall = false;
     if (!registryVC2017x64) {
         doInstall = true;
         install_str = "Yes";
-        QMessageBox.information("vcRedist.install", "Conditional 1", install_str, QMessageBox.OK);
     }
     else
     {
         var bld = installer.execute("reg", new Array("QUERY", "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Microsoft\\VisualStudio\\14.0\\VC\\Runtimes\\x64", "/v", "Bld"))[0];
-
         var elements = bld.split(" ");
-
         bld = parseInt(elements[elements.length-1]);
-        QMessageBox.information("vcRedist.install", "Conditional 2", '' + bld, QMessageBox.OK);
         if (bld < 26706)
         {
             doInstall = true;
@@ -56,7 +51,6 @@ Component.prototype.installVCRedist = function()
     {
         QMessageBox.information("vcRedist.install", "Install VS Redistributables", "The application requires Visual Studio 2017 Redistributables. Please follow the steps to install it now.", QMessageBox.OK);
         var dir = installer.value("TargetDir") + "/" + installer.value("ProductName");
-        QMessageBox.information("vcRedist.install", "Install VS Redistributables", "TargetDir: " + dir, QMessageBox.OK);
         installer.execute(dir + "/VC_redist.x64.exe", "/norestart", "/passive");
     }
 }

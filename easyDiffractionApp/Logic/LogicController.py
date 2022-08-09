@@ -191,6 +191,12 @@ class LogicController(QObject):
     def setPhaseScale(self, phase_label, phase_scale):
         self.l_phase.phases[phase_label].scale = phase_scale
 
+    def phases(self):
+        return self.l_phase.phases
+
+    def phasesAsObjChanged(self):
+        self.l_phase.phasesAsObjChanged.emit()
+
     def sim_x(self):
         return self.l_parameters.sim_x()
 

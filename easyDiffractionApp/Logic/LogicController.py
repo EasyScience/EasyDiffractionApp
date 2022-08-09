@@ -104,6 +104,9 @@ class LogicController(QObject):
     def pdata(self):
         return self.l_parameters._data
 
+    def setExperimentName(self, name=""):
+        self.l_parameters._data.experiments[0].name = name
+
     def updateCalculatedData(self):
         self.l_parameters._updateCalculatedData()
 
@@ -154,10 +157,13 @@ class LogicController(QObject):
             self.l_parameters._data.experiments[0].eb = np.zeros(length)
             self.l_experiment.spin_polarized = False
 
+    def sampleBackgrounds(self):
+        return self.l_sample._sample.pattern.backgrounds
+
     def updateBackgroundOnLoad(self):
-            self.l_background.onAsObjChanged()
-            if self.l_experiment.spin_polarized:
-                self.l_experiment.setSpinComponent()
+        self.l_background.onAsObjChanged()
+        if self.l_experiment.spin_polarized:
+            self.l_experiment.setSpinComponent()
 
     def setExperimentLoaded(self, loaded=True):
             self.l_experiment.experimentLoaded(loaded)
@@ -170,11 +176,26 @@ class LogicController(QObject):
             self.l_experiment.experimentSkipped(True)
             self.l_experiment.experimentSkippedChanged.emit()
 
+    def setExperimentType(self, type=""):
+        self.l_sample.experimentType = type
+
+    def experimentType(self):
+        return self.l_sample.experimentType
+
     def getSampleAsDict(self):
         return self.l_sample._sample.as_dict(skip=['interface','calculator'])
 
+    def setPhaseScale(self, phase_label, phase_scale):
+        self.l_phase.phases[phase_label].scale = phase_scale
+
+    def getPhaseNames(self):
+        return self.l_phase.phases.phase_names
+
     def getExperiments(self):
         return self.l_parameters.getExperiments()
+
+    def setCurrentExperimentDatasetName(self, name):
+        self.l_phase.setCurrentExperimentDatasetName(name)
 
     def isExperimentSkipped(self):
         return self.l_experiment._experiment_skipped
@@ -201,6 +222,36 @@ class LogicController(QObject):
         engine_name = self.l_fitting.fitter.current_engine.name
         minimizer_name = self.l_fitting._current_minimizer_method_name
         return self.l_state.statusModelAsXml(engine_name, minimizer_name)
+
+    def initializeContainer(self):
+        self.l_background.initializeContainer()
+
+    def setBackgroundData(self, x, y):
+        self.l_plotting1d.setBackgroundData(x, y)
+
+    def setMeasuredData(self, x, y, e):
+        self.l_plotting1d.setMeasuredData(x, y, e)
+
+    def setCalculatedData(self, x, y):
+        self.l_plotting1d.setCalculatedData(x, y)
+
+    def setBackgroundPoints(self, bg_2thetas, bg_intensities):
+        self.l_background.addPoints(bg_2thetas, bg_intensities)
+        self.l_background._setAsXml()
+        self.l_plotting1d.bokehBackgroundDataObjChanged.emit()
+
+    def removeBackgroundPoints(self):
+        if len(self.l_sample._sample.pattern.backgrounds) > 0:
+            self.l_background.removeAllPoints()
+
+    def removeAllConstraints(self):
+        self.l_fitting.removeAllConstraints()
+
+    def setSimulationParameters(self, params):
+        self.proxy.parameters.simulationParametersAsObj = params
+
+    def notifyProjectChanged(self):
+        self.l_project.projectInfoChanged.emit()
 
     def recorder(self):
         rec = None

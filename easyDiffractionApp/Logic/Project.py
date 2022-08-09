@@ -227,28 +227,18 @@ class ProjectLogic(QObject):
         projectPath = self._currentProjectPath
         project_save_filepath = os.path.join(projectPath, 'project.json')
         descr = {
-            'sample': self.parent.l_sample._sample.as_dict(skip=['interface','calculator'])
+            'sample': self.parent.getSampleAsDict()
         }
-        if self.parent.l_parameters._data.experiments:
-            experiments_x = self.parent.l_parameters._data.experiments[0].x
-            experiments_y = self.parent.l_parameters._data.experiments[0].y
-            experiments_e = self.parent.l_parameters._data.experiments[0].e
-            descr['experiments'] = [experiments_x, experiments_y, experiments_e]
-            if self.parent.l_experiment.spin_polarized:
-                experiments_yb = self.parent.l_parameters._data.experiments[0].yb
-                experiments_eb = self.parent.l_parameters._data.experiments[0].eb
-                descr['experiments'] += [experiments_yb, experiments_eb]
+        descr['experiments'] = self.parent.getExperiments()
 
-        descr['experiment_skipped'] = self.parent.l_experiment._experiment_skipped
+        descr['experiment_skipped'] = self.parent.isExperimentSkipped()
         descr['read_only'] = self._read_only
         descr['project_info'] = self._project_info
 
         descr['interface'] = self._interface.current_interface_name
 
-        descr['minimizer'] = {
-            'engine': self.parent.l_fitting.fitter.current_engine.name,
-            'method': self.parent.l_fitting._current_minimizer_method_name
-        }
+        descr['minimizer'] = self.parent.fittingNamesDict()
+
         content_json = json.dumps(descr, indent=4, default=self.default)
         path = generalizePath(project_save_filepath)
         createFile(path, content_json)

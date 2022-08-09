@@ -43,7 +43,7 @@ class FittingLogic(QObject):
 
         self.parent = parent
         self.interface = interface
-        self.fitter = CoreFitter(self.parent.l_sample._sample, self.interface.fit_func)
+        self.fitter = CoreFitter(self.parent.sample, self.interface.fit_func)
 
         # Multithreading
         # self._fitter_thread = None
@@ -98,7 +98,7 @@ class FittingLogic(QObject):
         exp_data = data.experiments[0]
         x = exp_data.x
 
-        refinement = self.parent.l_experiment.refinement_methods()
+        refinement = self.parent.refinementMethods()
         targets = [component for component in refinement if refinement[component]]
         try:
             x_, y_, fit_func = self.interface().generate_pol_fit_func(x, exp_data.y, exp_data.yb, targets)
@@ -129,7 +129,7 @@ class FittingLogic(QObject):
         self.finished.emit(res)
 
     def fit_threading(self):
-        if self.parent.l_experiment.spin_polarized:
+        if self.parent.isSpinPolarized():
             self.fit_polar()
         else:
             self.fit_nonpolar()
@@ -148,10 +148,10 @@ class FittingLogic(QObject):
 
     def resetErrors(self):
         # Reset all errors to zero
-        all_pars = set(self.parent.l_sample._sample.get_parameters())
+        all_pars = set(self.parent.sample().get_parameters())
         fit_pars = {par for par in all_pars if par.enabled and not par.fixed}
         to_zero = all_pars.difference(fit_pars)
-        borg = self.parent.l_sample._sample._borg
+        borg = self.parent.sample()._borg
         borg.stack.beginMacro('reset errors')
         for par in to_zero:
             par.error = 0.
@@ -168,8 +168,8 @@ class FittingLogic(QObject):
         self._fit_finished = True
         self.fitFinished.emit()
         # TODO: remove once background is correctly implemented in polarized
-        if self.parent.l_experiment.spin_polarized:
-            self.parent.l_experiment.setSpinComponent()
+        if self.parent.isSpinPolarized():
+            self.parent.setSpinComponent()
         # must re-instantiate the thread object
         self.fit_thread = Thread(target=self.fit_threading)
 
@@ -187,7 +187,7 @@ class FittingLogic(QObject):
 
     # def fit(self, data):
     def fit(self):
-        self.data = self.parent.l_parameters._data
+        self.data = self.parent.pdata()
         if not self.fit_thread.is_alive():
             self.is_fitting_now = True
             self.fit_thread.start()
@@ -241,35 +241,41 @@ class FittingLogic(QObject):
         new_method_index = self.minimizerMethodNames().index(method)
         self.currentMinimizerMethodIndex(new_method_index)
 
+    def fittingNamesDict(self):
+        return {
+            'engine': self.fitter.current_engine.name,
+            'method': self._current_minimizer_method_name
+            }
+
     ####################################################################################################################
     # Calculator
     ####################################################################################################################
 
     def calculatorNames(self):
-        interfaces = self.interface.interface_compatability(self.parent.l_sample._sample.exp_type_str)
+        interfaces = self.interface.interface_compatability(self.parent.sample().exp_type_str)
         return interfaces
 
     def currentCalculatorIndex(self):
-        interfaces = self.interface.interface_compatability(self.parent.l_sample._sample.exp_type_str)
+        interfaces = self.interface.interface_compatability(self.parent.sample().exp_type_str)
         return interfaces.index(self.interface.current_interface_name)
 
     def setCurrentCalculatorIndex(self, new_index: int):
         if self.currentCalculatorIndex == new_index:
             return
-        interfaces = self.interface.interface_compatability(self.parent.l_sample._sample.exp_type_str)
+        interfaces = self.interface.interface_compatability(self.parent.sample().exp_type_str)
         new_name = interfaces[new_index]
         self.interface.switch(new_name)
         # recreate the fitter object with the new interface
-        self.fitter = CoreFitter(self.parent.l_sample._sample, self.interface.fit_func)
+        self.fitter = CoreFitter(self.parent.sample(), self.interface.fit_func)
 
-        self.parent.l_sample._sample.update_bindings()
+        self.parent.sample().update_bindings()
         self.currentCalculatorChanged.emit()
         print("***** _onCurrentCalculatorChanged")
         self._onCurrentCalculatorChanged()
-        self.parent.l_parameters._updateCalculatedData()
+        self.parent.updateCalculatedData()
 
     def _onCurrentCalculatorChanged(self):
-        data = self.parent.l_parameters._data.simulations
+        data = self.parent.pdata().simulations
         data = data[0]
         data.name = f'{self.interface.current_interface_name} engine'
 

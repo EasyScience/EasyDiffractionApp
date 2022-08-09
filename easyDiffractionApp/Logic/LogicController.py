@@ -89,6 +89,24 @@ class LogicController(QObject):
     def resetFactory(self):
         self.interface = InterfaceFactory()
 
+    def sample(self):
+        return self.l_sample._sample
+
+    def refinementMethods(self):
+        return self.l_experiment.refinement_methods()
+
+    def isSpinPolarized(self):
+        return self.l_experiment.spin_polarized
+
+    def setSpinComponent(self):
+        self.l_experiment.setSpinComponent()
+
+    def pdata(self):
+        return self.l_parameters._data
+
+    def updateCalculatedData(self):
+        self.l_parameters._updateCalculatedData()
+
     def plotCalculatedData(self, data):
         self.l_plotting1d.setCalculatedData(data[0], data[1])
 
@@ -115,10 +133,9 @@ class LogicController(QObject):
         self.l_phase.phaseAdded.emit()
 
     def sendToExperiment(self, data, exp_name):
-
         self.setExperimentLoaded(True)
         self.setExperimentData(data)
-        self.updateExperimentData(exp_name)
+        self.l_experiment.updateExperimentData(exp_name)
         self.updateBackgroundOnLoad()
         self.l_experiment.experimentLoadedChanged.emit()
 
@@ -137,9 +154,6 @@ class LogicController(QObject):
             self.l_parameters._data.experiments[0].eb = np.zeros(length)
             self.l_experiment.spin_polarized = False
 
-    def updateExperimentData(self, name=None):
-        self.l_experiment.updateExperimentData(name=name)
-
     def updateBackgroundOnLoad(self):
             self.l_background.onAsObjChanged()
             if self.l_experiment.spin_polarized:
@@ -155,6 +169,18 @@ class LogicController(QObject):
         if skipped:
             self.l_experiment.experimentSkipped(True)
             self.l_experiment.experimentSkippedChanged.emit()
+
+    def getSampleAsDict(self):
+        return self.l_sample._sample.as_dict(skip=['interface','calculator'])
+
+    def getExperiments(self):
+        return self.l_parameters.getExperiments()
+
+    def isExperimentSkipped(self):
+        return self.l_experiment._experiment_skipped
+
+    def fittingNamesDict(self):
+        return self.l_fitting.fittingNamesDict()
 
     def resetStack(self):
         self.l_stack.resetUndoRedoStack()

@@ -327,6 +327,19 @@ class ParametersLogic(QObject):
         obj = borg.map.get_item_by_key(obj_id)
         return obj
 
+    def getExperiments(self):
+        experiments = []
+        if self._data.experiments:
+            experiments_x = self._data.experiments[0].x
+            experiments_y = self._data.experiments[0].y
+            experiments_e = self._data.experiments[0].e
+            experiments = [experiments_x, experiments_y, experiments_e]
+            if self.parent.isSpinPolarized():
+                experiments_yb = self._data.experiments[0].yb
+                experiments_eb = self._data.experiments[0].eb
+                experiments += [experiments_yb, experiments_eb]
+        return experiments
+
     def sim_x(self):
         """
         Rerurn the x-axis of the simulated data.

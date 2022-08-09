@@ -196,6 +196,13 @@ class ExperimentLogic(QObject):
         self.state._updateCalculatedData()
         return True
 
+    def updateExperimentData(self, name=None):
+            self._experiment_data = self.parent.l_parameters._data.experiments[0]
+            self.experiments = [{'name': name}]
+            self.setCurrentExperimentDatasetName(name)
+            self.setPolarized(self.spin_polarized)
+            self._onExperimentDataAdded()
+
     def experimentLoaded(self, loaded: bool):
         if self._experiment_loaded == loaded:
             return

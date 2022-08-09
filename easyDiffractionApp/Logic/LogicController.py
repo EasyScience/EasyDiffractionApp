@@ -3,6 +3,7 @@
 # © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
 import json
+import numpy as np
 
 from PySide2.QtCore import QObject, Signal
 
@@ -64,12 +65,11 @@ class LogicController(QObject):
         self.l_fitting.fitFinished.connect(self.l_parameters.parametersChanged)
         self.l_fitting.currentCalculatorChanged.connect(self.proxy.currentCalculatorChanged)
 
-        self.l_project.reset.connect(self.resetState)
         self.l_project.phasesEnabled.connect(self.l_phase.phasesEnabled)
         self.l_project.phasesAsObjChanged.connect(self.l_phase.phasesAsObjChanged)
-        self.l_project.experimentDataAdded.connect(self.l_experiment._onExperimentDataAdded)
+        # self.l_project.experimentDataAdded.connect(self.l_experiment._onExperimentDataAdded)
         self.l_project.structureParametersChanged.connect(self.l_phase.structureParametersChanged)
-        self.l_project.experimentLoadedChanged.connect(self.l_experiment.experimentLoadedChanged)
+        # self.l_project.experimentLoadedChanged.connect(self.l_experiment.experimentLoadedChanged)
 
         # the following data update is required for undo/redo.
         self.parametersChanged.connect(self.l_parameters._updateCalculatedData)
@@ -99,10 +99,72 @@ class LogicController(QObject):
         self.l_stack.initializeBorg()
 
     def resetState(self):
+        self.l_fitting.setCurrentCalculatorIndex(0)
+        if self.l_phase.samplesPresent():
+            self.l_phase.removeAllPhases()
         self.l_plotting1d.clearBackendState()
         self.l_plotting1d.clearFrontendState()
         self.l_stack.resetUndoRedoStack()
         self.l_stack.undoRedoChanged.emit()
+
+    def assignToSample(self, sample_descr):
+        self.l_sample._sample = sample_descr
+        self.l_phase.phases = self.l_sample._sample._phases
+        self.proxy.sample.updateExperimentType()
+        # send signal to tell the proxy we changed phases
+        self.l_phase.phaseAdded.emit()
+
+    def sendToExperiment(self, data, exp_name):
+
+        self.setExperimentLoaded(True)
+        self.setExperimentData(data)
+        self.updateExperimentData(exp_name)
+        self.updateBackgroundOnLoad()
+        self.l_experiment.experimentLoadedChanged.emit()
+
+    def setExperimentData(self, data):
+        self.l_parameters._data.experiments[0].x = np.array(data[0])
+        self.l_parameters._data.experiments[0].y = np.array(data[1])
+        self.l_parameters._data.experiments[0].e = np.array(data[2])
+
+        if(len(data) > 3):
+            self.l_parameters._data.experiments[0].yb = np.array(data[3])
+            self.l_parameters._data.experiments[0].eb = np.array(data[4])
+            self.l_experiment.spin_polarized = True
+        else:
+            length = len(self.l_parameters._data.experiments[0].y)
+            self.l_parameters._data.experiments[0].yb = np.zeros(length)
+            self.l_parameters._data.experiments[0].eb = np.zeros(length)
+            self.l_experiment.spin_polarized = False
+
+    def updateExperimentData(self, name=None):
+        self.l_experiment.updateExperimentData(name=name)
+
+    def updateBackgroundOnLoad(self):
+            self.l_background.onAsObjChanged()
+            if self.l_experiment.spin_polarized:
+                self.l_experiment.setSpinComponent()
+
+    def setExperimentLoaded(self, loaded=True):
+            self.l_experiment.experimentLoaded(loaded)
+            self.l_experiment.experimentSkipped(not loaded)
+
+    def removeExperiment(self, skipped=False):
+        self.l_experiment.experimentLoaded(False)
+        self.setExperimentLoaded(False)
+        if skipped:
+            self.l_experiment.experimentSkipped(True)
+            self.l_experiment.experimentSkippedChanged.emit()
+
+    def resetStack(self):
+        self.l_stack.resetUndoRedoStack()
+        self.l_stack.undoRedoChanged.emit()
+
+    def setNewEngine(self, engine=None, method=None):
+        self.l_fitting.setNewEngine(engine, method)
+
+    def setSampleOnFitter(self):
+        self.l_fitting.fitter.fit_object = self.l_sample._sample
 
     def statusModelAsObj(self):
         engine_name = self.l_fitting.fitter.current_engine.name

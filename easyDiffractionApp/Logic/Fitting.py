@@ -235,6 +235,12 @@ class FittingLogic(QObject):
         self._current_minimizer_method_name = self.minimizerMethodNames()[new_index]  # noqa: E501
         self.currentMinimizerMethodChanged.emit()
 
+    def setNewEngine(self, engine=None, method=None):
+        new_engine_index = self.fitter.available_engines.index(engine)
+        self.setCurrentMinimizerIndex(new_engine_index)
+        new_method_index = self.minimizerMethodNames().index(method)
+        self.currentMinimizerMethodIndex(new_method_index)
+
     ####################################################################################################################
     # Calculator
     ####################################################################################################################

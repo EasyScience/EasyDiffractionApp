@@ -187,13 +187,9 @@ class ProjectLogic(QObject):
                 self._interface.switch(interface_name)
 
         descr['sample']['interface'] = self._interface
-        self.parent.l_sample._sample = Sample.from_dict(descr['sample'])
+        sample_descr = Sample.from_dict(descr['sample'])
 
-        self.parent.l_phase.phases = self.parent.l_sample._sample._phases
-        self.parent.proxy.sample.updateExperimentType()
-
-        # send signal to tell the proxy we changed phases
-        self.parent.l_phase.phaseAdded.emit()
+        self.parent.assignToSample(sample_descr)
 
         # project info
         self._project_info = descr['project_info']
@@ -203,52 +199,25 @@ class ProjectLogic(QObject):
 
         # experiment
         if 'experiments' in descr:
-            self.parent.l_experiment.experimentLoaded(True)
-            self.parent.l_experiment.experimentSkipped(False)
-            self.parent.l_parameters._data.experiments[0].x = np.array(descr['experiments'][0])
-            self.parent.l_parameters._data.experiments[0].y = np.array(descr['experiments'][1])
-            self.parent.l_parameters._data.experiments[0].e = np.array(descr['experiments'][2])
-            if(len(descr['experiments']) > 3):
-                self.parent.l_parameters._data.experiments[0].yb = np.array(descr['experiments'][3])
-                self.parent.l_parameters._data.experiments[0].eb = np.array(descr['experiments'][4])
-                self.parent.l_experiment.spin_polarized = True
-            else:
-                length = len(self.parent.l_parameters._data.experiments[0].y)
-                self.parent.l_parameters._data.experiments[0].yb = np.zeros(length)
-                self.parent.l_parameters._data.experiments[0].eb = np.zeros(length)
-                self.parent.l_experiment.spin_polarized = False
-            self.parent.l_experiment._experiment_data = self.parent.l_parameters._data.experiments[0]
-            self.parent.l_experiment.experiments = [{'name': descr['project_info']['experiments']}]
-            self.parent.l_experiment.setCurrentExperimentDatasetName(descr['project_info']['experiments'])
-            self.parent.l_experiment.setPolarized(self.parent.l_experiment.spin_polarized)
-            # send signal to tell the proxy we changed experiment
-            self.experimentDataAdded.emit()
-            self.parent.l_background.onAsObjChanged()
-            if self.parent.l_experiment.spin_polarized:
-                self.parent.l_experiment.setSpinComponent()
-            self.experimentLoadedChanged.emit()
+            data = descr['experiments']
+            exp_name = descr['project_info']['experiments']
+
+            self.parent.sendToExperiment(data, exp_name)
         else:
             # delete existing experiment
-            self.parent.l_experiment.removeExperiment()
-            self.parent.l_experiment.experimentLoaded(False)
-            if descr['experiment_skipped']:
-                self.parent.l_experiment.experimentSkipped(True)
-                self.parent.l_experiment.experimentSkippedChanged.emit()
-
+            self.parent.removeExperiment(skipped=descr['experiment_skipped'])
 
         new_minimizer_settings = descr.get('minimizer', None)
         if new_minimizer_settings is not None:
             new_engine = new_minimizer_settings['engine']
             new_method = new_minimizer_settings['method']
+            self.parent.setNewEngine(engine=new_engine, method=new_method)
 
-            new_engine_index = self.parent.l_fitting.fitter.available_engines.index(new_engine)
-            self.parent.l_fitting.setCurrentMinimizerIndex(new_engine_index)
-            new_method_index = self.parent.l_fitting.minimizerMethodNames().index(new_method)
-            self.parent.l_fitting.currentMinimizerMethodIndex(new_method_index)
+        self.parent.setSampleOnFitter()
 
-        self.parent.l_fitting.fitter.fit_object = self.parent.l_sample._sample
-        self.parent.l_stack.resetUndoRedoStack()
-        self.parent.l_stack.undoRedoChanged.emit()
+        # tell the LC that the stack needs resetting
+        self.parent.resetStack()
+
         self.setProjectCreated(True)
         print("\nProject loading time: {0:.3f} s\n".format(timer() - start_time))
 
@@ -299,10 +268,7 @@ class ProjectLogic(QObject):
         self.projectInfoChanged.emit()
         self.project_save_filepath = ""
         self.removeExperiment.emit()
-        self.parent.l_fitting.setCurrentCalculatorIndex(0)
-        if self.parent.l_phase.samplesPresent():
-            self.parent.l_phase.removeAllPhases()
-        self.reset.emit()
+        self.parent.resetState()
 
     def updateProjectInfo(self, key_value):
         if len(key_value) == 2:

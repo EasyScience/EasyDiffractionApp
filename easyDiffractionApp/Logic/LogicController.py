@@ -98,6 +98,9 @@ class LogicController(QObject):
     def isSpinPolarized(self):
         return self.l_experiment.spin_polarized
 
+    def spinComponent(self):
+        return self.l_experiment.spinComponent()
+
     def setSpinComponent(self):
         self.l_experiment.setSpinComponent()
 
@@ -188,8 +191,20 @@ class LogicController(QObject):
     def setPhaseScale(self, phase_label, phase_scale):
         self.l_phase.phases[phase_label].scale = phase_scale
 
+    def sim_x(self):
+        return self.l_parameters.sim_x()
+
     def getPhaseNames(self):
         return self.l_phase.phases.phase_names
+
+    def phases(self):
+        return self.l_phase.phases
+
+    def onPatternParametersChanged(self):
+        self.l_parameters._onPatternParametersChanged()
+
+    def setPatternParametersAsObj(self):
+        self.l_parameters._setPatternParametersAsObj()
 
     def getExperiments(self):
         return self.l_parameters.getExperiments()
@@ -199,6 +214,10 @@ class LogicController(QObject):
 
     def isExperimentSkipped(self):
         return self.l_experiment._experiment_skipped
+
+    def setExperimentNameFromParameters(self):
+        self.l_project._project_info['experiments'] = \
+            self.l_parameters._data.experiments[0].name
 
     def fittingNamesDict(self):
         return self.l_fitting.fittingNamesDict()
@@ -234,6 +253,9 @@ class LogicController(QObject):
 
     def setCalculatedData(self, x, y):
         self.l_plotting1d.setCalculatedData(x, y)
+
+    def clearFrontendState(self):
+        self.l_plotting1d.clearFrontendState()
 
     def setBackgroundPoints(self, bg_2thetas, bg_intensities):
         self.l_background.addPoints(bg_2thetas, bg_intensities)

@@ -29,7 +29,6 @@ class ExperimentLogic(QObject):
     def __init__(self, parent=None, interface=None):
         super().__init__(parent)
         self.parent = parent
-        self.state = parent.l_parameters
         self._interface = interface
         self._experiment_parameters = None
         self._experiment_data_as_xml = ""
@@ -259,7 +258,7 @@ class ExperimentLogic(QObject):
         self.parent.updateCalculatedData()
 
     def _onExperimentLoadedChanged(self):
-        self.state._onPatternParametersChanged()
+        self.parent.onPatternParametersChanged()
 
     def setCurrentExperimentDatasetName(self, name):
         self.parent.setCurrentExperimentDatasetName(name)
@@ -290,17 +289,15 @@ class ExperimentLogic(QObject):
         if len(self.parent.sampleBackgrounds()) == 0:
             self.parent.initializeContainer()
 
-        self.parent.l_project._project_info['experiments'] = \
-            self.parent.pdata().experiments[0].name
-
+        self.parent.setExperimentNameFromParameters()
         self.parent.notifyProjectChanged()
 
     def _onPatternParametersChanged(self):
-        self.state._setPatternParametersAsObj()
+        self.parent.setPatternParametersAsObj()
         self.patternParametersAsObjChanged.emit()
 
     def onClearFrontendState(self):
-        self.parent.l_plotting1d.clearFrontendState()
+        self.parent.clearFrontendState()
 
     def spinComponent(self):
         return self._current_spin_component
@@ -368,7 +365,7 @@ class ExperimentLogic(QObject):
         if has_experiment:
             sim_x = self._experiment_data.x
         else:
-            sim_x = self.state.sim_x()
+            sim_x = self.parent.sim_x()
         self.parent.setBackgroundData(sim_x, bg)
         if has_experiment:
             self.parent.setMeasuredData(self._experiment_data.x, y, e)

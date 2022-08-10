@@ -45,8 +45,8 @@ class PyQmlProxy(QObject):
         self._stack_proxy = StackProxy(self, logic=self.lc)
         self._parameters_proxy = ParametersProxy(self, logic=self.lc)
         self._project_proxy = ProjectProxy(self, logic=self.lc)
-        self._experiment_proxy = ExperimentProxy(self, logic=self.lc)
         self._phase_proxy = PhaseProxy(self, logic=self.lc)
+        self._experiment_proxy = ExperimentProxy(self, logic=self.lc)
         self._sample_proxy = SampleProxy(self, logic=self.lc)
 
         ################## signals from other proxies #################

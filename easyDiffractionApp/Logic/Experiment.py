@@ -20,11 +20,14 @@ from easyApp.Logic.Utils.Utils import generalizePath
 class ExperimentLogic(QObject):
     """
     """
+    # signals controlled by LC
     experimentLoadedChanged = Signal()
     experimentSkippedChanged = Signal()
-    experimentDataChanged = Signal()
-    patternParametersAsObjChanged = Signal()
     clearFrontendState = Signal()
+
+    # signals controlled by our proxy
+    patternParametersAsObjChanged = Signal()
+    structureParametersChanged = Signal()
 
     def __init__(self, parent=None, interface=None):
         super().__init__(parent)
@@ -227,7 +230,7 @@ class ExperimentLogic(QObject):
         self.experimentLoaded(True)
         self.experimentSkipped(False)
         # need to update parameters in all the places.
-        self.parent.l_phase.structureParametersChanged.emit()
+        self.structureParametersChanged.emit()
 
     def addExperimentDataFromXye(self, file_url):
         self._experiment_data = self._loadExperimentData(file_url)
@@ -253,6 +256,7 @@ class ExperimentLogic(QObject):
         self._experiment_data = None
         self.experimentLoaded(False)
         self.experimentSkipped(False)
+        self.parent.clearFrontendState()
 
     def _onExperimentSkippedChanged(self):
         self.parent.updateCalculatedData()

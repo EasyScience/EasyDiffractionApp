@@ -24,11 +24,13 @@ class ExperimentProxy(QObject):
         self.logic = logic.l_experiment
         self.logic.experimentLoadedChanged.connect(self.experimentLoadedChanged)
         self.logic.experimentSkippedChanged.connect(self.experimentSkippedChanged)
-        self.logic.experimentDataChanged.connect(self.experimentDataChanged)
         self.experimentDataChanged.connect(self._onExperimentDataChanged)
         self.experimentSkippedChanged.connect(self._onExperimentSkippedChanged)
         self.experimentLoadedChanged.connect(self._onExperimentLoadedChanged)
+
+        # notifiers for other proxies
         self.logic.patternParametersAsObjChanged.connect(self.parent.parameters.patternParametersAsObjChanged)
+        self.logic.structureParametersChanged.connect(self.parent.phase.structureParametersChanged)
 
     @Property('QVariant', notify=experimentDataChanged)
     def experimentDataAsObj(self):
@@ -144,17 +146,12 @@ class ExperimentProxy(QObject):
     def removeExperiment(self):
         print("+ removeExperiment")
         self.logic.removeExperiment()
-        self._onExperimentDataRemoved()
+        self.experimentDataChanged.emit()
         self.experimentLoadedChanged.emit()
 
     def _loadExperimentData(self, file_url):
         print("+ _loadExperimentData")
         return self.logic._loadExperimentData(file_url)
-
-    def _onExperimentDataRemoved(self):
-        print("***** _onExperimentDataRemoved")
-        self.logic.clearFrontendState.emit()
-        self.experimentDataChanged.emit()
 
     @Property(bool, notify=experimentLoadedChanged)
     def experimentLoaded(self):

@@ -69,7 +69,6 @@ class LogicController(QObject):
         self.l_project.phasesAsObjChanged.connect(self.l_phase.phasesAsObjChanged)
         # self.l_project.experimentDataAdded.connect(self.l_experiment._onExperimentDataAdded)
         self.l_project.structureParametersChanged.connect(self.l_phase.structureParametersChanged)
-        # self.l_project.experimentLoadedChanged.connect(self.l_experiment.experimentLoadedChanged)
 
         # the following data update is required for undo/redo.
         self.parametersChanged.connect(self.l_parameters._updateCalculatedData)

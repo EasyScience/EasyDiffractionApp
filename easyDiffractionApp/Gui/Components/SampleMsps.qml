@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: BSD-3-Clause
 // © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.XmlListModel 2.13
+import QtQuick
+import QtQuick.Controls
+import QtQml.XmlListModel
 
 import easyApp.Gui.Globals 1.0 as EaGlobals
 import easyApp.Gui.Style 1.0 as EaStyle
@@ -35,23 +35,23 @@ EaComponents.TableView {
         xml: ExGlobals.Constants.proxy.phase.phasesAsXml
         query: `/root/item[${phaseIndex}]/atoms/data/item`
 
-        XmlRole { name: "label"; query: "label/value/string()" }
-        XmlRole { name: "mspType"; query: "msp/msp_type/value/string()" }
-        XmlRole { name: "mspIso"; query:   "msp/msp_class/chi/value/number()" }
-        XmlRole { name: "mspAni11"; query: "msp/msp_class/chi_11/value/number()" }
-        XmlRole { name: "mspAni22"; query: "msp/msp_class/chi_22/value/number()" }
-        XmlRole { name: "mspAni33"; query: "msp/msp_class/chi_33/value/number()" }
-        XmlRole { name: "mspAni12"; query: "msp/msp_class/chi_12/value/number()" }
-        XmlRole { name: "mspAni13"; query: "msp/msp_class/chi_13/value/number()" }
-        XmlRole { name: "mspAni23"; query: "msp/msp_class/chi_23/value/number()" }
+        XmlListModelRole { name: "label"; query: "label/value/string()" }
+        XmlListModelRole { name: "mspType"; query: "msp/msp_type/value/string()" }
+        XmlListModelRole { name: "mspIso"; query:   "msp/msp_class/chi/value/number()" }
+        XmlListModelRole { name: "mspAni11"; query: "msp/msp_class/chi_11/value/number()" }
+        XmlListModelRole { name: "mspAni22"; query: "msp/msp_class/chi_22/value/number()" }
+        XmlListModelRole { name: "mspAni33"; query: "msp/msp_class/chi_33/value/number()" }
+        XmlListModelRole { name: "mspAni12"; query: "msp/msp_class/chi_12/value/number()" }
+        XmlListModelRole { name: "mspAni13"; query: "msp/msp_class/chi_13/value/number()" }
+        XmlListModelRole { name: "mspAni23"; query: "msp/msp_class/chi_23/value/number()" }
 
-        XmlRole { name: "mspIsoId"; query: "msp/msp_class/chi/key[4]/string()" }
-        XmlRole { name: "mspAniId11"; query: "msp/msp_class/chi_11/key[4]/string()" }
-        XmlRole { name: "mspAniId22"; query: "msp/msp_class/chi_22/key[4]/string()" }
-        XmlRole { name: "mspAniId33"; query: "msp/msp_class/chi_33/key[4]/string()" }
-        XmlRole { name: "mspAniId12"; query: "msp/msp_class/chi_12/key[4]/string()" }
-        XmlRole { name: "mspAniId13"; query: "msp/msp_class/chi_13/key[4]/string()" }
-        XmlRole { name: "mspAniId23"; query: "msp/msp_class/chi_23/key[4]/string()" }
+        XmlListModelRole { name: "mspIsoId"; query: "msp/msp_class/chi/key[4]/string()" }
+        XmlListModelRole { name: "mspAniId11"; query: "msp/msp_class/chi_11/key[4]/string()" }
+        XmlListModelRole { name: "mspAniId22"; query: "msp/msp_class/chi_22/key[4]/string()" }
+        XmlListModelRole { name: "mspAniId33"; query: "msp/msp_class/chi_33/key[4]/string()" }
+        XmlListModelRole { name: "mspAniId12"; query: "msp/msp_class/chi_12/key[4]/string()" }
+        XmlListModelRole { name: "mspAniId13"; query: "msp/msp_class/chi_13/key[4]/string()" }
+        XmlListModelRole { name: "mspAniId23"; query: "msp/msp_class/chi_23/key[4]/string()" }
     }
 
     // Table rows

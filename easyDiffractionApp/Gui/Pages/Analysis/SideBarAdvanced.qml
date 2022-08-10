@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: BSD-3-Clause
 // © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.XmlListModel 2.13
+import QtQuick
+import QtQuick.Controls
+import QtQml.XmlListModel
 
 import easyApp.Gui.Style 1.0 as EaStyle
 import easyApp.Gui.Elements 1.0 as EaElements
@@ -166,8 +166,8 @@ EaComponents.SideBarColumn {
                         model: XmlListModel {
                             xml: ExGlobals.Constants.proxy.parameters.parametersAsXml
                             query: "/root/item"
-                            XmlRole { name: "label"; query: "label_with_index/string()" }
-                            XmlRole { name: "iconified_label"; query: "iconified_label_with_index/string()" }
+                            XmlListModelRole { name: "label"; query: "label_with_index/string()" }
+                            XmlListModelRole { name: "iconified_label"; query: "iconified_label_with_index/string()" }
                             onXmlChanged: dependentParCurrentIndex2 = dependentPar2.currentIndex
                         }
                         onCurrentIndexChanged: {
@@ -185,7 +185,7 @@ EaComponents.SideBarColumn {
                         model: XmlListModel {
                             xml: "<root><item><operator>&gt;</operator><icon>\uf531</icon></item><item><operator>&lt;</operator><icon>\uf536</icon></item></root>"
                             query: "/root/item"
-                            XmlRole { name: "icon"; query: "icon/string()" }
+                            XmlListModelRole { name: "icon"; query: "icon/string()" }
                         }
                     }
 
@@ -240,8 +240,8 @@ EaComponents.SideBarColumn {
                         model: XmlListModel {
                             xml: ExGlobals.Constants.proxy.parameters.parametersAsXml
                             query: "/root/item"
-                            XmlRole { name: "label"; query: "label_with_index/string()" }
-                            XmlRole { name: "iconified_label"; query: "iconified_label_with_index/string()" }
+                            XmlListModelRole { name: "label"; query: "label_with_index/string()" }
+                            XmlListModelRole { name: "iconified_label"; query: "iconified_label_with_index/string()" }
                             onXmlChanged: dependentParCurrentIndex = dependentPar.currentIndex
                         }
                         onCurrentIndexChanged: {
@@ -260,7 +260,7 @@ EaComponents.SideBarColumn {
                         model: XmlListModel {
                             xml: "<root><item><operator>=</operator><icon>\uf52c</icon></item><item><operator>&gt;</operator><icon>\uf531</icon></item><item><operator>&lt;</operator><icon>\uf536</icon></item></root>"
                             query: "/root/item"
-                            XmlRole { name: "icon"; query: "icon/string()" }
+                            XmlListModelRole { name: "icon"; query: "icon/string()" }
                         }
                     }
 
@@ -278,8 +278,8 @@ EaComponents.SideBarColumn {
                         model: XmlListModel {
                             xml: ExGlobals.Constants.proxy.parameters.parametersAsXml
                             query: "/root/item"
-                            XmlRole { name: "label"; query: "label_with_index/string()" }
-                            XmlRole { name: "iconified_label"; query: "iconified_label_with_index/string()" }
+                            XmlListModelRole { name: "label"; query: "label_with_index/string()" }
+                            XmlListModelRole { name: "iconified_label"; query: "iconified_label_with_index/string()" }
                             onXmlChanged: independentParCurrentIndex = independentPar.currentIndex
                         }
                         onCurrentIndexChanged: {
@@ -298,7 +298,7 @@ EaComponents.SideBarColumn {
                         model: XmlListModel {
                             xml: "<root><item><operator>*</operator><icon>\uf00d</icon></item><item><operator>/</operator><icon>\uf529</icon></item><item><operator>+</operator><icon>\uf067</icon></item><item><operator>-</operator><icon>\uf068</icon></item></root>"
                             query: "/root/item"
-                            XmlRole { name: "icon"; query: "icon/string()" }
+                            XmlListModelRole { name: "icon"; query: "icon/string()" }
                         }
                     }
 

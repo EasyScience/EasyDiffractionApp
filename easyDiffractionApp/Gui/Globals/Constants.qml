@@ -4,7 +4,7 @@
 
 pragma Singleton
 
-import QtQuick 2.13
+import QtQuick
 
 import easyApp.Gui.Globals 1.0 as EaGlobals
 import Gui.Logic 1.0 as ExLogic

@@ -10,7 +10,7 @@ import numpy as np
 import pathlib
 import json
 
-from PySide2.QtCore import Signal, QObject
+from PySide6.QtCore import Signal, QObject
 
 from easyCore import np
 

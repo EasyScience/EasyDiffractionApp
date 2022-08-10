@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: BSD-3-Clause
 // © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.XmlListModel 2.13
+import QtQuick
+import QtQuick.Controls
+import QtQml.XmlListModel
 
 import easyApp.Gui.Globals 1.0 as EaGlobals
 import easyApp.Gui.Style 1.0 as EaStyle
@@ -26,9 +26,9 @@ EaComponents.TableView {
         xml: ExGlobals.Constants.proxy.project.projectExamplesAsXml
         query: "/root/item"
 
-        XmlRole { name: "name"; query: "name/string()" }
-        XmlRole { name: "description"; query: "description/string()" }
-        XmlRole { name: "path"; query: "path/string()" }
+        XmlListModelRole { name: "name"; query: "name/string()" }
+        XmlListModelRole { name: "description"; query: "description/string()" }
+        XmlListModelRole { name: "path"; query: "path/string()" }
     }
 
     // Table rows

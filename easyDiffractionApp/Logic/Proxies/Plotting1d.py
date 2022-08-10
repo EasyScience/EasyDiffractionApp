@@ -5,7 +5,7 @@
 __author__ = 'github.com/andrewsazonov'
 __version__ = '0.0.1'
 
-from PySide2.QtCore import QObject, Signal, Slot, Property
+from PySide6.QtCore import QObject, Signal, Slot, Property
 from easyDiffractionApp.Logic.Plotting1d import Plotting1dLogic
 
 

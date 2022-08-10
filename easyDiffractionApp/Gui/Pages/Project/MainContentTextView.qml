@@ -1,5 +1,5 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
+import QtQuick
+import QtQuick.Controls
 
 import easyApp.Gui.Style 1.0 as EaStyle
 // SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>

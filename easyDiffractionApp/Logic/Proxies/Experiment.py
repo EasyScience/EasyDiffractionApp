@@ -5,7 +5,7 @@
 
 import os
 
-from PySide2.QtCore import QObject, Signal, Slot, Property
+from PySide6.QtCore import QObject, Signal, Slot, Property
 
 
 class ExperimentProxy(QObject):

@@ -7,8 +7,8 @@ import cv2
 import time
 import numpy as np
 from threading import Thread
-from PySide2.QtCore import QObject, Signal, Slot
-from PySide2.QtWidgets import QApplication
+from PySide6.QtCore import QObject, Signal, Slot
+from PySide6.QtWidgets import QApplication
 
 
 class ScreenRecorder(QObject):

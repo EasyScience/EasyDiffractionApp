@@ -8,7 +8,7 @@ from typing import Union
 from dicttoxml import dicttoxml
 import json
 
-from PySide2.QtCore import Signal, QObject
+from PySide6.QtCore import Signal, QObject
 
 from easyCore import np, borg
 

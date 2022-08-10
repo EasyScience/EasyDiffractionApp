@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: BSD-3-Clause
 // © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
-import QtQuick 2.13
+import QtQuick
 
 import Gui.Logic 1.0 as ExLogic
 import Gui.Globals 1.0 as ExGlobals

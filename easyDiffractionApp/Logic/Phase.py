@@ -6,7 +6,7 @@
 import re
 from dicttoxml import dicttoxml
 
-from PySide2.QtCore import Signal, QObject
+from PySide6.QtCore import Signal, QObject
 
 from easyCore import np, borg
 from easyDiffractionLib import Phases, Phase, Lattice, Site, SpaceGroup

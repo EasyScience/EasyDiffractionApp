@@ -5,7 +5,7 @@
 __author__ = 'github.com/AndrewSazonov'
 __version__ = '0.0.1'
 
-from PySide2.QtCore import QObject, Property, Signal, Slot
+from PySide6.QtCore import QObject, Property, Signal, Slot
 
 
 class BackgroundProxy(QObject):

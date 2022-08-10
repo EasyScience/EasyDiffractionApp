@@ -5,10 +5,10 @@
 import numpy as np
 import scipy
 
-from PySide2.QtCore import QObject, Qt, QPointF, Signal
-from PySide2.QtGui import QImage, QBrush
-from PySide2.QtQml import QJSValue
-from PySide2.QtCharts import QtCharts
+from PySide6.QtCore import QObject, Qt, QPointF, Signal
+from PySide6.QtGui import QImage, QBrush
+from PySide6.QtQml import QJSValue
+from PySide6.QtCharts import QLineSeries, QScatterSeries
 
 
 class Plotting1dLogic(QObject):
@@ -235,7 +235,7 @@ class Plotting1dLogic(QObject):
                 self._setQtChartsDifferenceDataObj()
 
     def lineSeriesCustomReplace(self, line_series, points):
-        if not isinstance(line_series, (QtCharts.QLineSeries, QtCharts.QScatterSeries)):
+        if not isinstance(line_series, (QLineSeries, QScatterSeries)):
             return
         if points is None:
             return

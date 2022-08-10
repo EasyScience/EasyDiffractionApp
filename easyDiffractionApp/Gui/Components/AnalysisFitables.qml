@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: BSD-3-Clause
 // © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.XmlListModel 2.13
+import QtQuick
+import QtQuick.Controls
+import QtQml.XmlListModel
 
 import easyApp.Gui.Globals 1.0 as EaGlobals
 import easyApp.Gui.Style 1.0 as EaStyle
@@ -29,14 +29,14 @@ EaComponents.TableView {
 
         query: "/root/item"
 
-        XmlRole { name: "id"; query: "id/string()" }
-        XmlRole { name: "number"; query: "number/number()" }
-        XmlRole { name: "label"; query: "label/string()" }
-        XmlRole { name: "iconified_label"; query: "iconified_label/string()" }
-        XmlRole { name: "value"; query: "value/number()" }
-        XmlRole { name: "unit"; query: "unit/string()" }
-        XmlRole { name: "error"; query: "error/number()" }
-        XmlRole { name: "fit"; query: "fit/number()" }
+        XmlListModelRole { name: "id"; query: "id/string()" }
+        XmlListModelRole { name: "number"; query: "number/number()" }
+        XmlListModelRole { name: "label"; query: "label/string()" }
+        XmlListModelRole { name: "iconified_label"; query: "iconified_label/string()" }
+        XmlListModelRole { name: "value"; query: "value/number()" }
+        XmlListModelRole { name: "unit"; query: "unit/string()" }
+        XmlListModelRole { name: "error"; query: "error/number()" }
+        XmlListModelRole { name: "fit"; query: "fit/number()" }
 
         onStatusChanged: {
             if (status === XmlListModel.Ready) {

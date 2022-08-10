@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: BSD-3-Clause
 // © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.XmlListModel 2.13
+import QtQuick
+import QtQuick.Controls
+import QtQml.XmlListModel
 
 import easyApp.Gui.Globals 1.0 as EaGlobals
 import easyApp.Gui.Style 1.0 as EaStyle
@@ -29,19 +29,19 @@ EaComponents.TableView {
         xml: ExGlobals.Constants.proxy.phase.phasesAsXml
         query: `/root/item[${phaseIndex}]/atoms/data/item`
 
-        XmlRole { name: "label"; query: "label/value/string()" }
-        XmlRole { name: "type"; query: "specie/value/string()" }
-        XmlRole { name: "x"; query: "fract_x/value/number()" }
-        XmlRole { name: "y"; query: "fract_y/value/number()" }
-        XmlRole { name: "z"; query: "fract_z/value/number()" }
-        XmlRole { name: "occupancy"; query: "occupancy/value/number()" }
+        XmlListModelRole { name: "label"; query: "label/value/string()" }
+        XmlListModelRole { name: "type"; query: "specie/value/string()" }
+        XmlListModelRole { name: "x"; query: "fract_x/value/number()" }
+        XmlListModelRole { name: "y"; query: "fract_y/value/number()" }
+        XmlListModelRole { name: "z"; query: "fract_z/value/number()" }
+        XmlListModelRole { name: "occupancy"; query: "occupancy/value/number()" }
 
-        XmlRole { name: "labelId"; query: "label/key[4]/string()" }
-        XmlRole { name: "typeId"; query: "specie/key[4]/string()" }
-        XmlRole { name: "xId"; query: "fract_x/key[4]/string()" }
-        XmlRole { name: "yId"; query: "fract_y/key[4]/string()" }
-        XmlRole { name: "zId"; query: "fract_z/key[4]/string()" }
-        XmlRole { name: "occupancyId"; query: "occupancy/key[4]/string()" }
+        XmlListModelRole { name: "labelId"; query: "label/key[4]/string()" }
+        XmlListModelRole { name: "typeId"; query: "specie/key[4]/string()" }
+        XmlListModelRole { name: "xId"; query: "fract_x/key[4]/string()" }
+        XmlListModelRole { name: "yId"; query: "fract_y/key[4]/string()" }
+        XmlListModelRole { name: "zId"; query: "fract_z/key[4]/string()" }
+        XmlListModelRole { name: "occupancyId"; query: "occupancy/key[4]/string()" }
     }
 
     // Table rows

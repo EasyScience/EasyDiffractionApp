@@ -10,12 +10,12 @@ import argparse
 import darkdetect
 
 # PySide
-from PySide2.QtCore import QUrl
-from PySide2.QtWidgets import QApplication
-from PySide2.QtGui import Qt, QIcon
-from PySide2.QtQml import QQmlApplicationEngine, qmlRegisterType
-from PySide2.QtWebEngine import QtWebEngine
-from PySide2.QtWebEngineWidgets import QWebEnginePage, QWebEngineView  # to call hook-PySide2.QtWebEngineWidgets.py
+from PySide6.QtCore import QUrl
+from PySide6.QtWidgets import QApplication
+from PySide6.QtGui import Qt, QIcon
+from PySide6.QtQml import QQmlApplicationEngine, qmlRegisterType
+from PySide6.QtWebEngineQuick import QtWebEngineQuick
+
 
 # easyScience
 import utils
@@ -67,7 +67,7 @@ def main():
     translations_path = os.path.join(package_path, *translations_dir.split('/'))
 
     # QtWebEngine
-    QtWebEngine.initialize()
+    QtWebEngineQuick.initialize()
 
     # Application
     app = App(sys.argv)
@@ -75,20 +75,20 @@ def main():
     app.setApplicationVersion(CONFIG['tool']['poetry']['version'])
     app.setOrganizationName(CONFIG['tool']['poetry']['name'])
     app.setOrganizationDomain(CONFIG['tool']['poetry']['name'])
-    app.setWindowIcon(QIcon(app_icon_path))
+#    app.setWindowIcon(QIcon(app_icon_path))
 
-    app.setWindowIcon(QIcon(os.path.join(package_path, 'Gui', 'Resources', 'Logo', 'App.png')))
+#    app.setWindowIcon(QIcon(os.path.join(package_path, 'Gui', 'Resources', 'Logo', 'App.png')))
     # QML application engine
     engine = QQmlApplicationEngine()
 
     # Python objects to be exposed to QML
     py_qml_proxy_obj = PyQmlProxy()
-    translator = Translator(app, engine, translations_path, languages)
+#    translator = Translator(app, engine, translations_path, languages)
 
     # Expose the Python objects to QML
     engine.rootContext().setContextProperty('_pyQmlProxyObj', py_qml_proxy_obj)
     engine.rootContext().setContextProperty('_settingsPath', settings_path)
-    engine.rootContext().setContextProperty('_translator', translator)
+#    engine.rootContext().setContextProperty('_translator', translator)
     engine.rootContext().setContextProperty('_projectConfig', CONFIG)
     engine.rootContext().setContextProperty('_isTestMode', args.testmode)
     try:
@@ -98,7 +98,7 @@ def main():
     engine.rootContext().setContextProperty('_isSystemThemeDark', isDark)
 
     # Register types to be instantiated in QML
-    qmlRegisterType(Updater, 'easyApp.Logic.Maintenance', 1, 0, 'Updater')
+#    qmlRegisterType(Updater, 'easyApp.Logic.Maintenance', 1, 0, 'Updater')
 
     # Add paths to search for installed modules
     engine.addImportPath(easyApp_path)

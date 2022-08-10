@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
-from PySide2.QtCore import QObject, Signal, Slot, Property
+from PySide6.QtCore import QObject, Signal, Slot, Property
 from easyCore.Utils.UndoRedo import property_stack_deco
 
 

@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: BSD-3-Clause
 // © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.XmlListModel 2.13
+import QtQuick
+import QtQuick.Controls
+import QtQml.XmlListModel
 
 import easyApp.Gui.Globals 1.0 as EaGlobals
 import easyApp.Gui.Style 1.0 as EaStyle
@@ -24,26 +24,26 @@ EaComponents.TableView {
         xml: ExGlobals.Constants.proxy.phase.phasesAsXml
         query: `/root/item[${phaseIndex}]`
 
-        XmlRole { name: "a"; query: "cell/length_a/value/number()" }
-        XmlRole { name: "b"; query: "cell/length_b/value/number()" }
-        XmlRole { name: "c"; query: "cell/length_c/value/number()" }
-        XmlRole { name: "alpha"; query: "cell/angle_alpha/value/number()" }
-        XmlRole { name: "beta"; query: "cell/angle_beta/value/number()" }
-        XmlRole { name: "gamma"; query: "cell/angle_gamma/value/number()" }
+        XmlListModelRole { name: "a"; query: "cell/length_a/value/number()" }
+        XmlListModelRole { name: "b"; query: "cell/length_b/value/number()" }
+        XmlListModelRole { name: "c"; query: "cell/length_c/value/number()" }
+        XmlListModelRole { name: "alpha"; query: "cell/angle_alpha/value/number()" }
+        XmlListModelRole { name: "beta"; query: "cell/angle_beta/value/number()" }
+        XmlListModelRole { name: "gamma"; query: "cell/angle_gamma/value/number()" }
 
-        XmlRole { name: "a_enabled"; query: "cell/length_a/enabled/string()"}
-        XmlRole { name: "b_enabled"; query: "cell/length_b/enabled/string()"}
-        XmlRole { name: "c_enabled"; query: "cell/length_c/enabled/string()"}
-        XmlRole { name: "alpha_enabled"; query: "cell/angle_alpha/enabled/string()" }
-        XmlRole { name: "beta_enabled"; query: "cell/angle_beta/enabled/string()"}
-        XmlRole { name: "gamma_enabled"; query: "cell/angle_gamma/enabled/string()"}
+        XmlListModelRole { name: "a_enabled"; query: "cell/length_a/enabled/string()"}
+        XmlListModelRole { name: "b_enabled"; query: "cell/length_b/enabled/string()"}
+        XmlListModelRole { name: "c_enabled"; query: "cell/length_c/enabled/string()"}
+        XmlListModelRole { name: "alpha_enabled"; query: "cell/angle_alpha/enabled/string()" }
+        XmlListModelRole { name: "beta_enabled"; query: "cell/angle_beta/enabled/string()"}
+        XmlListModelRole { name: "gamma_enabled"; query: "cell/angle_gamma/enabled/string()"}
 
-        XmlRole { name: "aId"; query: "cell/length_a/key[4]/string()" }
-        XmlRole { name: "bId"; query: "cell/length_b/key[4]/string()" }
-        XmlRole { name: "cId"; query: "cell/length_c/key[4]/string()" }
-        XmlRole { name: "alphaId"; query: "cell/angle_alpha/key[4]/string()" }
-        XmlRole { name: "betaId"; query: "cell/angle_beta/key[4]/string()" }
-        XmlRole { name: "gammaId"; query: "cell/angle_gamma/key[4]/string()" }
+        XmlListModelRole { name: "aId"; query: "cell/length_a/key[4]/string()" }
+        XmlListModelRole { name: "bId"; query: "cell/length_b/key[4]/string()" }
+        XmlListModelRole { name: "cId"; query: "cell/length_c/key[4]/string()" }
+        XmlListModelRole { name: "alphaId"; query: "cell/angle_alpha/key[4]/string()" }
+        XmlListModelRole { name: "betaId"; query: "cell/angle_beta/key[4]/string()" }
+        XmlListModelRole { name: "gammaId"; query: "cell/angle_gamma/key[4]/string()" }
     }
 
     // Table rows

@@ -1,6 +1,6 @@
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.XmlListModel 2.13
+import QtQuick
+import QtQuick.Controls
+import QtQml.XmlListModel
 
 import easyApp.Gui.Globals 1.0 as EaGlobals
 import easyApp.Gui.Style 1.0 as EaStyle
@@ -21,11 +21,11 @@ EaComponents.TableView {
         xml: ExGlobals.Constants.proxy.instrumentParametersAsXml
         query: `/root/item`
 
-        XmlRole { name: "x"; query: "resolution_x/value/number()" }
-        XmlRole { name: "y"; query: "resolution_y/value/number()" }
+        XmlListModelRole { name: "x"; query: "resolution_x/value/number()" }
+        XmlListModelRole { name: "y"; query: "resolution_y/value/number()" }
 
-        XmlRole { name: "xId"; query: "resolution_x/key[4]/string()" }
-        XmlRole { name: "yId"; query: "resolution_y/key[4]/string()" }
+        XmlListModelRole { name: "xId"; query: "resolution_x/key[4]/string()" }
+        XmlListModelRole { name: "yId"; query: "resolution_y/key[4]/string()" }
     }
 
     // Table rows

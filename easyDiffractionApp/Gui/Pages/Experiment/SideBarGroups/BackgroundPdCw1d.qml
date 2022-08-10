@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: BSD-3-Clause
 // © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.XmlListModel 2.13
+import QtQuick
+import QtQuick.Controls
+import QtQml.XmlListModel
 
 import easyApp.Gui.Style 1.0 as EaStyle
 import easyApp.Gui.Elements 1.0 as EaElements
@@ -45,13 +45,13 @@ Column {
                 xml: ExGlobals.Constants.proxy.background.asXml
                 query: "/root/item"
 
-                XmlRole { name: "x"; query: "x/value/number()" }
-                XmlRole { name: "y"; query: "y/value/number()" }
+                XmlListModelRole { name: "x"; query: "x/value/number()" }
+                XmlListModelRole { name: "y"; query: "y/value/number()" }
 
-                XmlRole { name: "pointName"; query: "name/string()" }
+                XmlListModelRole { name: "pointName"; query: "name/string()" }
 
-                XmlRole { name: "xId"; query: "x/key[4]/string()" }
-                XmlRole { name: "yId"; query: "y/key[4]/string()" }
+                XmlListModelRole { name: "xId"; query: "x/key[4]/string()" }
+                XmlListModelRole { name: "yId"; query: "y/key[4]/string()" }
             }
 
             // Table rows

@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: BSD-3-Clause
 // © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.XmlListModel 2.13
+import QtQuick
+import QtQuick.Controls
+import QtQml.XmlListModel
 
 import easyApp.Gui.Globals 1.0 as EaGlobals
 import easyApp.Gui.Style 1.0 as EaStyle
@@ -31,13 +31,13 @@ EaComponents.TableView  {
 
         query: "/root/item"
 
-        XmlRole { name: "number"; query: "number/number()" }
-        XmlRole { name: "dependentName"; query: "dependentName/string()" }
-        XmlRole { name: "relationalOperator"; query: "relationalOperator/string()" }
-        XmlRole { name: "value"; query: "value/number()" }
-        XmlRole { name: "arithmeticOperator"; query: "arithmeticOperator/string()" }
-        XmlRole { name: "independentName"; query: "independentName/string()" }
-        XmlRole { name: "enabled"; query: "enabled/number()" }
+        XmlListModelRole { name: "number"; query: "number/number()" }
+        XmlListModelRole { name: "dependentName"; query: "dependentName/string()" }
+        XmlListModelRole { name: "relationalOperator"; query: "relationalOperator/string()" }
+        XmlListModelRole { name: "value"; query: "value/number()" }
+        XmlListModelRole { name: "arithmeticOperator"; query: "arithmeticOperator/string()" }
+        XmlListModelRole { name: "independentName"; query: "independentName/string()" }
+        XmlListModelRole { name: "enabled"; query: "enabled/number()" }
     }
 
     // Table rows

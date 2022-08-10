@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: BSD-3-Clause
 // © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
-import QtQuick 2.13
-import QtQuick.Controls 2.13
-import QtQuick.XmlListModel 2.13
+import QtQuick
+import QtQuick.Controls
+import QtQml.XmlListModel
 
 import easyApp.Gui.Globals 1.0 as EaGlobals
 import easyApp.Gui.Style 1.0 as EaStyle
@@ -35,23 +35,23 @@ EaComponents.TableView {
         xml: ExGlobals.Constants.proxy.phase.phasesAsXml
         query: `/root/item[${phaseIndex}]/atoms/data/item`
 
-        XmlRole { name: "label"; query: "label/value/string()" }
-        XmlRole { name: "adpType"; query: "adp/adp_type/value/string()" }
-        XmlRole { name: "adpIso"; query: `adp/adp_class/Uiso/value/number()` }
-        XmlRole { name: "adpAni11"; query: "adp_ani_11/number()" }
-        XmlRole { name: "adpAni22"; query: "adp_ani_22/number()" }
-        XmlRole { name: "adpAni33"; query: "adp_ani_33/number()" }
-        XmlRole { name: "adpAni12"; query: "adp_ani_12/number()" }
-        XmlRole { name: "adpAni13"; query: "adp_ani_13/number()" }
-        XmlRole { name: "adpAni23"; query: "adp_ani_23/number()" }
+        XmlListModelRole { name: "label"; query: "label/value/string()" }
+        XmlListModelRole { name: "adpType"; query: "adp/adp_type/value/string()" }
+        XmlListModelRole { name: "adpIso"; query: `adp/adp_class/Uiso/value/number()` }
+        XmlListModelRole { name: "adpAni11"; query: "adp_ani_11/number()" }
+        XmlListModelRole { name: "adpAni22"; query: "adp_ani_22/number()" }
+        XmlListModelRole { name: "adpAni33"; query: "adp_ani_33/number()" }
+        XmlListModelRole { name: "adpAni12"; query: "adp_ani_12/number()" }
+        XmlListModelRole { name: "adpAni13"; query: "adp_ani_13/number()" }
+        XmlListModelRole { name: "adpAni23"; query: "adp_ani_23/number()" }
 
-        XmlRole { name: "adpIsoId"; query: "adp/adp_class/Uiso/key[4]/string()" }
-        XmlRole { name: "adpAni11Id"; query: "adp_ani_11/key[4]/string()" }
-        XmlRole { name: "adpAni22Id"; query: "adp_ani_22/key[4]/string()" }
-        XmlRole { name: "adpAni33Id"; query: "adp_ani_33/key[4]/string()" }
-        XmlRole { name: "adpAni12Id"; query: "adp_ani_12/key[4]/string()" }
-        XmlRole { name: "adpAni13Id"; query: "adp_ani_13/key[4]/string()" }
-        XmlRole { name: "adpAni23Id"; query: "adp_ani_23/key[4]/string()" }
+        XmlListModelRole { name: "adpIsoId"; query: "adp/adp_class/Uiso/key[4]/string()" }
+        XmlListModelRole { name: "adpAni11Id"; query: "adp_ani_11/key[4]/string()" }
+        XmlListModelRole { name: "adpAni22Id"; query: "adp_ani_22/key[4]/string()" }
+        XmlListModelRole { name: "adpAni33Id"; query: "adp_ani_33/key[4]/string()" }
+        XmlListModelRole { name: "adpAni12Id"; query: "adp_ani_12/key[4]/string()" }
+        XmlListModelRole { name: "adpAni13Id"; query: "adp_ani_13/key[4]/string()" }
+        XmlListModelRole { name: "adpAni23Id"; query: "adp_ani_23/key[4]/string()" }
     }
 
     // Table rows

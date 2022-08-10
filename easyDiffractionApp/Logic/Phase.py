@@ -31,7 +31,6 @@ class PhaseLogic(QObject):
         super().__init__(parent)
         self.parent = parent
         self._interface = interface
-        self.state = parent.l_parameters
         self.phases = Phases()
         self._phases_as_obj = []
         self._phases_as_xml = ""
@@ -123,14 +122,14 @@ class PhaseLogic(QObject):
         if self._phases_as_cif == phases_as_cif:
             return
         self.phases = Phases.from_cif_str(phases_as_cif)
-        self.parent.l_sample._sample.phases = self.phases
+        self.parent.setPhasesOnSample(self.phases)
         self.updateParameters()
 
     def _setPhasesAsObj(self):
         self._phases_as_obj = self.phases.as_dict(skip=['interface'])['data']
-        self.parent.l_plotting1d.setCalculatedDataForPhase()
+        self.parent.setCalculatedDataForPhase()
         # phase set - update xml so parameter table is also updated
-        self.parent.l_parameters.parametersChanged.emit()
+        self.parent.emitParametersChanged()
 
     def _setPhasesAsXml(self):
         self._phases_as_xml = dicttoxml(self._phases_as_obj, attr_type=True).decode()  # noqa: E501
@@ -147,7 +146,7 @@ class PhaseLogic(QObject):
 
     def updateParameters(self):
         self.parent.parametersChanged.emit()
-        self.parent.l_parameters.parametersChanged.emit()
+        self.parent.emitParametersChanged()
 
     def _spaceGroupSettingList(self):
         phases = self.phases
@@ -249,9 +248,9 @@ class PhaseLogic(QObject):
         self.updateParameters()
 
     def setCurrentExperimentDatasetName(self, name):
-        if self.parent.l_parameters._data.experiments[0].name == name:
+        if self.parent.pdata().experiments[0].name == name:
             return
-        self.parent.l_parameters._data.experiments[0].name = name
+        self.parent.setExperimentName(name)
         self.updateProjectInfo.emit(('experiments', name))
 
     def addSampleFromCif(self, cif_url):
@@ -288,4 +287,4 @@ class PhaseLogic(QObject):
         return result
 
     def _updateCalculatedData(self):
-        self.state._updateCalculatedData()
+        self.parent.updateCalculatedData()

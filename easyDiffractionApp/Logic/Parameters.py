@@ -119,7 +119,7 @@ class ParametersLogic(QObject):
         }
 
     def _setPatternParametersAsObj(self):
-        parameters = self.parent.l_sample._sample.pattern.as_dict(skip=['interface'])
+        parameters = self.parent.sample().pattern.as_dict(skip=['interface'])
         self._pattern_parameters_as_obj = parameters
 
     ####################################################################################################################
@@ -138,7 +138,7 @@ class ParametersLogic(QObject):
 
     def _setInstrumentParametersAsObj(self):
         # parameters = self._sample.parameters.as_dict()
-        parameters = self.parent.l_sample._sample.parameters.as_dict(skip=['interface'])
+        parameters = self.parent.sample().parameters.as_dict(skip=['interface'])
         self._instrument_parameters_as_obj = parameters
 
     def _setInstrumentParametersAsXml(self):
@@ -233,7 +233,7 @@ class ParametersLogic(QObject):
     def _setParametersAsObj(self):
         self._parameters_as_obj.clear()
 
-        par_ids, par_paths = generatePath(self.parent.l_sample._sample, True)
+        par_ids, par_paths = generatePath(self.parent.sample(), True)
         par_index = 0
 
         for par_id, par_path in zip(par_ids, par_paths):
@@ -244,11 +244,12 @@ class ParametersLogic(QObject):
                 continue
 
             # rename some groups of parameters and add experimental dataset name
-            par_path = par_path.replace('Instrument1DCWPolParameters.', f'Instrument.{self.parent.l_experiment.experimentDataAsObj()[0]["name"]}.')
-            par_path = par_path.replace('Instrument1DCWParameters.', f'Instrument.{self.parent.l_experiment.experimentDataAsObj()[0]["name"]}.')
-            par_path = par_path.replace('Instrument1DTOFParameters.', f'Instrument.{self.parent.l_experiment.experimentDataAsObj()[0]["name"]}.')
-            par_path = par_path.replace('PolPowder1DParameters.', f'Instrument.{self.parent.l_experiment.experimentDataAsObj()[0]["name"]}.')
-            par_path = par_path.replace('Powder1DParameters.', f'Instrument.{self.parent.l_experiment.experimentDataAsObj()[0]["name"]}.')
+            exp_name = self.parent.experimentName()
+            par_path = par_path.replace('Instrument1DCWPolParameters.', f'Instrument.{exp_name}.')
+            par_path = par_path.replace('Instrument1DCWParameters.', f'Instrument.{exp_name}.')
+            par_path = par_path.replace('Instrument1DTOFParameters.', f'Instrument.{exp_name}.')
+            par_path = par_path.replace('PolPowder1DParameters.', f'Instrument.{exp_name}.')
+            par_path = par_path.replace('Powder1DParameters.', f'Instrument.{exp_name}.')
             par_path = par_path.replace('.sigma0', '.resolution_sigma0')
             par_path = par_path.replace('.sigma1', '.resolution_sigma1')
             par_path = par_path.replace('.sigma2', '.resolution_sigma2')
@@ -357,35 +358,35 @@ class ParametersLogic(QObject):
     # Calculated data
     ####################################################################################################################
     def _updateCalculatedData(self):
-        if not self.parent.l_experiment._experiment_loaded and not self.parent.l_experiment._experiment_skipped:
+        if not self.parent.experimentLoaded() and not self.parent.experimentSkipped():
             return
 
-        self.parent.l_sample._sample.output_index = self.parent.l_phase._current_phase_index
+        self.parent.assignPhaseIndex()
 
         #  THIS IS WHERE WE WOULD LOOK UP CURRENT EXP INDEX
         sim = self._data.simulations[0]
 
-        if self.parent.l_experiment._experiment_loaded:
+        if self.parent.experimentLoaded():
             exp = self._data.experiments[0]
             sim.x = exp.x
 
-        elif self.parent.l_experiment._experiment_skipped:
+        elif self.parent.experimentSkipped():
             sim.x = self.sim_x()
 
         kwargs = {}
-        if self.parent.l_experiment.spin_polarized:
-            fn = self.parent.l_experiment.fn_aggregate
+        if self.parent.isSpinPolarized():
+            fn = self.parent.fnAggregate()
             kwargs["pol_fn"] = fn
             # save some kwargs on the interface object for use in the calculator
             # self._interface._InterfaceFactoryTemplate__interface_obj.saved_kwargs = local_kwargs
 
         sim.y = self._interface.fit_func(sim.x, **kwargs)
-        if self.parent.l_experiment.spin_polarized:
-            self.parent.l_experiment.setSpinComponent()
+        if self.parent.isSpinPolarized():
+            self.parent.setSpinComponent()
         else:
             self.plotCalculatedDataSignal.emit((sim.x, sim.y))
 
-        for phase_index, phase_name in enumerate([str(phase._borg.map.convert_id(phase).int) for phase in self.parent.l_phase.phases]):
+        for phase_index, phase_name in enumerate([str(phase._borg.map.convert_id(phase).int) for phase in self.parent.phases()]):
             hkl = self._interface.get_hkl(x_array=sim.x, phase_name=phase_name, encoded_name=True)
             if 'ttheta' in hkl.keys():
                 self.plotBraggDataSignal.emit((phase_index, hkl['ttheta'], hkl['h'], hkl['k'], hkl['l']))  # noqa: E501

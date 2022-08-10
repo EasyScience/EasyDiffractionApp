@@ -122,6 +122,9 @@ class LogicController(QObject):
     def initializeBorg(self):
         self.l_stack.initializeBorg()
 
+    def assignPhaseIndex(self):
+        self.sample().output_index = self.l_phase._current_phase_index
+
     def resetState(self):
         self.l_fitting.setCurrentCalculatorIndex(0)
         if self.l_phase.samplesPresent():
@@ -160,6 +163,9 @@ class LogicController(QObject):
             self.l_parameters._data.experiments[0].eb = np.zeros(length)
             self.l_experiment.spin_polarized = False
 
+    def fnAggregate(self):
+        return self.l_experiment.fn_aggregate
+
     def sampleBackgrounds(self):
         return self.l_sample._sample.pattern.backgrounds
 
@@ -185,17 +191,32 @@ class LogicController(QObject):
     def experimentType(self):
         return self.l_sample.experimentType
 
+    def experimentLoaded(self):
+        return self.l_experiment._experiment_loaded
+
+    def experimentSkipped(self):
+        return self.l_experiment._experiment_skipped
+
+    def experimentName(self):
+        return self.l_experiment.experimentDataAsObj()[0]["name"]
+
     def getSampleAsDict(self):
         return self.l_sample._sample.as_dict(skip=['interface','calculator'])
 
     def setPhaseScale(self, phase_label, phase_scale):
         self.l_phase.phases[phase_label].scale = phase_scale
 
+    def setCalculatedDataForPhase(self):
+        self.l_plotting1d.setCalculatedDataForPhase()
+
     def phases(self):
         return self.l_phase.phases
 
     def phasesAsObjChanged(self):
         self.l_phase.phasesAsObjChanged.emit()
+
+    def setPhasesOnSample(self, phases):
+        self.l_sample._sample.phases = phases
 
     def sim_x(self):
         return self.l_parameters.sim_x()
@@ -208,6 +229,9 @@ class LogicController(QObject):
 
     def onPatternParametersChanged(self):
         self.l_parameters._onPatternParametersChanged()
+
+    def emitParametersChanged(self):
+        self.l_parameters.parametersChanged.emit()
 
     def setPatternParametersAsObj(self):
         self.l_parameters._setPatternParametersAsObj()

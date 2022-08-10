@@ -258,6 +258,18 @@ EaComponents.SideBarColumn {
     }
 
     EaElements.GroupBox {
+        title: qsTr("Peak asymmetry")
+        enabled: ExGlobals.Constants.proxy.experiment.experimentLoaded ||
+                 ExGlobals.Constants.proxy.experiment.experimentSkipped
+
+        Loader {
+            source: {
+                    return 'SideBarGroups/PeakAsymmetry.qml'
+            }
+        }
+    }
+
+    EaElements.GroupBox {
         title: qsTr("Peak profile")
         enabled: ExGlobals.Constants.proxy.experiment.experimentLoaded ||
                  ExGlobals.Constants.proxy.experiment.experimentSkipped

@@ -17,6 +17,8 @@ class PhaseProxy(QObject):
     phasesAsCifChanged = Signal()
     currentPhaseChanged = Signal()
     phasesEnabled = Signal()
+    stateChanged = Signal(bool)
+    projectInfoChanged = Signal()
     structureParametersChanged = Signal()
     structureViewChanged = Signal()
 
@@ -86,7 +88,7 @@ class PhaseProxy(QObject):
         self._setPhasesAsObj()
         self._setPhasesAsXml()
         self._setPhasesAsCif()
-        self.parent._project_proxy.stateChanged.emit(True)
+        self.stateChanged.emit(True)
 
     ####################################################################################################################
     # Phase: Add / Remove
@@ -120,7 +122,7 @@ class PhaseProxy(QObject):
         self.phasesEnabled.emit()
         self.phasesAsObjChanged.emit()
         self.structureParametersChanged.emit()
-        self.parent._project_proxy.projectInfoChanged.emit()
+        self.projectInfoChanged.emit()
 
     @Property(bool, notify=phasesEnabled)
     def samplesPresent(self) -> bool:
@@ -214,4 +216,4 @@ class PhaseProxy(QObject):
             return
         self.logic.setCurrentPhaseName(name)
         self.structureParametersChanged.emit()
-        self.parent._project_proxy.projectInfoChanged.emit()
+        self.projectInfoChanged.emit()

@@ -55,6 +55,8 @@ class PyQmlProxy(QObject):
         self._fitting_proxy.currentMinimizerChanged.connect(self.statusInfoChanged)
         self._fitting_proxy.currentMinimizerMethodChanged.connect(self.statusInfoChanged)
         self._project_proxy.removeExperiment.connect(self._experiment_proxy.removeExperiment)
+        self._phase_proxy.stateChanged.connect(self._project_proxy.stateChanged)
+        self._phase_proxy.projectInfoChanged.connect(self._project_proxy.projectInfoChanged)
         # Constraints
         self._fitting_proxy.constraintsModified.connect(self._parameters_proxy._setParametersAsObj)
         self._fitting_proxy.constraintsModified.connect(self._parameters_proxy._setParametersAsXml)

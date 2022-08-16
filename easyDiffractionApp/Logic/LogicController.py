@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
-import json
 import numpy as np
 
 from PySide2.QtCore import QObject, Signal
@@ -22,6 +21,9 @@ from easyDiffractionLib.interface import InterfaceFactory
 
 
 class LogicController(QObject):
+    """
+    Controller class for communication between the logic components.
+    """
     parametersChanged = Signal()
 
     def __init__(self, parent):
@@ -115,6 +117,9 @@ class LogicController(QObject):
     def plotCalculatedData(self, data):
         self.l_plotting1d.setCalculatedData(data[0], data[1])
 
+    def calculatorListChanged(self):
+        self.proxy.fitting.calculatorListChanged.emit()
+
     def plotBraggData(self, data):
         self.l_plotting1d.setBraggData(data[0], data[1], data[2], data[3], data[4])  # noqa: E501
 
@@ -174,8 +179,8 @@ class LogicController(QObject):
             self.l_experiment.setSpinComponent()
 
     def setExperimentLoaded(self, loaded=True):
-            self.l_experiment.experimentLoaded(loaded)
-            self.l_experiment.experimentSkipped(not loaded)
+        self.l_experiment.experimentLoaded(loaded)
+        self.l_experiment.experimentSkipped(not loaded)
 
     def removeExperiment(self, skipped=False):
         self.l_experiment.experimentLoaded(False)
@@ -200,7 +205,7 @@ class LogicController(QObject):
         return self.l_experiment.experimentDataAsObj()[0]["name"]
 
     def getSampleAsDict(self):
-        return self.l_sample._sample.as_dict(skip=['interface','calculator'])
+        return self.l_sample._sample.as_dict(skip=['interface', 'calculator'])
 
     def setPhaseScale(self, phase_label, phase_scale):
         self.l_phase.phases[phase_label].scale = phase_scale
@@ -222,9 +227,6 @@ class LogicController(QObject):
 
     def getPhaseNames(self):
         return self.l_phase.phases.phase_names
-
-    def phases(self):
-        return self.l_phase.phases
 
     def onPatternParametersChanged(self):
         self.l_parameters._onPatternParametersChanged()

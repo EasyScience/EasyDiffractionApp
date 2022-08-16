@@ -229,7 +229,7 @@ class ExperimentLogic(QObject):
         self.experiments = [{'name': experiment.name} for experiment in self.parent.pdata().experiments]
         self.experimentLoaded(True)
         self.experimentSkipped(False)
-        # need to update parameters in all the places.
+        # slot in Exp proxy -> notify parameter proxy
         self.structureParametersChanged.emit()
 
     def addExperimentDataFromXye(self, file_url):
@@ -298,6 +298,7 @@ class ExperimentLogic(QObject):
 
     def _onPatternParametersChanged(self):
         self.parent.setPatternParametersAsObj()
+        # slot in Exp proxy -> notify Param proxy
         self.patternParametersAsObjChanged.emit()
 
     def onClearFrontendState(self):

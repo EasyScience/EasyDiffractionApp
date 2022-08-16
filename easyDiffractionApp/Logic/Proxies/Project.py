@@ -101,6 +101,7 @@ class ProjectProxy(QObject):
     @Slot()
     def resetState(self):
         self.logic.resetState()
+        self.removeExperiment.emit()
         self.logic.stateHasChanged(False)
         self.stateChanged.emit(False)
 

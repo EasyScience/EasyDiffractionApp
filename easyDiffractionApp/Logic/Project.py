@@ -257,7 +257,6 @@ class ProjectLogic(QObject):
         self.setProjectCreated(False)
         self.projectInfoChanged.emit()
         self.project_save_filepath = ""
-        self.removeExperiment.emit()
         self.parent.resetState()
 
     def updateProjectInfo(self, key_value):

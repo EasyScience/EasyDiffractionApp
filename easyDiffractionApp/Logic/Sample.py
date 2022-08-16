@@ -120,5 +120,5 @@ class SampleLogic(QObject):
 
         self._sample.interface = interface
         self.parent.phasesAsObjChanged()
-        self.parent.proxy.fitting.calculatorListChanged.emit()
+        self.parent.calculatorListChanged()
 

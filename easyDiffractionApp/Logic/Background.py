@@ -30,7 +30,7 @@ class BackgroundLogic(QObject):
         self._background_as_obj = self._background_obj()
 
     def _background_obj(self):
-        bgs = self.parent.sample().pattern.backgrounds
+        bgs = self.parent.sampleBackgrounds()
         itm = None
         if len(bgs) > 0:
             itm = bgs[0]
@@ -80,7 +80,7 @@ class BackgroundLogic(QObject):
         container = None
         if container_type is None:
             container = self._bg_types[self._default_type]['container']
-        self.parent.sample().pattern.backgrounds.append(
+        self.parent.sampleBackgrounds().append(
             # TODO we will be the current exp name and use it here.
             container(linked_experiment=experiment_name)
         )

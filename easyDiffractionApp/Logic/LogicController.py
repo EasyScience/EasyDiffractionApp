@@ -65,11 +65,9 @@ class LogicController(QObject):
 
         self.l_fitting.fitFinished.connect(self.parametersChanged)
         self.l_fitting.fitFinished.connect(self.l_parameters.parametersChanged)
-        self.l_fitting.currentCalculatorChanged.connect(self.proxy.currentCalculatorChanged)
 
         self.l_project.phasesEnabled.connect(self.l_phase.phasesEnabled)
         self.l_project.phasesAsObjChanged.connect(self.l_phase.phasesAsObjChanged)
-        # self.l_project.experimentDataAdded.connect(self.l_experiment._onExperimentDataAdded)
         self.l_project.structureParametersChanged.connect(self.l_phase.structureParametersChanged)
 
         # the following data update is required for undo/redo.
@@ -107,6 +105,9 @@ class LogicController(QObject):
 
     def pdata(self):
         return self.l_parameters._data
+
+    def experiments(self):
+        return self.pdata().experiments
 
     def setExperimentName(self, name=""):
         self.l_parameters._data.experiments[0].name = name
@@ -189,8 +190,8 @@ class LogicController(QObject):
             self.l_experiment.experimentSkipped(True)
             self.l_experiment.experimentSkippedChanged.emit()
 
-    def setExperimentType(self, type=""):
-        self.l_sample.experimentType = type
+    def setExperimentType(self, t=""):
+        self.l_sample.experimentType = t
 
     def experimentType(self):
         return self.l_sample.experimentType

@@ -80,9 +80,6 @@ class ExperimentLogic(QObject):
         value = block.find_value("_diffrn_radiation_efficiency")
         if value is not None:
             pattern_parameters.beam.efficiency = float(value)
-
-        # Get pattern parameters
-        pattern_parameters = self.parent.sample().pattern
         value = block.find_value("_setup_offset_2theta")
         if value is not None:
             pattern_parameters.zero_shift = float(value)
@@ -120,7 +117,7 @@ class ExperimentLogic(QObject):
                 self.parent.setPhaseScale(phase_label, phase_scale)
 
         # Get data
-        data = self.parent.pdata().experiments[0]
+        data = self.experiments()[0]
         # Polarized case
         data.x = np.fromiter(block.find_loop("_pd_meas_2theta"), float)
         data.y = np.fromiter(block.find_loop("_pd_meas_intensity_up"), float)
@@ -142,7 +139,7 @@ class ExperimentLogic(QObject):
     def _loadExperimentData(self, file_url):
         print("+ _loadExperimentData")
         file_path = generalizePath(file_url)
-        data = self.parent.pdata().experiments[0]
+        data = self.parent.experiments()[0]
         try:
             data.x, data.y, data.e, data.yb, data.eb = np.loadtxt(file_path, unpack=True)
             self.setPolarized(True)
@@ -199,7 +196,7 @@ class ExperimentLogic(QObject):
         return True
 
     def updateExperimentData(self, name=None):
-        self._experiment_data = self.parent.pdata().experiments[0]
+        self._experiment_data = self.parent.experiments()[0]
         self.experiments = [{'name': name}]
         self.setCurrentExperimentDatasetName(name)
         self.setPolarized(self.spin_polarized)
@@ -218,26 +215,26 @@ class ExperimentLogic(QObject):
         self.experimentSkippedChanged.emit()
 
     def experimentDataAsObj(self):
-        return [{'name': experiment.name} for experiment in self.parent.pdata().experiments]
+        return [{'name': experiment.name} for experiment in self.parent.experiments()]
 
     def _setExperimentDataAsXml(self):
         self._experiment_data_as_xml = dicttoxml(self.experiments, attr_type=True).decode()  # noqa: E501
 
     def addExperimentDataFromCif(self, file_url):
         self._experiment_data = self._loadExperimentCif(file_url)
+        self.newExperimentUpdate(file_url)
+
+    def addExperimentDataFromXye(self, file_url):
+        self._experiment_data = self._loadExperimentData(file_url)
+        self.newExperimentUpdate(file_url)
+
+    def newExperimentUpdate(self, file_url):
         self.parent.setExperimentName(pathlib.Path(file_url).stem)
-        self.experiments = [{'name': experiment.name} for experiment in self.parent.pdata().experiments]
+        self.experiments = [{'name': experiment.name} for experiment in self.parent.experiments()]
         self.experimentLoaded(True)
         self.experimentSkipped(False)
         # slot in Exp proxy -> notify parameter proxy
         self.structureParametersChanged.emit()
-
-    def addExperimentDataFromXye(self, file_url):
-        self._experiment_data = self._loadExperimentData(file_url)
-        self.parent.setExperimentName(pathlib.Path(file_url).stem)
-        self.experiments = [{'name': experiment.name} for experiment in self.parent.pdata().experiments]
-        self.experimentLoaded(True)
-        self.experimentSkipped(False)
 
     def addBackgroundDataFromCif(self, file_url):
         file_path = generalizePath(file_url)
@@ -286,9 +283,9 @@ class ExperimentLogic(QObject):
         self._experiment_parameters = \
             self._experimentDataParameters(self._experiment_data)
 
-        # non-kosher connection to foreign proxy. Ewwww :(
-        self.parent.proxy.parameters.simulationParametersAsObj = \
-            json.dumps(self._experiment_parameters)
+        # notify parameter proxy
+        params_json = json.dumps(self._experiment_parameters)
+        self.parent.setSimulationParameters(params_json)
 
         if len(self.parent.sampleBackgrounds()) == 0:
             self.parent.initializeContainer()

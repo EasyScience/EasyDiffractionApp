@@ -248,7 +248,7 @@ class PhaseLogic(QObject):
         self.updateParameters()
 
     def setCurrentExperimentDatasetName(self, name):
-        if self.parent.pdata().experiments[0].name == name:
+        if self.parent.experiments()[0].name == name:
             return
         self.parent.setExperimentName(name)
         self.updateProjectInfo.emit(('experiments', name))

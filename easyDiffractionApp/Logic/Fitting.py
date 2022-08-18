@@ -43,7 +43,7 @@ class FittingLogic(QObject):
 
         self.parent = parent
         self.interface = interface
-        self.fitter = CoreFitter(self.parent.sample, self.interface.fit_func)
+        self.fitter = CoreFitter(self.parent.sample(), self.interface.fit_func)
 
         # Multithreading
         # self._fitter_thread = None
@@ -271,13 +271,9 @@ class FittingLogic(QObject):
         self.parent.sample().update_bindings()
         self.currentCalculatorChanged.emit()
         print("***** _onCurrentCalculatorChanged")
-        self._onCurrentCalculatorChanged()
-        self.parent.updateCalculatedData()
-
-    def _onCurrentCalculatorChanged(self):
-        data = self.parent.pdata().simulations
-        data = data[0]
+        data = self.parent.pdata().simulations[0]
         data.name = f'{self.interface.current_interface_name} engine'
+        self.parent.updateCalculatedData()
 
     # Constraints
     def addConstraint(self, dependent_par_idx, relational_operator,

@@ -24,7 +24,6 @@ class ProjectLogic(QObject):
     projectCreatedChanged = Signal()
     projectInfoChanged = Signal()
     reset = Signal()
-    phasesEnabled = Signal()
     phasesAsObjChanged = Signal()
     structureParametersChanged = Signal()
     experimentDataAdded = Signal()

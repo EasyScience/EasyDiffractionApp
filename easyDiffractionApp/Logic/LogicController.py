@@ -59,24 +59,12 @@ class LogicController(QObject):
                                   callbacks_with_history=with_history)
 
     def setupSignals(self):
-        self.l_background.asObjChanged.connect(self.l_parameters.parametersChanged)
-        self.l_background.asObjChanged.connect(self.l_sample._sample.set_background)
-        self.l_background.asObjChanged.connect(self.l_parameters._updateCalculatedData)
-
         self.l_fitting.fitFinished.connect(self.parametersChanged)
         self.l_fitting.fitFinished.connect(self.l_parameters.parametersChanged)
 
-        self.l_project.phasesEnabled.connect(self.l_phase.phasesEnabled)
+        # self.l_project.phasesEnabled.connect(self.l_phase.phasesEnabled)
         self.l_project.phasesAsObjChanged.connect(self.l_phase.phasesAsObjChanged)
         self.l_project.structureParametersChanged.connect(self.l_phase.structureParametersChanged)
-
-        # the following data update is required for undo/redo.
-        self.parametersChanged.connect(self.l_parameters._updateCalculatedData)
-        self.parametersChanged.connect(self.l_phase.structureParametersChanged)
-        self.parametersChanged.connect(self.l_experiment._onPatternParametersChanged)
-        self.parametersChanged.connect(self.l_parameters.instrumentParametersChanged)
-        self.parametersChanged.connect(self.l_background.onAsObjChanged)
-        self.parametersChanged.connect(self.l_stack.undoRedoChanged)
 
         self.l_parameters.parametersValuesChanged.connect(self.parametersChanged)
         self.l_parameters.plotCalculatedDataSignal.connect(self.plotCalculatedData)
@@ -84,6 +72,7 @@ class LogicController(QObject):
         self.l_parameters.undoRedoChanged.connect(self.l_stack.undoRedoChanged)
 
         self.l_phase.updateProjectInfo.connect(self.l_project.updateProjectInfo)
+        self.parametersChanged.connect(self.onParametersChanged)
 
     def resetFactory(self):
         self.interface = InterfaceFactory()
@@ -173,6 +162,11 @@ class LogicController(QObject):
 
     def sampleBackgrounds(self):
         return self.l_sample._sample.pattern.backgrounds
+
+    def updateBackground(self, background):
+        self.l_parameters.parametersChanged.emit()
+        self.l_sample._sample.set_background(background)
+        self.l_parameters._updateCalculatedData()
 
     def updateBackgroundOnLoad(self):
         self.l_background.onAsObjChanged()
@@ -306,6 +300,14 @@ class LogicController(QObject):
 
     def notifyProjectChanged(self):
         self.l_project.projectInfoChanged.emit()
+
+    def onParametersChanged(self):
+        self.l_parameters._updateCalculatedData()
+        self.l_phase.structureParametersChanged.emit()
+        self.l_experiment._onPatternParametersChanged()
+        self.l_parameters.instrumentParametersChanged.emit()
+        self.l_background.onAsObjChanged()
+        self.l_stack.undoRedoChanged.emit()
 
     def recorder(self):
         rec = None

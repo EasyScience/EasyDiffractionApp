@@ -23,7 +23,7 @@ class PhaseLogic(QObject):
     phaseAdded = Signal()
     updateProjectInfo = Signal(tuple)
     structureParametersChanged = Signal()
-    phasesEnabled = Signal()  # from other logics
+    phasesEnabled = Signal()
     phasesAsObjChanged = Signal()
     phasesReplaced = Signal()
 

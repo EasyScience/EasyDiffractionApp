@@ -11,7 +11,7 @@ class ProjectProxy(QObject):
     dummySignal = Signal()
     stateChanged = Signal(bool)
     htmlExportingFinished = Signal(bool, str)
-    removeExperiment = Signal()
+    statusInfoChanged = Signal()
 
     def __init__(self, parent=None, logic=None):  # , interface=None):
         super().__init__(parent)
@@ -20,7 +20,6 @@ class ProjectProxy(QObject):
         self.stateChanged.connect(self._onStateChanged)
         self.logic.projectCreatedChanged.connect(self.projectCreatedChanged)
         self.logic.projectInfoChanged.connect(self.projectInfoChanged)
-        self.logic.removeExperiment.connect(self.removeExperiment)
 
     @Property('QVariant', notify=projectInfoChanged)
     def projectInfoAsJson(self):
@@ -101,7 +100,7 @@ class ProjectProxy(QObject):
     @Slot()
     def resetState(self):
         self.logic.resetState()
-        self.removeExperiment.emit()
+        self.parent.experiment.removeExperiment()
         self.logic.stateHasChanged(False)
         self.stateChanged.emit(False)
 
@@ -132,3 +131,11 @@ class ProjectProxy(QObject):
         success = self.logic.saveReport(filepath)
         self.htmlExportingFinished.emit(success, filepath)
 
+    # status
+    @Property('QVariant', notify=statusInfoChanged)
+    def statusModelAsObj(self):
+        return self.logic.statusModelAsObj()
+
+    @Property(str, notify=statusInfoChanged)
+    def statusModelAsXml(self):
+        return self.logic.statusModelAsXml()

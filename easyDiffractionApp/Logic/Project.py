@@ -27,7 +27,6 @@ class ProjectLogic(QObject):
     phasesAsObjChanged = Signal()
     structureParametersChanged = Signal()
     experimentDataAdded = Signal()
-    removeExperiment = Signal()
     experimentLoadedChanged = Signal()
 
     def __init__(self, parent=None , interface=None):
@@ -263,6 +262,11 @@ class ProjectLogic(QObject):
             self._project_info[key_value[0]] = key_value[1]
             self.projectInfoChanged.emit()
 
+    def statusModelAsObj(self):
+        return self.parent.statusModelAsObj()
+
+    def statusModelAsXml(self):
+        return self.parent.statusModelAsXml()
 
 def createFile(path, content):
     if os.path.exists(path):

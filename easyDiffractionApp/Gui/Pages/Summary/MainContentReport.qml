@@ -497,8 +497,8 @@ Item {
                   `<b>Analysis:</b> <a href="${ExGlobals.Constants.appUrl}">${ExGlobals.Constants.appName} v${ExGlobals.Constants.appVersion}</a><br>`,
                   `<b>Structure chart:</b> <a href="${ExGlobals.Variables.chemDoodleStructureChart.info.url}"> ChemDoodle Web Components v${ExGlobals.Variables.chemDoodleStructureChart.info.version}</a><br>`,
                   `<b>Data chart:</b> <a href="${dataChartLibUrl}"> BokehJS v${dataChartLibVersion}</a><br>`,
-                  `<b>Calculation engine:</b> ${ExGlobals.Constants.proxy.statusModelAsObj.calculation}<br>`,
-                  isFitting ? `<b>Minimization:</b> ${ExGlobals.Constants.proxy.statusModelAsObj.minimization}<br>` : '',
+                  `<b>Calculation engine:</b> ${ExGlobals.Constants.proxy.project.statusModelAsObj.calculation}<br>`,
+                  isFitting ? `<b>Minimization:</b> ${ExGlobals.Constants.proxy.project.statusModelAsObj.minimization}<br>` : '',
                   '</div>'
               ]
         return list.join('\n')

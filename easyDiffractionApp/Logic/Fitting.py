@@ -185,7 +185,6 @@ class FittingLogic(QObject):
         self.setFailedFitResults()
         self.finishFit()
 
-    # def fit(self, data):
     def fit(self):
         self.data = self.parent.pdata()
         if not self.fit_thread.is_alive():
@@ -202,7 +201,6 @@ class FittingLogic(QObject):
             return
         new_name = self.fitter.available_engines[new_index]
         self.fitter.switch_engine(new_name)
-        self.currentMinimizerChanged.emit()
 
     def onCurrentMinimizerChanged(self):
         idx = 0
@@ -215,7 +213,6 @@ class FittingLogic(QObject):
             # Bypass the property as it would be added to the stack.
             self._current_minimizer_method_index = idx
             self._current_minimizer_method_name = self.minimizerMethodNames()[idx]  # noqa: E501
-            self.currentMinimizerMethodChanged.emit()
         return
 
     def minimizerMethodNames(self):
@@ -233,7 +230,6 @@ class FittingLogic(QObject):
 
         self._current_minimizer_method_index = new_index
         self._current_minimizer_method_name = self.minimizerMethodNames()[new_index]  # noqa: E501
-        self.currentMinimizerMethodChanged.emit()
 
     def setNewEngine(self, engine=None, method=None):
         new_engine_index = self.fitter.available_engines.index(engine)
@@ -269,7 +265,6 @@ class FittingLogic(QObject):
         self.fitter = CoreFitter(self.parent.sample(), self.interface.fit_func)
 
         self.parent.sample().update_bindings()
-        self.currentCalculatorChanged.emit()
         print("***** _onCurrentCalculatorChanged")
         data = self.parent.pdata().simulations[0]
         data.name = f'{self.interface.current_interface_name} engine'

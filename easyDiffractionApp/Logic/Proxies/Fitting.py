@@ -25,6 +25,7 @@ class FittingProxy(QObject):
         super().__init__(parent)
 
         self.logic = logic.l_fitting
+        self.parent = parent
         self.logic.fitStarted.connect(self.fitFinishedNotify)
         self.logic.fitFinished.connect(self.fitFinishedNotify)
         self.logic.fitFinished.connect(self.fitResultsChanged)
@@ -63,6 +64,8 @@ class FittingProxy(QObject):
     @property_stack_deco('Minimizer change')
     def currentMinimizerIndex(self, new_index: int):
         self.logic.setCurrentMinimizerIndex(new_index)
+        self.currentMinimizerChanged.emit()
+        self.parent.project.statusInfoChanged.emit()
 
     # Minimizer method
     @Property('QVariant', notify=currentMinimizerChanged)
@@ -77,6 +80,8 @@ class FittingProxy(QObject):
     @property_stack_deco('Minimizer method change')
     def currentMinimizerMethodIndex(self, new_index: int):
         self.logic.currentMinimizerMethodIndex(new_index)
+        self.currentMinimizerMethodChanged.emit()
+        self.parent.project.statusInfoChanged.emit()
 
     def _onCurrentMinimizerMethodChanged(self):
         print("***** _onCurrentMinimizerMethodChanged")
@@ -97,6 +102,9 @@ class FittingProxy(QObject):
     @property_stack_deco('Calculation engine change')
     def currentCalculatorIndex(self, new_index: int):
         self.logic.setCurrentCalculatorIndex(new_index)
+        self.currentCalculatorChanged.emit()
+        self.parent.project.statusInfoChanged.emit()
+
 
     ####################################################################################################################
     # Constraints
@@ -107,7 +115,7 @@ class FittingProxy(QObject):
                       value, arithmetic_operator, independent_par_idx):
         self.logic.addConstraint(dependent_par_idx, relational_operator,
                                  value, arithmetic_operator, independent_par_idx)
-        self.constraintsModified.emit()
+        self.constraintsModified()
         self.constraintsChanged.emit()
 
     @Property(str, notify=constraintsChanged)
@@ -117,11 +125,16 @@ class FittingProxy(QObject):
     @Slot(int)
     def removeConstraintByIndex(self, index: int):
         self.logic.removeConstraintByIndex(index)
-        self.constraintsModified.emit()
+        self.constraintsModified()
         self.constraintsChanged.emit()
 
     @Slot(int, str)
     def toggleConstraintByIndex(self, index, enabled):
         self.logic.toggleConstraintByIndex(index, enabled)
-        self.constraintsModified.emit()
+        self.constraintsModified()
         self.constraintsChanged.emit()
+
+    def constraintsModified(self):
+        self.parent.parameters._setParametersAsObj()
+        self.parent.parameters._setParametersAsXml()
+        self.parent.parameters._onSimulationParametersChanged()

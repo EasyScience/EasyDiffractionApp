@@ -20,9 +20,6 @@ from easyDiffractionApp.Logic.Proxies.Stack import StackProxy
 
 class PyQmlProxy(QObject):
 
-    # Status info
-    statusInfoChanged = Signal()
-
     # Misc
     dummySignal = Signal()
 
@@ -45,18 +42,6 @@ class PyQmlProxy(QObject):
         self._phase_proxy = PhaseProxy(self, logic=self.lc)
         self._experiment_proxy = ExperimentProxy(self, logic=self.lc)
         self._sample_proxy = SampleProxy(self, logic=self.lc)
-
-        ################## signals from other proxies #################
-        self._fitting_proxy.currentCalculatorChanged.connect(self.statusInfoChanged)
-        self._fitting_proxy.currentMinimizerChanged.connect(self.statusInfoChanged)
-        self._fitting_proxy.currentMinimizerMethodChanged.connect(self.statusInfoChanged)
-        self._project_proxy.removeExperiment.connect(self._experiment_proxy.removeExperiment)
-        self._phase_proxy.stateChanged.connect(self._project_proxy.stateChanged)
-        self._phase_proxy.projectInfoChanged.connect(self._project_proxy.projectInfoChanged)
-        # Constraints
-        self._fitting_proxy.constraintsModified.connect(self._parameters_proxy._setParametersAsObj)
-        self._fitting_proxy.constraintsModified.connect(self._parameters_proxy._setParametersAsXml)
-        self._fitting_proxy.constraintsModified.connect(self._parameters_proxy._onSimulationParametersChanged)
 
         # start the undo/redo stack
         self.lc.initializeBorg()
@@ -116,15 +101,6 @@ class PyQmlProxy(QObject):
     @Property('QVariant', notify=dummySignal)
     def parameters(self):
         return self._parameters_proxy
-
-    # status
-    @Property('QVariant', notify=statusInfoChanged)
-    def statusModelAsObj(self):
-        return self.lc.statusModelAsObj()
-
-    @Property(str, notify=statusInfoChanged)
-    def statusModelAsXml(self):
-        return self.lc.statusModelAsXml()
 
     # screen recorder
     @Property('QVariant', notify=dummySignal)

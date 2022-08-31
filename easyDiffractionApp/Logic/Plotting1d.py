@@ -42,7 +42,6 @@ class Plotting1dLogic(QObject):
         # Lib
         self._libs = ['bokeh', 'qtcharts']
         self._current_lib = 'bokeh'
-        self.currentLibChanged.connect(self.onCurrentLibChanged)
 
         # Ranges
         self._measured_min_x = 999999
@@ -102,6 +101,7 @@ class Plotting1dLogic(QObject):
         if self._current_lib == lib:
             return
         self._current_lib = lib
+        self.onCurrentLibChanged()
         self.currentLibChanged.emit()
 
     def clearBackendState(self):

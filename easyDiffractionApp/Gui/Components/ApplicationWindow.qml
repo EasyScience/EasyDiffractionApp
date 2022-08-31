@@ -354,7 +354,7 @@ EaComponents.ApplicationWindow {
         visible: EaGlobals.Variables.appBarCurrentIndex !== 0
 
         model: XmlListModel {
-            xml: ExGlobals.Constants.proxy.statusModelAsXml
+            xml: ExGlobals.Constants.proxy.project.statusModelAsXml
             query: "/root/item"
 
             XmlRole { name: "label"; query: "label/string()" }

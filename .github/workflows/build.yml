@@ -86,6 +86,9 @@ jobs:
       - name: Create venv and install Python dependences
         run: poetry install
 
+      - name: Install extras # How to do it via poetry without pip?
+        run: poetry run pip install CFML GSASII --extra-index-url https://easyscience.github.io/pypi
+
       - name: Create freezed python app bundle
         run: poetry run python ${{ env.SCRIPTS_PATH }}/FreezeApp.py
 

@@ -108,6 +108,18 @@ class ExperimentLogic(QObject):
         value = block.find_value("_pd_instr_resolution_y")
         if value is not None:
             instrument_parameters.resolution_y = float(value)
+        value = block.find_value("_pd_instr_reflex_asymmetry_p1")
+        if value is not None:
+            instrument_parameters.reflex_asymmetry_p1 = float(value)
+        value = block.find_value("_pd_instr_reflex_asymmetry_p2")
+        if value is not None:
+            instrument_parameters.reflex_asymmetry_p2 = float(value)
+        value = block.find_value("_pd_instr_reflex_asymmetry_p3")
+        if value is not None:
+            instrument_parameters.reflex_asymmetry_p3 = float(value)
+        value = block.find_value("_pd_instr_reflex_asymmetry_p4")
+        if value is not None:
+            instrument_parameters.reflex_asymmetry_p4 = float(value)
 
         # Get phase parameters
         sample_phase_labels = self.parent.l_phase.phases.phase_names

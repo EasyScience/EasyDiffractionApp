@@ -39,6 +39,10 @@ class SampleLogic(QObject):
         sample.parameters.resolution_w = 0.3864
         sample.parameters.resolution_x = 0.0
         sample.parameters.resolution_y = 0.0  # 0.0961
+        sample.parameters.reflex_asymmetry_p1 = 0.0
+        sample.parameters.reflex_asymmetry_p2 = 0.0
+        sample.parameters.reflex_asymmetry_p3 = 0.0
+        sample.parameters.reflex_asymmetry_p4 = 0.0
         return sample
 
     def _defaultCWSample(self):

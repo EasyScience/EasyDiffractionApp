@@ -134,6 +134,10 @@ class ParametersLogic(QObject):
             "resolution_w": 0.01,
             "resolution_x": 0.0,
             "resolution_y": 0.0,
+            "reflex_asymmetry_p1": 0.0,
+            "reflex_asymmetry_p2": 0.0,
+            "reflex_asymmetry_p3": 0.0,
+            "reflex_asymmetry_p4": 0.0
         }
 
     def _setInstrumentParametersAsObj(self):

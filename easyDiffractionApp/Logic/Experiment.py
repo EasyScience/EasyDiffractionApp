@@ -117,7 +117,7 @@ class ExperimentLogic(QObject):
                 self.parent.setPhaseScale(phase_label, phase_scale)
 
         # Get data
-        data = self.experiments()[0]
+        data = self.parent.experiments()[0]
         # Polarized case
         data.x = np.fromiter(block.find_loop("_pd_meas_2theta"), float)
         data.y = np.fromiter(block.find_loop("_pd_meas_intensity_up"), float)

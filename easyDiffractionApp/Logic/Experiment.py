@@ -233,6 +233,7 @@ class ExperimentLogic(QObject):
         self._experiment_data_as_xml = dicttoxml(self.experiments, attr_type=True).decode()  # noqa: E501
 
     def addExperimentDataFromCif(self, file_url):
+        self.parent.shouldProfileBeCalculated = False # don't run update until we're done with setting parameters
         self._experiment_data = self._loadExperimentCif(file_url)
         self.newExperimentUpdate(file_url)
 
@@ -297,6 +298,7 @@ class ExperimentLogic(QObject):
 
         # notify parameter proxy
         params_json = json.dumps(self._experiment_parameters)
+        self.parent.shouldProfileBeCalculated = True # now we can run update
         self.parent.setSimulationParameters(params_json)
 
         if len(self.parent.sampleBackgrounds()) == 0:

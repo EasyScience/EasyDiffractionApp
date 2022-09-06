@@ -362,6 +362,8 @@ class ParametersLogic(QObject):
     # Calculated data
     ####################################################################################################################
     def _updateCalculatedData(self):
+        if not self.parent.shouldProfileBeCalculated:
+            return
         if not self.parent.experimentLoaded() and not self.parent.experimentSkipped():
             return
 

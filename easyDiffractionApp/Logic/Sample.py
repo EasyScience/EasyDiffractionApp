@@ -20,7 +20,6 @@ class SampleLogic(QObject):
         super().__init__(parent)
         self.parent = parent
         self._interface = interface
-        self._phases = parent.l_phase
         self._sample = self._defaultCWSample()
 
     ####################################################################################################################
@@ -47,7 +46,7 @@ class SampleLogic(QObject):
 
     def _defaultCWSample(self):
         sample = Sample(
-            phases=self._phases.phases,
+            phases=self.parent.phases(),
             parameters=Instrument1DCWParameters(),
             pattern=Powder1DParameters(),
             interface=self._interface)
@@ -57,7 +56,7 @@ class SampleLogic(QObject):
     def _defaultCWPolSample(self):
         # sample = super()._defaultCWSample()
         sample = Sample(
-            phases=self._phases.phases,
+            phases=self.parent.phases(),
             parameters=Instrument1DCWPolParameters(),
             pattern=PolPowder1DParameters(),
             interface=self._interface)
@@ -68,7 +67,7 @@ class SampleLogic(QObject):
 
     def _defaultTOFSample(self):
         sample = Sample(
-            phases=self._phases.phases,
+            phases=self.parent.phases(),
             parameters=Instrument1DTOFParameters(),
             pattern=Powder1DParameters(),
             interface=self._interface)
@@ -124,6 +123,6 @@ class SampleLogic(QObject):
             interface.switch(interfaces[0])
 
         self._sample.interface = interface
-        self.parent.l_phase.phasesAsObjChanged.emit()
-        self.parent.proxy.fitting.calculatorListChanged.emit()
+        self.parent.phasesAsObjChanged()
+        self.parent.calculatorListChanged()
 

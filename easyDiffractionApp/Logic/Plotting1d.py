@@ -42,7 +42,6 @@ class Plotting1dLogic(QObject):
         # Lib
         self._libs = ['bokeh', 'qtcharts']
         self._current_lib = 'bokeh'
-        self.currentLibChanged.connect(self.onCurrentLibChanged)
 
         # Ranges
         self._measured_min_x = 999999
@@ -102,6 +101,7 @@ class Plotting1dLogic(QObject):
         if self._current_lib == lib:
             return
         self._current_lib = lib
+        self.onCurrentLibChanged()
         self.currentLibChanged.emit()
 
     def clearBackendState(self):
@@ -305,15 +305,15 @@ class Plotting1dLogic(QObject):
         self.bokehMeasuredDataObjChanged.emit()
 
     def _setBokehPhasesDataObj(self):
-        for phase_index in range(len(self.parent.l_phase.phases)):
+        for phase_index in range(len(self.parent.phases())):
             # skip this step with try-except block until instrumental parameters are defined/loaded
             try:
-                if not self.parent.l_experiment.spin_polarized:
+                if not self.parent.isSpinPolarized():
                     yarray = self._interface.get_calculated_y_for_phase(phase_index)
                     is_diff = False
                 else:
                     phases_y = list(self._interface.get_component('phases').values())[phase_index]
-                    component = self.parent.l_experiment.spinComponent()
+                    component = self.parent.spinComponent()
                     is_diff = False
                     if component == "Sum":
                         yarray = phases_y["components"]["up"] + phases_y["components"]["down"]

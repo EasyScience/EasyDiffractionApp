@@ -11,14 +11,12 @@ from easyDiffractionLib.elements.Backgrounds.Point import PointBackground, Backg
 
 class BackgroundLogic(QObject):
 
-    asObjChanged = Signal('QVariant')
     asXmlChanged = Signal()
 
     def __init__(self, parent):
         super().__init__(parent)
         self.parent = parent
         self._background_as_xml = ""
-        self.asObjChanged.connect(self.onAsObjChanged)
         self.asXmlChanged.connect(self.updateChartBackground)
         self._bg_types = {
             'point': {
@@ -30,23 +28,23 @@ class BackgroundLogic(QObject):
         self._background_as_obj = self._background_obj()
 
     def _background_obj(self):
-        bgs = self.parent.l_sample._sample.pattern.backgrounds
+        bgs = self.parent.sampleBackgrounds()
         itm = None
         if len(bgs) > 0:
             itm = bgs[0]
         return itm
 
     def removeAllPoints(self):
-        self.asObjChanged.disconnect()
         for point_name in self._background_as_obj.names:
-            self.removePoint(point_name)
-        self.asObjChanged.connect(self.onAsObjChanged)
-        self.onAsObjChanged()
+            self.removePoint(point_name, silently=True)
+        self._background_as_obj = self._background_obj()
+        self._setAsXml()
 
     def onAsObjChanged(self):
         print(f"***** onAsObjChanged")
         self._background_as_obj = self._background_obj()
         self._setAsXml()
+        self.parent.updateBackground(self._background_as_obj)
 
     def _setAsXml(self):
         if self._background_as_obj is None:
@@ -74,13 +72,13 @@ class BackgroundLogic(QObject):
         self._background_as_obj.append(min_point)
         self._background_as_obj.append(max_point)
 
-        self.asObjChanged.emit(self._background_as_obj)
+        self.onAsObjChanged()
 
     def initializeContainer(self, experiment_name: str = 'current_exp', container_type=None):
         container = None
         if container_type is None:
             container = self._bg_types[self._default_type]['container']
-        self.parent.l_sample._sample.pattern.backgrounds.append(
+        self.parent.sampleBackgrounds().append(
             # TODO we will be the current exp name and use it here.
             container(linked_experiment=experiment_name)
         )
@@ -94,7 +92,7 @@ class BackgroundLogic(QObject):
         point = BackgroundPoint.from_pars(x=x, y=y)
         self._background_as_obj.append(point)
         if not silently:
-            self.asObjChanged.emit(self._background_as_obj)
+            self.onAsObjChanged()
 
     def addPoints(self, xarray, yarray):
         if self._background_as_obj is None:
@@ -103,7 +101,7 @@ class BackgroundLogic(QObject):
             print(f"+ add background point ({x}, {y})")
             point = BackgroundPoint.from_pars(x=x, y=y)
             self._background_as_obj.append(point)
-        self.asObjChanged.emit(self._background_as_obj)
+        self.onAsObjChanged()
 
     def addDefaultPoint(self):
         print(f"+ add default background point")
@@ -113,17 +111,17 @@ class BackgroundLogic(QObject):
             x = self._background_as_obj.x_sorted_points[-1] + 10.0
         self.addPoint(x, y)
 
-    def removePoint(self, point_name: str):
+    def removePoint(self, point_name: str, silently: bool = False):
         print(f"+ removeBackgroundPoint for point_name: {point_name}")
         point_names = self._background_as_obj.names
         point_index = point_names.index(point_name)
         del self._background_as_obj[point_index]
-
-        self.asObjChanged.emit(self._background_as_obj)
+        if not silently:
+            self.onAsObjChanged()
 
     def updateChartBackground(self):
         if self._background_as_obj is None:
             return
-        self.parent.l_plotting1d.setBackgroundData(
+        self.parent.setBackgroundData(
                             self._background_as_obj.x_sorted_points,
                             self._background_as_obj.y_sorted_points)

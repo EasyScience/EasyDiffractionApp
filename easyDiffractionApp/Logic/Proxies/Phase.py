@@ -30,7 +30,6 @@ class PhaseProxy(QObject):
         self.logic.structureParametersChanged.connect(self.structureParametersChanged)
 
         self.logic.phaseAdded.connect(self._onPhaseAdded)
-        self.logic.phaseAdded.connect(self.phasesEnabled)
         self.logic.phasesEnabled.connect(self.phasesEnabled)
         self.logic.phasesAsObjChanged.connect(self.phasesAsObjChanged)
         self.logic.phasesAsObjChanged.connect(self.structureViewChanged)
@@ -215,3 +214,4 @@ class PhaseProxy(QObject):
         self.logic.setCurrentPhaseName(name)
         self.structureParametersChanged.emit()
         self.parent._project_proxy.projectInfoChanged.emit()
+

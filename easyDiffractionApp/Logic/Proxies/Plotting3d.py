@@ -16,7 +16,6 @@ class Plotting3dProxy(QObject):
 
     def __init__(self, logic=None):
         super().__init__()
-        # self.parent = parent
         self.logic = logic.l_plotting3d
         self.current3dPlottingLibChanged.connect(self.onCurrent3dPlottingLibChanged)
 

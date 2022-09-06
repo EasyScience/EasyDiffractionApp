@@ -20,16 +20,18 @@ from easyApp.Logic.Utils.Utils import generalizePath
 class ExperimentLogic(QObject):
     """
     """
+    # signals controlled by LC
     experimentLoadedChanged = Signal()
     experimentSkippedChanged = Signal()
-    experimentDataChanged = Signal()
-    patternParametersAsObjChanged = Signal()
     clearFrontendState = Signal()
+
+    # signals controlled by our proxy
+    patternParametersAsObjChanged = Signal()
+    structureParametersChanged = Signal()
 
     def __init__(self, parent=None, interface=None):
         super().__init__(parent)
         self.parent = parent
-        self.state = parent.l_parameters
         self._interface = interface
         self._experiment_parameters = None
         self._experiment_data_as_xml = ""
@@ -60,27 +62,24 @@ class ExperimentLogic(QObject):
 
         # Get experiment type
         # Set default experiment type: powder1DCWunp
-        self.parent.l_sample.experimentType = 'powder1DCWunp'
+        self.parent.setExperimentType('powder1DCWunp')
         # Check if powder1DCWpol
         value = block.find_value("_diffrn_radiation_polarization")
         if value is not None:
-            self.parent.l_sample.experimentType = 'powder1DCWpol'
+            self.parent.setExperimentType('powder1DCWpol')
         # Check if powder1DTOFunp
         # ...
         # Check if powder1DTOFpol
         # ...
 
         # Get diffraction radiation parameters
-        pattern_parameters = self.parent.l_sample._sample.pattern
+        pattern_parameters = self.parent.sample().pattern
         value = block.find_value("_diffrn_radiation_polarization")
         if value is not None:
             pattern_parameters.beam.polarization = float(value)
         value = block.find_value("_diffrn_radiation_efficiency")
         if value is not None:
             pattern_parameters.beam.efficiency = float(value)
-
-        # Get pattern parameters
-        pattern_parameters = self.parent.l_sample._sample.pattern
         value = block.find_value("_setup_offset_2theta")
         if value is not None:
             pattern_parameters.zero_shift = float(value)
@@ -89,7 +88,7 @@ class ExperimentLogic(QObject):
             pattern_parameters.field = float(value)
 
         # Get instrumental parameters
-        instrument_parameters = self.parent.l_sample._sample.parameters
+        instrument_parameters = self.parent.sample().parameters
         value = block.find_value("_setup_wavelength")
         if value is not None:
             instrument_parameters.wavelength = float(value)
@@ -122,15 +121,15 @@ class ExperimentLogic(QObject):
             instrument_parameters.reflex_asymmetry_p4 = float(value)
 
         # Get phase parameters
-        sample_phase_labels = self.parent.l_phase.phases.phase_names
+        sample_phase_labels = self.parent.getPhaseNames()
         experiment_phase_labels = list(block.find_loop("_phase_label"))
         experiment_phase_scales = np.fromiter(block.find_loop("_phase_scale"), float)
         for (phase_label, phase_scale) in zip(experiment_phase_labels, experiment_phase_scales):
             if phase_label in sample_phase_labels:
-                self.parent.l_phase.phases[phase_label].scale = phase_scale
+                self.parent.setPhaseScale(phase_label, phase_scale)
 
         # Get data
-        data = self.state._data.experiments[0]
+        data = self.parent.experiments()[0]
         # Polarized case
         data.x = np.fromiter(block.find_loop("_pd_meas_2theta"), float)
         data.y = np.fromiter(block.find_loop("_pd_meas_intensity_up"), float)
@@ -152,7 +151,7 @@ class ExperimentLogic(QObject):
     def _loadExperimentData(self, file_url):
         print("+ _loadExperimentData")
         file_path = generalizePath(file_url)
-        data = self.state._data.experiments[0]
+        data = self.parent.experiments()[0]
         try:
             data.x, data.y, data.e, data.yb, data.eb = np.loadtxt(file_path, unpack=True)
             self.setPolarized(True)
@@ -186,7 +185,7 @@ class ExperimentLogic(QObject):
     def setPolarized(self, polarized: bool):
         if self.spin_polarized == polarized:
             return False
-        current_type = self.parent.l_sample.experimentType
+        current_type = self.parent.experimentType()
         if 'TOF' in current_type:
             return False # no polarized for TOF
 
@@ -203,10 +202,17 @@ class ExperimentLogic(QObject):
             if 'pol' in current_type:
                 current_type = current_type.replace('pol', 'unp')
 
-        self.parent.l_sample.experimentType = current_type
+        self.parent.setExperimentType(current_type)
         # need to recalculate the profile
-        self.state._updateCalculatedData()
+        self.parent.updateCalculatedData()
         return True
+
+    def updateExperimentData(self, name=None):
+        self._experiment_data = self.parent.experiments()[0]
+        self.experiments = [{'name': name}]
+        self.setCurrentExperimentDatasetName(name)
+        self.setPolarized(self.spin_polarized)
+        self._onExperimentDataAdded()
 
     def experimentLoaded(self, loaded: bool):
         if self._experiment_loaded == loaded:
@@ -221,26 +227,26 @@ class ExperimentLogic(QObject):
         self.experimentSkippedChanged.emit()
 
     def experimentDataAsObj(self):
-        return [{'name': experiment.name} for experiment in self.state._data.experiments]
+        return [{'name': experiment.name} for experiment in self.parent.experiments()]
 
     def _setExperimentDataAsXml(self):
         self._experiment_data_as_xml = dicttoxml(self.experiments, attr_type=True).decode()  # noqa: E501
 
     def addExperimentDataFromCif(self, file_url):
         self._experiment_data = self._loadExperimentCif(file_url)
-        self.state._data.experiments[0].name = pathlib.Path(file_url).stem
-        self.experiments = [{'name': experiment.name} for experiment in self.state._data.experiments]
-        self.experimentLoaded(True)
-        self.experimentSkipped(False)
-        # need to update parameters in all the places.
-        self.parent.l_phase.structureParametersChanged.emit()
+        self.newExperimentUpdate(file_url)
 
     def addExperimentDataFromXye(self, file_url):
         self._experiment_data = self._loadExperimentData(file_url)
-        self.state._data.experiments[0].name = pathlib.Path(file_url).stem
-        self.experiments = [{'name': experiment.name} for experiment in self.state._data.experiments]
+        self.newExperimentUpdate(file_url)
+
+    def newExperimentUpdate(self, file_url):
+        self.parent.setExperimentName(pathlib.Path(file_url).stem)
+        self.experiments = [{'name': experiment.name} for experiment in self.parent.experiments()]
         self.experimentLoaded(True)
         self.experimentSkipped(False)
+        # slot in Exp proxy -> notify parameter proxy
+        self.structureParametersChanged.emit()
 
     def addBackgroundDataFromCif(self, file_url):
         file_path = generalizePath(file_url)
@@ -248,68 +254,64 @@ class ExperimentLogic(QObject):
         # Get background
         background_2thetas = np.fromiter(block.find_loop("_pd_background_2theta"), float)
         background_intensities = np.fromiter(block.find_loop("_pd_background_intensity"), float)
-        self.parent.l_background.addPoints(background_2thetas, background_intensities)
-        self.parent.l_background._setAsXml()
-        self.parent.l_plotting1d.bokehBackgroundDataObjChanged.emit()
+        self.parent.setBackgroundPoints(background_2thetas, background_intensities)
 
     def removeExperiment(self):
-        if len(self.parent.l_sample._sample.pattern.backgrounds) > 0:
-            self.parent.l_background.removeAllPoints()
-        self.parent.l_fitting.removeAllConstraints()
-        self.setPolarized(False)
+        self.parent.removeBackgroundPoints()
+        self.parent.removeAllConstraints()
         self._current_spin_component = 'Sum'
         self.experiments.clear()
         self._experiment_data = None
         self.experimentLoaded(False)
         self.experimentSkipped(False)
+        self.setPolarized(False)
+        self.parent.clearFrontendState()
 
     def _onExperimentSkippedChanged(self):
-        self.state._updateCalculatedData()
+        self.parent.updateCalculatedData()
 
     def _onExperimentLoadedChanged(self):
-        self.state._onPatternParametersChanged()
+        self.parent.onPatternParametersChanged()
 
     def setCurrentExperimentDatasetName(self, name):
-        self.parent.l_phase.setCurrentExperimentDatasetName(name)
+        self.parent.setCurrentExperimentDatasetName(name)
 
     def initializeBackground(self):
-        self.parent.l_plotting1d.setMeasuredData(
-                                          self._experiment_data.x,
-                                          self._experiment_data.y + self._experiment_data.yb,
-                                          self._experiment_data.e + self._experiment_data.eb)
+        self.parent.setMeasuredData(
+                                    self._experiment_data.x,
+                                    self._experiment_data.y + self._experiment_data.yb,
+                                    self._experiment_data.e + self._experiment_data.eb)
 
-        self.parent.proxy.parameters.simulationParametersAsObj = \
-            json.dumps(self._experiment_parameters)
-        self.parent.l_background.initializeContainer()
+        self.parent.setSimulationParameters(json.dumps(self._experiment_parameters))
+        self.parent.initializeContainer()
 
     def _onExperimentDataAdded(self):
         print("***** _onExperimentDataAdded")
         # default settings are up+down
-        self.parent.l_plotting1d.setMeasuredData(
-                                          self._experiment_data.x,
-                                          self._experiment_data.y + self._experiment_data.yb,
-                                          self._experiment_data.e + self._experiment_data.eb)
+        self.parent.setMeasuredData(
+                                    self._experiment_data.x,
+                                    self._experiment_data.y + self._experiment_data.yb,
+                                    self._experiment_data.e + self._experiment_data.eb)
         self._experiment_parameters = \
             self._experimentDataParameters(self._experiment_data)
 
-        # non-kosher connection to foreign proxy. Ewwww :(
-        self.parent.proxy.parameters.simulationParametersAsObj = \
-            json.dumps(self._experiment_parameters)
+        # notify parameter proxy
+        params_json = json.dumps(self._experiment_parameters)
+        self.parent.setSimulationParameters(params_json)
 
-        if len(self.parent.l_sample._sample.pattern.backgrounds) == 0:
-            self.parent.l_background.initializeContainer()
+        if len(self.parent.sampleBackgrounds()) == 0:
+            self.parent.initializeContainer()
 
-        self.parent.l_project._project_info['experiments'] = \
-            self.parent.l_parameters._data.experiments[0].name
-
-        self.parent.l_project.projectInfoChanged.emit()
+        self.parent.setExperimentNameFromParameters()
+        self.parent.notifyProjectChanged()
 
     def _onPatternParametersChanged(self):
-        self.state._setPatternParametersAsObj()
+        self.parent.setPatternParametersAsObj()
+        # slot in Exp proxy -> notify Param proxy
         self.patternParametersAsObjChanged.emit()
 
     def onClearFrontendState(self):
-        self.parent.l_plotting1d.clearFrontendState()
+        self.parent.clearFrontendState()
 
     def spinComponent(self):
         return self._current_spin_component
@@ -336,7 +338,7 @@ class ExperimentLogic(QObject):
         if component is not None:
             self._current_spin_component = component
 
-        phase_label = self.parent.l_phase.phases.phase_names[0]
+        phase_label = self.parent.getPhaseNames()[0]
         components = self._interface.get_phase_components(phase_label)
         calc_y = components['components']['up']
         calc_yb = components['components']['down']
@@ -377,12 +379,12 @@ class ExperimentLogic(QObject):
         if has_experiment:
             sim_x = self._experiment_data.x
         else:
-            sim_x = self.state.sim_x()
-        self.parent.l_plotting1d.setBackgroundData(sim_x, bg)
+            sim_x = self.parent.sim_x()
+        self.parent.setBackgroundData(sim_x, bg)
         if has_experiment:
-            self.parent.l_plotting1d.setMeasuredData(self._experiment_data.x, y, e)
+            self.parent.setMeasuredData(self._experiment_data.x, y, e)
 
-        self.parent.l_plotting1d.setCalculatedData(sim_x, sim_y)
+        self.parent.setCalculatedData(sim_x, sim_y)
 
         return has_experiment
 

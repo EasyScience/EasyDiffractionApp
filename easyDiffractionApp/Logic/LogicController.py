@@ -121,7 +121,9 @@ class LogicController(QObject):
         self.sample().output_index = self.l_phase._current_phase_index
 
     def resetState(self):
+        self.shouldProfileBeCalculated = False # setCurrentCalculatorIndex forces update
         self.l_fitting.setCurrentCalculatorIndex(0)
+        self.shouldProfileBeCalculated = True
         if self.l_phase.samplesPresent():
             self.l_phase.removeAllPhases()
         self.l_plotting1d.clearBackendState()

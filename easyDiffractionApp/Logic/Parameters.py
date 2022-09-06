@@ -312,6 +312,7 @@ class ParametersLogic(QObject):
             self.undoRedoChanged.emit()
 
         else:
+            self.parent.shouldProfileBeCalculated = False
             if obj.raw_value == new_value:
                 return
             if isinstance(new_value, str):
@@ -321,6 +322,7 @@ class ParametersLogic(QObject):
             obj.error = 0.
             borg.stack.endMacro()
             self.parametersValuesChanged.emit()
+            self.parent.shouldProfileBeCalculated = True
             self._updateCalculatedData()
             self.parametersChanged.emit()
 

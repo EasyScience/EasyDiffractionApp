@@ -84,9 +84,10 @@ Component.prototype.createOperations = function()
       "description=@ProductName@"
     )
        // Add shortcut for maintenance tool.
-       component.addOperation("CreateShortcut",
+       component.addOperation(
+       "CreateShortcut",
        "@TargetDir@/maintenancetool.exe",
-       "@StartMenuDir@/@ProductName@ Maintenance.lnk",
+       "@StartMenuDir@/@ProductName@/Uninstall.lnk",
        "workingDirectory=@TargetDir@",
        "iconPath=@TargetDir@/maintenancetool.exe",
        "iconId=0",

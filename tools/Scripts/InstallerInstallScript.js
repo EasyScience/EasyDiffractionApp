@@ -87,7 +87,7 @@ Component.prototype.createOperations = function()
        component.addOperation(
        "CreateShortcut",
        "@TargetDir@/maintenancetool.exe",
-       "@StartMenuDir@/@ProductName@/Uninstall.lnk",
+       "@StartMenuDir@/@ProductName@/Maintenance Tool.lnk",
        "workingDirectory=@TargetDir@",
        "iconPath=@TargetDir@/maintenancetool.exe",
        "iconId=0",

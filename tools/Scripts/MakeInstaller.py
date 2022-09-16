@@ -126,7 +126,7 @@ def installerConfigXml():
                 'WizardDefaultWidth': 900,
                 'WizardDefaultHeight': 600,
                 'StyleSheet': config_style,
-                'StartMenuDir': CONFIG.app_name,
+                'StartMenuDir' : CONFIG.family_name,
                 'TargetDir': CONFIG.installation_dir_for_qtifw,
                 #'CreateLocalRepository': 'true',
                 #'SaveDefaultRepositories': 'false',

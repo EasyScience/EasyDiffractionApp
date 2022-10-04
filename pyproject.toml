@@ -58,6 +58,7 @@ easyDiffraction = 'easyDiffractionApp.main:main'
 
 [release]
 app_name = 'EasyDiffraction'
+family_name = 'EasyScience'
 tag_template = 'v{VERSION}'
 title_template = 'Version {VERSION} ({DATE})'
 description_file = 'RELEASE.md'

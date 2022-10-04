@@ -83,6 +83,15 @@ Component.prototype.createOperations = function()
       "iconPath=@TargetDir@/@ProductName@/@ProductName@.exe", "iconId=0",
       "description=@ProductName@"
     )
+       // Add shortcut for maintenance tool.
+       component.addOperation(
+       "CreateShortcut",
+       "@TargetDir@/maintenancetool.exe",
+       "@StartMenuDir@/@ProductName@/Maintenance Tool.lnk",
+       "workingDirectory=@TargetDir@",
+       "iconPath=@TargetDir@/maintenancetool.exe",
+       "iconId=0",
+       "description=Update or remove@ProductName@");
 
     // Add start menu shortcut for the app uninstaller
     /*

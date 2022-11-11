@@ -23,7 +23,7 @@
                             "@class": "Descriptor",
                             "@version": "0.2.2",
                             "name": "_space_group_HM_name",
-                            "value": "P n m a:abc",
+                            "value": "P n m a",
                             "units": "dimensionless",
                             "description": "Hermann-Mauguin symbols given in Table 4.3.2.1 of International Tables for Crystallography Vol. A (2002) or a Hermann-Mauguin symbol for a conventional or unconventional setting.",
                             "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Ispace_group_name_H-M_alt.html",
@@ -148,7 +148,7 @@
                                 "url": "https://www.iucr.org/__data/iucr/cifdic_html/1/cif_core.dic/Ispace_group_name_H-M_alt.html",
                                 "display_name": "_space_group_HM_name",
                                 "enabled": true,
-                                "value": "P n m a:abc",
+                                "value": "P n m a",
                                 "@id": "190449306832608112257018576936052249392"
                             },
                             "setting": "",

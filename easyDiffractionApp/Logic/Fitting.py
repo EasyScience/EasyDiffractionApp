@@ -10,9 +10,10 @@ from threading import Thread
 
 from easyDiffractionLib.interface import InterfaceFactory as Calculator
 from easyCore.Fitting.Fitting import Fitter as CoreFitter
+from easyCore.Utils.io.xml import XMLSerializer
 from easyCore.Fitting.Constraints import ObjConstraint, NumericConstraint
 
-from dicttoxml import dicttoxml
+# from dicttoxml import dicttoxml
 from distutils.util import strtobool
 
 
@@ -327,8 +328,9 @@ class FittingLogic(QObject):
         return constraint_list
 
     def constraintsAsXml(self):
-        xml = dicttoxml(self.constraintsList(), attr_type=False)
-        xml = xml.decode()
+        # xml = dicttoxml(self.constraintsList(), attr_type=False)
+        xml = XMLSerializer().encode(self.constraintsList())
+        # xml = xml.decode()
         return xml
 
     def removeConstraintByIndex(self, index: int):

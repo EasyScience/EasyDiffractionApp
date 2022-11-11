@@ -4,7 +4,7 @@
 
 # noqa: E501
 
-from dicttoxml import dicttoxml
+# from dicttoxml import dicttoxml
 from gemmi import cif
 import numpy as np
 import pathlib
@@ -13,7 +13,7 @@ import json
 from PySide2.QtCore import Signal, QObject
 
 from easyCore import np
-
+from easyCore.Utils.io.xml import XMLSerializer
 from easyApp.Logic.Utils.Utils import generalizePath
 
 
@@ -230,7 +230,8 @@ class ExperimentLogic(QObject):
         return [{'name': experiment.name} for experiment in self.parent.experiments()]
 
     def _setExperimentDataAsXml(self):
-        self._experiment_data_as_xml = dicttoxml(self.experiments, attr_type=True).decode()  # noqa: E501
+        # self._experiment_data_as_xml = dicttoxml(self.experiments, attr_type=True).decode()  # noqa: E501
+        self._experiment_data_as_xml = XMLSerializer().encode(self.experiments)
 
     def addExperimentDataFromCif(self, file_url):
         self._experiment_data = self._loadExperimentCif(file_url)

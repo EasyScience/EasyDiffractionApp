@@ -17,7 +17,7 @@ import Gui.Globals 1.0 as ExGlobals
 EaComponents.TableView { 
     property bool enableDelButton:
         typeof ExGlobals.Constants.proxy.phase.phasesAsObj[ExGlobals.Constants.proxy.phase.currentPhaseIndex] !== 'undefined'
-        && ExGlobals.Constants.proxy.phase.phasesAsObj[ExGlobals.Constants.proxy.phase.currentPhaseIndex].atoms.data.length > 1
+        && ExGlobals.Constants.proxy.phase.phasesAsObj[ExGlobals.Constants.proxy.phase.currentPhaseIndex]['atoms'].length > 1
         ? true
         : false
 
@@ -27,7 +27,7 @@ EaComponents.TableView {
         property int phaseIndex: ExGlobals.Constants.proxy.phase.currentPhaseIndex + 1
 
         xml: ExGlobals.Constants.proxy.phase.phasesAsXml
-        query: `/root/item[${phaseIndex}]/atoms/data/item`
+        query: `/data/data/atoms`
 
         XmlRole { name: "label"; query: "label/value/string()" }
         XmlRole { name: "type"; query: "specie/value/string()" }

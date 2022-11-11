@@ -113,15 +113,19 @@ EaComponents.SideBarColumn {
                         if (typeof ExGlobals.Constants.proxy.phase.phasesAsObj === 'undefined' || typeof ExGlobals.Constants.proxy.phase.phasesAsObj[0] === 'undefined' ) {
                             return []
                         }
-                        const phaseName = ExGlobals.Constants.proxy.phase.phasesAsObj[0].name
+                        const phaseName = ExGlobals.Constants.proxy.phase.phasesAsObj[0]['name']
                         const datasetName = ExGlobals.Constants.proxy.experiment.experimentDataAsObj[0].name
                         let m = [
                                 { value: "", text: qsTr("All names") },
                                 { value: `.${phaseName}.`, text: formatFilterText("gem", "", phaseName) },
                                 { value: `.${datasetName}.`, text: formatFilterText("microscope", "", datasetName) },
                                 ]
-                        for (let i in ExGlobals.Constants.proxy.phase.phasesAsObj[0].atoms.data) {
-                            const atomLabel = ExGlobals.Constants.proxy.phase.phasesAsObj[0].atoms.data[i].label.value
+                        // for (let i in ExGlobals.Constants.proxy.phase.phasesAsObj[0].atoms.data) {
+                        //     const atomLabel = ExGlobals.Constants.proxy.phase.phasesAsObj[0].atoms.data[i].label.value
+                        //     m.push({ value: `.${atomLabel}.`, text: formatFilterText("gem", "atom", atomLabel) })
+                        // }
+                        for (let i in ExGlobals.Constants.proxy.phase.phasesAsObj[0]['atoms']) {
+                            const atomLabel = ExGlobals.Constants.proxy.phase.phasesAsObj[0]['atoms'][i]['label']['value']
                             m.push({ value: `.${atomLabel}.`, text: formatFilterText("gem", "atom", atomLabel) })
                         }
                         return m

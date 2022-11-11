@@ -29,7 +29,8 @@ EaComponents.TableView  {
         //xml: ExGlobals.Constants.proxy.constraintsListAsXml
         xml: ExGlobals.Constants.proxy.fitting.constraintsAsXml
 
-        query: "/root/item"
+        // query: "/root/item"
+        query: "/data/data"
 
         XmlRole { name: "number"; query: "number/number()" }
         XmlRole { name: "dependentName"; query: "dependentName/string()" }

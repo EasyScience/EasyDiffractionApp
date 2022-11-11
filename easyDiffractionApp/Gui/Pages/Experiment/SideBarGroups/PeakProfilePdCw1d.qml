@@ -45,7 +45,8 @@ Column {
 
                 model: XmlListModel {
                     xml: ExGlobals.Constants.proxy.parameters.instrumentParametersAsXml
-                    query: `/root/item`
+                    //query: `/root/item`
+                    query: `/data/data`
 
                     XmlRole { name: "u"; query: "resolution_u/value/number()" }
                     XmlRole { name: "v"; query: "resolution_v/value/number()" }
@@ -95,7 +96,8 @@ Column {
 
                 model: XmlListModel {
                     xml: ExGlobals.Constants.proxy.parameters.instrumentParametersAsXml
-                    query: `/root/item`
+                    //query: `/root/item`
+                    query: `/data/data`
 
                     XmlRole { name: "x"; query: "resolution_x/value/number()" }
                     XmlRole { name: "y"; query: "resolution_y/value/number()" }

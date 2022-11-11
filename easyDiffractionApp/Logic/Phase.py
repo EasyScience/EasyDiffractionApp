@@ -4,11 +4,13 @@
 
 
 import re
-from dicttoxml import dicttoxml
+# from dicttoxml import dicttoxml
 
 from PySide2.QtCore import Signal, QObject
 
 from easyCore import np, borg
+from easyCore.Utils.io.xml import XMLSerializer
+
 from easyDiffractionLib import Phases, Phase, Lattice, Site, SpaceGroup
 from easyCrystallography.Components.AtomicDisplacement import AtomicDisplacement
 from easyCrystallography.Components.Susceptibility import MagneticSusceptibility
@@ -79,8 +81,9 @@ class PhaseLogic(QObject):
 
     @staticmethod
     def _defaultPhase():
-        space_group = SpaceGroup.from_pars('F d -3:2')
-        cell = Lattice.from_pars(5.0, 3.0, 4.0, 90, 90, 90)
+        space_group = SpaceGroup('F d -3:2')
+        # cell = Lattice.from_pars(5.0, 3.0, 4.0, 90, 90, 90)
+        cell = Lattice(5.0, 3.0, 4.0, 90, 90, 90)
         adp = AtomicDisplacement("Uiso")
         atom = Site(label='O', specie='O', fract_x=0.0, fract_y=0.0, fract_z=0.0, adp=adp)
         phase = Phase('Test', spacegroup=space_group, cell=cell)
@@ -111,7 +114,7 @@ class PhaseLogic(QObject):
     def currentPhaseAsExtendedCif(self):
         if len(self.phases) == 0:
             return
-        symm_ops = self.phases[self._current_phase_index].spacegroup.symmetry_opts
+        symm_ops = self.phases[self._current_phase_index].spacegroup.symmetry_ops
         symm_ops_cif_loop = "loop_\n _symmetry_equiv_pos_as_xyz\n"
         for symm_op in symm_ops:
             symm_ops_cif_loop += f' {symm_op.as_xyz_string()}\n'
@@ -132,7 +135,13 @@ class PhaseLogic(QObject):
         self.parent.emitParametersChanged()
 
     def _setPhasesAsXml(self):
-        self._phases_as_xml = dicttoxml(self._phases_as_obj, attr_type=True).decode()  # noqa: E501
+        #obj = XMLSerializer(self.phases)
+        #self._phases_as_xml = obj.encode(self.phases)
+        # self._phases_as_xml = XMLSerializer._convert_from_dict(self.phases.as_dict(skip=['interface']))
+        # self._phases_as_xml = XMLSerializer().encode(self.phases.as_dict(skip=['interface']))
+        # self._phases_as_xml = dicttoxml(self._phases_as_obj, attr_type=True).decode()  # noqa: E501
+        self._phases_as_xml = self.phases.encode(skip=['interface'], encoder=XMLSerializer)
+        pass
 
     def _setPhasesAsCif(self):
         self._phases_as_cif = str(self.phases.cif)
@@ -215,8 +224,8 @@ class PhaseLogic(QObject):
             return 0
 
         settings = self._spaceGroupSettingList()
-        # current_setting = phases[self._current_phase_index].spacegroup.space_group_HM_name.raw_value  # noqa: E501
-        current_setting = phases[self._current_phase_index].spacegroup.hermann_mauguin  # noqa: E501
+        current_setting = phases[self._current_phase_index].spacegroup.space_group_HM_name.raw_value  # noqa: E501
+        # current_setting = phases[self._current_phase_index].spacegroup.hermann_mauguin  # noqa: E501
         current_number = settings.index(current_setting)
         return current_number
 

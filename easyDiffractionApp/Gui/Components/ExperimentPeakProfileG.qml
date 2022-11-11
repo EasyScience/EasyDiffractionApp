@@ -19,7 +19,9 @@ EaComponents.TableView {
 
     model: XmlListModel {
         xml: ExGlobals.Constants.proxy.instrumentParametersAsXml
-        query: `/root/item`
+        // query: `/root/item`
+        query: `/data/data`
+
 
         XmlRole { name: "u"; query: "resolution_u/value/number()" }
         XmlRole { name: "v"; query: "resolution_v/value/number()" }

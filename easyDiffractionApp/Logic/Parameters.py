@@ -5,13 +5,13 @@
 # noqa: E501
 from typing import Union
 
-from dicttoxml import dicttoxml
+# from dicttoxml import dicttoxml
 import json
 
 from PySide2.QtCore import Signal, QObject
 
 from easyCore import np, borg
-
+from easyCore.Utils.io.xml import XMLSerializer
 from easyCore.Utils.classTools import generatePath
 
 from easyDiffractionApp.Logic.DataStore import DataSet1D, DataStore
@@ -147,7 +147,8 @@ class ParametersLogic(QObject):
 
     def _setInstrumentParametersAsXml(self):
         parameters = [self._instrument_parameters_as_obj]
-        self._instrument_parameters_as_xml = dicttoxml(parameters, attr_type=True).decode()  # noqa: E501
+        # self._instrument_parameters_as_xml = dicttoxml(parameters, attr_type=True).decode()  # noqa: E501
+        self._instrument_parameters_as_xml = XMLSerializer().encode(parameters)
 
     ####################################################################################################################
     # Fitables (parameters table from analysis tab & ...)
@@ -284,7 +285,8 @@ class ParametersLogic(QObject):
         self._setIconifiedLabels()
 
     def _setParametersAsXml(self):
-        self._parameters_as_xml = dicttoxml(self._parameters_as_obj, attr_type=False).decode()  # noqa: E501
+        # self._parameters_as_xml = dicttoxml(self._parameters_as_obj, attr_type=False).decode()  # noqa: E501
+        self._parameters_as_xml = XMLSerializer().encode(self._parameters_as_obj)
 
     def setParametersFilterCriteria(self, new_criteria):
         if self._parameters_filter_criteria == new_criteria:

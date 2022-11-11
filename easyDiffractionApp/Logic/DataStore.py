@@ -9,13 +9,15 @@ from abc import abstractmethod
 from typing import Union, overload, TypeVar
 
 from easyCore import np
-from easyCore.Utils.json import MSONable, MontyDecoder
+# from easyCore.Utils.json import MSONable, MontyDecoder
+from easyCore.Objects.core import ComponentSerializer  # old MSONable
+from easyCore.Utils.io.dict import DictSerializer  # old MontyDecoder
 from collections.abc import Sequence
 
 T = TypeVar('T')
 
 
-class ProjectData(MSONable):
+class ProjectData(ComponentSerializer):
     def __init__(self, name='DataStore', exp_data=None, sim_data=None):
         self.name = name
         if exp_data is None:
@@ -26,7 +28,7 @@ class ProjectData(MSONable):
         self.sim_data = sim_data
 
 
-class DataStore(Sequence, MSONable):
+class DataStore(Sequence, ComponentSerializer):
 
     def __init__(self, *args, name='DataStore'):
         self.name = name
@@ -56,8 +58,10 @@ class DataStore(Sequence, MSONable):
         items = d['items']
         del d['items']
         obj = cls.from_dict(d)
-        decoder = MontyDecoder()
-        obj.items = [decoder.process_decoded(item) for item in items]
+        # decoder = MontyDecoder()
+        decoder = DictSerializer()
+        # obj.items = [decoder.process_decoded(item) for item in items]
+        obj.items = [decoder.decode(item) for item in items]
         return obj
 
     @property
@@ -69,7 +73,7 @@ class DataStore(Sequence, MSONable):
         return [self[idx] for idx in range(len(self)) if self[idx].is_simulation]
 
 
-class DataSet1D(MSONable):
+class DataSet1D(ComponentSerializer):
 
     def __init__(self, name: str = 'Series',
                  x: Union[np.ndarray, list] = None,

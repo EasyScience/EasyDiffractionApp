@@ -6,14 +6,13 @@
 import os
 import datetime
 from timeit import default_timer as timer
-
 from dicttoxml import dicttoxml
 import json
 
 from PySide2.QtCore import Signal, QObject
 
 from easyCore import np, borg
-
+from easyCore.Utils.io.xml import XMLSerializer
 from easyDiffractionLib.sample import Sample
 from easyApp.Logic.Utils.Utils import generalizePath
 
@@ -109,8 +108,7 @@ class ProjectLogic(QObject):
             {"name": "Ho2Ti2O7", "description": "neutrons, powder, constant wavelength, polarised, VIP@LLB",
              "path": "../Resources/Examples/Ho2Ti2O7/project.json"}
         ]
-        xml = dicttoxml(model, attr_type=False)
-        xml = xml.decode()
+        xml = XMLSerializer().encode(model[0], data_only=True)
         return xml
 
     def projectInfoAsCif(self):

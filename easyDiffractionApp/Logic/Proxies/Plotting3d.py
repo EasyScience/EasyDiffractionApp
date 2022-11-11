@@ -24,7 +24,7 @@ class Plotting3dProxy(QObject):
         return self.logic.current3dPlottingLib()
 
     @current3dPlottingLib.setter
-    @property_stack_deco('Changing 3D library from {old_value} to {new_value}')
+    # @property_stack_deco('Changing 3D library from {old_value} to {new_value}')
     def current3dPlottingLib(self, plotting_lib):
         self.logic._current_3d_plotting_lib = plotting_lib
         self.current3dPlottingLibChanged.emit()

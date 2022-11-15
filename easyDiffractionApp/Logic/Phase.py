@@ -226,8 +226,12 @@ class PhaseLogic(QObject):
         settings = self._spaceGroupSettingList()
         current_setting = phases[self._current_phase_index].spacegroup.space_group_HM_name.raw_value  # noqa: E501
         # current_setting = phases[self._current_phase_index].spacegroup.hermann_mauguin  # noqa: E501
-        current_number = settings.index(current_setting)
-        return current_number
+        for setting in settings:
+            if current_setting in setting:
+                return settings.index(setting)
+        return 0
+        #current_number = settings.index(current_setting)
+        #return current_number
 
     def setCurrentSpaceGroupSetting(self, new_number: int):
         settings = self._spaceGroupSettingList()

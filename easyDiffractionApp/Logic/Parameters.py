@@ -285,8 +285,8 @@ class ParametersLogic(QObject):
         self._setIconifiedLabels()
 
     def _setParametersAsXml(self):
-        self._parameters_as_xml = XMLSerializer().encode(self._parameters_as_obj)
-        pass
+        # XMLSerializer doesn't currently handle lists so wrap in a dict
+        self._parameters_as_xml = XMLSerializer().encode({"item":self._parameters_as_obj})
 
     def setParametersFilterCriteria(self, new_criteria):
         if self._parameters_filter_criteria == new_criteria:

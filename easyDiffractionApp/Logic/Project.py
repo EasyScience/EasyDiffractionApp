@@ -90,7 +90,7 @@ class ProjectLogic(QObject):
         )
 
     def projectExamplesAsXml(self):
-        model = [
+        model = { "item": [
             {"name": "PbSO4", "description": "neutrons, powder, constant wavelength, D1A@ILL",
              "path": "../Resources/Examples/PbSO4/project.json"},
             {"name": "Co2SiO4", "description": "neutrons, powder, constant wavelength, D20@ILL",
@@ -107,8 +107,9 @@ class ProjectLogic(QObject):
              "path": "../Resources/Examples/Fe3O4/project.json"},
             {"name": "Ho2Ti2O7", "description": "neutrons, powder, constant wavelength, polarised, VIP@LLB",
              "path": "../Resources/Examples/Ho2Ti2O7/project.json"}
-        ]
-        xml = XMLSerializer().encode(model[0], data_only=True)
+        ]}
+        # XMLSerializer doesn't currently handle lists.
+        xml = XMLSerializer().encode(model, data_only=True)
         return xml
 
     def projectInfoAsCif(self):

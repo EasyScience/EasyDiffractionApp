@@ -23,7 +23,7 @@ EaComponents.TableView {
 
     model: XmlListModel {
         xml: ExGlobals.Constants.proxy.experiment.experimentDataAsXml
-        query: "/root/item"
+        query: "/data"
 
         XmlRole { name: "label"; query: "name/string()" }
     }

@@ -43,7 +43,7 @@ Column {
 
             model: XmlListModel {
                 xml: ExGlobals.Constants.proxy.background.asXml
-                query: "/root/item"
+                query: "/data/data"
 
                 XmlRole { name: "x"; query: "x/value/number()" }
                 XmlRole { name: "y"; query: "y/value/number()" }

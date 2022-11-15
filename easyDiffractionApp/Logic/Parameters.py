@@ -5,7 +5,6 @@
 # noqa: E501
 from typing import Union
 
-# from dicttoxml import dicttoxml
 import json
 
 from PySide2.QtCore import Signal, QObject
@@ -147,7 +146,6 @@ class ParametersLogic(QObject):
 
     def _setInstrumentParametersAsXml(self):
         parameters = [self._instrument_parameters_as_obj]
-        # self._instrument_parameters_as_xml = dicttoxml(parameters, attr_type=True).decode()  # noqa: E501
         self._instrument_parameters_as_xml = XMLSerializer().encode(parameters)
 
     ####################################################################################################################

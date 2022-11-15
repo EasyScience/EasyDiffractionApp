@@ -4,7 +4,6 @@
 
 # noqa: E501
 
-# from dicttoxml import dicttoxml
 from gemmi import cif
 import numpy as np
 import pathlib
@@ -230,7 +229,6 @@ class ExperimentLogic(QObject):
         return [{'name': experiment.name} for experiment in self.parent.experiments()]
 
     def _setExperimentDataAsXml(self):
-        # self._experiment_data_as_xml = dicttoxml(self.experiments, attr_type=True).decode()  # noqa: E501
         self._experiment_data_as_xml = XMLSerializer().encode(self.experiments)
 
     def addExperimentDataFromCif(self, file_url):

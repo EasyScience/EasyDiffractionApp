@@ -4,7 +4,6 @@
 
 
 import re
-# from dicttoxml import dicttoxml
 
 from PySide2.QtCore import Signal, QObject
 
@@ -135,13 +134,7 @@ class PhaseLogic(QObject):
         self.parent.emitParametersChanged()
 
     def _setPhasesAsXml(self):
-        #obj = XMLSerializer(self.phases)
-        #self._phases_as_xml = obj.encode(self.phases)
-        # self._phases_as_xml = XMLSerializer._convert_from_dict(self.phases.as_dict(skip=['interface']))
-        # self._phases_as_xml = XMLSerializer().encode(self.phases.as_dict(skip=['interface']))
-        # self._phases_as_xml = dicttoxml(self._phases_as_obj, attr_type=True).decode()  # noqa: E501
         self._phases_as_xml = self.phases.encode(skip=['interface'], encoder=XMLSerializer)
-        pass
 
     def _setPhasesAsCif(self):
         self._phases_as_cif = str(self.phases.cif)

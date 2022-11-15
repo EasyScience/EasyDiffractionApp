@@ -19,7 +19,6 @@ EaComponents.TableView {
 
     model: XmlListModel {
         xml: ExGlobals.Constants.proxy.instrumentParametersAsXml
-        // query: `/root/item`
         query: `/data/data`
 
 

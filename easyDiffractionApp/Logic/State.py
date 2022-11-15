@@ -3,8 +3,6 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
-# from dicttoxml import dicttoxml
-
 from PySide2.QtCore import Signal, QObject
 
 from easyCore import np
@@ -44,8 +42,6 @@ class StateLogic(QObject):
             {"label": "Minimization",
              "value": f'{current_engine} ({current_minimizer})'}  # noqa: E501
         ]
-        # xml = dicttoxml(model, attr_type=False)
         xml = XMLSerializer().encode(model)
-        # xml = xml.decode()
         return xml
 

@@ -3,7 +3,6 @@
 # © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
 from easyCore import np
-# from dicttoxml import dicttoxml
 
 from easyCore.Utils.io.xml import XMLSerializer
 from PySide2.QtCore import QObject, Signal
@@ -49,12 +48,10 @@ class BackgroundLogic(QObject):
 
     def _setAsXml(self):
         if self._background_as_obj is None:
-            # self._background_as_xml = dicttoxml({}, attr_type=False).decode()
             self._background_as_xml = XMLSerializer().encode({})
         else:
             background = np.array([item.as_dict() for item in self._background_as_obj])
             point_index = np.array([item.x.raw_value for item in self._background_as_obj]).argsort()
-            # self._background_as_xml = dicttoxml(background[point_index], attr_type=False).decode()
             self._background_as_xml = XMLSerializer().encode(background[point_index])
         self.asXmlChanged.emit()
 

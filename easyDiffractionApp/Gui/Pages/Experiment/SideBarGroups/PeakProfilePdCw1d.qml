@@ -45,7 +45,6 @@ Column {
 
                 model: XmlListModel {
                     xml: ExGlobals.Constants.proxy.parameters.instrumentParametersAsXml
-                    //query: `/root/item`
                     query: `/data/data`
 
                     XmlRole { name: "u"; query: "resolution_u/value/number()" }
@@ -96,7 +95,6 @@ Column {
 
                 model: XmlListModel {
                     xml: ExGlobals.Constants.proxy.parameters.instrumentParametersAsXml
-                    //query: `/root/item`
                     query: `/data/data`
 
                     XmlRole { name: "x"; query: "resolution_x/value/number()" }

@@ -6,7 +6,6 @@
 import os
 import datetime
 from timeit import default_timer as timer
-from dicttoxml import dicttoxml
 import json
 
 from PySide2.QtCore import Signal, QObject

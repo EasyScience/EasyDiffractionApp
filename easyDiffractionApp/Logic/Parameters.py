@@ -285,8 +285,8 @@ class ParametersLogic(QObject):
         self._setIconifiedLabels()
 
     def _setParametersAsXml(self):
-        # self._parameters_as_xml = dicttoxml(self._parameters_as_obj, attr_type=False).decode()  # noqa: E501
         self._parameters_as_xml = XMLSerializer().encode(self._parameters_as_obj)
+        pass
 
     def setParametersFilterCriteria(self, new_criteria):
         if self._parameters_filter_criteria == new_criteria:

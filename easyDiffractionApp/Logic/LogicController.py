@@ -30,6 +30,7 @@ class LogicController(QObject):
         super().__init__(parent)
         self.proxy = parent
         self.interface = InterfaceFactory()
+        self.shouldProfileBeCalculated = True
 
         # Screen recorder
         self._screen_recorder = self.recorder()
@@ -120,7 +121,9 @@ class LogicController(QObject):
         self.sample().output_index = self.l_phase._current_phase_index
 
     def resetState(self):
+        self.shouldProfileBeCalculated = False # setCurrentCalculatorIndex forces update
         self.l_fitting.setCurrentCalculatorIndex(0)
+        self.shouldProfileBeCalculated = True
         if self.l_phase.samplesPresent():
             self.l_phase.removeAllPhases()
         self.l_plotting1d.clearBackendState()
@@ -137,8 +140,10 @@ class LogicController(QObject):
 
     def sendToExperiment(self, data, exp_name):
         self.setExperimentLoaded(True)
+        self.shouldProfileBeCalculated = False # don't calculate profile before all the loading took place
         self.setExperimentData(data)
         self.l_experiment.updateExperimentData(exp_name)
+        self.shouldProfileBeCalculated = True # now we can calculate profile
         self.updateBackgroundOnLoad()
         self.l_experiment.experimentLoadedChanged.emit()
 

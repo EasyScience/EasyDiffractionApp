@@ -33,7 +33,7 @@ EaComponents.TableView {
         property int phaseIndex: ExGlobals.Constants.proxy.phase.currentPhaseIndex + 1
 
         xml: ExGlobals.Constants.proxy.phase.phasesAsXml
-        query: `/data/data/atoms`
+        query: `/data/item/atoms`
 
         XmlRole { name: "label"; query: "label/value/string()" }
         XmlRole { name: "mspType"; query: "msp/msp_type/value/string()" }

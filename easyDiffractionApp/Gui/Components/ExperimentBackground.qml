@@ -24,9 +24,8 @@ EaComponents.TableView {
         XmlRole { name: "y"; query: "y/value/number()" }
 
         XmlRole { name: "pointName"; query: "name/string()" }
-
-        XmlRole { name: "xId"; query: "x/key[4]/string()" }
-        XmlRole { name: "yId"; query: "y/key[4]/string()" }
+        XmlRole { name: "xId"; query: "x/__class/string()" }
+        XmlRole { name: "yId"; query: "y/__class/string()" }
     }
 
     // Table rows

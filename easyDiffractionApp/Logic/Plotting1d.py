@@ -213,7 +213,7 @@ class Plotting1dLogic(QObject):
             self._setQtChartsBraggDataObj()
 
     def setBackgroundData(self, xarray, yarray):
-        if not xarray.size:
+        if xarray.size < 2:
             return
         interp_func = scipy.interpolate.interp1d(xarray, yarray, fill_value="extrapolate")
         extrapolated_y = interp_func(self._measured_xarray)

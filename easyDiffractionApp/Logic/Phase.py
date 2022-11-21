@@ -134,7 +134,7 @@ class PhaseLogic(QObject):
         self.parent.emitParametersChanged()
 
     def _setPhasesAsXml(self):
-        self._phases_as_xml = self.phases.encode(skip=['interface'], encoder=XMLSerializer)
+        self._phases_as_xml = XMLSerializer().encode({"item":self._phases_as_obj}, skip=['interface'])
 
     def _setPhasesAsCif(self):
         self._phases_as_cif = str(self.phases.cif)

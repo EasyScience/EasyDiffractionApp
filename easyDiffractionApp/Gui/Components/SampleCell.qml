@@ -22,7 +22,7 @@ EaComponents.TableView {
         property int phaseIndex: ExGlobals.Constants.proxy.phase.currentPhaseIndex + 1
 
         xml: ExGlobals.Constants.proxy.phase.phasesAsXml
-        query: `/data/data/cell`
+        query: `/data/item/cell`
 
         XmlRole { name: "a"; query: "length_a/value/number()" }
         XmlRole { name: "b"; query: "length_b/value/number()" }

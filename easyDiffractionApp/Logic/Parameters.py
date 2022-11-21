@@ -284,7 +284,7 @@ class ParametersLogic(QObject):
 
     def _setParametersAsXml(self):
         # XMLSerializer doesn't currently handle lists so wrap in a dict
-        self._parameters_as_xml = XMLSerializer().encode({"item":self._parameters_as_obj})
+        self._parameters_as_xml = XMLSerializer().encode({"item":self._parameters_as_obj}, data_only=True, skip=['interface'])
 
     def setParametersFilterCriteria(self, new_criteria):
         if self._parameters_filter_criteria == new_criteria:
@@ -295,10 +295,13 @@ class ParametersLogic(QObject):
     # Any parameter
     ####################################################################################################################
     def editParameter(self, obj_id: str, new_value: Union[bool, float, str]):  # noqa: E501
+        print(f"editParameter: {obj_id} {new_value}")
+
         if not obj_id:
             return
 
         obj = self._parameterObj(obj_id)
+        print(f"editParameter object: {obj}")
         if obj is None:
             return
 

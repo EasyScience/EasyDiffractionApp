@@ -21,7 +21,7 @@ EaComponents.TableView {
 
     model: XmlListModel {
         xml: ExGlobals.Constants.proxy.phase.phasesAsXml
-        query: "/data"
+        query: "/data/item"
 
         XmlRole { name: "label"; query: "name/string()" }
         XmlRole { name: "color"; query: "color/string()" }

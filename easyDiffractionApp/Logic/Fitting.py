@@ -240,11 +240,11 @@ class FittingLogic(QObject):
     ####################################################################################################################
 
     def calculatorNames(self):
-        interfaces = self.interface.interface_compatability(self.parent.l_sample._sample.exp_type_str)
+        interfaces = self.interface.interface_compatability("Npowder1DCWunp")  # (self.parent.l_sample._sample.exp_type_str) # Temporarily hardcode Neutron powder 1D CW
         return interfaces
 
     def currentCalculatorIndex(self):
-        interfaces = self.interface.interface_compatability(self.parent.l_sample._sample.exp_type_str)
+        interfaces = self.interface.interface_compatability("Npowder1DCWunp")  # (self.parent.l_sample._sample.exp_type_str) # Temporarily hardcode Neutron powder 1D CW
         return interfaces.index(self.interface.current_interface_name)
 
     def setCurrentCalculatorIndex(self, new_index: int):

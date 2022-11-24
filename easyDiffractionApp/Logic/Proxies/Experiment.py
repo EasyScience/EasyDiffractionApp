@@ -187,6 +187,7 @@ class ExperimentProxy(QObject):
             self.parent.parameters._onInstrumentParametersChanged()
             self._setPatternParametersAsObj()
             self.logic._onExperimentSkippedChanged()
+            print()
 
     def _setPatternParametersAsObj(self):
         self.logic._onPatternParametersChanged()

@@ -219,6 +219,7 @@ class ExperimentLogic(QObject):
             return
         self._experiment_skipped = skipped
         self.experimentSkippedChanged.emit()
+        print()
 
     def experimentDataAsObj(self):
         return [{'name': experiment.name} for experiment in self.state._data.experiments]
@@ -265,6 +266,7 @@ class ExperimentLogic(QObject):
 
     def _onExperimentSkippedChanged(self):
         self.state._updateCalculatedData()
+        print()
 
     def _onExperimentLoadedChanged(self):
         self.state._onPatternParametersChanged()

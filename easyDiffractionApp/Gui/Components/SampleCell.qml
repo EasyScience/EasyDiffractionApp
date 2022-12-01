@@ -38,12 +38,12 @@ EaComponents.TableView {
         XmlRole { name: "beta_enabled"; query: "angle_beta/enabled/string()"}
         XmlRole { name: "gamma_enabled"; query: "angle_gamma/enabled/string()"}
 
-        // XmlRole { name: "aId"; query: "cell/length_a/key[4]/string()" }
-        // XmlRole { name: "bId"; query: "cell/length_b/key[4]/string()" }
-        // XmlRole { name: "cId"; query: "cell/length_c/key[4]/string()" }
-        // XmlRole { name: "alphaId"; query: "cell/angle_alpha/key[4]/string()" }
-        // XmlRole { name: "betaId"; query: "cell/angle_beta/key[4]/string()" }
-        // XmlRole { name: "gammaId"; query: "cell/angle_gamma/key[4]/string()" }
+        XmlRole { name: "aId"; query: "length_a/__id/string()" }
+        XmlRole { name: "bId"; query: "length_b/__id/string()" }
+        XmlRole { name: "cId"; query: "length_c/__id/string()" }
+        XmlRole { name: "alphaId"; query: "angle_alpha/__id/string()" }
+        XmlRole { name: "betaId"; query: "angle_beta/__id/string()" }
+        XmlRole { name: "gammaId"; query: "angle_gamma/__id/string()" }
     }
 
     // Table rows

@@ -33,7 +33,7 @@ EaComponents.TableView {
         property int phaseIndex: ExGlobals.Constants.proxy.phase.currentPhaseIndex + 1
 
         xml: ExGlobals.Constants.proxy.phase.phasesAsXml
-        query: `/data/item/atoms`
+        query: `/data/item/atoms/data`
 
         XmlRole { name: "label"; query: "label/value/string()" }
         XmlRole { name: "mspType"; query: "msp/msp_type/value/string()" }
@@ -45,13 +45,13 @@ EaComponents.TableView {
         XmlRole { name: "mspAni13"; query: "msp/msp_class/chi_13/value/number()" }
         XmlRole { name: "mspAni23"; query: "msp/msp_class/chi_23/value/number()" }
 
-        XmlRole { name: "mspIsoId"; query: "msp/msp_class/chi/key[4]/string()" }
-        XmlRole { name: "mspAniId11"; query: "msp/msp_class/chi_11/key[4]/string()" }
-        XmlRole { name: "mspAniId22"; query: "msp/msp_class/chi_22/key[4]/string()" }
-        XmlRole { name: "mspAniId33"; query: "msp/msp_class/chi_33/key[4]/string()" }
-        XmlRole { name: "mspAniId12"; query: "msp/msp_class/chi_12/key[4]/string()" }
-        XmlRole { name: "mspAniId13"; query: "msp/msp_class/chi_13/key[4]/string()" }
-        XmlRole { name: "mspAniId23"; query: "msp/msp_class/chi_23/key[4]/string()" }
+        XmlRole { name: "mspIsoId"; query: "msp/msp_class/chi/__id/string()" }
+        XmlRole { name: "mspAniId11"; query: "msp/msp_class/chi_11/__id/string()" }
+        XmlRole { name: "mspAniId22"; query: "msp/msp_class/chi_22/__id/string()" }
+        XmlRole { name: "mspAniId33"; query: "msp/msp_class/chi_33/__id/string()" }
+        XmlRole { name: "mspAniId12"; query: "msp/msp_class/chi_12/__id/string()" }
+        XmlRole { name: "mspAniId13"; query: "msp/msp_class/chi_13/__id/string()" }
+        XmlRole { name: "mspAniId23"; query: "msp/msp_class/chi_23/__id/string()" }
     }
 
     // Table rows

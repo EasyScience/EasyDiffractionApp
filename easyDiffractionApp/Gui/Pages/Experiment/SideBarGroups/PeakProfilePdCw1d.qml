@@ -51,9 +51,9 @@ Column {
                     XmlRole { name: "v"; query: "resolution_v/value/number()" }
                     XmlRole { name: "w"; query: "resolution_w/value/number()" }
 
-                    XmlRole { name: "uId"; query: "resolution_u/key[4]/string()" }
-                    XmlRole { name: "vId"; query: "resolution_v/key[4]/string()" }
-                    XmlRole { name: "wId"; query: "resolution_w/key[4]/string()" }
+                    XmlRole { name: "uId"; query: "resolution_u/__id/string()" }
+                    XmlRole { name: "vId"; query: "resolution_v/__id/string()" }
+                    XmlRole { name: "wId"; query: "resolution_w/__id/string()" }
                 }
 
                 delegate: EaComponents.TableViewDelegate {
@@ -100,8 +100,8 @@ Column {
                     XmlRole { name: "x"; query: "resolution_x/value/number()" }
                     XmlRole { name: "y"; query: "resolution_y/value/number()" }
 
-                    XmlRole { name: "xId"; query: "resolution_x/key[4]/string()" }
-                    XmlRole { name: "yId"; query: "resolution_y/key[4]/string()" }
+                    XmlRole { name: "xId"; query: "resolution_x/__id/string()" }
+                    XmlRole { name: "yId"; query: "resolution_y/__id/string()" }
                 }
 
                 delegate: EaComponents.TableViewDelegate {

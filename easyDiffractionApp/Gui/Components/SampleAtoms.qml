@@ -27,7 +27,7 @@ EaComponents.TableView {
         property int phaseIndex: ExGlobals.Constants.proxy.phase.currentPhaseIndex + 1
 
         xml: ExGlobals.Constants.proxy.phase.phasesAsXml
-        query: `/data/item/atoms`
+        query: `/data/item/atoms/data`
 
         XmlRole { name: "label"; query: "label/value/string()" }
         XmlRole { name: "type"; query: "specie/value/string()" }
@@ -36,12 +36,12 @@ EaComponents.TableView {
         XmlRole { name: "z"; query: "fract_z/value/number()" }
         XmlRole { name: "occupancy"; query: "occupancy/value/number()" }
 
-        XmlRole { name: "labelId"; query: "label/key[4]/string()" }
-        XmlRole { name: "typeId"; query: "specie/key[4]/string()" }
-        XmlRole { name: "xId"; query: "fract_x/key[4]/string()" }
-        XmlRole { name: "yId"; query: "fract_y/key[4]/string()" }
-        XmlRole { name: "zId"; query: "fract_z/key[4]/string()" }
-        XmlRole { name: "occupancyId"; query: "occupancy/key[4]/string()" }
+        XmlRole { name: "labelId"; query: "label/__id/string()" }
+        XmlRole { name: "typeId"; query: "specie__id/string()" }
+        XmlRole { name: "xId"; query: "fract_x/__id/string()" }
+        XmlRole { name: "yId"; query: "fract_y/__id/string()" }
+        XmlRole { name: "zId"; query: "fract_z/__id/string()" }
+        XmlRole { name: "occupancyId"; query: "occupancy/__id/string()" }
     }
 
     // Table rows

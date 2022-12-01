@@ -27,7 +27,7 @@ EaComponents.TableView {
 
         XmlRole { name: "label"; query: "name/string()" }
         XmlRole { name: "scale"; query: "scale/value/number()" }
-        XmlRole { name: "scaleId"; query: "scale/key[4]/string()" }
+        XmlRole { name: "scaleId"; query: "scale/__id/string()" }
 
     }
 

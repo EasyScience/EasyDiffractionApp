@@ -50,6 +50,7 @@ opencv-python = '4.5.1.48'
 google-trans-new = '^1.1.9'
 gTTS = '^2.2.2'
 gemmi = '^0.5.4'
+scipy = '1.6.1' # to keep in sync with core. Also > 1.6.3 doesn't package with pyinstaller
 
 [tool.poetry.scripts]
 easyDiffraction = 'easyDiffractionApp.main:main'

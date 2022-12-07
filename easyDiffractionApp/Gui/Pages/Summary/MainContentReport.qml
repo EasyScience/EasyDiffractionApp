@@ -386,7 +386,7 @@ Item {
 
                 hasMeasured: ExGlobals.Variables.analysisChart.hasMeasuredData,
                 hasCalculated: ExGlobals.Variables.analysisChart.hasCalculatedData,
-                hasPhase: typeof ExGlobals.Constants.proxy.plotting1d.hasSinglePhaseData !== "undefined" ? ExGlobals.Constants.proxy.plotting1d.hasSinglePhaseData : false,
+                hasPhase: ExGlobals.Constants.proxy.plotting1d.hasSinglePhaseData,
                 hasDifference: ExGlobals.Variables.analysisChart.hasDifferenceData,
                 hasBragg: ExGlobals.Variables.analysisChart.hasBraggData,
                 hasBackground: ExGlobals.Variables.analysisChart.hasBackgroundData,
@@ -525,16 +525,13 @@ Item {
     property string fittingInfo: {
         if (!isFitting)
             return ''
-        if (typeof ExGlobals.Constants.proxy.fitResults !== 'undefined') {
-            const redchi2 = ExGlobals.Constants.proxy.fitResults.redchi2.toFixed(2)
-            let list = [
-                    '<p>',
-                    `<b>Goodness-of-fit (reduced \u03c7\u00b2):</b> ${redchi2}<br>`,
-                    '</p>'
-                ]
-            return list.join('\n')
-        }
-        return ''
+        const redchi2 = ExGlobals.Constants.proxy.fitResults.redchi2.toFixed(2)
+        let list = [
+                '<p>',
+                `<b>Goodness-of-fit (reduced \u03c7\u00b2):</b> ${redchi2}<br>`,
+                '</p>'
+            ]
+        return list.join('\n')
     }
 
     property string analysisSection: {

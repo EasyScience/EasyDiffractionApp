@@ -97,15 +97,15 @@ Component.prototype.createOperations = function()
 
     component.addOperation(
       "Copy",
-      "@TargetDir@/@ProductName@.desktop",
-      "@HomeDir@/.local/share/applications/@ProductName@.desktop"
+      "@TargetDir@/easyDiffraction.desktop",
+      "@HomeDir@/.local/share/applications/easyDiffraction.desktop"
     )
 
     /*
     component.addOperation(
       "Copy",
-      "@TargetDir@/@ProductName@.desktop",
-      "/usr/share/applications/@ProductName@.desktop"
+      "@TargetDir@/easyDiffraction.desktop",
+      "/usr/share/applications/easyDiffraction.desktop"
     )
     */
   }

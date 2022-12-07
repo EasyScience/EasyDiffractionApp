@@ -13,7 +13,7 @@ import Gui.Globals 1.0 as ExGlobals
 
 
 Grid {
-    columns: ExGlobals.Constants.proxy.experiment.isSpinPolarized ? 3 : 2
+    columns: 2
     columnSpacing: EaStyle.Sizes.fontPixelSize
 
     Column {
@@ -41,22 +41,6 @@ Grid {
             units: "Å" //ExGlobals.Constants.proxy.parameters.instrumentParametersAsObj.wavelength.units
             text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.parameters.instrumentParametersAsObj.wavelength.value)
             onEditingFinished: editParameterValue(ExGlobals.Constants.proxy.parameters.instrumentParametersAsObj.wavelength["@id"], text)
-        }
-    }
-
-    Column {
-        visible: ExGlobals.Constants.proxy.experiment.isSpinPolarized
-
-        EaElements.Label {
-            enabled: false
-            text: qsTr("Magnetic field")
-        }
-
-        EaElements.Parameter {
-            width: inputFieldWidth()
-            units: "T"
-            text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.parameters.patternParametersAsObj.field.value)
-            onEditingFinished: editParameterValue(ExGlobals.Constants.proxy.parameters.patternParametersAsObj.field["@id"], text)
         }
     }
 

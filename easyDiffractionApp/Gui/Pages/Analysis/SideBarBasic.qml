@@ -78,7 +78,6 @@ EaComponents.SideBarColumn {
                         { value: ".atoms.", text: formatFilterText("gem", "atom", "Atoms") },
                         { value: ".fract_", text: formatFilterText("gem", "map-marker-alt", "Coordinates") },
                         { value: ".adp.", text: formatFilterText("gem", "arrows-alt", "ADPs") },
-                        { value: ".msp.", text: formatFilterText("gem", "arrows-alt", "MSPs") },
                         { value: ".resolution_", text: formatFilterText("microscope", "grip-lines-vertical", "Resolution") }, //"delicious"//"grip-lines"//"flipboard"
                         { value: ".background.", text: formatFilterText("microscope", "wave-square", "Background") } //"water"
                     ]

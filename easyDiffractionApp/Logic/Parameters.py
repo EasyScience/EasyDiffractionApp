@@ -16,6 +16,7 @@ from easyCore.Utils.classTools import generatePath
 
 from easyDiffractionApp.Logic.DataStore import DataSet1D, DataStore
 
+
 class ParametersLogic(QObject):
     """
     """
@@ -68,33 +69,24 @@ class ParametersLogic(QObject):
         data.append(
             DataSet1D(
                 name='PND',
-                x=x_data,
-                y=np.zeros_like(x_data),
-                yb=np.zeros_like(x_data),
-                x_label='2theta (deg)',
-                y_label='Intensity',
+                x=x_data, y=np.zeros_like(x_data),
+                x_label='2theta (deg)', y_label='Intensity',
                 data_type='experiment'
             )
         )
         data.append(
             DataSet1D(
                 name='{:s} engine'.format(self._interface_name),
-                x=x_data,
-                y=np.zeros_like(x_data),
-                yb=np.zeros_like(x_data),
-                x_label='2theta (deg)',
-                y_label='Intensity',
+                x=x_data, y=np.zeros_like(x_data),
+                x_label='2theta (deg)', y_label='Intensity',
                 data_type='simulation'
             )
         )
         data.append(
             DataSet1D(
                 name='Difference',
-                x=x_data,
-                y=np.zeros_like(x_data),
-                yb=np.zeros_like(x_data),
-                x_label='2theta (deg)',
-                y_label='Difference',
+                x=x_data, y=np.zeros_like(x_data),
+                x_label='2theta (deg)', y_label='Difference',
                 data_type='simulation'
             )
         )
@@ -114,8 +106,7 @@ class ParametersLogic(QObject):
     def _defaultPatternParameters(self):
         return {
             "scale":      1.0,
-            "zero_shift": 0.0,
-            "field":      0.0
+            "zero_shift": 0.0
         }
 
     def _setPatternParametersAsObj(self):
@@ -133,7 +124,7 @@ class ParametersLogic(QObject):
             "resolution_v": -0.01,
             "resolution_w": 0.01,
             "resolution_x": 0.0,
-            "resolution_y": 0.0,
+            "resolution_y": 0.0
         }
 
     def _setInstrumentParametersAsObj(self):
@@ -162,7 +153,6 @@ class ParametersLogic(QObject):
             # Modify current label
             label = label.replace(".background.", ".")
             label = label.replace("Uiso.Uiso", "Uiso")
-            label = label.replace("Ciso.chi_11", "Ciso")
             label = label.replace("fract_", "fract.")
             label = label.replace("length_", "length.")
             label = label.replace("angle_", "angle.")
@@ -171,7 +161,6 @@ class ParametersLogic(QObject):
             # Modify previous label
             previousLabel = previousLabel.replace(".background.", ".")
             previousLabel = previousLabel.replace("Uiso.Uiso", "Uiso")
-            previousLabel = previousLabel.replace("Ciso.chi_11", "Ciso")
             previousLabel = previousLabel.replace("fract_", "fract.")
             previousLabel = previousLabel.replace("length_", "length.")
             previousLabel = previousLabel.replace("angle_", "angle.")
@@ -202,7 +191,6 @@ class ParametersLogic(QObject):
                     list[i] = list[i].replace("angle", f'<font color={iconColor} face="{iconsFamily}">less-than</font>')
                     list[i] = list[i].replace("atoms", f'<font color={iconColor} face="{iconsFamily}">atom</font>')
                     list[i] = list[i].replace("adp", f'<font color={iconColor} face="{iconsFamily}">arrows-alt</font>')
-                    list[i] = list[i].replace("msp", f'<font color={iconColor} face="{iconsFamily}">arrows-alt</font>')
                     list[i] = list[i].replace("fract", f'<font color={iconColor} face="{iconsFamily}">map-marker-alt</font>')
                     list[i] = list[i].replace("resolution", f'<font color={iconColor} face="{iconsFamily}">grip-lines-vertical</font>')
                     list[i] = list[i].replace("point_background", f'<font color={iconColor} face="{iconsFamily}">wave-square</font>')
@@ -212,7 +200,6 @@ class ParametersLogic(QObject):
                     list[i] = list[i].replace("angle", f'<font face="{iconsFamily}">less-than</font>')
                     list[i] = list[i].replace("atoms", f'<font face="{iconsFamily}">atom</font>')
                     list[i] = list[i].replace("adp", f'<font face="{iconsFamily}">arrows-alt</font>')
-                    list[i] = list[i].replace("msp", f'<font face="{iconsFamily}">arrows-alt</font>')
                     list[i] = list[i].replace("fract", f'<font face="{iconsFamily}">map-marker-alt</font>')
                     list[i] = list[i].replace("resolution", f'<font face="{iconsFamily}">grip-lines-vertical</font>')
                     list[i] = list[i].replace("point_background", f'<font face="{iconsFamily}">wave-square</font>')
@@ -244,10 +231,8 @@ class ParametersLogic(QObject):
                 continue
 
             # rename some groups of parameters and add experimental dataset name
-            par_path = par_path.replace('Instrument1DCWPolParameters.', f'Instrument.{self.parent.l_experiment.experimentDataAsObj()[0]["name"]}.')
             par_path = par_path.replace('Instrument1DCWParameters.', f'Instrument.{self.parent.l_experiment.experimentDataAsObj()[0]["name"]}.')
             par_path = par_path.replace('Instrument1DTOFParameters.', f'Instrument.{self.parent.l_experiment.experimentDataAsObj()[0]["name"]}.')
-            par_path = par_path.replace('PolPowder1DParameters.', f'Instrument.{self.parent.l_experiment.experimentDataAsObj()[0]["name"]}.')
             par_path = par_path.replace('Powder1DParameters.', f'Instrument.{self.parent.l_experiment.experimentDataAsObj()[0]["name"]}.')
             par_path = par_path.replace('.sigma0', '.resolution_sigma0')
             par_path = par_path.replace('.sigma1', '.resolution_sigma1')
@@ -327,19 +312,6 @@ class ParametersLogic(QObject):
         obj = borg.map.get_item_by_key(obj_id)
         return obj
 
-    def sim_x(self):
-        """
-        Rerurn the x-axis of the simulated data.
-        """
-        params = self._simulation_parameters_as_obj
-        x_min = float(params['x_min'])
-        x_max = float(params['x_max'])
-        x_step = float(params['x_step'])
-        num_points = int((x_max - x_min) / x_step + 1)
-        simx = np.linspace(x_min, x_max, num_points)
-        return simx
-
-
     ####################################################################################################################
     # Calculated data
     ####################################################################################################################
@@ -357,20 +329,15 @@ class ParametersLogic(QObject):
             sim.x = exp.x
 
         elif self.parent.l_experiment._experiment_skipped:
-            sim.x = self.sim_x()
+            params = self._simulation_parameters_as_obj
+            x_min = float(params['x_min'])
+            x_max = float(params['x_max'])
+            x_step = float(params['x_step'])
+            num_points = int((x_max - x_min) / x_step + 1)
+            sim.x = np.linspace(x_min, x_max, num_points)
 
-        kwargs = {}
-        if self.parent.l_experiment.spin_polarized:
-            fn = self.parent.l_experiment.fn_aggregate
-            kwargs["pol_fn"] = fn
-            # save some kwargs on the interface object for use in the calculator
-            # self._interface._InterfaceFactoryTemplate__interface_obj.saved_kwargs = local_kwargs
-
-        sim.y = self._interface.fit_func(sim.x, **kwargs)
-        if self.parent.l_experiment.spin_polarized:
-            self.parent.l_experiment.setSpinComponent()
-        else:
-            self.plotCalculatedDataSignal.emit((sim.x, sim.y))
+        sim.y = self._interface.fit_func(sim.x)
+        self.plotCalculatedDataSignal.emit((sim.x, sim.y))
 
         for phase_index, phase_name in enumerate([str(phase._borg.map.convert_id(phase).int) for phase in self.parent.l_phase.phases]):
             hkl = self._interface.get_hkl(x_array=sim.x, phase_name=phase_name, encoded_name=True)
@@ -379,18 +346,19 @@ class ParametersLogic(QObject):
             if 'time' in hkl.keys():
                 self.plotBraggDataSignal.emit((phase_index, hkl['time'], hkl['h'], hkl['k'], hkl['l']))  # noqa: E501
 
+
 def defaultSimulationParams(exp_type='powder1DCW', jsonify=True):
-    if 'powder1DCW' in exp_type:
+    if exp_type == 'powder1DCW':
         params = {
-            'x_min':  20,
-            'x_max':  140,
+            'x_min':  10,
+            'x_max':  120,
             'x_step': 0.1
         }
-    elif 'powder1DTOF' in exp_type:
+    elif exp_type == 'powder1DTOF':
         params = {
             'x_min':  5000,
-            'x_max':  17000,
-            'x_step': 10
+            'x_max':  60000,
+            'x_step': 50
         }
     else:
         raise AttributeError('Unknown Experiment type')

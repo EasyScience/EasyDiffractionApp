@@ -11,6 +11,7 @@ import requests
 import xml.dom.minidom
 import dephell_licenses
 import Functions, Config
+import Signatures
 
 
 CONFIG = Config.Config()
@@ -250,6 +251,23 @@ def installQtInstallerFramework():
     else:
         Functions.printSuccessMessage(message)
 
+def prepareSignedMaintenanceTool():
+    if CONFIG.setup_os != "Windows":
+        return
+    try:
+        message = 'copy and sign MaintenanceTool'
+        target_dir = CONFIG['ci']['project']['subdirs']['certificates_path']
+        target_file = os.path.join(target_dir, "signedmaintenancetool.exe")
+        # copy MaintenanceTool locally
+        Functions.copyFile(os.path.join(qtifwDirPath(), "bin", "installerbase.exe" ), target_file)
+        Signatures.unzipCerts(zip_pass=sys.argv[2])
+        Signatures.sign_windows(file_to_sign=target_file, cert_pass=sys.argv[1])
+    except Exception as exception:
+        Functions.printFailMessage(message, exception)
+        sys.exit(1)
+    else:
+        Functions.printSuccessMessage(message)
+
 def createInstallerSourceDir():
     try:
         message = f'create installer source directory {setupBuildDirPath()}'
@@ -280,6 +298,11 @@ def createInstallerSourceDir():
         Functions.moveDir(source=freezed_app_src, destination=app_data_subsubdir_path)
         Functions.copyFile(source=CONFIG.license_file, destination=app_data_subsubdir_path)
         Functions.copyFile(source=CONFIG['release']['changelog_file'], destination=app_data_subsubdir_path)
+        # TODO: change the handling of failure in all methods in Functions.py so they bubble up exceptions
+        # TODO: remove this platform conditional once the above is done
+        if CONFIG.os == 'windows':
+            Functions.copyFile(source=CONFIG.maintenancetool_file, destination=app_data_subsubdir_path)
+
         # package: docs
         ##docs_subdir_path = os.path.join(packagesDirPath(), CONFIG['ci']['app']['setup']['build']['docs_package_subdir'])
         ##docs_data_subsubdir_path = os.path.join(docs_subdir_path, CONFIG['ci']['app']['setup']['build']['data_subsubdir'])
@@ -299,6 +322,8 @@ def createInstallerSourceDir():
         #Functions.copyDir(source=examples_dir_src, destination=os.path.join(app_data_subsubdir_path, examples_dir_dest))
         # TODO: change the handling of failure in all methods in Functions.py so they bubble up exceptions
         # TODO: remove this platform conditional once the above is done
+        if CONFIG.os == 'windows':
+            Functions.copyFile(source=CONFIG.maintenancetool_file, destination=app_data_subsubdir_path)
     except Exception as exception:
         Functions.printFailMessage(message, exception)
         sys.exit(1)
@@ -307,7 +332,7 @@ def createInstallerSourceDir():
 
 def createOfflineInstaller():
     try:
-        message = 'create offline installer'
+        message = 'create installer'
         qtifw_bin_dir_path = os.path.join(qtifwDirPath(), 'bin')
         qtifw_binarycreator_path = os.path.join(qtifw_bin_dir_path, 'binarycreator')
         qtifw_installerbase_path = os.path.join(qtifw_bin_dir_path, 'installerbase')
@@ -362,6 +387,7 @@ if __name__ == "__main__":
     downloadQtInstallerFramework()
     osDependentPreparation()
     installQtInstallerFramework()
+    prepareSignedMaintenanceTool()
     createInstallerSourceDir()
     createOfflineInstaller()
     createOnlineRepositoryLocally()

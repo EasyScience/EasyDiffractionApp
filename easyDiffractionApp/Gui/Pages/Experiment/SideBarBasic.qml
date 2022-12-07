@@ -54,7 +54,7 @@ EaComponents.SideBarColumn {
     }
 
     EaElements.GroupBox {
-        title: qsTr("Experiment type") // qsTr("Instrument and experiment type")
+        title: qsTr("Instrument and experiment type")
         enabled: ExGlobals.Constants.proxy.experiment.experimentLoaded ||
                  ExGlobals.Constants.proxy.experiment.experimentSkipped
 
@@ -116,7 +116,7 @@ EaComponents.SideBarColumn {
 
                     EaElements.ComboBox {
                         enabled: !ExGlobals.Constants.proxy.experiment.experimentLoaded
-                        width: (EaStyle.Sizes.sideBarContentWidth - EaStyle.Sizes.fontPixelSize) / 2
+                        width: (EaStyle.Sizes.sideBarContentWidth - EaStyle.Sizes.fontPixelSize * 2 ) / 3
                         model: ["Neutron"]
                     }
                 }
@@ -131,7 +131,7 @@ EaComponents.SideBarColumn {
                         property string experimentType: ExGlobals.Constants.proxy.sample.experimentType
 
                         enabled: !ExGlobals.Constants.proxy.experiment.experimentLoaded
-                        width: (EaStyle.Sizes.sideBarContentWidth - EaStyle.Sizes.fontPixelSize) / 2
+                        width: (EaStyle.Sizes.sideBarContentWidth - EaStyle.Sizes.fontPixelSize * 2 ) / 3
 
                         textRole: "text"
                         valueRole: "value"
@@ -154,11 +154,6 @@ EaComponents.SideBarColumn {
                         }
                     }
                 }
-            }
-
-            Row {
-                visible: true
-                spacing: EaStyle.Sizes.fontPixelSize
 
                 Column {
                     EaElements.Label {
@@ -168,41 +163,8 @@ EaComponents.SideBarColumn {
 
                     EaElements.ComboBox {
                         enabled: !ExGlobals.Constants.proxy.experiment.experimentLoaded
-                        width: (EaStyle.Sizes.sideBarContentWidth - EaStyle.Sizes.fontPixelSize) / 2
+                        width: (EaStyle.Sizes.sideBarContentWidth - EaStyle.Sizes.fontPixelSize * 2 ) / 3
                         model: ["Powder"]
-                    }
-                }
-
-                Column {
-                    EaElements.Label {
-                        enabled: false
-                        text: qsTr("Polarization")
-                    }
-
-                    EaElements.ComboBox {
-                        property bool experimentType: ExGlobals.Constants.proxy.experiment.isSpinPolarized
-                        enabled: !ExGlobals.Constants.proxy.experiment.experimentLoaded
-                        width: (EaStyle.Sizes.sideBarContentWidth - EaStyle.Sizes.fontPixelSize) / 2
-
-                        textRole: "text"
-                        valueRole: "value"
-
-                        model: [
-                            { value: false, text: qsTr("Unpolarized") },
-                            { value: true, text: qsTr("Polarized") }
-                        ]
-
-                        onExperimentTypeChanged: {
-                            if (experimentType === false) {
-                                currentIndex = 0
-                            } else if (experimentType === true) {
-                                currentIndex = 1
-                            }
-                        }
-
-                        onActivated: {
-                            ExGlobals.Constants.proxy.experiment.setSpinPolarization(currentValue)
-                        }
                     }
                 }
             }
@@ -219,7 +181,7 @@ EaComponents.SideBarColumn {
 
         Loader {
             source: {
-                if ((ExGlobals.Constants.proxy.sample.experimentType === 'powder1DCW') || (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DCWpol')) {
+                if (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DCW') {
                     return 'SideBarGroups/RangesPdCw1d.qml'
                 } else if (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DTOF') {
                     return 'SideBarGroups/RangesPdTof1d.qml'
@@ -235,24 +197,11 @@ EaComponents.SideBarColumn {
 
         Loader {
             source: {
-                if ((ExGlobals.Constants.proxy.sample.experimentType === 'powder1DCW') || (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DCWpol')) {
+                if (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DCW') {
                     return 'SideBarGroups/InstrumentSetupPdCw1d.qml'
                 } else if (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DTOF') {
                     return 'SideBarGroups/InstrumentSetupPdTof1d.qml'
                 }
-            }
-        }
-    }
-
-    EaElements.GroupBox {
-        title: qsTr("Diffraction radiation")
-        visible: ExGlobals.Constants.proxy.experiment.isSpinPolarized
-        enabled: ExGlobals.Constants.proxy.experiment.experimentLoaded ||
-                 ExGlobals.Constants.proxy.experiment.experimentSkipped
-
-        Loader {
-            source: {
-                    return 'SideBarGroups/DiffractionRadiation.qml'
             }
         }
     }
@@ -264,7 +213,7 @@ EaComponents.SideBarColumn {
 
         Loader {
             source: {
-                if ((ExGlobals.Constants.proxy.sample.experimentType === 'powder1DCW') || (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DCWpol')) {
+                if (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DCW') {
                     return 'SideBarGroups/PeakProfilePdCw1d.qml'
                 } else if (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DTOF') {
                     return 'SideBarGroups/PeakProfilePdTof1d.qml'
@@ -280,7 +229,7 @@ EaComponents.SideBarColumn {
 
         Loader {
             source: {
-                if ((ExGlobals.Constants.proxy.sample.experimentType === 'powder1DCW') || (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DCWpol')) {
+                if (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DCW') {
                     return 'SideBarGroups/BackgroundPdCw1d.qml'
                 } else if (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DTOF') {
                     return 'SideBarGroups/BackgroundPdTof1d.qml'
@@ -302,12 +251,12 @@ EaComponents.SideBarColumn {
 
     // Load experimental data file dialog
 
-    Dialogs1.FileDialog {
+    Dialogs1.FileDialog{
         id: loadExperimentDataFileDialog
 
-        nameFilters: [ qsTr("CIF files (*.cif)"), qsTr("Data files (*.xye *.xys *.xy)") ]
+        nameFilters: [ qsTr("Data files") + " (*.xye *.xys *.xy)" ]
 
-        onAccepted: ExGlobals.Constants.proxy.experiment.addExperimentData(fileUrl)
+        onAccepted: ExGlobals.Constants.proxy.experiment.addExperimentDataFromXye(fileUrl)
     }
 
     // Logic

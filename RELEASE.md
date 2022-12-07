@@ -1,18 +1,3 @@
-### New Features
-
-- Simulating and fitting polarised data using the [CrysPy](https://github.com/ikibalin/cryspy) calculation engine.
-- Reading CIF files with experimental data and instrumental parameters.
-
 ### Changes
 
-- Default example with experimental phase has been modified.
-- Added example projects with polarised data.
-- Windows installer is now 64-bit.
-
-### Bug Fixes
-
-- CrysFML simulation now shows Bragg peaks.
-- Inclusion of the space group setting in calculations.
-- The `Project save` button is now disabled for read-only example projects.
-- The `Reset state` functionality now resets calculator choice.
-- Overall performance has been improved.
+- The Python-based backend framework has been updated from version 3.7 to 3.8.

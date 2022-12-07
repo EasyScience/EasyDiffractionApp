@@ -9,5 +9,3 @@ RangesPdTof1d 1.0 RangesPdTof1d.qml
 InstrumentSetupPdTof1d 1.0 InstrumentSetupPdTof1d.qml
 PeakProfilePdTof1d 1.0 PeakProfilePdTof1d.qml
 BackgroundPdTof1d 1.0 BackgroundPdTof1d.qml
-
-DiffractionRadiation 1.0 DiffractionRadiation.qml

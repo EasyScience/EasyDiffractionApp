@@ -4,11 +4,8 @@
 
 from PySide2.QtCore import Signal, QObject, QThread
 
-import numpy as np
-
 from threading import Thread
 
-from easyDiffractionLib.interface import InterfaceFactory as Calculator
 from easyCore.Fitting.Fitting import Fitter as CoreFitter
 from easyCore.Fitting.Constraints import ObjConstraint, NumericConstraint
 
@@ -59,7 +56,7 @@ class FittingLogic(QObject):
         self.finished.connect(self.onSuccess)
         self.failed.connect(self.onFailed)
 
-    def fit_nonpolar(self):
+    def fit_threading(self):
         data = self.data
         method = self._current_minimizer_method_name
 
@@ -75,64 +72,14 @@ class FittingLogic(QObject):
             'weights': weights,
             'method': method
         }
-
-        local_kwargs = {}
         if method == 'least_squares':
             kwargs['minimizer_kwargs'] = {'diff_step': 1e-5}
-
-        # save some kwargs on the interface object for use in the calculator
-        self.interface._InterfaceFactoryTemplate__interface_obj.saved_kwargs = local_kwargs
         try:
             res = self.fitter.fit(x, y, **kwargs)
-
         except Exception as ex:
             self.failed.emit(str(ex))
             return
         self.finished.emit(res)
-
-    def fit_polar(self):
-        data = self.data
-        method = self._current_minimizer_method_name
-        self._fit_finished = False
-        self.fitStarted.emit()
-        exp_data = data.experiments[0]
-        x = exp_data.x
-
-        refinement = self.parent.l_experiment.refinement_methods()
-        targets = [component for component in refinement if refinement[component]]
-        try:
-            x_, y_, fit_func = self.interface().generate_pol_fit_func(x, exp_data.y, exp_data.yb, targets)
-        except Exception as ex:
-            raise NotImplementedError('This is not implemented for this calculator yet')
-        weights = 1/exp_data.e
-        weights = np.tile(weights, len(targets))
-
-        kwargs = {
-            'weights': weights,
-            'method': method
-        }
-
-        local_kwargs = {}
-        if method == 'least_squares':
-            kwargs['minimizer_kwargs'] = {'diff_step': 1e-5}
-
-        # save some kwargs on the interface object for use in the calculator
-        # TODO FIX THIS THIS IS NOT THE WAY TO DO IT :-/
-        self.interface._InterfaceFactoryTemplate__interface_obj.saved_kwargs = local_kwargs
-        try:
-            obj = self.fitter.fit_object
-            fitter = CoreFitter(obj, fit_func)
-            res = fitter.fit(x_, y_, **kwargs)
-        except Exception as ex:
-            self.failed.emit(str(ex))
-            return
-        self.finished.emit(res)
-
-    def fit_threading(self):
-        if self.parent.l_experiment.spin_polarized:
-            self.fit_polar()
-        else:
-            self.fit_nonpolar()
 
     def setFailedFitResults(self):
         self._fit_results = _defaultFitResults()
@@ -167,9 +114,6 @@ class FittingLogic(QObject):
     def finishFit(self):
         self._fit_finished = True
         self.fitFinished.emit()
-        # TODO: remove once background is correctly implemented in polarized
-        if self.parent.l_experiment.spin_polarized:
-            self.parent.l_experiment.setSpinComponent()
         # must re-instantiate the thread object
         self.fit_thread = Thread(target=self.fit_threading)
 
@@ -255,7 +199,6 @@ class FittingLogic(QObject):
         self.interface.switch(new_name)
         # recreate the fitter object with the new interface
         self.fitter = CoreFitter(self.parent.l_sample._sample, self.interface.fit_func)
-
         self.parent.l_sample._sample.update_bindings()
         self.currentCalculatorChanged.emit()
         print("***** _onCurrentCalculatorChanged")

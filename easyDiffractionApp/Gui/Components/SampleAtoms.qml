@@ -31,6 +31,7 @@ EaComponents.TableView {
 
         XmlRole { name: "label"; query: "label/value/string()" }
         XmlRole { name: "type"; query: "specie/value/string()" }
+        //XmlRole { name: "color"; query: "color/string()" }
         XmlRole { name: "x"; query: "fract_x/value/number()" }
         XmlRole { name: "y"; query: "fract_y/value/number()" }
         XmlRole { name: "z"; query: "fract_z/value/number()" }
@@ -64,6 +65,14 @@ EaComponents.TableView {
             onEditingFinished: editDescriptorValue(model.labelId, text)
         }
 
+        /*
+        EaComponents.TableViewComboBox {
+            width: atomLabel.width
+            currentIndex: model.indexOf(modelType)
+            headerText: "Atom"
+            model: ["Mn", "Fe", "Co", "Ni", "Cu", "Si", "O"]
+        }
+        */
         EaComponents.TableViewTextInput {
             width: atomLabel.width
             horizontalAlignment: Text.AlignLeft
@@ -249,19 +258,9 @@ EaComponents.TableView {
             'Ts' : '#000000',
             'Og' : '#000000'
         }
-        // Simple case, e.g. Co
         if (colors.hasOwnProperty(symbol)) {
             return colors[symbol]
         }
-        // First 2 symbols, if valency is given for 2 characters element, e.g. Mn3+
-        if (colors.hasOwnProperty(symbol.substring(0, 2))) {
-            return colors[symbol.substring(0, 2)]
-        }
-        // First symbol, if valency is given for 1 characters element, e.g. O2-
-        if (colors.hasOwnProperty(symbol.substring(0, 1))) {
-            return colors[symbol.substring(0, 1)]
-        }
-        // Transparent color if no elements found
         return 'transparent'
     }
 

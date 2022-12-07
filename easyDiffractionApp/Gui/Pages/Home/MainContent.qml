@@ -49,13 +49,13 @@ Item {
                 font.family: parent.fontFamily
                 font.pixelSize: parent.fontPixelSize
                 font.weight: Font.Light
-                text: ExGlobals.Constants.appPrefixNameLogo
+                text: ExGlobals.Constants.appPrefixName
             }
             EaElements.Label {
                 font.family: parent.fontFamily
                 font.pixelSize: parent.fontPixelSize
                 font.weight: Font.DemiBold
-                text: ExGlobals.Constants.appSuffixNameLogo
+                text: ExGlobals.Constants.appSuffixName
             }
         }
 

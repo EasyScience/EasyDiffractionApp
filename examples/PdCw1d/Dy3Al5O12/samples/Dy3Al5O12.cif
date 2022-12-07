@@ -1,6 +1,6 @@
 data_Dy3Al5O12
 
-_cell_length_a 11.8
+_cell_length_a 11.8()
 _cell_length_b 11.8
 _cell_length_c 11.8
 _cell_angle_alpha 90.0

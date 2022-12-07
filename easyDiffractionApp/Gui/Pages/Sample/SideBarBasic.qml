@@ -98,17 +98,12 @@ EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
         title: qsTr("Atomic displacement parameters")
-        enabled: ExGlobals.Constants.proxy.phase.samplesPresent
-        ExComponents.SampleAdps {}
-        Component.onCompleted: ExGlobals.Variables.adpsGroup = this
-    }
-
-    EaElements.GroupBox {
-        title: qsTr("Magnetic susceptibility parameters")
         last: true
-        enabled: ExGlobals.Constants.proxy.phase.samplesPresent &&
-            (ExGlobals.Constants.proxy.experiment.isSpinPolarized || ExGlobals.Constants.proxy.phase.hasMsp)
-        ExComponents.SampleMsps{}
+        enabled: ExGlobals.Constants.proxy.phase.samplesPresent
+
+        ExComponents.SampleAdps {}
+
+        Component.onCompleted: ExGlobals.Variables.adpsGroup = this
     }
 
     // Open phase CIF file dialog

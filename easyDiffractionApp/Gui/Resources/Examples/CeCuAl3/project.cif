@@ -1,5 +1,5 @@
 _name CeCuAl3
-_short_description 'neutrons, powder, time-of-flight, Polaris@ISIS'
-_samples CeCuAl3
-_experiments Polaris@ISIS
-_modified '01.06.2022 17:37'
+_short_description 'neutrons, powder, time-of-flight, 1D'
+_samples 'CeCuAl3'
+_experiments 'Polaris@ISIS'
+_modified '25.08.2021 11:00'

@@ -17,7 +17,6 @@ import Gui.Globals 1.0 as ExGlobals
 EaComponents.TableView {
     id: tableView
 
-    maxRowCountShow: 9
     defaultInfoText: qsTr("No Examples Available")
 
     // Table model
@@ -58,7 +57,7 @@ EaComponents.TableView {
             text: model.name
         }
 
-        EaComponents.TableViewLabelControl {
+        EaComponents.TableViewLabel {
             id: descriptionColumn
 
             width: EaStyle.Sizes.fontPixelSize * 24
@@ -67,7 +66,6 @@ EaComponents.TableView {
 
             headerText: "Description"
             text: model.description
-            ToolTip.text: model.description
         }
 
         EaComponents.TableViewButton {

@@ -10,8 +10,6 @@ from PySide2.QtCore import Signal, QObject
 
 from easyCore import np, borg
 from easyDiffractionLib import Phases, Phase, Lattice, Site, SpaceGroup
-from easyCrystallography.Components.AtomicDisplacement import AtomicDisplacement
-from easyCrystallography.Components.Susceptibility import MagneticSusceptibility
 from easyCrystallography.Symmetry.tools import SpacegroupInfo
 from easyApp.Logic.Utils.Utils import generalizePath
 
@@ -32,12 +30,11 @@ class PhaseLogic(QObject):
         self.parent = parent
         self._interface = interface
         self.state = parent.l_parameters
-        self.phases = Phases()
+        self.phases = Phases(interface=interface)
         self._phases_as_obj = []
         self._phases_as_xml = ""
         self._phases_as_cif = ""
         self._current_phase_index = 0
-        self.has_msp = False
 
     ####################################################################################################################
     ####################################################################################################################
@@ -74,17 +71,17 @@ class PhaseLogic(QObject):
             idx = known_phases.count(default_phase.name)
             default_phase.name = default_phase.name + str(idx)
         # print('Disabling scale')
-        default_phase.scale.fixed = True
+        # default_phase.scale.enabled = False
         self.phases.append(default_phase)
         borg.stack.enabled = True
 
     @staticmethod
     def _defaultPhase():
-        space_group = SpaceGroup.from_pars('F d -3:2')
-        cell = Lattice.from_pars(5.0, 3.0, 4.0, 90, 90, 90)
-        adp = AtomicDisplacement("Uiso")
-        atom = Site(label='O', specie='O', fract_x=0.0, fract_y=0.0, fract_z=0.0, adp=adp)
-        phase = Phase('Test', spacegroup=space_group, cell=cell)
+        space_group = SpaceGroup.from_pars('P 42/n c m')
+        cell = Lattice.from_pars(8.56, 8.56, 6.12, 90, 90, 90)
+        atom = Site.from_pars(label='Cl1', specie='Cl', fract_x=0.125, fract_y=0.167, fract_z=0.107)  # noqa: E501
+        atom.add_adp('Uiso', Uiso=0.0)
+        phase = Phase('Dichlorine', spacegroup=space_group, cell=cell)
         phase.add_atom(atom)
         return phase
 
@@ -143,7 +140,6 @@ class PhaseLogic(QObject):
         if phases[self._current_phase_index].spacegroup.space_group_HM_name == new_name:  # noqa: E501
             return
         phases[self._current_phase_index].spacegroup.space_group_HM_name = new_name  # noqa: E501
-        self._updateCalculatedData()
 
     def updateParameters(self):
         self.parent.parametersChanged.emit()
@@ -232,15 +228,12 @@ class PhaseLogic(QObject):
     def addDefaultAtom(self):
         index = len(self.phases[0].atoms.atom_labels) + 1
         label = f'Label{index}'
-        adp = AtomicDisplacement("Uiso")
-        msp = MagneticSusceptibility("Ciso")
-        atom = Site(label=label,
-                    specie='Cl',
-                    fract_x=0.5,
-                    fract_y=0.5,
-                    fract_z=0.5,
-                    adp=adp,
-                    msp=msp)
+        atom = Site.from_pars(label=label,
+                              specie='O',
+                              fract_x=0.05,
+                              fract_y=0.05,
+                              fract_z=0.05)
+        atom.add_adp('Uiso', Uiso=0.0)
         self.phases[self._current_phase_index].add_atom(atom)
         self.updateParameters()
 
@@ -262,19 +255,14 @@ class PhaseLogic(QObject):
             phases = Phases.from_cif_file(cif_path)
             self.phases.interface = self._interface
             for phase in phases:
-                phase.scale.fixed = True
+                # print('Disabling scale')
+                # phase.scale.enabled = False
                 self.phases.append(phase)
-                # see if MSP is present (or just default)
-                msps = [hasattr(atom, 'msp') for atom in phase.atoms]  # noqa: E501
-                self.has_msp = any(msps)
             self.phasesReplaced.emit()
             borg.stack.enabled = True
 
     def getCurrentPhaseName(self):
         return self.phases[self._current_phase_index].name
-
-    def hasMsp(self):
-        return self.has_msp
 
     def setCurrentPhaseName(self, name):
         if self.phases[self._current_phase_index].name == name:

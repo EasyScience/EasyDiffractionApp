@@ -49,7 +49,7 @@ EaComponents.TableView {
         EaComponents.TableViewLabel {
             headerText: "Color"
             //backgroundColor: model.color ? model.color : "transparent"
-            backgroundColor: EaStyle.Colors.chartForegroundsExtra[model.index] ? EaStyle.Colors.chartForegroundsExtra[model.index] : "transparent"
+            backgroundColor: EaStyle.Colors.chartForegroundsExtra[model.index]
         }
 
         EaComponents.TableViewButton {

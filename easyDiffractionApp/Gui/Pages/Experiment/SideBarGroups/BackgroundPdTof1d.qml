@@ -103,7 +103,7 @@ Column {
         EaElements.SideBarButton {
             fontIcon: "plus-circle"
             text: qsTr("Append new point")
-            onClicked: ExGlobals.Constants.proxy.background.addDefaultPoint()
+            onClicked: ExGlobals.Constants.proxy.background.addPoint()
         }
 
         EaElements.SideBarButton {

@@ -15,17 +15,6 @@ import easyApp.Gui.Logic 1.0 as EaLogic
 import Gui.Globals 1.0 as ExGlobals
 
 EaComponents.TableView {
-    property int numColumnWidth: EaStyle.Sizes.fontPixelSize * 2.5
-    property int labelColumnWidth: EaStyle.Sizes.fontPixelSize * 2.5
-    property int typeColumnWidth: EaStyle.Sizes.fontPixelSize * 4.0
-    property int numFixedColumn: 3
-    property int numFlexColumn: 7
-    property int flexColumnWidth: (width -
-                                    numColumnWidth -
-                                    labelColumnWidth -
-                                    typeColumnWidth -
-                                    EaStyle.Sizes.tableColumnSpacing * (numFixedColumn + numFlexColumn - 1)) /
-                                    numFlexColumn
 
     // Table model
 
@@ -60,21 +49,22 @@ EaComponents.TableView {
         property string modelAdpType: model.adpType
 
         EaComponents.TableViewLabel {
-            width: numColumnWidth
+            width: EaStyle.Sizes.fontPixelSize * 2.5
             headerText: "No."
             text: model.index + 1
         }
 
         EaComponents.TableViewLabel {
+            id: adpAtomLabel
             horizontalAlignment: Text.AlignLeft
-            width: labelColumnWidth
+            width: EaStyle.Sizes.fontPixelSize * 3.8
             headerText: "Label"
             text: model.label
         }
 
         EaComponents.TableViewComboBox {
             enabled: false
-            width: typeColumnWidth
+            width: adpAtomLabel.width * 1.2
             headerText: "Type"
             model: ["Uiso", "Uani", "Biso", "Bani"]
             //currentIndex: model.indexOf(modelAdpType)
@@ -82,49 +72,49 @@ EaComponents.TableView {
         }
 
         EaComponents.TableViewTextInput {
-            width: flexColumnWidth
+            width: adpAtomLabel.width
             headerText: "Iso"
             text: EaLogic.Utils.toFixed(model.adpIso)
             onEditingFinished: editParameterValue(model.adpIsoId, text)
         }
 
         EaComponents.TableViewTextInput {
-            width: flexColumnWidth
+            width: adpAtomLabel.width
             headerText: "Ani11"
             text: EaLogic.Utils.toFixed(model.adpAni11)
             onEditingFinished: editParameterValue(model.adpAniId11, text)
         }
 
         EaComponents.TableViewTextInput {
-            width: flexColumnWidth
+            width: adpAtomLabel.width
             headerText: "Ani22"
             text: EaLogic.Utils.toFixed(model.adpAni22)
             onEditingFinished: editParameterValue(model.adpAniId22, text)
         }
 
         EaComponents.TableViewTextInput {
-            width: flexColumnWidth
+            width: adpAtomLabel.width
             headerText: "Ani33"
             text: EaLogic.Utils.toFixed(model.adpAni33)
             onEditingFinished: editParameterValue(model.adpAniId33, text)
         }
 
         EaComponents.TableViewTextInput {
-            width: flexColumnWidth
+            width: adpAtomLabel.width
             headerText: "Ani12"
             text: EaLogic.Utils.toFixed(model.adpAni12)
             onEditingFinished: editParameterValue(model.adpAniId12, text)
         }
 
         EaComponents.TableViewTextInput {
-            width: flexColumnWidth
+            width: adpAtomLabel.width
             headerText: "Ani13"
             text: EaLogic.Utils.toFixed(model.adpAni13)
             onEditingFinished: editParameterValue(model.adpAniId13, text)
         }
 
         EaComponents.TableViewTextInput {
-            width: flexColumnWidth
+            width: adpAtomLabel.width
             headerText: "Ani23"
             text: EaLogic.Utils.toFixed(model.adpAni23)
             onEditingFinished: editParameterValue(model.adpAniId23, text)

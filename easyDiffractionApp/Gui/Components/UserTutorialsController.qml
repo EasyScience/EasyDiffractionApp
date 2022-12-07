@@ -246,7 +246,7 @@ EaElements.RemoteController {
         //rc.keyClick(Qt.Key_Right)
         //rc.keyClick(Qt.Key_Right)
         rc.deleteCharacters(6)
-        rc.typeText("6.00")
+        rc.typeText("7.00")
         rc.keyClick(Qt.Key_Enter) // DOESN'T WORK ON CI XVFB ?
         rc.showPointer()
 

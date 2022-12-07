@@ -7278,7 +7278,7 @@
         }
     ],
     "instrument_parameters": {
-        "@module": "easyDiffractionLib.elements.Experiments.Experiment",
+        "@module": "easyDiffractionLib.Elements.Experiments.Experiment",
         "@class": "Pars1D",
         "@version": "0.0.1",
         "wavelength": {

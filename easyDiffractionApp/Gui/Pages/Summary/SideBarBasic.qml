@@ -20,8 +20,7 @@ EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
         title: qsTr("Export report")
-        enabled: ExGlobals.Constants.proxy.project.projectCreated &&
-        !ExGlobals.Constants.proxy.project.readOnly
+        enabled: ExGlobals.Constants.proxy.project.currentProjectPath !== '--- EXAMPLE ---' && ExGlobals.Constants.proxy.project.projectCreated
         collapsible: false
         last: true
 
@@ -98,7 +97,7 @@ EaComponents.SideBarColumn {
                 horizontalAlignment: TextInput.AlignLeft
 
                 placeholderText: qsTr("Enter report location here")
-                text: ExGlobals.Constants.proxy.project.projectCreated ?
+                text: ExGlobals.Constants.proxy.project.currentProjectPath !== '--- EXAMPLE ---' && ExGlobals.Constants.proxy.project.projectCreated ?
                           EaLogic.Utils.urlToLocalFile(reportParentDirDialog.folder + '/' + reportNameField.text + '.' + reportFormatField.currentValue) :
                           ''
 

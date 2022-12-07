@@ -186,10 +186,6 @@ class PhaseProxy(QObject):
     def removeAtom(self, atom_label: str):
         self.logic.removeAtom(atom_label)
 
-    @Property(bool, notify=currentPhaseChanged)
-    def hasMsp(self):
-        return self.logic.hasMsp()
-
     ####################################################################################################################
     # Current phase
     ####################################################################################################################

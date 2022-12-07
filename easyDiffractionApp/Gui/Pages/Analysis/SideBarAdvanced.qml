@@ -133,7 +133,7 @@ EaComponents.SideBarColumn {
     EaElements.GroupBox {
         title: qsTr("Fitting constraints")
         enabled: ExGlobals.Constants.proxy.experiment.experimentLoaded
-        last: !ExGlobals.Constants.proxy.experiment.isSpinPolarized
+        last: true
 
         ExComponents.AnalysisConstraints {}
 
@@ -329,21 +329,5 @@ EaComponents.SideBarColumn {
             // Type 2 END
 
         }
-    }
-
-    EaElements.GroupBox {
-        title: qsTr("Fitting componenets")
-        last: true
-        visible: ExGlobals.Constants.proxy.experiment.isSpinPolarized
-        enabled: ExGlobals.Constants.proxy.experiment.experimentLoaded ||
-                 ExGlobals.Constants.proxy.experiment.experimentSkipped
-
-        Loader {
-            source: {
-                    return 'SideBarGroups/Refinement.qml'
-            }
-        }
-
-        Component.onCompleted: ExGlobals.Variables.associatedPhasesGroup = this
     }
 }

@@ -43,6 +43,8 @@ class BackgroundLogic(QObject):
     def onAsObjChanged(self):
         print(f"***** onAsObjChanged")
         self._background_as_obj = self._background_obj()
+        if self._background_as_obj is None:
+            return
         self._setAsXml()
         self.parent.updateBackground(self._background_as_obj)
 
@@ -56,8 +58,6 @@ class BackgroundLogic(QObject):
         self.asXmlChanged.emit()
 
     def setDefaultPoints(self):
-        print("+ setDefaultPoints")
-
         if self._background_as_obj is None:
             # TODO THIS IS NOT HOW TO DO THINGS!!!
             self.initializeContainer()

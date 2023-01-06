@@ -20,7 +20,7 @@ def _defaultFitResults():
     return {
         "success": None,
         "nvarys":  None,
-        "GOF":     None,
+        # "GOF":     None,
         "redchi2": None
     }
 
@@ -142,7 +142,7 @@ class FittingLogic(QObject):
         self._fit_results = {
             "success": res.success,
             "nvarys":  res.n_pars,
-            "GOF":     float(res.goodness_of_fit),
+            # "GOF":     float(res.goodness_of_fit),
             "redchi2": float(res.reduced_chi)
         }
 

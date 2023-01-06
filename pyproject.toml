@@ -24,8 +24,8 @@ secondary = true
 [tool.poetry.dependencies]
 python = '^3.8, <3.9'
 darkdetect = '^0.3.1'
-# pyobjc-core = { version = '^7.1', platform = 'darwin' }
-# pyobjc-framework-cocoa = { version = '^7.1', platform = 'darwin' }
+pyobjc-core = { version = '^9.0', platform = 'darwin' }
+pyobjc-framework-cocoa = { version = '^9.0', platform = 'darwin' }
 CFML = '^0.0.1'
 GSASII = '^0.0.1'
 

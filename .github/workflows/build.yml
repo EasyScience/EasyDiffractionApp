@@ -10,7 +10,8 @@ jobs:
 
     strategy:
       matrix:
-        os: [macos-11, ubuntu-20.04, windows-2019]
+        # os: [macos-11, ubuntu-20.04, windows-2019]
+        os: [macos-11]
 
     steps:
       - name: Cancel previous workflow runs
@@ -58,8 +59,8 @@ jobs:
       - name: Compile and install pyobjc on macos-11
         if: runner.os == 'macOS'
         run: |
-          python -m pip install pyobjc-core==7.0.1 --no-binary :all:
-          python -m pip install pyobjc-framework-Cocoa==7.0.1 --no-binary :all:
+          python -m pip install pyobjc-core>=7.1 --no-binary :all:
+          python -m pip install pyobjc-framework-Cocoa>=7.1 --no-binary :all:
 
       # https://docs.github.com/en/actions/reference/environment-variables
       - name: Declare env variables on push and pull_request

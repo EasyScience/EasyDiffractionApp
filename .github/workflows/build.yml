@@ -55,6 +55,12 @@ jobs:
           python -m pip install toml
           python utils.py --update
 
+      - name: Compile and install pyobjc on macos-11
+        if: runner.os == 'macOS'
+        run: |
+          python -m pip install pyobjc-core --no-binary :all:
+          python -m pip install pyobjc-framework-Cocoa --no-binary :all:
+
       # https://docs.github.com/en/actions/reference/environment-variables
       - name: Declare env variables on push and pull_request
         shell: bash

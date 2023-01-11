@@ -83,9 +83,18 @@ Item {
             saveConfirmationDialog.open()
         }
 
+        // handlers for clicking the "Create Report" button in the side bar
+        signal reportRequested()
+        onReportRequested: {
+            ExGlobals.Constants.proxy.project.setReport(html)
+            webView.loadHtml(html)
+        }
+
         Component.onCompleted: {
             ExGlobals.Variables.reportWebView = this
+            // Notify the python proxies
             ExGlobals.Constants.proxy.project.htmlExportingFinished.connect(htmlExportingFinished)
+            ExGlobals.Constants.proxy.project.reportRequested.connect(reportRequested)
         }
     }
 
@@ -135,14 +144,23 @@ Item {
         }
     }
 
-    //}
-
     onHtmlChanged: {
-        //print(html)
-        ExGlobals.Constants.proxy.project.setReport(html)
-        webView.loadHtml(html)
+        // when the state changes, the html display is reset
+        const list = [
+            '<!DOCTYPE html>',
+            '<html>\n',
+            '<head>\n',
+            head+'\n',
+            '</head>\n',
+            '<body>\n',
+            '</body>\n',
+            '</html>'
+        ]
+        const empty_html = list.join('\n')
+        ExGlobals.Constants.proxy.project.setReport(empty_html)
+        webView.loadHtml(empty_html)
     }
-
+ 
     /////////////
     // HTML parts
     /////////////

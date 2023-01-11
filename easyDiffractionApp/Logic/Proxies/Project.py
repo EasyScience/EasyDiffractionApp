@@ -12,6 +12,7 @@ class ProjectProxy(QObject):
     stateChanged = Signal(bool)
     htmlExportingFinished = Signal(bool, str)
     statusInfoChanged = Signal()
+    reportRequested = Signal()
 
     def __init__(self, parent=None, logic=None):  # , interface=None):
         super().__init__(parent)
@@ -130,6 +131,13 @@ class ProjectProxy(QObject):
         """
         success = self.logic.saveReport(filepath)
         self.htmlExportingFinished.emit(success, filepath)
+
+    @Slot()
+    def requestReport(self):
+        """
+        Request a report generation
+        """
+        self.reportRequested.emit()
 
     # status
     @Property('QVariant', notify=statusInfoChanged)

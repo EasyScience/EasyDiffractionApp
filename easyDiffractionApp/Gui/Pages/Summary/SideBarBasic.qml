@@ -19,9 +19,28 @@ import Gui.Pages.Summary 1.0 as ExSummaryPage
 EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
+        title: qsTr("Create report")
+        enabled: !ExGlobals.Constants.proxy.project.readOnly
+        collapsible: false
+        last: true
+
+        // Create button
+        EaElements.SideBarButton {
+            wide: true
+            fontIcon: "flask"
+            text: qsTr("Create")
+
+            onClicked: {
+                ExGlobals.Constants.proxy.project.requestReport()
+            }
+
+            Component.onCompleted: ExGlobals.Variables.exportReportButton = this
+        }
+    }
+
+    EaElements.GroupBox {
         title: qsTr("Export report")
-        enabled: ExGlobals.Constants.proxy.project.projectCreated &&
-        !ExGlobals.Constants.proxy.project.readOnly
+        enabled: !ExGlobals.Constants.proxy.project.readOnly
         collapsible: false
         last: true
 

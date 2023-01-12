@@ -26,9 +26,9 @@ secondary = true
 
 [tool.poetry.dependencies]
 python = '^3.8, <3.9'
-darkdetect = '^0.3.1'
-pyobjc-core = { version = '^7.1', platform = 'darwin' }
-pyobjc-framework-cocoa = { version = '^7.1', platform = 'darwin' }
+darkdetect = '^0.8.0'
+pyobjc-core = { version = '^9.0.1', platform = 'darwin' }
+pyobjc-framework-cocoa = { version = '^9.0.1', platform = 'darwin' }
 CFML = '^0.0.1'
 GSASII = '^0.0.1'
 
@@ -45,14 +45,14 @@ pypiwin32 = { version = '^223', platform = 'win32' }
 pefile = { version = '^2022.5.30', platform = 'win32' }
 # Misc
 toml = '^0.10.2'
-requests = '^2.25.1'
+requests = '^2.28.1'
 dephell_licenses = '^0.1.7'
 ffmpeg-python = '^0.2.0'
-mss = '^6.1.0'
+mss = '^7.0.1'
 opencv-python = '4.5.1.48'
 google-trans-new = '^1.1.9'
-gTTS = '^2.2.2'
-gemmi = '^0.5.4'
+gTTS = '^2.3.0'
+gemmi = '^0.5.8'
 
 [tool.poetry.scripts]
 easyDiffraction = 'easyDiffractionApp.main:main'
@@ -171,7 +171,7 @@ manual_exclude = [ 'mfc*', 'msvcp*', 'VCRUNTIME*',
                    '*Qt*Scxml*', '*Qt*Sensors*', '*Qt*Sql*', '*Qt*VirtualKeyboard*', '*Qt*Wayland*' ]
 
 [ci.qtifw.setup]
-version = '4.4.1'
+version = '4.5.1'
 https_mirrors = ['download.qt.io', 'ftp.fau.de/qtproject', 'mirrors.dotsrc.org/qtproject']
 base_path = 'official_releases/qt-installer-framework'
 file_name_base = 'QtInstallerFramework'
@@ -180,7 +180,7 @@ file_ext = { macos = 'dmg', ubuntu = 'run', windows = 'exe' }
 installation_path = { macOS = '/Users/runner/Qt', Linux = '/home/runner/Qt', Windows = 'C:\Qt' }
 
 [ci.ffmpeg.macos]  # https://evermeet.cx/ffmpeg/ffmpeg-4.3.zip
-version = '5.0.1'
+version = '5.1.2'
 base_url = 'https://evermeet.cx/ffmpeg'
 file_name_base = 'ffmpeg-'
 file_ext = '.zip'

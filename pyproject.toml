@@ -14,7 +14,10 @@ readme = 'README.md'
 homepage = 'https://easydiffraction.org'
 repository = 'https://download.easydiffraction.org/'
 documentation = 'https://easydiffraction.org'
-include = ['CHANGELOG.md']
+packages = [ { include = "easyDiffractionApp" } ]
+include = [
+  { path = 'CHANGELOG.md', format = 'wheel'}
+]
 
 [[tool.poetry.source]]
 name = "easyScience"

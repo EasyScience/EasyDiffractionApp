@@ -8,6 +8,7 @@ import pathlib
 import platform
 import argparse
 import darkdetect
+import pip, toml # for PyInstaller to include these modules from utils.py
 
 # PySide
 from PySide2.QtCore import QUrl

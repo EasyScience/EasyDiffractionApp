@@ -384,21 +384,25 @@ class ParametersLogic(QObject):
         if self.parent.isSpinPolarized():
             fn = self.parent.fnAggregate()
             kwargs["pol_fn"] = fn
-            # save some kwargs on the interface object for use in the calculator
-            # self._interface._InterfaceFactoryTemplate__interface_obj.saved_kwargs = local_kwargs
 
-        sim.y = self._interface.fit_func(sim.x, **kwargs)
+        # sim.y = self._interface.fit_func(sim.x, **kwargs)
+        sim.y = self.parent.l_sample._sample.create_simulation(sim.x, **kwargs)
+
+        print("SIM.Y shape: ", sim.y.shape)
+        print("SIM.X shape: ", sim.x.shape)
+
         if self.parent.isSpinPolarized():
             self.parent.setSpinComponent()
         else:
             self.plotCalculatedDataSignal.emit((sim.x, sim.y))
 
-        for phase_index, phase_name in enumerate([str(phase._borg.map.convert_id(phase).int) for phase in self.parent.phases()]):
-            hkl = self._interface.get_hkl(x_array=sim.x, phase_name=phase_name, encoded_name=True)
-            if 'ttheta' in hkl.keys():
-                self.plotBraggDataSignal.emit((phase_index, hkl['ttheta'], hkl['h'], hkl['k'], hkl['l']))  # noqa: E501
-            if 'time' in hkl.keys():
-                self.plotBraggDataSignal.emit((phase_index, hkl['time'], hkl['h'], hkl['k'], hkl['l']))  # noqa: E501
+        # temporarily disable 
+        # for phase_index, phase_name in enumerate([str(phase._borg.map.convert_id(phase).int) for phase in self.parent.phases()]):
+        #     hkl = self._interface.get_hkl(x_array=sim.x, phase_name=phase_name, encoded_name=True)
+        #     if 'ttheta' in hkl.keys():
+        #         self.plotBraggDataSignal.emit((phase_index, hkl['ttheta'], hkl['h'], hkl['k'], hkl['l']))  # noqa: E501
+        #     if 'time' in hkl.keys():
+        #         self.plotBraggDataSignal.emit((phase_index, hkl['time'], hkl['h'], hkl['k'], hkl['l']))  # noqa: E501
 
 def defaultSimulationParams(exp_type='powder1DCW', jsonify=True):
     if 'powder1DCW' in exp_type:

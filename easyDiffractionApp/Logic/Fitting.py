@@ -43,7 +43,8 @@ class FittingLogic(QObject):
 
         self.parent = parent
         self.interface = interface
-        self.fitter = CoreFitter(self.parent.sample(), self.interface.fit_func)
+        # self.fitter = CoreFitter(self.parent.sample(), self.interface.fit_func)
+        self.fitter = CoreFitter(self.parent.sample(), self.parent.sample().create_simulation)
 
         # Multithreading
         # self._fitter_thread = None
@@ -248,21 +249,21 @@ class FittingLogic(QObject):
     ####################################################################################################################
 
     def calculatorNames(self):
-        interfaces = self.interface.interface_compatability(self.parent.sample().exp_type_str)
+        interfaces = self.interface.interface_compatability("Npowder1DCWunp")     ## (self.parent.sample().exp_type_str)
         return interfaces
 
     def currentCalculatorIndex(self):
-        interfaces = self.interface.interface_compatability(self.parent.sample().exp_type_str)
+        interfaces = self.interface.interface_compatability("Npowder1DCWunp")    #(self.parent.sample().exp_type_str)
         return interfaces.index(self.interface.current_interface_name)
 
     def setCurrentCalculatorIndex(self, new_index: int):
         if self.currentCalculatorIndex == new_index:
             return
-        interfaces = self.interface.interface_compatability(self.parent.sample().exp_type_str)
+        interfaces = self.interface.interface_compatability("Npowder1DCWunp")   # (self.parent.sample().exp_type_str)
         new_name = interfaces[new_index]
         self.interface.switch(new_name)
         # recreate the fitter object with the new interface
-        self.fitter = CoreFitter(self.parent.sample(), self.interface.fit_func)
+        self.fitter = CoreFitter(self.parent.sample(), self.parent.sample().create_simulation)
 
         self.parent.sample().update_bindings()
         print("***** _onCurrentCalculatorChanged")

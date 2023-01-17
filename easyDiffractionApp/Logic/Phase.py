@@ -38,6 +38,7 @@ class PhaseLogic(QObject):
         self._phases_as_cif = ""
         self._current_phase_index = 0
         self.has_msp = False
+        # self.addDefaultPhase()
 
     ####################################################################################################################
     ####################################################################################################################
@@ -78,14 +79,14 @@ class PhaseLogic(QObject):
         self.phases.append(default_phase)
         borg.stack.enabled = True
 
-    @staticmethod
-    def _defaultPhase():
+    # @staticmethod
+    def _defaultPhase(self):
         space_group = SpaceGroup('F d -3:2')
         # cell = Lattice.from_pars(5.0, 3.0, 4.0, 90, 90, 90)
         cell = Lattice(5.0, 3.0, 4.0, 90, 90, 90)
         adp = AtomicDisplacement("Uiso")
         atom = Site(label='O', specie='O', fract_x=0.0, fract_y=0.0, fract_z=0.0, adp=adp)
-        phase = Phase('Test', spacegroup=space_group, cell=cell)
+        phase = Phase('Test', spacegroup=space_group, cell=cell, interface=self._interface)
         phase.add_atom(atom)
         return phase
 

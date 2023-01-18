@@ -50,7 +50,7 @@ def main():
     # Paths
     current_path = os.path.dirname(sys.argv[0])
     package_name = CONFIG['tool']['poetry']['name']
-    package_path = os.path.join(current_path, package_name)
+    package_path = os.path.dirname(__file__) # os.path.join(current_path, package_name)
     if not os.path.exists(package_path):
         package_path = current_path
 

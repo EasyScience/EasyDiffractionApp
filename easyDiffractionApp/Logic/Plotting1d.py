@@ -274,6 +274,8 @@ class Plotting1dLogic(QObject):
 
     def _setCalculatedDataArrays(self, xarray, yarray):
         self._calculated_xarray = xarray
+        if type(yarray)!=np.ndarray:
+            yarray = np.array(yarray)
         self._calculated_yarray = yarray
 
     def _setDifferenceDataArrays(self):
@@ -309,7 +311,8 @@ class Plotting1dLogic(QObject):
             # skip this step with try-except block until instrumental parameters are defined/loaded
             try:
                 if not self.parent.isSpinPolarized():
-                    yarray = self._interface.get_calculated_y_for_phase(phase_index)
+                    # yarray = self._interface.get_calculated_y_for_phase(phase_index)
+                    yarray = self._interface().calculator.get_calculated_y_for_phase(phase_index)
                     is_diff = False
                 else:
                     phases_y = list(self._interface.get_component('phases').values())[phase_index]

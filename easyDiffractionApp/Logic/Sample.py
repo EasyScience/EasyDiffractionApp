@@ -4,12 +4,6 @@
 
 from PySide2.QtCore import Signal, QObject
 
-# from easyDiffractionLib.sample import Sample
-# from easyDiffractionLib.Profiles.P1D import Instrument1DCWParameters
-# from easyDiffractionLib.Profiles.P1D import Instrument1DTOFParameters
-# from easyDiffractionLib.Profiles.P1D import Instrument1DCWPolParameters
-# from easyDiffractionLib.Profiles.P1D import Powder1DParameters, PolPowder1DParameters
-
 from easyCore.Datasets.xarray import xr
 from easyDiffractionLib.Profiles.P1D import Instrument1DCWParameters, Instrument1DTOFParameters, Instrument1DCWPolParameters
 from easyDiffractionLib.Jobs import Powder1DCW, Powder1DTOF, PolPowder1DCW

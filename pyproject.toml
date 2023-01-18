@@ -30,7 +30,7 @@ CFML = '^0.0.1'
 GSASII = '^0.0.1'
 
 # easyScience
-easyDiffraction = { git = 'https://github.com/easyScience/easyDiffractionLib.git', rev = 'IOTake3' }
+easyDiffraction = { git = 'https://github.com/easyScience/easyDiffractionLib.git', rev = 'job_based' }
 easyApp = { git = 'https://github.com/easyScience/easyApp.git', rev = 'io_serialize' }
 
 #[tool.poetry.dev-dependencies]

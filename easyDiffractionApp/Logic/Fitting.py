@@ -261,11 +261,14 @@ class FittingLogic(QObject):
             return
         interfaces = self.interface.interface_compatability("Npowder1DCWunp")   # (self.parent.sample().exp_type_str)
         new_name = interfaces[new_index]
-        self.interface.switch(new_name)
-        # recreate the fitter object with the new interface
+
+        # self.fitter = CoreFitter(self.parent.sample(), self.parent.sample().create_simulation)
+
+        self.interface.switch(new_name, fitter=self.fitter)
+
+        # recreate the fitter with the new interface
         self.fitter = CoreFitter(self.parent.sample(), self.parent.sample().create_simulation)
 
-        self.parent.sample().update_bindings()
         print("***** _onCurrentCalculatorChanged")
         data = self.parent.pdata().simulations[0]
         data.name = f'{self.interface.current_interface_name} engine'

@@ -85,7 +85,7 @@ class PhaseLogic(QObject):
         # cell = Lattice.from_pars(5.0, 3.0, 4.0, 90, 90, 90)
         cell = Lattice(5.0, 3.0, 4.0, 90, 90, 90)
         adp = AtomicDisplacement("Uiso")
-        atom = Site(label='O', specie='O', fract_x=0.0, fract_y=0.0, fract_z=0.0, adp=adp)
+        atom = Site(label='O', specie='O', fract_x=0.0, fract_y=0.0, fract_z=0.0, adp=adp, interface=self._interface)
         phase = Phase('Test', spacegroup=space_group, cell=cell, interface=self._interface)
         phase.add_atom(atom)
         return phase

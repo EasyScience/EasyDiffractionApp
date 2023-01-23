@@ -24,6 +24,7 @@ class SampleLogic(QObject):
 
     def _defaultCWJob(self):
         job = Powder1DCW('default_job_9999', self._data_storage, phases=self._phases.phases, interface=self._interface)
+        job = Powder1DCW('default_job_9999', phases=self._phases.phases, interface=self._interface)
         job.pattern.zero_shift = 0.9999
         job.pattern.scale = 9999.0
         job.parameters.wavelength = 1.912
@@ -39,7 +40,7 @@ class SampleLogic(QObject):
         return job
 
     def _defaultCWPolJob(self):
-        job = PolPowder1DCW('default_job_8888', self._data_storage, phases=self._phases.phases, interface=self._interface)
+        job = PolPowder1DCW('default_job_8888', phases=self._phases.phases, interface=self._interface)
         # unpolarized parameters
         job.pattern.zero_shift = 0.8888
         job.pattern.scale = 8888.0
@@ -59,7 +60,7 @@ class SampleLogic(QObject):
         return job
 
     def _defaultTOFJob(self):
-        job = Powder1DTOF('default_job_7777', self._data_storage, phases=self._phases.phases, interface=self._interface)
+        job = Powder1DTOF('default_job_7777', phases=self._phases.phases, interface=self._interface)
         job.pattern.zero_shift = 0.7777
         job.pattern.scale = 7777.0
         job.parameters.dtt1 = 6167.24700

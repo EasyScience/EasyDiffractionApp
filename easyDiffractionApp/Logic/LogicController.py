@@ -200,7 +200,7 @@ class LogicController(QObject):
         return self.l_experiment.experimentDataAsObj()[0]["name"]
 
     def getSampleAsDict(self):
-        return self.l_sample._sample.as_dict(skip=['interface', 'calculator'])
+        return self.l_sample._sample.as_dict(skip=['interface', 'calculator', 'datastore'])
 
     def setPhaseScale(self, phase_label, phase_scale):
         self.l_phase.phases[phase_label].scale = phase_scale

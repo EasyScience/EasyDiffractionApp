@@ -10,7 +10,7 @@ import json
 
 from PySide2.QtCore import Signal, QObject
 
-from easyCore import np, borg
+from easyCore.Datasets.xarray import np
 from easyCore.Utils.io.xml import XMLSerializer
 from easyDiffractionLib.sample import Sample
 from easyApp.Logic.Utils.Utils import generalizePath
@@ -236,6 +236,7 @@ class ProjectLogic(QObject):
         descr['minimizer'] = self.parent.fittingNamesDict()
 
         content_json = json.dumps(descr, indent=4, default=self.default)
+
         path = generalizePath(project_save_filepath)
         createFile(path, content_json)
         self.stateHasChanged(False)

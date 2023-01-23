@@ -6,14 +6,14 @@ version: master
 grade: stable
 confinement: strict
 base: core20
-icon: snap/gui/easyDiffraction.png
+icon: snap/gui/ed_logo.svg
 architectures:
     - build-on: [amd64]
 
 
 apps:
 
-    easyreflectometry:
+    easydiffraction:
         command: bin/python3.8 $SNAP/easyDiffractionApp/main.py
         extensions: [gnome-3-38]
         plugs: [network, x11, pulseaudio, opengl, home, ssh-keys]

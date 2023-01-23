@@ -2,8 +2,8 @@
 Name=EasyDiffraction
 GenericName=Python application
 Comment=Making diffraction data analysis and modelling easy.
-Exec=easyDiffraction
-Icon=${SNAP}/meta/gui/easyDiffraction.png
+Exec=easydiffraction
+Icon=${SNAP}/meta/gui/ed_logo.svg
 Terminal=false
 Type=Application
 Categories=Education;

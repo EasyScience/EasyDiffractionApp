@@ -23,6 +23,7 @@ import utils
 import easyApp as easyApp2
 from easyApp.Logic.Translate import Translator
 from easyApp.Logic.Maintenance import Updater
+import easyDiffractionApp
 from easyDiffractionApp.Logic.PyQmlProxy import PyQmlProxy
 
 # Global vars
@@ -48,7 +49,7 @@ def main():
         import easyApp.Logging
 
     # Paths
-    project_name = CONFIG['project']['name']
+    project_name = CONFIG['tool']['poetry']['name']
     current_path = easyDiffractionApp.__path__[0]
     
     package_path = os.path.join(current_path, f'{project_name}')

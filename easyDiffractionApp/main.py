@@ -48,9 +48,10 @@ def main():
         import easyApp.Logging
 
     # Paths
-    current_path = os.path.dirname(sys.argv[0])
-    package_name = CONFIG['tool']['poetry']['name']
-    package_path = os.path.dirname(__file__) # os.path.join(current_path, package_name)
+    project_name = CONFIG['project']['name']
+    current_path = easyDiffractionApp.__path__[0]
+    
+    package_path = os.path.join(current_path, f'{project_name}')
     if not os.path.exists(package_path):
         package_path = current_path
 

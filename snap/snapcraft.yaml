@@ -19,6 +19,8 @@ apps:
         plugs: [network, x11, pulseaudio, opengl, home, ssh-keys]
         environment:
             DISABLE_WAYLAND: 1
+            PYTHONPATH: $PYTHONPATH:$SNAP
+
 
 parts:
     copy-stuff:
@@ -66,5 +68,8 @@ parts:
           ln -s /usr/lib/python3.8/distutils $SNAPCRAFT_PART_INSTALL/usr/lib/python3.8/distutils
           mkdir -p $SNAPCRAFT_PART_INSTALL/usr/include/
           ln -s /usr/include/python3.8 $SNAPCRAFT_PART_INSTALL/usr/include/python3.8
+          mkdir -p $SNAPCRAFT_PART_INSTALL/bin
+          ln -s /usr/bin/python3.8 $SNAPCRAFT_PART_INSTALL/bin/python3.8
+          which python3.8
           snapcraftctl build
-          python3.8 -m pip install -U --extra-index-url https://easyscience.github.io/pypi/ . 
+          python3.8 -m pip install -U --extra-index-url https://easyscience.github.io/pypi/ .

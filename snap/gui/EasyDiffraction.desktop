@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=EasyDiffraction
+GenericName=Python application
+Comment=Making diffraction data analysis and modelling easy.
+Exec=easydiffraction
+Icon=${SNAP}/meta/gui/ed_logo.svg
+Terminal=false
+Type=Application
+Categories=Education;
+StartupNotify=true

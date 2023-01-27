@@ -259,10 +259,8 @@ class FittingLogic(QObject):
     def setCurrentCalculatorIndex(self, new_index: int):
         if self.currentCalculatorIndex == new_index:
             return
-        interfaces = self.interface.interface_compatability("Npowder1DCWunp")   # (self.parent.sample().exp_type_str)
+        interfaces = self.interface.interface_compatability("Npowder1DCWunp")
         new_name = interfaces[new_index]
-
-        # self.fitter = CoreFitter(self.parent.sample(), self.parent.sample().create_simulation)
 
         self.interface.switch(new_name, fitter=self.fitter)
 

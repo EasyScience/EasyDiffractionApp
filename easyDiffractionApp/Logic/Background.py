@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
-from easyCore import np
+from easyCore import np, borg
 
 from easyCore.Utils.io.xml import XMLSerializer
 from PySide2.QtCore import QObject, Signal
@@ -40,13 +40,21 @@ class BackgroundLogic(QObject):
         self._background_as_obj = self._background_obj()
         self._setAsXml()
 
+    def backgroundLoaded(self):
+        self._background_as_obj = self._background_obj()
+        if self._background_as_obj is None:
+            return
+        self._setAsXml()
+
     def onAsObjChanged(self):
         print(f"***** onAsObjChanged")
         self._background_as_obj = self._background_obj()
         if self._background_as_obj is None:
             return
         self._setAsXml()
+        borg.stack.enabled = False
         self.parent.updateBackground(self._background_as_obj)
+        borg.stack.enabled = True
 
     def _setAsXml(self):
         if self._background_as_obj is None:

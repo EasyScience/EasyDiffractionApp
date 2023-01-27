@@ -120,7 +120,8 @@ class LogicController(QObject):
         self.sample().output_index = self.l_phase._current_phase_index
 
     def resetState(self):
-        self.l_fitting.setCurrentCalculatorIndex(0)
+        # TO FIX: after modifying the interface string
+        # self.l_fitting.setCurrentCalculatorIndex(0)
         if self.l_phase.samplesPresent():
             self.l_phase.removeAllPhases()
         self.l_plotting1d.clearBackendState()
@@ -169,9 +170,12 @@ class LogicController(QObject):
         self.l_parameters._updateCalculatedData()
 
     def updateBackgroundOnLoad(self):
-        self.l_background.onAsObjChanged()
+        # self.l_background.onAsObjChanged()
+        self.l_background.backgroundLoaded()
         if self.l_experiment.spin_polarized:
             self.l_experiment.setSpinComponent()
+        self.l_parameters.parametersChanged.emit()
+        self.l_sample._sample.set_background(self.l_background._background_as_obj)
 
     def setExperimentLoaded(self, loaded=True):
         self.l_experiment.experimentLoaded(loaded)
@@ -302,11 +306,10 @@ class LogicController(QObject):
         self.l_project.projectInfoChanged.emit()
 
     def onParametersChanged(self):
-        self.l_parameters._updateCalculatedData()
         self.l_phase.structureParametersChanged.emit()
         self.l_experiment._onPatternParametersChanged()
         self.l_parameters.instrumentParametersChanged.emit()
-        self.l_background.onAsObjChanged()
+        self.l_background.onAsObjChanged()  # this invokes _updateCalculatedData()
         self.l_stack.undoRedoChanged.emit()
 
     def recorder(self):

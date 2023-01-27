@@ -295,13 +295,11 @@ class ParametersLogic(QObject):
     # Any parameter
     ####################################################################################################################
     def editParameter(self, obj_id: str, new_value: Union[bool, float, str]):  # noqa: E501
-        print(f"editParameter: {obj_id} {new_value}")
 
         if not obj_id:
             return
 
         obj = self._parameterObj(obj_id)
-        print(f"editParameter object: {obj}")
         if obj is None:
             return
 
@@ -319,14 +317,17 @@ class ParametersLogic(QObject):
                 return
             if isinstance(new_value, str):
                 new_value = new_value.capitalize()
-            borg.stack.beginMacro(f"'{obj.display_name}' value changed from {obj.raw_value} to {new_value}")
+
+            if not borg.stack._macro_running:
+                borg.stack.beginMacro(f"'{obj.display_name}' value changed from {obj.raw_value} to {new_value}")
+
             obj.value = new_value
             obj.error = 0.
             borg.stack.endMacro()
-            self.parametersValuesChanged.emit()
-            self._updateCalculatedData()
-            self.parametersChanged.emit()
 
+            self.parametersValuesChanged.emit()
+            # self._updateCalculatedData() # called in  updateBackground() triggered by parametersValuesChanged
+            self.parametersChanged.emit()
 
     def _parameterObj(self, obj_id: str):
         if not obj_id:
@@ -369,7 +370,6 @@ class ParametersLogic(QObject):
             return
 
         self.parent.assignPhaseIndex()
-
         #  THIS IS WHERE WE WOULD LOOK UP CURRENT EXP INDEX
         sim = self._data.simulations[0]
 
@@ -379,23 +379,17 @@ class ParametersLogic(QObject):
 
         elif self.parent.experimentSkipped():
             sim.x = self.sim_x()
-
         kwargs = {}
         if self.parent.isSpinPolarized():
             fn = self.parent.fnAggregate()
             kwargs["pol_fn"] = fn
 
-        # sim.y = self._interface.fit_func(sim.x, **kwargs)
         sim.y = self.parent.l_sample._sample.create_simulation(sim.x, **kwargs)
-
-        print("SIM.Y shape: ", sim.y.shape)
-        print("SIM.X shape: ", sim.x.shape)
 
         if self.parent.isSpinPolarized():
             self.parent.setSpinComponent()
         else:
             self.plotCalculatedDataSignal.emit((sim.x, sim.y))
-
         # temporarily disable 
         # for phase_index, phase_name in enumerate([str(phase._borg.map.convert_id(phase).int) for phase in self.parent.phases()]):
         #     hkl = self._interface.get_hkl(x_array=sim.x, phase_name=phase_name, encoded_name=True)

@@ -23,7 +23,6 @@ class SampleLogic(QObject):
         self._sample = self._defaultCWJob()
 
     def _defaultCWJob(self):
-        job = Powder1DCW('default_job_9999', self._data_storage, phases=self._phases.phases, interface=self._interface)
         job = Powder1DCW('default_job_9999', phases=self._phases.phases, interface=self._interface)
         job.pattern.zero_shift = 0.9999
         job.pattern.scale = 9999.0

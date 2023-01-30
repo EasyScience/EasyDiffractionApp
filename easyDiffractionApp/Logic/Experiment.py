@@ -61,11 +61,12 @@ class ExperimentLogic(QObject):
 
         # Get experiment type
         # Set default experiment type: powder1DCWunp
-        self.parent.setExperimentType('powder1DCWunp')
         # Check if powder1DCWpol
         value = block.find_value("_diffrn_radiation_polarization")
         if value is not None:
             self.parent.setExperimentType('powder1DCWpol')
+        else:
+            self.parent.setExperimentType('powder1DCWunp')
         # Check if powder1DTOFunp
         # ...
         # Check if powder1DTOFpol

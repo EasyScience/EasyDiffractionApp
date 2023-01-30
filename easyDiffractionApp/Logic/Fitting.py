@@ -5,6 +5,7 @@
 from PySide2.QtCore import Signal, QObject, QThread
 
 import numpy as np
+from typing import Callable, List
 
 from threading import Thread
 
@@ -102,7 +103,7 @@ class FittingLogic(QObject):
         refinement = self.parent.refinementMethods()
         targets = [component for component in refinement if refinement[component]]
         try:
-            x_, y_, fit_func = self.interface().generate_pol_fit_func(x, exp_data.y, exp_data.yb, targets)
+            x_, y_, fit_func = self.generate_pol_fit_func(x, exp_data.y, exp_data.yb, targets)
         except Exception as ex:
             raise NotImplementedError('This is not implemented for this calculator yet')
         weights = 1/exp_data.e
@@ -128,6 +129,36 @@ class FittingLogic(QObject):
             self.failed.emit(str(ex))
             return
         self.finished.emit(res)
+
+    def generate_pol_fit_func(
+        self,
+        x_array: np.ndarray,
+        spin_up: np.ndarray,
+        spin_down: np.ndarray,
+        components: List[Callable],
+    ) -> Callable:
+        num_components = len(components)
+        dummy_x = np.repeat(x_array[..., np.newaxis], num_components, axis=x_array.ndim)
+        calculated_y = np.array(
+            [fun(spin_up, spin_down) for fun in components]
+        ).swapaxes(0, x_array.ndim)
+
+        def pol_fit_fuction(dummy_x: np.ndarray, **kwargs) -> np.ndarray:
+            results, results_dict = self.interface().full_callback(
+                x_array, pol_fn=components[0], **kwargs
+            )
+            phases = list(results_dict["phases"].keys())[0]
+            up, down = (
+                results_dict["phases"][phases]["components"]["up"],
+                results_dict["phases"][phases]["components"]["down"],
+            )
+            bg = results_dict["f_background"]
+            sim_y = np.array(
+                [fun(up, down) + fun(bg, bg) for fun in components]
+            ).swapaxes(0, x_array.ndim)
+            return sim_y.flatten()
+
+        return dummy_x.flatten(), calculated_y.flatten(), pol_fit_fuction
 
     def fit_threading(self):
         if self.parent.isSpinPolarized():

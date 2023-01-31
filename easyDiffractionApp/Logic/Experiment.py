@@ -14,6 +14,7 @@ from PySide2.QtCore import Signal, QObject
 from easyCore import np
 from easyCore.Utils.io.xml import XMLSerializer
 from easyApp.Logic.Utils.Utils import generalizePath
+from easyDiffractionLib.Jobs import get_job_from_file
 
 
 class ExperimentLogic(QObject):
@@ -59,66 +60,12 @@ class ExperimentLogic(QObject):
         file_path = generalizePath(file_url)
         block = cif.read(file_path).sole_block()
 
-        # Get experiment type
-        # Set default experiment type: powder1DCWunp
-        # Check if powder1DCWpol
-        value = block.find_value("_diffrn_radiation_polarization")
-        if value is not None:
-            self.parent.setExperimentType('powder1DCWpol')
-        else:
-            self.parent.setExperimentType('powder1DCWunp')
-        # Check if powder1DTOFunp
-        # ...
-        # Check if powder1DTOFpol
-        # ...
+        # job name from file name
+        job_name = pathlib.Path(file_path).stem
+        ds, job = get_job_from_file(file_path, job_name, phases=self.parent.phases(), interface=self._interface)
 
-        # Get diffraction radiation parameters
-        pattern_parameters = self.parent.sample().pattern
-        value = block.find_value("_diffrn_radiation_polarization")
-        if value is not None:
-            pattern_parameters.beam.polarization = float(value)
-        value = block.find_value("_diffrn_radiation_efficiency")
-        if value is not None:
-            pattern_parameters.beam.efficiency = float(value)
-        value = block.find_value("_setup_offset_2theta")
-        if value is not None:
-            pattern_parameters.zero_shift = float(value)
-        value = block.find_value("_setup_field")
-        if value is not None:
-            pattern_parameters.field = float(value)
-
-        # Get instrumental parameters
-        instrument_parameters = self.parent.sample().parameters
-        value = block.find_value("_setup_wavelength")
-        if value is not None:
-            instrument_parameters.wavelength = float(value)
-        value = block.find_value("_pd_instr_resolution_u")
-        if value is not None:
-            instrument_parameters.resolution_u = float(value)
-        value = block.find_value("_pd_instr_resolution_v")
-        if value is not None:
-            instrument_parameters.resolution_v = float(value)
-        value = block.find_value("_pd_instr_resolution_w")
-        if value is not None:
-            instrument_parameters.resolution_w = float(value)
-        value = block.find_value("_pd_instr_resolution_x")
-        if value is not None:
-            instrument_parameters.resolution_x = float(value)
-        value = block.find_value("_pd_instr_resolution_y")
-        if value is not None:
-            instrument_parameters.resolution_y = float(value)
-        value = block.find_value("_pd_instr_reflex_asymmetry_p1")
-        if value is not None:
-            instrument_parameters.reflex_asymmetry_p1 = float(value)
-        value = block.find_value("_pd_instr_reflex_asymmetry_p2")
-        if value is not None:
-            instrument_parameters.reflex_asymmetry_p2 = float(value)
-        value = block.find_value("_pd_instr_reflex_asymmetry_p3")
-        if value is not None:
-            instrument_parameters.reflex_asymmetry_p3 = float(value)
-        value = block.find_value("_pd_instr_reflex_asymmetry_p4")
-        if value is not None:
-            instrument_parameters.reflex_asymmetry_p4 = float(value)
+        # Update job on sample
+        self.parent.l_sample._sample = job
 
         # Get phase parameters
         sample_phase_labels = self.parent.getPhaseNames()
@@ -129,6 +76,7 @@ class ExperimentLogic(QObject):
                 self.parent.setPhaseScale(phase_label, phase_scale)
 
         # Get data
+        # TODO: reuse `ds` since it already contains the data
         data = self.parent.experiments()[0]
         # Polarized case
         data.x = np.fromiter(block.find_loop("_pd_meas_2theta"), float)

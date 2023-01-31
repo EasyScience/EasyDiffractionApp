@@ -18,12 +18,13 @@ class SampleLogic(QObject):
         super().__init__(parent)
         self.parent = parent
         self._phases = parent.l_phase
-        self._data_storage = xr.Dataset()
         self._interface = interface
         self._sample = self._defaultCWJob()
 
-    def _defaultCWJob(self):
-        job = Powder1DCW('default_job_9999', phases=self._phases.phases, interface=self._interface)
+    def _defaultCWJob(self, name=None):
+        if name is None:
+            name = 'default_job_9999'
+        job = Powder1DCW(name, phases=self._phases.phases, interface=self._interface)
         job.pattern.zero_shift = 0.9999
         job.pattern.scale = 9999.0
         job.parameters.wavelength = 1.912

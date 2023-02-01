@@ -23,7 +23,7 @@ class SampleLogic(QObject):
 
     def _defaultCWJob(self, name=None):
         if name is None:
-            name = 'default_job_9999'
+            name = 'default_cw_job'
         job = Powder1DCW(name, phases=self._phases.phases, interface=self._interface)
         job.pattern.zero_shift = 0.9999
         job.pattern.scale = 9999.0
@@ -39,8 +39,10 @@ class SampleLogic(QObject):
         job.parameters.reflex_asymmetry_p4 = 0.0
         return job
 
-    def _defaultCWPolJob(self):
-        job = PolPowder1DCW('default_job_8888', phases=self._phases.phases, interface=self._interface)
+    def _defaultCWPolJob(self, name=None):
+        if name is None:
+            name = 'default_pol_job'
+        job = PolPowder1DCW(name, phases=self._phases.phases, interface=self._interface)
         # unpolarized parameters
         job.pattern.zero_shift = 0.8888
         job.pattern.scale = 8888.0
@@ -59,8 +61,10 @@ class SampleLogic(QObject):
         job.pattern.beam.efficiency = 100.0
         return job
 
-    def _defaultTOFJob(self):
-        job = Powder1DTOF('default_job_7777', phases=self._phases.phases, interface=self._interface)
+    def _defaultTOFJob(self, name=None):
+        if name is None:
+            name = 'default_tof_job'
+        job = Powder1DTOF(name, phases=self._phases.phases, interface=self._interface)
         job.pattern.zero_shift = 0.7777
         job.pattern.scale = 7777.0
         job.parameters.dtt1 = 6167.24700
@@ -116,3 +120,5 @@ class SampleLogic(QObject):
         self.parent.phasesAsObjChanged()
         self.parent.calculatorListChanged()
 
+    def reset(self):
+        self._sample = self._defaultCWJob()

@@ -99,15 +99,28 @@ class ExperimentLogic(QObject):
     def _loadExperimentData(self, file_url):
         print("+ _loadExperimentData")
         file_path = generalizePath(file_url)
+        job_name = pathlib.Path(file_path).stem
+
         data = self.parent.experiments()[0]
+        # TOD: figure out how to tell ToF from CW
         try:
             data.x, data.y, data.e, data.yb, data.eb = np.loadtxt(file_path, unpack=True)
             self.setPolarized(True)
+            job = self.parent.l_sample._defaultCWPolJob(name=job_name)
         except Exception as e:
             data.x, data.y, data.e = np.loadtxt(file_path, unpack=True)
             data.yb = np.zeros(len(data.y))
             data.eb = np.zeros(len(data.e))
             self.setPolarized(False)
+            # check if set to ToF
+            current_type = self.parent.experimentType()
+            if 'TOF' in current_type:
+                job = self.parent.l_sample._defaultTOFJob(name=job_name)
+            else:
+                job = self.parent.l_sample._defaultCWJob(name=job_name)
+
+        # Update job on sample
+        self.parent.l_sample._sample = job
         return data
 
     def _experimentDataParameters(self, data):
@@ -206,6 +219,7 @@ class ExperimentLogic(QObject):
 
     def removeExperiment(self):
         self.parent.removeBackgroundPoints()
+        self.parent.l_sample.reset()
         self.parent.removeAllConstraints()
         self._current_spin_component = 'Sum'
         self.experiments.clear()

@@ -2,7 +2,7 @@ name: easydiffraction
 summary: Making diffraction data analysis and modelling easy.
 description: |
    easyDiffraction allows simulation of diffraction patterns based on a structural model and refinement of its parameters. For refinement, the program uses a number of fitting engines (minimizers) such as lmfit, bumps and DFO-LS.
-version: master
+version: git
 grade: stable
 confinement: strict
 base: core20

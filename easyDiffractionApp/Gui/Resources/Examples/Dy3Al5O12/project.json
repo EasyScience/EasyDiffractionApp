@@ -3820,9 +3820,9 @@
         ]
     ],
     "experiment_skipped": false,
-    "read_only": false,
+    "read_only": true,
     "project_info": {
-        "name": "1_Dy3Al5O12",
+        "name": "Dy3Al5O12",
         "short_description": "diffraction, powder, 1D",
         "samples": "Dy3Al5O12",
         "experiments": "G41@LLB",

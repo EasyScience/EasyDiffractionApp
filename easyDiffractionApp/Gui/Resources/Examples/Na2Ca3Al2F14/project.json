@@ -18384,9 +18384,9 @@
         ]
     ],
     "experiment_skipped": false,
-    "read_only": false,
+    "read_only": true,
     "project_info": {
-        "name": "Example Project",
+        "name": "Na2Ca3Al2F14",
         "short_description": "diffraction, powder, 1D",
         "samples": "Na2Ca3Al2F14",
         "experiments": "Osiris@ISIS",

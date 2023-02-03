@@ -94,6 +94,7 @@ class PhaseLogic(QObject):
         self.phases.name = 'Phases'
         name = self.phases[self._current_phase_index].name
         self.updateProjectInfo.emit(('samples', name))
+        self.parent.sample().interface = self._interface
 
     def currentCrystalSystem(self):
         phases = self.phases
@@ -219,7 +220,6 @@ class PhaseLogic(QObject):
 
         settings = self._spaceGroupSettingList()
         current_setting = phases[self._current_phase_index].spacegroup.space_group_HM_name.raw_value  # noqa: E501
-        # current_setting = phases[self._current_phase_index].spacegroup.hermann_mauguin  # noqa: E501
         for setting in settings:
             if current_setting in setting:
                 return settings.index(setting)

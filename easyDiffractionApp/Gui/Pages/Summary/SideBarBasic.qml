@@ -20,7 +20,8 @@ EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
         title: qsTr("Create report")
-        enabled: !ExGlobals.Constants.proxy.project.readOnly
+        // enabled: !ExGlobals.Constants.proxy.project.readOnly
+        enabled: true
         collapsible: false
         last: true
 
@@ -40,7 +41,8 @@ EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
         title: qsTr("Export report")
-        enabled: !ExGlobals.Constants.proxy.project.readOnly
+        // enabled: !ExGlobals.Constants.proxy.project.readOnly
+        enabled: true
         collapsible: false
         last: true
 

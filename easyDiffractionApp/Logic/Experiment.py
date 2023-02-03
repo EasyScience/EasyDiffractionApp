@@ -63,6 +63,7 @@ class ExperimentLogic(QObject):
         # job name from file name
         job_name = pathlib.Path(file_path).stem
         ds, job = get_job_from_file(file_path, job_name, phases=self.parent.phases(), interface=self._interface)
+        job.from_cif_file(file_path, experiment_name=job_name)
 
         # Update job on sample
         self.parent.l_sample._sample = job
@@ -93,7 +94,6 @@ class ExperimentLogic(QObject):
             data.yb = np.zeros(len(data.y))
             data.eb = np.zeros(len(data.e))
             self.spin_polarized = False
-        self.setPolarized(self.spin_polarized)
         return data
 
     def _loadExperimentData(self, file_url):

@@ -9633,9 +9633,9 @@
         ]
     ],
     "experiment_skipped": false,
-    "read_only": false,
+    "read_only": true,
     "project_info": {
-        "name": "1_Si3N4",
+        "name": "Si3N4",
         "short_description": "diffraction, powder, 1D",
         "samples": "Si3N4_alpha",
         "experiments": "3T2@LLB",

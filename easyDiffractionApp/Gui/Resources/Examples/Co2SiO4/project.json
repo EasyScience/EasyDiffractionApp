@@ -6071,9 +6071,9 @@
         ]
     ],
     "experiment_skipped": false,
-    "read_only": false,
+    "read_only": true,
     "project_info": {
-        "name": "1_Co2SiO4",
+        "name": "Co2SiO4",
         "short_description": "diffraction, powder, 1D",
         "samples": "Co2SiO4",
         "experiments": "D20@ILL",

@@ -3097,9 +3097,9 @@
         ]
     ],
     "experiment_skipped": false,
-    "read_only": false,
+    "read_only": true,
     "project_info": {
-        "name": "1_Fe3O4",
+        "name": "Fe3O4",
         "short_description": "diffraction, powder, 1D",
         "samples": "Fe3O4",
         "experiments": "PolNPD5T",

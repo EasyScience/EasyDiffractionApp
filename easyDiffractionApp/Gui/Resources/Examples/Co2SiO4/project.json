@@ -6074,7 +6074,7 @@
     "read_only": true,
     "project_info": {
         "name": "Co2SiO4",
-        "short_description": "diffraction, powder, 1D",
+        "short_description": "neutrons, powder, constant wavelength, D20@ILL",
         "samples": "Co2SiO4",
         "experiments": "D20@ILL",
         "modified": "01.02.2023 11:56"

@@ -10256,10 +10256,10 @@
         ]
     ],
     "experiment_skipped": false,
-    "read_only": false,
+    "read_only": true,
     "project_info": {
-        "name": "1_PbSO4",
-        "short_description": "diffraction, powder, 1D",
+        "name": "PbSO4",
+        "short_description": "neutrons, powder, constant wavelength, D1A",
         "samples": "PbSO4",
         "experiments": "D1A@ILL",
         "modified": "01.02.2023 11:36"

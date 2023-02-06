@@ -1,5 +1,5 @@
-_name 1_CeCuAl3
-_short_description 'diffraction, powder, 1D'
-_samples 'Not loaded'
-_experiments 'Not loaded'
-_modified '01.02.2023 12:53'
+_name CeCuAl3
+_short_description 'neutrons, powder, time-of-flight, Polaris@ISIS'
+_samples CeCuAl3
+_experiments Polaris@ISIS
+_modified '01.06.2022 17:37'

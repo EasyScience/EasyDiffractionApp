@@ -1,5 +1,5 @@
-_name 1_Ho2Ti2O7
-_short_description 'diffraction, powder, 1D'
-_samples 'Not loaded'
-_experiments 'Not loaded'
-_modified '02.02.2023 09:25'
+_name Ho2Ti2O7
+_short_description 'neutrons, powder, constant wavelength, polarised, VIP@LLB'
+_samples 'Ho2Ti2O7'
+_experiments 'VIP@LLB-5K5T'
+_modified '24.05.2022 09:52'

@@ -1,5 +1,5 @@
-_name 1_Co2SiO4
-_short_description 'diffraction, powder, 1D'
-_samples 'Not loaded'
-_experiments 'Not loaded'
-_modified '01.02.2023 11:56'
+_name Co2SiO4
+_short_description 'neutrons, powder, constant wavelength, D20@ILL'
+_samples 'Co2SiO4'
+_experiments 'D20@ILL'
+_modified '26.04.2021 17:46'

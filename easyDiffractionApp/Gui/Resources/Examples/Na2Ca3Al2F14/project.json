@@ -18387,7 +18387,7 @@
     "read_only": true,
     "project_info": {
         "name": "Na2Ca3Al2F14",
-        "short_description": "diffraction, powder, 1D",
+        "short_description": "neutrons, powder, time-of-flight, Osiris@ISIS",
         "samples": "Na2Ca3Al2F14",
         "experiments": "Osiris@ISIS",
         "modified": "01.02.2023 14:49"

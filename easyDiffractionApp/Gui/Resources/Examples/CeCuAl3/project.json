@@ -12839,9 +12839,9 @@
     "read_only": true,
     "project_info": {
         "name": "CeCuAl3",
-        "short_description": "diffraction, powder, 1D",
+        "short_description": "neutrons, powder, time-of-flight, Polaris@ISIS",
         "samples": "CeCuAl3",
-        "experiments": "data",
+        "experiments": "Polaris@ISIS",
         "modified": "01.02.2023 14:23"
     },
     "interface": "CrysPyV2",

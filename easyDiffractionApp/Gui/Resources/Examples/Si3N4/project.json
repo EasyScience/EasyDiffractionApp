@@ -9636,7 +9636,7 @@
     "read_only": true,
     "project_info": {
         "name": "Si3N4",
-        "short_description": "diffraction, powder, 1D",
+        "short_description": "neutrons, powder, constant wavelength, multi-phase, 3T2@LLB",
         "samples": "Si3N4_alpha",
         "experiments": "3T2@LLB",
         "modified": "02.02.2023 09:21"

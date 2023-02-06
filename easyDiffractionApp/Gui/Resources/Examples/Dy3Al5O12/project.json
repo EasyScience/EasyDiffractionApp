@@ -3823,7 +3823,7 @@
     "read_only": true,
     "project_info": {
         "name": "Dy3Al5O12",
-        "short_description": "diffraction, powder, 1D",
+        "short_description": "neutrons, powder, constant wavelength, G41@LLB",
         "samples": "Dy3Al5O12",
         "experiments": "G41@LLB",
         "modified": "01.02.2023 12:44"

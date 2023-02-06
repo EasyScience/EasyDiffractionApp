@@ -3097,10 +3097,10 @@
         ]
     ],
     "experiment_skipped": false,
-    "read_only": false,
+    "read_only": true,
     "project_info": {
-        "name": "1_Fe3O4",
-        "short_description": "diffraction, powder, 1D",
+        "name": "Fe3O4",
+        "short_description": "neutrons, powder, constant wavelength, polarised, 6T2@LLB",
         "samples": "Fe3O4",
         "experiments": "PolNPD5T",
         "modified": "02.02.2023 09:24"

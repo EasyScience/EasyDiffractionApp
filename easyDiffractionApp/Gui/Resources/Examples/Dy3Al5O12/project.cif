@@ -1,5 +1,5 @@
-_name 1_Dy3Al5O12
-_short_description 'diffraction, powder, 1D'
-_samples 'Not loaded'
-_experiments 'Not loaded'
-_modified '01.02.2023 12:03'
+_name Dy3Al5O12
+_short_description 'neutrons, powder, constant wavelength, G41@LLB'
+_samples 'Dy3Al5O12'
+_experiments 'G41@LLB'
+_modified '26.04.2021 20:07'

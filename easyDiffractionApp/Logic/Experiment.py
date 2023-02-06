@@ -60,9 +60,30 @@ class ExperimentLogic(QObject):
         file_path = generalizePath(file_url)
         block = cif.read(file_path).sole_block()
 
+        data = self.parent.experiments()[0]
+        # Polarized case
+        data.x = np.fromiter(block.find_loop("_pd_meas_2theta"), float)
+        data.y = np.fromiter(block.find_loop("_pd_meas_intensity_up"), float)
+        data.e = np.fromiter(block.find_loop("_pd_meas_intensity_up_sigma"), float)
+        data.yb = np.fromiter(block.find_loop("_pd_meas_intensity_down"), float)
+        data.eb = np.fromiter(block.find_loop("_pd_meas_intensity_down_sigma"), float)
+        #self.spin_polarized = True
+        spin_polarized = True
+        # Unpolarized case
+        if not np.any(data.y):
+            data.x = np.fromiter(block.find_loop("_pd_meas_2theta"), float)
+            data.y = np.fromiter(block.find_loop("_pd_meas_intensity"), float)
+            data.e = np.fromiter(block.find_loop("_pd_meas_intensity_sigma"), float)
+            data.yb = np.zeros(len(data.y))
+            data.eb = np.zeros(len(data.e))
+            #self.spin_polarized = False
+            spin_polarized = False
+        # setting spin polarization needs to be done first, before experiment is loaded
+        self.setPolarized(spin_polarized)
+
         # job name from file name
         job_name = pathlib.Path(file_path).stem
-        ds, job = get_job_from_file(file_path, job_name, phases=self.parent.phases(), interface=self._interface)
+        _, job = get_job_from_file(file_path, job_name, phases=self.parent.phases(), interface=self._interface)
         job.from_cif_file(file_path, experiment_name=job_name)
 
         # Update job on sample
@@ -76,24 +97,6 @@ class ExperimentLogic(QObject):
             if phase_label in sample_phase_labels:
                 self.parent.setPhaseScale(phase_label, phase_scale)
 
-        # Get data
-        # TODO: reuse `ds` since it already contains the data
-        data = self.parent.experiments()[0]
-        # Polarized case
-        data.x = np.fromiter(block.find_loop("_pd_meas_2theta"), float)
-        data.y = np.fromiter(block.find_loop("_pd_meas_intensity_up"), float)
-        data.e = np.fromiter(block.find_loop("_pd_meas_intensity_up_sigma"), float)
-        data.yb = np.fromiter(block.find_loop("_pd_meas_intensity_down"), float)
-        data.eb = np.fromiter(block.find_loop("_pd_meas_intensity_down_sigma"), float)
-        self.spin_polarized = True
-        # Unpolarized case
-        if not np.any(data.y):
-            data.x = np.fromiter(block.find_loop("_pd_meas_2theta"), float)
-            data.y = np.fromiter(block.find_loop("_pd_meas_intensity"), float)
-            data.e = np.fromiter(block.find_loop("_pd_meas_intensity_sigma"), float)
-            data.yb = np.zeros(len(data.y))
-            data.eb = np.zeros(len(data.e))
-            self.spin_polarized = False
         return data
 
     def _loadExperimentData(self, file_url):
@@ -102,7 +105,7 @@ class ExperimentLogic(QObject):
         job_name = pathlib.Path(file_path).stem
 
         data = self.parent.experiments()[0]
-        # TOD: figure out how to tell ToF from CW
+        # TODO: figure out how to tell ToF from CW
         try:
             data.x, data.y, data.e, data.yb, data.eb = np.loadtxt(file_path, unpack=True)
             self.setPolarized(True)

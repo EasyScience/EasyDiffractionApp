@@ -3794,10 +3794,10 @@
         ]
     ],
     "experiment_skipped": false,
-    "read_only": false,
+    "read_only": true,
     "project_info": {
-        "name": "1_Ho2Ti2O7",
-        "short_description": "diffraction, powder, 1D",
+        "name": "Ho2Ti2O7",
+        "short_description": "neutrons, powder, constant wavelength, polarised, VIP@LLB",
         "samples": "Ho2Ti2O7",
         "experiments": "VIP@LLB-5K5T",
         "modified": "02.02.2023 09:25"

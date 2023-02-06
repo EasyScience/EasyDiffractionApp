@@ -10259,7 +10259,7 @@
     "read_only": true,
     "project_info": {
         "name": "PbSO4",
-        "short_description": "diffraction, powder, 1D",
+        "short_description": "neutrons, powder, constant wavelength, D1A",
         "samples": "PbSO4",
         "experiments": "D1A@ILL",
         "modified": "01.02.2023 11:36"

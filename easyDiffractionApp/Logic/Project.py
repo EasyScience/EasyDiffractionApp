@@ -227,7 +227,8 @@ class ProjectLogic(QObject):
         descr = {
             'sample': self.parent.getSampleAsDict()
         }
-        descr['experiments'] = self.parent.getExperiments()
+        if not self.parent.isExperimentSkipped():
+            descr['experiments'] = self.parent.getExperiments()
 
         descr['experiment_skipped'] = self.parent.isExperimentSkipped()
         descr['read_only'] = self._read_only

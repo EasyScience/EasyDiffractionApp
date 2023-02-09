@@ -38,6 +38,7 @@ jobs:
         run: |
             snap run easydiffraction &
             sleep 60
+
   upload_snap:
     runs-on: ubuntu-latest
     needs: install_test
@@ -51,20 +52,24 @@ jobs:
         id: branch-name
         uses: tj-actions/branch-names@v6
 
+      - name: Get snap filename
+        run: |
+          echo "SNAP_FILENAME=$(ls *.snap)" >> $GITHUB_ENV
+  
       - name: Publish Develop Branch to snapcraft beta
         if: steps.branch-name.outputs.current_branch == 'develop'
         uses: snapcore/action-publish@v1
         env:
           SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.STORE_LOGIN }}
         with:
-          snap: ./*.snap
+          snap: ${{ env.SNAP_FILENAME }}
           release: beta
-
+          
       - name: Publish Main Branch to snapcraft stable
         if: steps.branch-name.outputs.current_branch == 'main'
         uses: snapcore/action-publish@v1
         env:
           SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.STORE_LOGIN }}
         with:
-          snap: ./*.snap
+          snap: ${{ env.SNAP_FILENAME }}
           release: stable

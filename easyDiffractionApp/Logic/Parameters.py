@@ -313,7 +313,6 @@ class ParametersLogic(QObject):
             self.undoRedoChanged.emit()
 
         else:
-            self.parent.shouldProfileBeCalculated = False
             if obj.raw_value == new_value:
                 return
             if isinstance(new_value, str):

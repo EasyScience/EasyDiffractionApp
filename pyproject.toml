@@ -65,44 +65,6 @@ name = "easyScience"
 url = "https://easyscience.github.io/pypi/"
 secondary = true
 
-<<<<<<< HEAD
-[tool.poetry.dependencies]
-python = '^3.8, <3.9'
-darkdetect = '^0.3.1'
-pyobjc-core = { version = '7.0.1', platform = 'darwin' }
-pyobjc-framework-cocoa = { version = '7.0.1', platform = 'darwin' }
-CFML = '^0.0.1'
-GSASII = '^0.0.1'
-
-# easyScience
-easyDiffraction = { git = 'https://github.com/easyScience/easyDiffractionLib.git', rev = 'job_based' }
-easyApp = { git = 'https://github.com/easyScience/easyApp.git', rev = 'io_serialize' }
-
-#[tool.poetry.dev-dependencies]
-# PyInstaller
-pyinstaller = '4.5.1'  # 4.6-5.2 give "ModuleNotFoundError: No module named 'pip'" on Ubuntu, when run app
-#pyinstaller = { git = 'https://github.com/pyinstaller/pyinstaller.git', rev = 'develop' }
-pywin32-ctypes = { version = '^0.2.0', platform = 'win32' }
-pypiwin32 = { version = '^223', platform = 'win32' }
-pefile = { version = '^2022.5.30', platform = 'win32' }
-# Misc
-toml = '^0.10.2'
-requests = '^2.25.1'
-dephell_licenses = '^0.1.7'
-ffmpeg-python = '^0.2.0'
-mss = '^6.1.0'
-opencv-python = '4.5.1.48'
-google-trans-new = '^1.1.9'
-gTTS = '^2.2.2'
-gemmi = '^0.5.4'
-scipy = '1.6.1' # to keep in sync with core. Also > 1.6.3 doesn't package with pyinstaller
-
-[tool.poetry.scripts]
-easyDiffraction = 'easyDiffractionApp.main:main'
-=======
-
->>>>>>> develop
-
 # CUSTOM CONFIG
 # -------------
 # The information presented from here is to do with release and CI. This can be disregarded

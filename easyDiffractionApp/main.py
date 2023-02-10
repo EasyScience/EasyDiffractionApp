@@ -8,6 +8,7 @@ import pathlib
 import platform
 import argparse
 import darkdetect
+import pip, toml # for PyInstaller to include these modules from utils.py
 
 # PySide
 from PySide2.QtCore import QUrl
@@ -22,6 +23,7 @@ import utils
 import easyApp as easyApp2
 from easyApp.Logic.Translate import Translator
 from easyApp.Logic.Maintenance import Updater
+import easyDiffractionApp
 from easyDiffractionApp.Logic.PyQmlProxy import PyQmlProxy
 
 # Global vars
@@ -47,9 +49,10 @@ def main():
         import easyApp.Logging
 
     # Paths
-    current_path = os.path.dirname(sys.argv[0])
-    package_name = CONFIG['tool']['poetry']['name']
-    package_path = os.path.join(current_path, package_name)
+    project_name = CONFIG['tool']['poetry']['name']
+    current_path = easyDiffractionApp.__path__[0]
+    
+    package_path = os.path.join(current_path, f'{project_name}')
     if not os.path.exists(package_path):
         package_path = current_path
 

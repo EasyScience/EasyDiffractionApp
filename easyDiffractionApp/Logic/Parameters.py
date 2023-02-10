@@ -313,6 +313,7 @@ class ParametersLogic(QObject):
             self.undoRedoChanged.emit()
 
         else:
+            self.parent.shouldProfileBeCalculated = False
             if obj.raw_value == new_value:
                 return
             if isinstance(new_value, str):
@@ -366,6 +367,8 @@ class ParametersLogic(QObject):
     # Calculated data
     ####################################################################################################################
     def _updateCalculatedData(self):
+        if not self.parent.shouldProfileBeCalculated:
+            return
         if not self.parent.experimentLoaded() and not self.parent.experimentSkipped():
             return
 

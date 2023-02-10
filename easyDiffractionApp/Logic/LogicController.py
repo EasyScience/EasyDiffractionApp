@@ -30,6 +30,7 @@ class LogicController(QObject):
         super().__init__(parent)
         self.proxy = parent
         self.interface = InterfaceFactory()
+        self.shouldProfileBeCalculated = True
 
         # Screen recorder
         self._screen_recorder = self.recorder()
@@ -138,8 +139,10 @@ class LogicController(QObject):
 
     def sendToExperiment(self, data, exp_name):
         self.setExperimentLoaded(True)
+        self.shouldProfileBeCalculated = False # don't calculate profile before all the loading took place
         self.setExperimentData(data)
         self.l_experiment.updateExperimentData(exp_name)
+        self.shouldProfileBeCalculated = True # now we can calculate profile
         self.updateBackgroundOnLoad()
         self.l_experiment.experimentLoadedChanged.emit()
 

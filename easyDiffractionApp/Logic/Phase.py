@@ -239,14 +239,13 @@ class PhaseLogic(QObject):
         index = len(self.phases[0].atoms.atom_labels) + 1
         label = f'Label{index}'
         adp = AtomicDisplacement("Uiso")
-        msp = MagneticSusceptibility("Ciso")
         atom = Site(label=label,
                     specie='Cl',
                     fract_x=0.5,
                     fract_y=0.5,
                     fract_z=0.5,
-                    adp=adp,
-                    msp=msp)
+                    adp=adp)
+
         self.phases[self._current_phase_index].add_atom(atom)
         self.updateParameters()
 

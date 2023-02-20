@@ -27,9 +27,12 @@ toml = '^0.10.2'
 requests = '^2.28.1'
 CFML = '^0.0.1'
 GSASII = '^0.0.1'
+"diffpy.pdffit2" = "0.0.0"
+"diffpy.utils" = "^3.0.0"
+
 gemmi = '^0.5.8'
 # EasyScience Dependencies
-easyDiffraction = { git = 'https://github.com/easyScience/easyDiffractionLib.git', rev = 'job_based' }
+easyDiffraction = { git = 'https://github.com/easyScience/easyDiffractionLib.git', rev = 'release-0.8.5' }
 easyApp = { git = 'https://github.com/easyScience/easyApp.git', rev = 'io_serialize' }
 
 # Graphical Dependencies

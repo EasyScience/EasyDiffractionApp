@@ -130,7 +130,7 @@ class PhaseLogic(QObject):
         self.updateParameters()
 
     def _setPhasesAsObj(self):
-        self._phases_as_obj = self.phases.as_dict(skip=['interface'])['data']
+        self._phases_as_obj = self.phases.as_dict(skip=['interface', 'msp_values'])['data']
         self.parent.setCalculatedDataForPhase()
         # phase set - update xml so parameter table is also updated
         self.parent.emitParametersChanged()

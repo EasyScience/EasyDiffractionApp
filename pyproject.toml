@@ -27,8 +27,6 @@ toml = '^0.10.2'
 requests = '^2.28.1'
 CFML = '^0.0.1'
 GSASII = '^0.0.1'
-"diffpy.pdffit2" = "0.0.0"
-"diffpy.utils" = "^3.0.0"
 
 gemmi = '^0.5.8'
 # EasyScience Dependencies

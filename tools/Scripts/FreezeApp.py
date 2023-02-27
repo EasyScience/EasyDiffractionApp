@@ -46,7 +46,6 @@ def addedData():
             {'from': easyDiffractionLib.__path__[0], 'to': 'easyDiffractionLib'},
             {'from': easyCrystallography.__path__[0], 'to': 'easyCrystallography'},
             {'from': easyApp.__path__[0], 'to': 'easyApp'},
-            {'from': pt_data, 'to': pt_data_target},
             {'from': 'utils.py', 'to': '.'},
             {'from': 'pyproject.toml', 'to': '.'}]
     # Add other missing libs

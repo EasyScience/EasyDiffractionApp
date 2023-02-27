@@ -6079,7 +6079,7 @@
         "experiments": "D20@ILL",
         "modified": "01.02.2023 11:56"
     },
-    "interface": "CrysPyV2",
+    "interface": "CrysPy",
     "minimizer": {
         "engine": "lmfit",
         "method": "least_squares"

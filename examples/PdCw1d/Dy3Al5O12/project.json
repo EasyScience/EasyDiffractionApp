@@ -3828,7 +3828,7 @@
         "experiments": "G41@LLB",
         "modified": "01.02.2023 12:44"
     },
-    "interface": "CrysPyV2",
+    "interface": "CrysPy",
     "minimizer": {
         "engine": "lmfit",
         "method": "least_squares"

@@ -10685,7 +10685,7 @@
         "experiments": "HRPT@PSI",
         "modified": "06.02.2023 11:09"
     },
-    "interface": "CrysPyV2",
+    "interface": "CrysPy",
     "minimizer": {
         "engine": "lmfit",
         "method": "least_squares"

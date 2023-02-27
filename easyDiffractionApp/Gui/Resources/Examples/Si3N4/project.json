@@ -9641,7 +9641,7 @@
         "experiments": "3T2@LLB",
         "modified": "02.02.2023 09:21"
     },
-    "interface": "CrysPyV2",
+    "interface": "CrysPy",
     "minimizer": {
         "engine": "lmfit",
         "method": "least_squares"

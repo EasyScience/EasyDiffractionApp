@@ -10264,7 +10264,7 @@
         "experiments": "D1A@ILL",
         "modified": "01.02.2023 11:36"
     },
-    "interface": "CrysPyV2",
+    "interface": "CrysPy",
     "minimizer": {
         "engine": "lmfit",
         "method": "least_squares"

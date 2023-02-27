@@ -12844,7 +12844,7 @@
         "experiments": "Polaris@ISIS",
         "modified": "01.02.2023 14:23"
     },
-    "interface": "CrysPyV2",
+    "interface": "CrysPy",
     "minimizer": {
         "engine": "lmfit",
         "method": "least_squares"

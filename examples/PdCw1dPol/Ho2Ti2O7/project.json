@@ -3802,7 +3802,7 @@
         "experiments": "VIP@LLB-5K5T",
         "modified": "02.02.2023 09:25"
     },
-    "interface": "CrysPyV2",
+    "interface": "CrysPy",
     "minimizer": {
         "engine": "lmfit",
         "method": "least_squares"

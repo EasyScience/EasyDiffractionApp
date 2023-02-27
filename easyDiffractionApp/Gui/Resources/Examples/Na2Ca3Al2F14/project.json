@@ -18392,7 +18392,7 @@
         "experiments": "Osiris@ISIS",
         "modified": "01.02.2023 14:49"
     },
-    "interface": "CrysPyV2",
+    "interface": "CrysPy",
     "minimizer": {
         "engine": "lmfit",
         "method": "least_squares"

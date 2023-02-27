@@ -82,7 +82,6 @@ class PhaseLogic(QObject):
     # @staticmethod
     def _defaultPhase(self):
         space_group = SpaceGroup('F d -3:2')
-        # cell = Lattice.from_pars(5.0, 3.0, 4.0, 90, 90, 90)
         cell = Lattice(5.0, 3.0, 4.0, 90, 90, 90)
         adp = AtomicDisplacement("Uiso")
         atom = Site(label='O', specie='O', fract_x=0.0, fract_y=0.0, fract_z=0.0, adp=adp, interface=self._interface)
@@ -224,8 +223,6 @@ class PhaseLogic(QObject):
             if current_setting in setting:
                 return settings.index(setting)
         return 0
-        #current_number = settings.index(current_setting)
-        #return current_number
 
     def setCurrentSpaceGroupSetting(self, new_number: int):
         settings = self._spaceGroupSettingList()

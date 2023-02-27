@@ -40,6 +40,7 @@ def excludedModules():
 def addedData():
     # Add main data
     pt_data = os.path.join(periodictable.__path__[0], 'xsf')
+    pt_data_target = os.path.join('periodictable-data', 'xsf')
     data = [{'from': CONFIG.package_name, 'to': CONFIG.package_name},
             {'from': cryspy.__path__[0], 'to': 'cryspy'},
             {'from': GSASII.__path__[0], 'to': '.'},
@@ -47,7 +48,7 @@ def addedData():
             {'from': easyDiffractionLib.__path__[0], 'to': 'easyDiffractionLib'},
             {'from': easyCrystallography.__path__[0], 'to': 'easyCrystallography'},
             {'from': easyApp.__path__[0], 'to': 'easyApp'},
-            {'from': pt_data, 'to': 'periodictable-data'},
+            {'from': pt_data, 'to': pt_data_target},
             {'from': 'utils.py', 'to': '.'},
             {'from': 'pyproject.toml', 'to': '.'}]
     # Add other missing libs

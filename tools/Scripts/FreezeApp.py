@@ -39,8 +39,6 @@ def excludedModules():
 
 def addedData():
     # Add main data
-    pt_data = os.path.join(periodictable.__path__[0], 'xsf')
-    pt_data_target = os.path.join('periodictable-data', 'xsf')
     data = [{'from': CONFIG.package_name, 'to': CONFIG.package_name},
             {'from': cryspy.__path__[0], 'to': 'cryspy'},
             {'from': GSASII.__path__[0], 'to': '.'},
@@ -63,6 +61,10 @@ def addedData():
         for lib_name in missing_calculator_libs:
             lib_path = os.path.join(site_packages_path, lib_name)
             data.append({'from': lib_path, 'to': lib_name})
+    # Add missing module data (e.g. periodictable data)
+    pt_data = os.path.join(periodictable.__path__[0], 'xsf')
+    pt_data_target = os.path.join('periodictable-data', 'xsf')
+    data.append({'from': pt_data, 'to': pt_data_target})
     # Format for pyinstaller  
     separator = CONFIG['ci']['pyinstaller']['separator'][CONFIG.os]
     formatted = []

@@ -10,7 +10,7 @@ import glob
 import site
 import PySide2, shiboken2
 import cryspy, GSASII
-import easyCore, easyCrystallography, easyDiffractionLib, easyApp
+import easyCore, easyCrystallography, easyDiffractionLib, easyApp, periodictable
 import Functions, Config
 from PyInstaller.__main__ import run as pyInstallerMain
 
@@ -39,6 +39,7 @@ def excludedModules():
 
 def addedData():
     # Add main data
+    pt_data = os.path.join(periodictable.__path__[0], 'xsf')
     data = [{'from': CONFIG.package_name, 'to': CONFIG.package_name},
             {'from': cryspy.__path__[0], 'to': 'cryspy'},
             {'from': GSASII.__path__[0], 'to': '.'},
@@ -46,6 +47,7 @@ def addedData():
             {'from': easyDiffractionLib.__path__[0], 'to': 'easyDiffractionLib'},
             {'from': easyCrystallography.__path__[0], 'to': 'easyCrystallography'},
             {'from': easyApp.__path__[0], 'to': 'easyApp'},
+            {'from': pt_data, 'to': 'periodictable-data'},
             {'from': 'utils.py', 'to': '.'},
             {'from': 'pyproject.toml', 'to': '.'}]
     # Add other missing libs

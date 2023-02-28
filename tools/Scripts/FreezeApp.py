@@ -141,7 +141,7 @@ def runPyInstaller():
             '--log-level', 'WARN',                  # LEVEL may be one of DEBUG, INFO, WARN, ERROR, CRITICAL (default: INFO).
             '--noconfirm',                          # Replace output directory (default: SPECPATH/dist/SPECNAME) without asking for confirmation
             '--clean',                              # Clean PyInstaller cache and remove temporary files before building
-            # '--windowed',                           # Windows and Mac OS X: do not provide a console window for standard i/o.
+            '--windowed',                           # Windows and Mac OS X: do not provide a console window for standard i/o.
             '--onedir',                             # Create a one-folder bundle containing an executable (default)
             #'--specpath', workDirPath(),           # Folder to store the generated spec file (default: current directory)
             '--distpath', CONFIG.dist_dir,          # Where to put the bundled app (default: ./dist)

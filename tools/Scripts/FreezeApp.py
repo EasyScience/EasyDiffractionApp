@@ -9,8 +9,9 @@ import os, sys
 import glob
 import site
 import PySide2, shiboken2
+import periodictable
 import cryspy, GSASII
-import easyCore, easyCrystallography, easyDiffractionLib, easyApp, periodictable
+import easyCore, easyCrystallography, easyDiffractionLib, easyApp
 import Functions, Config
 from PyInstaller.__main__ import run as pyInstallerMain
 

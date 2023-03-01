@@ -146,7 +146,7 @@ class ParametersLogic(QObject):
 
     def _setInstrumentParametersAsXml(self):
         parameters = [self._instrument_parameters_as_obj]
-        self._instrument_parameters_as_xml = XMLSerializer().encode(parameters)
+        self._instrument_parameters_as_xml = XMLSerializer().encode(parameters[0])
 
     ####################################################################################################################
     # Fitables (parameters table from analysis tab & ...)
@@ -326,7 +326,9 @@ class ParametersLogic(QObject):
             borg.stack.endMacro()
 
             self.parametersValuesChanged.emit()
-            # self._updateCalculatedData() # called in  updateBackground() triggered by parametersValuesChanged
+            # This needs to be called only when no experiment is loaded
+            if self.parent.experimentSkipped():
+                self._updateCalculatedData() # called in  updateBackground() triggered by parametersValuesChanged
             self.parametersChanged.emit()
 
     def _parameterObj(self, obj_id: str):

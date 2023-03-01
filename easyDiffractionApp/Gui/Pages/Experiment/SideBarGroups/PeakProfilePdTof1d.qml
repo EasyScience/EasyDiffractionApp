@@ -45,7 +45,7 @@ Column {
 
                 model: XmlListModel {
                     xml: ExGlobals.Constants.proxy.parameters.instrumentParametersAsXml
-                    query: `/data/data/`
+                    query: `/data`
 
                     XmlRole { name: "sigma0"; query: "sigma0/value/number()" }
                     XmlRole { name: "sigma1"; query: "sigma1/value/number()" }
@@ -102,7 +102,7 @@ Column {
 
                 model: XmlListModel {
                     xml: ExGlobals.Constants.proxy.parameters.instrumentParametersAsXml
-                    query: `/data/data/`
+                    query: `/data`
 
                     XmlRole { name: "gamma0"; query: "gamma0/value/number()" }
                     XmlRole { name: "gamma1"; query: "gamma1/value/number()" }
@@ -163,7 +163,7 @@ Column {
 
                 model: XmlListModel {
                     xml: ExGlobals.Constants.proxy.parameters.instrumentParametersAsXml
-                    query: `/data/data/`
+                    query: `/data`
 
                     XmlRole { name: "alpha0"; query: "alpha0/value/number()" }
                     XmlRole { name: "alpha1"; query: "alpha1/value/number()" }

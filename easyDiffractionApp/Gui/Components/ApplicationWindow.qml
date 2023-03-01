@@ -156,7 +156,10 @@ EaComponents.ApplicationWindow {
             fontIcon: "clipboard-list"
             text: qsTr("Summary")
             ToolTip.text: qsTr("Summary of the work done")
-            Component.onCompleted: ExGlobals.Variables.summaryTabButton = summaryTabButton
+            onClicked: {
+                ExGlobals.Constants.proxy.project.requestReport()
+            }
+            Component.onCompleted: ExGlobals.Variables.summaryTabButton = this
         }
 
     ]

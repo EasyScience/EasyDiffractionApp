@@ -18,26 +18,27 @@ import Gui.Pages.Summary 1.0 as ExSummaryPage
 
 EaComponents.SideBarColumn {
 
-    EaElements.GroupBox {
-        title: qsTr("Create report")
-        // enabled: !ExGlobals.Constants.proxy.project.readOnly
-        enabled: true
-        collapsible: false
-        last: true
+    // TEMPORARILY DISABLED
+    // EaElements.GroupBox {
+    //     title: qsTr("Create report")
+    //     // enabled: !ExGlobals.Constants.proxy.project.readOnly
+    //     enabled: true
+    //     collapsible: false
+    //     last: true
 
-        // Create button
-        EaElements.SideBarButton {
-            wide: true
-            fontIcon: "flask"
-            text: qsTr("Create")
+    //     // Create button
+    //     EaElements.SideBarButton {
+    //         wide: true
+    //         fontIcon: "flask"
+    //         text: qsTr("Create")
 
-            onClicked: {
-                ExGlobals.Constants.proxy.project.requestReport()
-            }
+    //         onClicked: {
+    //             ExGlobals.Constants.proxy.project.requestReport()
+    //         }
 
-            Component.onCompleted: ExGlobals.Variables.exportReportButton = this
-        }
-    }
+    //         Component.onCompleted: ExGlobals.Variables.exportReportButton = this
+    //     }
+    // }
 
     EaElements.GroupBox {
         title: qsTr("Export report")

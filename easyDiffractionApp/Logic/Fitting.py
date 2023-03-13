@@ -301,6 +301,9 @@ class FittingLogic(QObject):
         print("***** _onCurrentCalculatorChanged")
         data = self.parent.pdata().simulations[0]
         data.name = f'{self.interface.current_interface_name} engine'
+        # update interface on job
+        job = self.parent.sample()
+        job.interface = self.interface
         self.parent.updateCalculatedData()
 
     # Constraints

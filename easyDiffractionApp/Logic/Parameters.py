@@ -387,7 +387,6 @@ class ParametersLogic(QObject):
         if self.parent.isSpinPolarized():
             fn = self.parent.fnAggregate()
             kwargs["pol_fn"] = fn
-
         sim.y = self.parent.l_sample._sample.create_simulation(sim.x, **kwargs)
 
         if self.parent.isSpinPolarized():

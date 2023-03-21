@@ -6,7 +6,7 @@ build-backend = "poetry.core.masonry.api"
 # Define the project
 [tool.poetry]
 name = 'easyDiffractionApp'
-version = '0.8.4-beta'
+version = '0.8.5-beta'
 description = 'Making diffraction data analysis and modelling easy.'
 license = 'BSD-3-Clause'
 authors = ['Andrew Sazonov', 'Simon Ward', 'Piotr Rozyczko']

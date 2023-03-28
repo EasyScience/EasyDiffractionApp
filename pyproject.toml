@@ -30,8 +30,8 @@ GSASII = '^0.0.1'
 
 gemmi = '^0.5.8'
 # EasyScience Dependencies
-easyDiffraction = { git = 'https://github.com/easyScience/easyDiffractionLib.git', rev = 'release-0.8.5' }
-easyApp = { git = 'https://github.com/easyScience/easyApp.git', rev = 'io_serialize' }
+easyDiffraction = '^0.0.9'
+easyApp = { git = 'https://github.com/easyScience/easyApp.git', rev = 'master' }
 
 # Graphical Dependencies
 darkdetect = '^0.8.0'

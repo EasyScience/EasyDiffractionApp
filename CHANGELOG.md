@@ -1,12 +1,14 @@
 # Version 0.8.5-beta (28 Mar 2023)
+
 ### Changes
-- Removed GSASII calculation engine.
-- Greatly inreased application performance.
+
+- GSASII calculation engine has been removed.
+- Overall application performance has been significantly improved.
 
 ### Bug Fixes
-- Export report widget is now properly enabled for custom projects.
-- Undo/redo functionality has been fixed.
 
+- Summary report export widget is now properly enabled for custom projects.
+- Undo/redo functionality has been fixed.
 
 # Version 0.8.4-beta (28 Jul 2022)
 

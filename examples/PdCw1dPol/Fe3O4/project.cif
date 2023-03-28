@@ -1,5 +1,5 @@
-_name polar_Fe
+_name Fe3O4
 _short_description 'neutrons, powder, constant wavelength, polarised, 6T2@LLB'
-_samples 'Fe3O4'
-_experiments 'PolNPD5T'
-_modified '30.05.2022 10:53'
+_samples Fe3O4
+_experiments PolNPD5T
+_modified '14.07.2022 16:47'

@@ -1,17 +1,16 @@
-# SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
+# SPDX-FileCopyrightText: 2023 easyDiffraction contributors <support@easydiffraction.org>
 # SPDX-License-Identifier: BSD-3-Clause
-# © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+# © 2021-2023 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
 # noqa: E501
 from typing import Union
 
-from dicttoxml import dicttoxml
 import json
 
 from PySide2.QtCore import Signal, QObject
 
 from easyCore import np, borg
-
+from easyCore.Utils.io.xml import XMLSerializer
 from easyCore.Utils.classTools import generatePath
 
 from easyDiffractionApp.Logic.DataStore import DataSet1D, DataStore
@@ -147,7 +146,7 @@ class ParametersLogic(QObject):
 
     def _setInstrumentParametersAsXml(self):
         parameters = [self._instrument_parameters_as_obj]
-        self._instrument_parameters_as_xml = dicttoxml(parameters, attr_type=True).decode()  # noqa: E501
+        self._instrument_parameters_as_xml = XMLSerializer().encode(parameters[0])
 
     ####################################################################################################################
     # Fitables (parameters table from analysis tab & ...)
@@ -284,7 +283,8 @@ class ParametersLogic(QObject):
         self._setIconifiedLabels()
 
     def _setParametersAsXml(self):
-        self._parameters_as_xml = dicttoxml(self._parameters_as_obj, attr_type=False).decode()  # noqa: E501
+        # XMLSerializer doesn't currently handle lists so wrap in a dict
+        self._parameters_as_xml = XMLSerializer().encode({"item":self._parameters_as_obj}, data_only=True, skip=['interface'])
 
     def setParametersFilterCriteria(self, new_criteria):
         if self._parameters_filter_criteria == new_criteria:
@@ -295,6 +295,7 @@ class ParametersLogic(QObject):
     # Any parameter
     ####################################################################################################################
     def editParameter(self, obj_id: str, new_value: Union[bool, float, str]):  # noqa: E501
+
         if not obj_id:
             return
 
@@ -312,20 +313,23 @@ class ParametersLogic(QObject):
             self.undoRedoChanged.emit()
 
         else:
-            self.parent.shouldProfileBeCalculated = False
             if obj.raw_value == new_value:
                 return
             if isinstance(new_value, str):
                 new_value = new_value.capitalize()
-            borg.stack.beginMacro(f"'{obj.display_name}' value changed from {obj.raw_value} to {new_value}")
+
+            if not borg.stack._macro_running:
+                borg.stack.beginMacro(f"'{obj.display_name}' value changed from {obj.raw_value} to {new_value}")
+
             obj.value = new_value
             obj.error = 0.
             borg.stack.endMacro()
-            self.parametersValuesChanged.emit()
-            self.parent.shouldProfileBeCalculated = True
-            self._updateCalculatedData()
-            self.parametersChanged.emit()
 
+            self.parametersValuesChanged.emit()
+            # This needs to be called only when no experiment is loaded
+            if self.parent.experimentSkipped():
+                self._updateCalculatedData() # called in  updateBackground() triggered by parametersValuesChanged
+            self.parametersChanged.emit()
 
     def _parameterObj(self, obj_id: str):
         if not obj_id:
@@ -370,7 +374,6 @@ class ParametersLogic(QObject):
             return
 
         self.parent.assignPhaseIndex()
-
         #  THIS IS WHERE WE WOULD LOOK UP CURRENT EXP INDEX
         sim = self._data.simulations[0]
 
@@ -380,20 +383,17 @@ class ParametersLogic(QObject):
 
         elif self.parent.experimentSkipped():
             sim.x = self.sim_x()
-
         kwargs = {}
         if self.parent.isSpinPolarized():
             fn = self.parent.fnAggregate()
             kwargs["pol_fn"] = fn
-            # save some kwargs on the interface object for use in the calculator
-            # self._interface._InterfaceFactoryTemplate__interface_obj.saved_kwargs = local_kwargs
+        sim.y = self.parent.l_sample._sample.create_simulation(sim.x, **kwargs)
 
-        sim.y = self._interface.fit_func(sim.x, **kwargs)
         if self.parent.isSpinPolarized():
             self.parent.setSpinComponent()
         else:
             self.plotCalculatedDataSignal.emit((sim.x, sim.y))
-
+        # temporarily disable 
         for phase_index, phase_name in enumerate([str(phase._borg.map.convert_id(phase).int) for phase in self.parent.phases()]):
             hkl = self._interface.get_hkl(x_array=sim.x, phase_name=phase_name, encoded_name=True)
             if 'ttheta' in hkl.keys():

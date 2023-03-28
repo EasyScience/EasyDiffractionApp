@@ -6,7 +6,7 @@ build-backend = "poetry.core.masonry.api"
 # Define the project
 [tool.poetry]
 name = 'easyDiffractionApp'
-version = '0.8.4-beta'
+version = '0.8.5-beta'
 description = 'Making diffraction data analysis and modelling easy.'
 license = 'BSD-3-Clause'
 authors = ['Andrew Sazonov', 'Simon Ward', 'Piotr Rozyczko']
@@ -27,9 +27,10 @@ toml = '^0.10.2'
 requests = '^2.28.1'
 CFML = '^0.0.1'
 GSASII = '^0.0.1'
+
 gemmi = '^0.5.8'
 # EasyScience Dependencies
-easyDiffraction = { git = 'https://github.com/easyScience/easyDiffractionLib.git', rev = 'develop' }
+easyDiffraction = '^0.0.9'
 easyApp = { git = 'https://github.com/easyScience/easyApp.git', rev = 'master' }
 
 # Graphical Dependencies
@@ -64,8 +65,6 @@ easyDiffraction = 'easyDiffractionApp.main:main'
 name = "easyScience"
 url = "https://easyscience.github.io/pypi/"
 secondary = true
-
-
 
 # CUSTOM CONFIG
 # -------------

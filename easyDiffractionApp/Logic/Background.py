@@ -1,10 +1,10 @@
-# SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
+# SPDX-FileCopyrightText: 2023 easyDiffraction contributors <support@easydiffraction.org>
 # SPDX-License-Identifier: BSD-3-Clause
-# © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+# © 2021-2023 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
-from easyCore import np
-from dicttoxml import dicttoxml
+from easyCore import np, borg
 
+from easyCore.Utils.io.xml import XMLSerializer
 from PySide2.QtCore import QObject, Signal
 from easyDiffractionLib.elements.Backgrounds.Point import PointBackground, BackgroundPoint
 
@@ -40,24 +40,32 @@ class BackgroundLogic(QObject):
         self._background_as_obj = self._background_obj()
         self._setAsXml()
 
+    def backgroundLoaded(self):
+        self._background_as_obj = self._background_obj()
+        if self._background_as_obj is None:
+            return
+        self._setAsXml()
+
     def onAsObjChanged(self):
         print(f"***** onAsObjChanged")
         self._background_as_obj = self._background_obj()
+        if self._background_as_obj is None:
+            return
         self._setAsXml()
+        borg.stack.enabled = False
         self.parent.updateBackground(self._background_as_obj)
+        borg.stack.enabled = True
 
     def _setAsXml(self):
         if self._background_as_obj is None:
-            self._background_as_xml = dicttoxml({}, attr_type=False).decode()
+            self._background_as_xml = XMLSerializer().encode({})
         else:
             background = np.array([item.as_dict() for item in self._background_as_obj])
             point_index = np.array([item.x.raw_value for item in self._background_as_obj]).argsort()
-            self._background_as_xml = dicttoxml(background[point_index], attr_type=False).decode()
+            self._background_as_xml = XMLSerializer().encode(background[point_index])
         self.asXmlChanged.emit()
 
     def setDefaultPoints(self):
-        print("+ setDefaultPoints")
-
         if self._background_as_obj is None:
             # TODO THIS IS NOT HOW TO DO THINGS!!!
             self.initializeContainer()

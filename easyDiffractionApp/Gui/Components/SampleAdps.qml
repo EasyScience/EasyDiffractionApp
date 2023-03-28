@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
+// SPDX-FileCopyrightText: 2023 easyDiffraction contributors <support@easydiffraction.org>
 // SPDX-License-Identifier: BSD-3-Clause
 // © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
@@ -33,7 +33,7 @@ EaComponents.TableView {
         property int phaseIndex: ExGlobals.Constants.proxy.phase.currentPhaseIndex + 1
 
         xml: ExGlobals.Constants.proxy.phase.phasesAsXml
-        query: `/root/item[${phaseIndex}]/atoms/data/item`
+        query: `/data/item/atoms/data`
 
         XmlRole { name: "label"; query: "label/value/string()" }
         XmlRole { name: "adpType"; query: "adp/adp_type/value/string()" }
@@ -45,13 +45,13 @@ EaComponents.TableView {
         XmlRole { name: "adpAni13"; query: "adp_ani_13/number()" }
         XmlRole { name: "adpAni23"; query: "adp_ani_23/number()" }
 
-        XmlRole { name: "adpIsoId"; query: "adp/adp_class/Uiso/key[4]/string()" }
-        XmlRole { name: "adpAni11Id"; query: "adp_ani_11/key[4]/string()" }
-        XmlRole { name: "adpAni22Id"; query: "adp_ani_22/key[4]/string()" }
-        XmlRole { name: "adpAni33Id"; query: "adp_ani_33/key[4]/string()" }
-        XmlRole { name: "adpAni12Id"; query: "adp_ani_12/key[4]/string()" }
-        XmlRole { name: "adpAni13Id"; query: "adp_ani_13/key[4]/string()" }
-        XmlRole { name: "adpAni23Id"; query: "adp_ani_23/key[4]/string()" }
+        XmlRole { name: "adpIsoId"; query: "adp/adp_class/Uiso/__id/string()" }
+        XmlRole { name: "adpAni11Id"; query: "adp_ani_11/__id/string()" }
+        XmlRole { name: "adpAni22Id"; query: "adp_ani_22/__id/string()" }
+        XmlRole { name: "adpAni33Id"; query: "adp_ani_33/__id/string()" }
+        XmlRole { name: "adpAni12Id"; query: "adp_ani_12/__id/string()" }
+        XmlRole { name: "adpAni13Id"; query: "adp_ani_13/__id/string()" }
+        XmlRole { name: "adpAni23Id"; query: "adp_ani_23/__id/string()" }
     }
 
     // Table rows

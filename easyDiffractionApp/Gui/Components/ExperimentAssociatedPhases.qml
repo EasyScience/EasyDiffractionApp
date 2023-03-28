@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
+// SPDX-FileCopyrightText: 2023 easyDiffraction contributors <support@easydiffraction.org>
 // SPDX-License-Identifier: BSD-3-Clause
 // © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
@@ -23,11 +23,11 @@ EaComponents.TableView {
 
     model: XmlListModel {
         xml: ExGlobals.Constants.proxy.phase.phasesAsXml
-        query: "/root/item"
+        query: "/data/item"
 
         XmlRole { name: "label"; query: "name/string()" }
         XmlRole { name: "scale"; query: "scale/value/number()" }
-        XmlRole { name: "scaleId"; query: "scale/key[4]/string()" }
+        XmlRole { name: "scaleId"; query: "scale/__id/string()" }
 
     }
 

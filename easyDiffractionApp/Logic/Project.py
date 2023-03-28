@@ -1,19 +1,17 @@
-# SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
+# SPDX-FileCopyrightText: 2023 easyDiffraction contributors <support@easydiffraction.org>
 # SPDX-License-Identifier: BSD-3-Clause
-# © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+# © 2021-2023 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
 # noqa: E501
 import os
 import datetime
 from timeit import default_timer as timer
-
-from dicttoxml import dicttoxml
 import json
 
 from PySide2.QtCore import Signal, QObject
 
-from easyCore import np, borg
-
+from easyCore.Datasets.xarray import np
+from easyCore.Utils.io.xml import XMLSerializer
 from easyDiffractionLib.sample import Sample
 from easyApp.Logic.Utils.Utils import generalizePath
 
@@ -91,7 +89,7 @@ class ProjectLogic(QObject):
         )
 
     def projectExamplesAsXml(self):
-        model = [
+        model = { "item": [
             {"name": "PbSO4", "description": "neutrons, powder, constant wavelength, D1A@ILL",
              "path": "../Resources/Examples/PbSO4/project.json"},
             {"name": "Co2SiO4", "description": "neutrons, powder, constant wavelength, D20@ILL",
@@ -107,10 +105,13 @@ class ProjectLogic(QObject):
             {"name": "Fe3O4", "description": "neutrons, powder, constant wavelength, polarised, 6T2@LLB",
              "path": "../Resources/Examples/Fe3O4/project.json"},
             {"name": "Ho2Ti2O7", "description": "neutrons, powder, constant wavelength, polarised, VIP@LLB",
-             "path": "../Resources/Examples/Ho2Ti2O7/project.json"}
-        ]
-        xml = dicttoxml(model, attr_type=False)
-        xml = xml.decode()
+             "path": "../Resources/Examples/Ho2Ti2O7/project.json"},
+            # disbaled until the new Cryspy is available.
+            # {"name": "La0.5Ba0.5CoO3", "description": "neutrons, powder, constant wavelength, HRPT@PSI",
+            #  "path": "../Resources/Examples/La0.5Ba0.5CoO3/project.json"}
+        ]}
+        # XMLSerializer doesn't currently handle lists.
+        xml = XMLSerializer().encode(model, data_only=True)
         return xml
 
     def projectInfoAsCif(self):
@@ -227,7 +228,8 @@ class ProjectLogic(QObject):
         descr = {
             'sample': self.parent.getSampleAsDict()
         }
-        descr['experiments'] = self.parent.getExperiments()
+        if not self.parent.isExperimentSkipped():
+            descr['experiments'] = self.parent.getExperiments()
 
         descr['experiment_skipped'] = self.parent.isExperimentSkipped()
         descr['read_only'] = self._read_only
@@ -238,6 +240,7 @@ class ProjectLogic(QObject):
         descr['minimizer'] = self.parent.fittingNamesDict()
 
         content_json = json.dumps(descr, indent=4, default=self.default)
+
         path = generalizePath(project_save_filepath)
         createFile(path, content_json)
         self.stateHasChanged(False)

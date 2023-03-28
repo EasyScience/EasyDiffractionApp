@@ -1,6 +1,6 @@
-# SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
+# SPDX-FileCopyrightText: 2023 easyDiffraction contributors <support@easydiffraction.org>
 # SPDX-License-Identifier: BSD-3-Clause
-# © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+# © 2021-2023 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
 from PySide2.QtCore import QObject, Signal, Slot, Property
 
@@ -12,6 +12,7 @@ class ProjectProxy(QObject):
     stateChanged = Signal(bool)
     htmlExportingFinished = Signal(bool, str)
     statusInfoChanged = Signal()
+    reportRequested = Signal()
 
     def __init__(self, parent=None, logic=None):  # , interface=None):
         super().__init__(parent)
@@ -130,6 +131,13 @@ class ProjectProxy(QObject):
         """
         success = self.logic.saveReport(filepath)
         self.htmlExportingFinished.emit(success, filepath)
+
+    @Slot()
+    def requestReport(self):
+        """
+        Request a report generation
+        """
+        self.reportRequested.emit()
 
     # status
     @Property('QVariant', notify=statusInfoChanged)

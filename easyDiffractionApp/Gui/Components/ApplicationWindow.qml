@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
+// SPDX-FileCopyrightText: 2023 easyDiffraction contributors <support@easydiffraction.org>
 // SPDX-License-Identifier: BSD-3-Clause
 // © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
@@ -156,7 +156,10 @@ EaComponents.ApplicationWindow {
             fontIcon: "clipboard-list"
             text: qsTr("Summary")
             ToolTip.text: qsTr("Summary of the work done")
-            Component.onCompleted: ExGlobals.Variables.summaryTabButton = summaryTabButton
+            onClicked: {
+                ExGlobals.Constants.proxy.project.requestReport()
+            }
+            Component.onCompleted: ExGlobals.Variables.summaryTabButton = this
         }
 
     ]
@@ -355,7 +358,7 @@ EaComponents.ApplicationWindow {
 
         model: XmlListModel {
             xml: ExGlobals.Constants.proxy.project.statusModelAsXml
-            query: "/root/item"
+            query: "/data"
 
             XmlRole { name: "label"; query: "label/string()" }
             XmlRole { name: "value"; query: "value/string()" }

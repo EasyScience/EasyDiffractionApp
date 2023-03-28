@@ -1,6 +1,6 @@
-# SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
+# SPDX-FileCopyrightText: 2023 easyDiffraction contributors <support@easydiffraction.org>
 # SPDX-License-Identifier: BSD-3-Clause
-# © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+# © 2021-2023 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
 import numpy as np
 
@@ -121,9 +121,8 @@ class LogicController(QObject):
         self.sample().output_index = self.l_phase._current_phase_index
 
     def resetState(self):
-        self.shouldProfileBeCalculated = False # setCurrentCalculatorIndex forces update
-        self.l_fitting.setCurrentCalculatorIndex(0)
-        self.shouldProfileBeCalculated = True
+        # TO FIX: after modifying the interface string
+        # self.l_fitting.setCurrentCalculatorIndex(0)
         if self.l_phase.samplesPresent():
             self.l_phase.removeAllPhases()
         self.l_plotting1d.clearBackendState()
@@ -174,9 +173,12 @@ class LogicController(QObject):
         self.l_parameters._updateCalculatedData()
 
     def updateBackgroundOnLoad(self):
-        self.l_background.onAsObjChanged()
+        # self.l_background.onAsObjChanged()
+        self.l_background.backgroundLoaded()
         if self.l_experiment.spin_polarized:
             self.l_experiment.setSpinComponent()
+        self.l_parameters.parametersChanged.emit()
+        self.l_sample._sample.set_background(self.l_background._background_as_obj)
 
     def setExperimentLoaded(self, loaded=True):
         self.l_experiment.experimentLoaded(loaded)
@@ -205,7 +207,7 @@ class LogicController(QObject):
         return self.l_experiment.experimentDataAsObj()[0]["name"]
 
     def getSampleAsDict(self):
-        return self.l_sample._sample.as_dict(skip=['interface', 'calculator'])
+        return self.l_sample._sample.as_dict(skip=['interface', 'calculator', 'datastore'])
 
     def setPhaseScale(self, phase_label, phase_scale):
         self.l_phase.phases[phase_label].scale = phase_scale
@@ -307,11 +309,10 @@ class LogicController(QObject):
         self.l_project.projectInfoChanged.emit()
 
     def onParametersChanged(self):
-        self.l_parameters._updateCalculatedData()
         self.l_phase.structureParametersChanged.emit()
         self.l_experiment._onPatternParametersChanged()
         self.l_parameters.instrumentParametersChanged.emit()
-        self.l_background.onAsObjChanged()
+        self.l_background.onAsObjChanged()  # this invokes _updateCalculatedData()
         self.l_stack.undoRedoChanged.emit()
 
     def recorder(self):

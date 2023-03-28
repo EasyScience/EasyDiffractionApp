@@ -1,10 +1,9 @@
-# SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
+# SPDX-FileCopyrightText: 2023 easyDiffraction contributors <support@easydiffraction.org>
 # SPDX-License-Identifier: BSD-3-Clause
-# © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+# © 2021-2023 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
 # noqa: E501
 
-from dicttoxml import dicttoxml
 from gemmi import cif
 import numpy as np
 import pathlib
@@ -13,8 +12,9 @@ import json
 from PySide2.QtCore import Signal, QObject
 
 from easyCore import np
-
+from easyCore.Utils.io.xml import XMLSerializer
 from easyApp.Logic.Utils.Utils import generalizePath
+from easyDiffractionLib.Jobs import get_job_from_file
 
 
 class ExperimentLogic(QObject):
@@ -60,65 +60,34 @@ class ExperimentLogic(QObject):
         file_path = generalizePath(file_url)
         block = cif.read(file_path).sole_block()
 
-        # Get experiment type
-        # Set default experiment type: powder1DCWunp
-        self.parent.setExperimentType('powder1DCWunp')
-        # Check if powder1DCWpol
-        value = block.find_value("_diffrn_radiation_polarization")
-        if value is not None:
-            self.parent.setExperimentType('powder1DCWpol')
-        # Check if powder1DTOFunp
-        # ...
-        # Check if powder1DTOFpol
-        # ...
+        data = self.parent.experiments()[0]
+        # Polarized case
+        data.x = np.fromiter(block.find_loop("_pd_meas_2theta"), float)
+        data.y = np.fromiter(block.find_loop("_pd_meas_intensity_up"), float)
+        data.e = np.fromiter(block.find_loop("_pd_meas_intensity_up_sigma"), float)
+        data.yb = np.fromiter(block.find_loop("_pd_meas_intensity_down"), float)
+        data.eb = np.fromiter(block.find_loop("_pd_meas_intensity_down_sigma"), float)
+        #self.spin_polarized = True
+        spin_polarized = True
+        # Unpolarized case
+        if not np.any(data.y):
+            data.x = np.fromiter(block.find_loop("_pd_meas_2theta"), float)
+            data.y = np.fromiter(block.find_loop("_pd_meas_intensity"), float)
+            data.e = np.fromiter(block.find_loop("_pd_meas_intensity_sigma"), float)
+            data.yb = np.zeros(len(data.y))
+            data.eb = np.zeros(len(data.e))
+            #self.spin_polarized = False
+            spin_polarized = False
+        # setting spin polarization needs to be done first, before experiment is loaded
+        self.setPolarized(spin_polarized)
 
-        # Get diffraction radiation parameters
-        pattern_parameters = self.parent.sample().pattern
-        value = block.find_value("_diffrn_radiation_polarization")
-        if value is not None:
-            pattern_parameters.beam.polarization = float(value)
-        value = block.find_value("_diffrn_radiation_efficiency")
-        if value is not None:
-            pattern_parameters.beam.efficiency = float(value)
-        value = block.find_value("_setup_offset_2theta")
-        if value is not None:
-            pattern_parameters.zero_shift = float(value)
-        value = block.find_value("_setup_field")
-        if value is not None:
-            pattern_parameters.field = float(value)
+        # job name from file name
+        job_name = pathlib.Path(file_path).stem
+        _, job = get_job_from_file(file_path, job_name, phases=self.parent.phases(), interface=self._interface)
+        job.from_cif_file(file_path, experiment_name=job_name)
 
-        # Get instrumental parameters
-        instrument_parameters = self.parent.sample().parameters
-        value = block.find_value("_setup_wavelength")
-        if value is not None:
-            instrument_parameters.wavelength = float(value)
-        value = block.find_value("_pd_instr_resolution_u")
-        if value is not None:
-            instrument_parameters.resolution_u = float(value)
-        value = block.find_value("_pd_instr_resolution_v")
-        if value is not None:
-            instrument_parameters.resolution_v = float(value)
-        value = block.find_value("_pd_instr_resolution_w")
-        if value is not None:
-            instrument_parameters.resolution_w = float(value)
-        value = block.find_value("_pd_instr_resolution_x")
-        if value is not None:
-            instrument_parameters.resolution_x = float(value)
-        value = block.find_value("_pd_instr_resolution_y")
-        if value is not None:
-            instrument_parameters.resolution_y = float(value)
-        value = block.find_value("_pd_instr_reflex_asymmetry_p1")
-        if value is not None:
-            instrument_parameters.reflex_asymmetry_p1 = float(value)
-        value = block.find_value("_pd_instr_reflex_asymmetry_p2")
-        if value is not None:
-            instrument_parameters.reflex_asymmetry_p2 = float(value)
-        value = block.find_value("_pd_instr_reflex_asymmetry_p3")
-        if value is not None:
-            instrument_parameters.reflex_asymmetry_p3 = float(value)
-        value = block.find_value("_pd_instr_reflex_asymmetry_p4")
-        if value is not None:
-            instrument_parameters.reflex_asymmetry_p4 = float(value)
+        # Update job on sample
+        self.parent.l_sample._sample = job
 
         # Get phase parameters
         sample_phase_labels = self.parent.getPhaseNames()
@@ -128,38 +97,33 @@ class ExperimentLogic(QObject):
             if phase_label in sample_phase_labels:
                 self.parent.setPhaseScale(phase_label, phase_scale)
 
-        # Get data
-        data = self.parent.experiments()[0]
-        # Polarized case
-        data.x = np.fromiter(block.find_loop("_pd_meas_2theta"), float)
-        data.y = np.fromiter(block.find_loop("_pd_meas_intensity_up"), float)
-        data.e = np.fromiter(block.find_loop("_pd_meas_intensity_up_sigma"), float)
-        data.yb = np.fromiter(block.find_loop("_pd_meas_intensity_down"), float)
-        data.eb = np.fromiter(block.find_loop("_pd_meas_intensity_down_sigma"), float)
-        self.spin_polarized = True
-        # Unpolarized case
-        if not np.any(data.y):
-            data.x = np.fromiter(block.find_loop("_pd_meas_2theta"), float)
-            data.y = np.fromiter(block.find_loop("_pd_meas_intensity"), float)
-            data.e = np.fromiter(block.find_loop("_pd_meas_intensity_sigma"), float)
-            data.yb = np.zeros(len(data.y))
-            data.eb = np.zeros(len(data.e))
-            self.spin_polarized = False
-        self.setPolarized(self.spin_polarized)
         return data
 
     def _loadExperimentData(self, file_url):
         print("+ _loadExperimentData")
         file_path = generalizePath(file_url)
+        job_name = pathlib.Path(file_path).stem
+
         data = self.parent.experiments()[0]
+        # TODO: figure out how to tell ToF from CW
         try:
             data.x, data.y, data.e, data.yb, data.eb = np.loadtxt(file_path, unpack=True)
             self.setPolarized(True)
+            job = self.parent.l_sample._defaultCWPolJob(name=job_name)
         except Exception as e:
             data.x, data.y, data.e = np.loadtxt(file_path, unpack=True)
             data.yb = np.zeros(len(data.y))
             data.eb = np.zeros(len(data.e))
             self.setPolarized(False)
+            # check if set to ToF
+            current_type = self.parent.experimentType()
+            if 'TOF' in current_type:
+                job = self.parent.l_sample._defaultTOFJob(name=job_name)
+            else:
+                job = self.parent.l_sample._defaultCWJob(name=job_name)
+
+        # Update job on sample
+        self.parent.l_sample._sample = job
         return data
 
     def _experimentDataParameters(self, data):
@@ -230,7 +194,7 @@ class ExperimentLogic(QObject):
         return [{'name': experiment.name} for experiment in self.parent.experiments()]
 
     def _setExperimentDataAsXml(self):
-        self._experiment_data_as_xml = dicttoxml(self.experiments, attr_type=True).decode()  # noqa: E501
+        self._experiment_data_as_xml = XMLSerializer().encode(self.experiments)
 
     def addExperimentDataFromCif(self, file_url):
         self.parent.shouldProfileBeCalculated = False # don't run update until we're done with setting parameters
@@ -259,6 +223,7 @@ class ExperimentLogic(QObject):
 
     def removeExperiment(self):
         self.parent.removeBackgroundPoints()
+        self.parent.l_sample.reset()
         self.parent.removeAllConstraints()
         self._current_spin_component = 'Sum'
         self.experiments.clear()

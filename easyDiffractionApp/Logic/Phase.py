@@ -1,14 +1,15 @@
-# SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
+# SPDX-FileCopyrightText: 2023 easyDiffraction contributors <support@easydiffraction.org>
 # SPDX-License-Identifier: BSD-3-Clause
-# © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+# © 2021-2023 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
 
 import re
-from dicttoxml import dicttoxml
 
 from PySide2.QtCore import Signal, QObject
 
 from easyCore import np, borg
+from easyCore.Utils.io.xml import XMLSerializer
+
 from easyDiffractionLib import Phases, Phase, Lattice, Site, SpaceGroup
 from easyCrystallography.Components.AtomicDisplacement import AtomicDisplacement
 from easyCrystallography.Components.Susceptibility import MagneticSusceptibility
@@ -37,6 +38,7 @@ class PhaseLogic(QObject):
         self._phases_as_cif = ""
         self._current_phase_index = 0
         self.has_msp = False
+        # self.addDefaultPhase()
 
     ####################################################################################################################
     ####################################################################################################################
@@ -77,13 +79,13 @@ class PhaseLogic(QObject):
         self.phases.append(default_phase)
         borg.stack.enabled = True
 
-    @staticmethod
-    def _defaultPhase():
-        space_group = SpaceGroup.from_pars('F d -3:2')
-        cell = Lattice.from_pars(5.0, 3.0, 4.0, 90, 90, 90)
+    # @staticmethod
+    def _defaultPhase(self):
+        space_group = SpaceGroup('F d -3:2')
+        cell = Lattice(5.0, 3.0, 4.0, 90, 90, 90)
         adp = AtomicDisplacement("Uiso")
-        atom = Site(label='O', specie='O', fract_x=0.0, fract_y=0.0, fract_z=0.0, adp=adp)
-        phase = Phase('Test', spacegroup=space_group, cell=cell)
+        atom = Site(label='O', specie='O', fract_x=0.0, fract_y=0.0, fract_z=0.0, adp=adp, interface=self._interface)
+        phase = Phase('Test', spacegroup=space_group, cell=cell, interface=self._interface)
         phase.add_atom(atom)
         return phase
 
@@ -91,6 +93,7 @@ class PhaseLogic(QObject):
         self.phases.name = 'Phases'
         name = self.phases[self._current_phase_index].name
         self.updateProjectInfo.emit(('samples', name))
+        self.parent.sample().interface = self._interface
 
     def currentCrystalSystem(self):
         phases = self.phases
@@ -111,7 +114,7 @@ class PhaseLogic(QObject):
     def currentPhaseAsExtendedCif(self):
         if len(self.phases) == 0:
             return
-        symm_ops = self.phases[self._current_phase_index].spacegroup.symmetry_opts
+        symm_ops = self.phases[self._current_phase_index].spacegroup.symmetry_ops
         symm_ops_cif_loop = "loop_\n _symmetry_equiv_pos_as_xyz\n"
         for symm_op in symm_ops:
             symm_ops_cif_loop += f' {symm_op.as_xyz_string()}\n'
@@ -126,13 +129,13 @@ class PhaseLogic(QObject):
         self.updateParameters()
 
     def _setPhasesAsObj(self):
-        self._phases_as_obj = self.phases.as_dict(skip=['interface'])['data']
+        self._phases_as_obj = self.phases.as_dict(skip=['interface', 'msp_values'])['data']
         self.parent.setCalculatedDataForPhase()
         # phase set - update xml so parameter table is also updated
         self.parent.emitParametersChanged()
 
     def _setPhasesAsXml(self):
-        self._phases_as_xml = dicttoxml(self._phases_as_obj, attr_type=True).decode()  # noqa: E501
+        self._phases_as_xml = XMLSerializer().encode({"item":self._phases_as_obj}, skip=['interface'])
 
     def _setPhasesAsCif(self):
         self._phases_as_cif = str(self.phases.cif)
@@ -215,10 +218,11 @@ class PhaseLogic(QObject):
             return 0
 
         settings = self._spaceGroupSettingList()
-        # current_setting = phases[self._current_phase_index].spacegroup.space_group_HM_name.raw_value  # noqa: E501
-        current_setting = phases[self._current_phase_index].spacegroup.hermann_mauguin  # noqa: E501
-        current_number = settings.index(current_setting)
-        return current_number
+        current_setting = phases[self._current_phase_index].spacegroup.space_group_HM_name.raw_value  # noqa: E501
+        for setting in settings:
+            if current_setting in setting:
+                return settings.index(setting)
+        return 0
 
     def setCurrentSpaceGroupSetting(self, new_number: int):
         settings = self._spaceGroupSettingList()
@@ -232,14 +236,13 @@ class PhaseLogic(QObject):
         index = len(self.phases[0].atoms.atom_labels) + 1
         label = f'Label{index}'
         adp = AtomicDisplacement("Uiso")
-        msp = MagneticSusceptibility("Ciso")
         atom = Site(label=label,
                     specie='Cl',
                     fract_x=0.5,
                     fract_y=0.5,
                     fract_z=0.5,
-                    adp=adp,
-                    msp=msp)
+                    adp=adp)
+
         self.phases[self._current_phase_index].add_atom(atom)
         self.updateParameters()
 

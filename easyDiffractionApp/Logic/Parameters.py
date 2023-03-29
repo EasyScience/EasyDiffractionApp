@@ -263,6 +263,7 @@ class ParametersLogic(QObject):
             par_path = par_path.replace('.alpha1', '.resolution_alpha1')
             par_path = par_path.replace('.beta0', '.resolution_beta0')
             par_path = par_path.replace('.beta1', '.resolution_beta1')
+            par_path = par_path.replace('.from_cif', '.atoms')
 
             if self._parameters_filter_criteria.lower() not in par_path.lower():  # noqa: E501
                 continue

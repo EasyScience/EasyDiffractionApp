@@ -10,7 +10,7 @@
 
 **EasyDiffraction** allows simulation of diffraction patterns based on a structural model and refinement of its parameters. For refinement, the program uses a number of fitting engines (minimizers) such as [lmfit](https://lmfit.github.io/lmfit-py), [bumps](https://github.com/bumps/bumps) and [DFO-LS](https://github.com/numericalalgorithmsgroup/dfols).
 
-**EasyDiffraction** is similar to crystallographic programs like FullProf, Jana, GSAS, ShelX, etc. Unlike these programs **EasyDiffraction** is based on _external_ crystallographic libraries (calculation engines) such as [CrysPy](https://github.com/ikibalin/cryspy), [CrysFML](https://code.ill.fr/scientific-software/crysfml) and [GSAS-II](https://subversion.xray.aps.anl.gov/trac/pyGSAS) (experimental). This allows **EasyDiffraction** to cover different functionality aspects within a single, intuitive and user-friendly graphical interface. These libraries are included with the installation so there is no need to compile/install them separately.
+**EasyDiffraction** is similar to crystallographic programs like FullProf, Jana, GSAS, ShelX, etc. Unlike these programs **EasyDiffraction** is based on _external_ crystallographic libraries (calculation engines) such as [CrysPy](https://github.com/ikibalin/cryspy) and [CrysFML](https://code.ill.fr/scientific-software/crysfml). This allows **EasyDiffraction** to cover different functionality aspects within a single, intuitive and user-friendly graphical interface. These libraries are included with the installation so there is no need to compile/install them separately.
 
 ## Main features
 
@@ -21,7 +21,7 @@
 Current main features of **Easydiffraction**:
 
 - Support for both constant-wavelength and time-of-flight 1D unpolarized neutron powder diffraction data.
-- Simulations of diffraction pattern using [CrysPy](https://github.com/ikibalin/cryspy), [CrysFML](https://code.ill.fr/scientific-software/crysfml) and [GSAS-II](https://subversion.xray.aps.anl.gov/trac/pyGSAS) (experimental) calculation engines.
+- Simulations of diffraction pattern using [CrysPy](https://github.com/ikibalin/cryspy) and [CrysFML](https://code.ill.fr/scientific-software/crysfml) calculation engines.
 - Structure refinement (yet unstable) using aforementioned engines.
 - Multiple minimization engines: [lmfit](https://lmfit.github.io/lmfit-py), [bumps](https://github.com/bumps/bumps) and [DFO-LS](https://github.com/numericalalgorithmsgroup/dfols).
 - Parameter constraints during refinement.
@@ -35,7 +35,8 @@ Current main features of **Easydiffraction**:
 Planned improvements / new functionality for **EasyDiffraction**:
 
 - Improved refinement.
-- Time-of-flight support using [CrysFML](https://code.ill.fr/scientific-software/crysfml) and [GSAS-II](https://subversion.xray.aps.anl.gov/trac/pyGSAS).
+- Time-of-flight support using [CrysFML](https://code.ill.fr/scientific-software/crysfml).
+- X-ray data analysis.
 - Asymmetric peak shapes.
 - Multiple phases and datasets.
 - Combined and sequential refinement.
@@ -43,13 +44,12 @@ Planned improvements / new functionality for **EasyDiffraction**:
 - Single crystal data.
 - Magnetic structure refinement.
 - Pair distribution function.
-- X-ray data analysis.
 
 ## Getting Started
 
 ### Downloading
 
-The official **EasyDiffraction** installer for Windows, macOS and Linux (Ubuntu) can be found [here](https://github.com/easyScience/easyDiffractionApp/releases):
+The official **EasyDiffraction** installer for Windows, macOS and Linux (Ubuntu) can be found [here](https://github.com/easyscience/easydiffractionapp/releases):
 
 ### Installing
 
@@ -73,25 +73,25 @@ We absolutely welcome contributions. **EasyDiffraction** is maintained by the [E
 
 For general questions or comments, please contact us at [support@easydiffraction.org](mailto:support@easydiffraction.org).
 
-For bug reports and feature requests, please use [Issue Tracker](https://github.com/easyScience/easyDiffractionApp/issues) instead.
+For bug reports and feature requests, please use [Issue Tracker](https://github.com/easyscience/easydiffractionapp/issues) instead.
 
 <!---URLs--->
 <!---https://naereen.github.io/badges/--->
 
 <!---CI Build Status--->
 
-[20]: https://img.shields.io/github/workflow/status/easyScience/easyDiffractionApp/build%20macOS,%20Linux,%20Windows/master
-[21]: https://github.com/easyScience/easyDiffractionApp/actions?query=workflow%3A%22build+macOS%2C+Linux%2C+Windows%22
+[20]: https://img.shields.io/github/actions/workflow/status/easyscience/easydiffractionapp/build.yml?branch=master
+[21]: https://github.com/easyscience/easydiffractionapp/actions/workflows/build.yml?query=workflow%3A%22build+macOS%2C+Linux%2C+Windows%22+branch%3Amaster
 
 <!---Release--->
 
-[30]: https://img.shields.io/github/release/easyScience/easyDiffractionApp.svg?include_prereleases
-[31]: https://github.com/easyScience/easyDiffractionApp/releases
+[30]: https://img.shields.io/github/release/easyscience/easydiffractionapp.svg?include_prereleases
+[31]: https://github.com/easyscience/easydiffractionapp/releases
 
 <!---License--->
 
-[50]: https://img.shields.io/github/license/easyScience/easyDiffractionApp.svg
-[51]: https://github.com/easyScience/easyDiffractionApp/blob/master/LICENSE.md
+[50]: https://img.shields.io/github/license/easyscience/easydiffractionapp.svg
+[51]: https://github.com/easyscience/easydiffractionapp/blob/master/LICENSE.md
 
 <!---LicenseScan--->
 
@@ -100,15 +100,15 @@ For bug reports and feature requests, please use [Issue Tracker](https://github.
 
 <!---Downloads--->
 
-[70]: https://img.shields.io/github/downloads/easyScience/easyDiffractionApp/total.svg
-[71]: https://github.com/easyScience/easyDiffractionApp/releases
+[70]: https://img.shields.io/github/downloads/easyscience/easydiffractionapp/total.svg
+[71]: https://github.com/easyscience/easydiffractionapp/releases
 
 <!---Code statistics--->
 
-[80]: https://github.com/easyScience/easyDiffractionApp
-[81]: https://tokei.rs/b1/github/easyScience/easyDiffractionApp
-[82]: https://tokei.rs/b1/github/easyScience/easyDiffractionApp?category=code
-[83]: https://tokei.rs/b1/github/easyScience/easyDiffractionApp?category=files
+[80]: https://github.com/easyscience/easydiffractionapp
+[81]: https://tokei.rs/b1/github/easyscience/easydiffractionapp
+[82]: https://tokei.rs/b1/github/easyscience/easydiffractionapp?category=code
+[83]: https://tokei.rs/b1/github/easyscience/easydiffractionapp?category=files
 
 <!---W3C validation--->
 

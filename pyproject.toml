@@ -30,7 +30,7 @@ GSASII = '^0.0.1'
 
 gemmi = '^0.5.8'
 # EasyScience Dependencies
-easyDiffraction = { git = 'https://github.com/easyScience/easyDiffractionLib.git', rev = 'pdffit_fix' }
+easyDiffraction = { git = 'https://github.com/easyScience/easyDiffractionLib.git', rev = 'hotfix_0.0.9' }
 easyApp = { git = 'https://github.com/easyScience/easyApp.git', rev = 'master' }
 
 # Graphical Dependencies

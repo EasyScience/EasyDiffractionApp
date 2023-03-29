@@ -10,7 +10,7 @@ import glob
 import site
 import PySide2, shiboken2
 import periodictable
-import cryspy, GSASII
+import cryspy
 import easyCore, easyCrystallography, easyDiffractionLib, easyApp
 import Functions, Config
 from PyInstaller.__main__ import run as pyInstallerMain
@@ -42,7 +42,6 @@ def addedData():
     # Add main data
     data = [{'from': CONFIG.package_name, 'to': CONFIG.package_name},
             {'from': cryspy.__path__[0], 'to': 'cryspy'},
-            {'from': GSASII.__path__[0], 'to': '.'},
             {'from': easyCore.__path__[0], 'to': 'easyCore'},
             {'from': easyDiffractionLib.__path__[0], 'to': 'easyDiffractionLib'},
             {'from': easyCrystallography.__path__[0], 'to': 'easyCrystallography'},
@@ -65,7 +64,7 @@ def addedData():
     pt_data = os.path.join(periodictable.__path__[0], 'xsf')
     pt_data_target = os.path.join('periodictable-data', 'xsf')
     data.append({'from': pt_data, 'to': pt_data_target})
-    # Format for pyinstaller  
+    # Format for pyinstaller
     separator = CONFIG['ci']['pyinstaller']['separator'][CONFIG.os]
     formatted = []
     for element in data:
@@ -155,7 +154,7 @@ def runPyInstaller():
         sys.exit(1)
     else:
         Functions.printSuccessMessage(message)
-        
+
 if __name__ == "__main__":
     copyMissingLibs()
     copyMissingPlugins()

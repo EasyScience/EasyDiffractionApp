@@ -378,8 +378,8 @@ EaElements.RemoteController {
         rc.mouseClick(ExGlobals.Variables.fitCellCCheckBox)
         rc.mouseClick(ExGlobals.Variables.parametersFilterTypeSelector)
         rc.mouseClick(ExGlobals.Variables.parametersFilterTypeSelector, x_pos, y_pos)
-        rc.mouseClick(ExGlobals.Variables.fitZeroShiftCheckBox)
-        rc.mouseClick(ExGlobals.Variables.fitScaleCheckBox)
+        //rc.mouseClick(ExGlobals.Variables.fitZeroShiftCheckBox)
+        //rc.mouseClick(ExGlobals.Variables.fitScaleCheckBox)
         x_pos = typeof ExGlobals.Variables.fitResolutionYValue !== 'undefined' ?
                     ExGlobals.Variables.fitResolutionYValue.width :
                     0

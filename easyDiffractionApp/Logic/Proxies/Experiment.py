@@ -1,7 +1,10 @@
 
-# SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
+# SPDX-FileCopyrightText: 2023 easyDiffraction contributors <support@easydiffraction.org>
 # SPDX-License-Identifier: BSD-3-Clause
-# © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+# © 2021-2023 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+
+import os
+import timeit
 
 from PySide2.QtCore import QObject, Signal, Slot, Property
 
@@ -22,11 +25,13 @@ class ExperimentProxy(QObject):
         self.logic = logic.l_experiment
         self.logic.experimentLoadedChanged.connect(self.experimentLoadedChanged)
         self.logic.experimentSkippedChanged.connect(self.experimentSkippedChanged)
-        self.logic.experimentDataChanged.connect(self.experimentDataChanged)
         self.experimentDataChanged.connect(self._onExperimentDataChanged)
         self.experimentSkippedChanged.connect(self._onExperimentSkippedChanged)
         self.experimentLoadedChanged.connect(self._onExperimentLoadedChanged)
+
+        # notifiers for other proxies
         self.logic.patternParametersAsObjChanged.connect(self.parent.parameters.patternParametersAsObjChanged)
+        self.logic.structureParametersChanged.connect(self.parent.phase.structureParametersChanged)
 
     @Property('QVariant', notify=experimentDataChanged)
     def experimentDataAsObj(self):
@@ -44,13 +49,64 @@ class ExperimentProxy(QObject):
     ####################################################################################################################
     ####################################################################################################################
 
+    @Property(bool, notify=experimentLoadedChanged)
+    def isSpinPolarized(self):
+        return self.logic.spin_polarized
+
+    @Property(str, notify=experimentLoadedChanged)
+    def spinComponent(self):
+        return self.logic.spinComponent()
+
+    @Slot('QVariant')
+    def setSpinPolarization(self, spin_polarized):
+        if self.logic.setPolarized(spin_polarized):
+            self.experimentLoadedChanged.emit()
+
+    @Slot('QVariant')
+    def setSpinComponent(self, component):
+        if self.logic.setSpinComponent(component):
+            self.experimentLoadedChanged.emit()
+
+    @Property(bool, notify=experimentLoadedChanged)
+    def refineSum(self):
+        return self.logic.refineSum()
+
+    @refineSum.setter
+    def refineSum(self, value):
+        self.logic.setRefineSum(value)
+
+    @Property(bool, notify=experimentLoadedChanged)
+    def refineDiff(self):
+        return self.logic.refineDiff()
+
+    @refineDiff.setter
+    def refineDiff(self, value):
+        self.logic.setRefineDiff(value)
+
+    @Property(bool, notify=experimentLoadedChanged)
+    def refineUp(self):
+        return self.logic.refineUp()
+
+    @refineUp.setter
+    def refineUp(self, value):
+        self.logic.setRefineUp(value)
+
+    @Property(bool, notify=experimentLoadedChanged)
+    def refineDown(self):
+        return self.logic.refineDown()
+
+    @refineDown.setter
+    def refineDown(self, value):
+        self.logic.setRefineDown(value)
+
     @Property(str, notify=experimentDataAsXmlChanged)
     def experimentDataAsXml(self):
         return self.logic._experiment_data_as_xml
 
     def _setExperimentDataAsXml(self):
-        print("+ _setExperimentDataAsXml")
+        start_time = timeit.default_timer()
         self.logic._setExperimentDataAsXml()
+        print("+ _setExperimentDataAsXml: {0:.3f} s".format(timeit.default_timer() - start_time))
         self.experimentDataAsXmlChanged.emit()
 
     def _onExperimentDataChanged(self):
@@ -63,7 +119,27 @@ class ExperimentProxy(QObject):
     ####################################################################################################################
 
     @Slot(str)
-    def addExperimentDataFromXye(self, file_url):
+    def addExperimentData(self, file_url):
+        _, file_extension = os.path.splitext(file_url)
+        if file_extension == '.cif':
+            print(f"Reading '{file_extension}' file")
+            self._addExperimentDataFromCif(file_url)
+        elif file_extension in ('.xye', '.xys'):
+            print(f"Reading '{file_extension}' file")
+            self._addExperimentDataFromXye(file_url)
+        elif file_extension == '.xy':
+            print(f"We are working on supporting '{file_extension}' files")
+        else:
+            print(f"This file extension is not supported: '{file_extension}'")
+
+    def _addExperimentDataFromCif(self, file_url):
+        self.logic.addExperimentDataFromCif(file_url)
+        self.logic.initializeBackground()
+        self.logic.addBackgroundDataFromCif(file_url)
+        self.logic._onExperimentDataAdded()
+        self.experimentLoadedChanged.emit()
+
+    def _addExperimentDataFromXye(self, file_url):
         self.logic.addExperimentDataFromXye(file_url)
         self.logic._onExperimentDataAdded()
         self.experimentLoadedChanged.emit()
@@ -72,17 +148,12 @@ class ExperimentProxy(QObject):
     def removeExperiment(self):
         print("+ removeExperiment")
         self.logic.removeExperiment()
-        self._onExperimentDataRemoved()
+        self.experimentDataChanged.emit()
         self.experimentLoadedChanged.emit()
 
     def _loadExperimentData(self, file_url):
         print("+ _loadExperimentData")
         return self.logic._loadExperimentData(file_url)
-
-    def _onExperimentDataRemoved(self):
-        print("***** _onExperimentDataRemoved")
-        self.logic.clearFrontendState.emit()
-        self.experimentDataChanged.emit()
 
     @Property(bool, notify=experimentLoadedChanged)
     def experimentLoaded(self):
@@ -107,6 +178,7 @@ class ExperimentProxy(QObject):
             self.parent.parameters._onParametersChanged()
             self.parent.parameters._onInstrumentParametersChanged()
             self._setPatternParametersAsObj()
+            self._onExperimentDataChanged()
 
     def _onExperimentSkippedChanged(self):
         print("***** _onExperimentSkippedChanged")

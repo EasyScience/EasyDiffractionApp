@@ -1,7 +1,7 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
 
-// SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
+// SPDX-FileCopyrightText: 2023 easyDiffraction contributors <support@easydiffraction.org>
 // SPDX-License-Identifier: BSD-3-Clause
 // © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
@@ -65,9 +65,15 @@ Item {
         }
 
         EaComponents.GuideWindow {
+            property var loadExampleProjectButton: ExGlobals.Variables.loadExampleProjectButton
             container: projectPageGuidesContainer
-            parent: ExGlobals.Variables.loadExampleProjectButton
             text: qsTr("Or click this button to load one of the examples.")
+            //parent: ExGlobals.Variables.loadExampleProjectButton // This generates a QML warning because the loadExampleProjectButton is still not defined when this window is created
+            onLoadExampleProjectButtonChanged: {
+                if (typeof loadExampleProjectButton !== "undefined") {
+                    parent = loadExampleProjectButton
+                }
+            }
         }
 
         EaComponents.GuideWindow {

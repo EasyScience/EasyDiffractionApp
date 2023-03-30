@@ -1,6 +1,6 @@
-# SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
+# SPDX-FileCopyrightText: 2023 easyDiffraction contributors <support@easydiffraction.org>
 # SPDX-License-Identifier: BSD-3-Clause
-# © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+# © 2021-2023 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
 from PySide2.QtCore import QObject, Signal, Property
 
@@ -16,7 +16,6 @@ class Plotting3dProxy(QObject):
 
     def __init__(self, logic=None):
         super().__init__()
-        # self.parent = parent
         self.logic = logic.l_plotting3d
         self.current3dPlottingLibChanged.connect(self.onCurrent3dPlottingLibChanged)
 
@@ -25,7 +24,7 @@ class Plotting3dProxy(QObject):
         return self.logic.current3dPlottingLib()
 
     @current3dPlottingLib.setter
-    @property_stack_deco('Changing 3D library from {old_value} to {new_value}')
+    # @property_stack_deco('Changing 3D library from {old_value} to {new_value}')
     def current3dPlottingLib(self, plotting_lib):
         self.logic._current_3d_plotting_lib = plotting_lib
         self.current3dPlottingLibChanged.emit()

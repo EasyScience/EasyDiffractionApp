@@ -1,12 +1,12 @@
-# POETRY CONFIG
-
+# Build System
 [build-system]
-requires = ['poetry>=1.0']
-build-backend = 'poetry.masonry.api'
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
 
+# Define the project
 [tool.poetry]
 name = 'easyDiffractionApp'
-version = '0.8.3-beta'
+version = '0.8.5-beta'
 description = 'Making diffraction data analysis and modelling easy.'
 license = 'BSD-3-Clause'
 authors = ['Andrew Sazonov', 'Simon Ward', 'Piotr Rozyczko']
@@ -14,47 +14,58 @@ readme = 'README.md'
 homepage = 'https://easydiffraction.org'
 repository = 'https://download.easydiffraction.org/'
 documentation = 'https://easydiffraction.org'
-include = ['CHANGELOG.md']
+packages = [ { include = "easyDiffractionApp" } ]
+include = [
+  { path = 'CHANGELOG.md', format = 'wheel'}
+]
 
+# These are the dependencies. Dependencies for CI and app building are optional
+[tool.poetry.dependencies]
+# Basic Dependencies
+python = '^3.8'
+toml = '^0.10.2'
+# EasyScience Dependencies
+easyDiffraction = '^0.0.9'
+easyApp = { git = 'https://github.com/easyScience/easyApp.git', rev = 'master' }
+# Graphical Dependencies
+darkdetect = '^0.8.0'
+pyobjc-core = { version = '^9.0.1', platform = 'darwin' }
+pyobjc-framework-cocoa = { version = '^9.0.1', platform = 'darwin' }
+pywin32-ctypes = { version = '^0.2.0', platform = 'win32' }
+pypiwin32 = { version = '^223', platform = 'win32' }
+pefile = { version = '^2022.5.30', platform = 'win32' }
+# PyInstaller Dependencies
+pyinstaller = {version = '^5.7.0', optional = true} # '4.5.1'  # 4.6-5.2 give "ModuleNotFoundError: No module named 'pip'" on Ubuntu, when run app
+#pyinstaller = { git = 'https://github.com/pyinstaller/pyinstaller.git', rev = 'develop' }
+dephell_licenses = { version = '^0.1.7', optional = true}
+ffmpeg-python = { version = '^0.2.0', optional = true}
+mss = { version = '^7.0.1', optional = true}
+opencv-python = { version = '4.5.1.48', optional = true}
+google-trans-new = { version = '^1.1.9', optional = true}
+gTTS = { version = '^2.3.0', optional = true}
+
+# Define extra install type. e.g. pip install easyDifffraction[ci]
+[tool.poetry.extras]
+ci = ['pyinstaller', 'dephell_licenses', 'ffmpeg-python', 'opencv-python', 'google-trans-new', 'gTTS']
+
+# This is the entry point which can be called from terminal
+[tool.poetry.scripts]
+easyDiffraction = 'easyDiffractionApp.main:main'
+
+# Add the additional pip url. Fallback =  pip install --extra-index-url https://easyscience.github.io/pypi/ .
 [[tool.poetry.source]]
 name = "easyScience"
 url = "https://easyscience.github.io/pypi/"
 secondary = true
 
-[tool.poetry.dependencies]
-python = '^3.7, <3.9'
-darkdetect = '^0.3.1'
-pyobjc-core = { version = '^7.1', platform = 'darwin' }
-pyobjc-framework-cocoa = { version = '^7.1', platform = 'darwin' }
-# easyScience
-easyDiffraction = { git = 'https://github.com/easyScience/easyDiffractionLib.git', rev = 'master' }
-easyApp = { git = 'https://github.com/easyScience/easyApp.git', rev = 'master' }
-
-#[tool.poetry.dev-dependencies]
-# PyInstaller
-pyinstaller = '4.5.1'  # 4.6-4.7 give "ModuleNotFoundError: No module named 'pip'" on Ubuntu, when run app
-#pyinstaller = { git = 'https://github.com/pyinstaller/pyinstaller.git', rev = 'develop' }
-pywin32-ctypes = { version = '^0.2.0', platform = 'win32' }
-pypiwin32 = { version = '^223', platform = 'win32' }
-pefile = { version = '^2019.4.18', platform = 'win32' }
-# Misc
-toml = '^0.10.2'
-requests = '^2.25.1'
-dephell_licenses = '^0.1.7'
-ffmpeg-python = '^0.2.0'
-mss = '^6.1.0'
-#opencv-python = '^4.5.1'
-opencv-python = '4.5.1.48'
-google-trans-new = "^1.1.9"
-gTTS = '^2.2.2'
-
-[tool.poetry.scripts]
-easyDiffraction = 'easyDiffractionApp.main:main'
-
 # CUSTOM CONFIG
+# -------------
+# The information presented from here is to do with release and CI. This can be disregarded
+
 
 [release]
-app_name = 'easyDiffraction'
+app_name = 'EasyDiffraction'
+family_name = 'EasyScience'
 tag_template = 'v{VERSION}'
 title_template = 'Version {VERSION} ({DATE})'
 description_file = 'RELEASE.md'
@@ -72,14 +83,18 @@ download = '.ci/download'
 screenshots = '.ci/screenshots'
 build = '.ci/build'
 distribution = '.ci/distribution'
-certificates_path = 'Certificates'
 
 [ci.scripts]
 silent_install = 'SilentInstall.js'
 package_install = 'InstallerInstallScript.js'
 config_control = 'InstallerControlScript.js'
 config_style = 'style.qss'
-certificate_name = 'ESS_cert'
+
+[ci.codesign]
+bundle_id = 'org.easyscience.easydiffraction'
+
+[ci.codesign.macos]
+identity = 'Developer ID Application: European Spallation Source Eric (W2AG9MPZ43)'
 
 [ci.app.icon]
 dir = ['Gui', 'Resources', 'Logo']
@@ -90,7 +105,7 @@ file_ext = { macos = '.icns', ubuntu = '.png', windows = '.ico' }
 build_dir_suffix = 'Setup'
 repository_dir_suffix = 'Repos'
 os = { macos = 'macOS', ubuntu = 'Linux', windows = 'Windows' }  # Should be the same as GH actions ${{ runner.os }}
-arch = { macos = 'x86-64', ubuntu = 'x86-64', windows = 'x86-32' }
+arch = { macos = 'x64', ubuntu = 'x64', windows = 'x64' }
 file_ext = { macos = '.app', ubuntu = '', windows = '.exe' }
 maintenance_tool_suffix = 'MaintenanceTool'
 maintenance_file = 'signedmaintenancetool.exe'
@@ -146,10 +161,10 @@ separator = { macos = ':', ubuntu = ':', windows = ';' }
 dir_suffix = { macos = '.app', ubuntu = '', windows = '' }
 content_suffix = { macos = 'Contents/MacOS/', ubuntu = '', windows = '' }
 libs = { macos = 'libsDarwin', ubuntu = 'libsLinux', windows = 'libsWin32' }
-missing_calculator_libs = { macos = [], ubuntu = [], windows = ['GSASII.libs', 'CFML.libs'] }
+missing_calculator_libs = { macos = [], ubuntu = [], windows = ['CFML.libs'] }
 missing_pyside2_files = { macos = ['libshiboken2.abi3.*.dylib'], ubuntu = [], windows = ['shiboken2.abi3.dll', 'MSVCP140.dll'] }
 missing_pyside2_plugins = { macos = [], ubuntu = ['Qt/plugins/xcbglintegrations'], windows = [] } # EGL and GLX plugins
-missing_other_libraries = {macos = [], ubuntu = [], windows = ['libs/libiomp5md.dll', 'libs/opengl32.dll'] }
+missing_other_libraries = {macos = [], ubuntu = [], windows = ['libs/libiomp5md.dll', 'libs/opengl32.dll', 'libs/VC_redist.x64.exe'] }
 auto_exclude = { macos = ['_tkinter'], ubuntu = ['_tkinter'], windows = [''], all = [ 'lib2to3', '_bisect',
                 '_codecs_cn', '_codecs_hk', '_codecs_iso2022', '_codecs_jp', '_codecs_kr', '_codecs_tw',
                 '_curses', '_elementtree', '_hashlib', '_heapq', '_multibytecodec', '_multiprocessing',
@@ -160,16 +175,16 @@ manual_exclude = [ 'mfc*', 'msvcp*', 'VCRUNTIME*',
                    '*Qt*Scxml*', '*Qt*Sensors*', '*Qt*Sql*', '*Qt*VirtualKeyboard*', '*Qt*Wayland*' ]
 
 [ci.qtifw.setup]
-version = '4.1.0'
+version = '4.5.1'
 https_mirrors = ['download.qt.io', 'ftp.fau.de/qtproject', 'mirrors.dotsrc.org/qtproject']
 base_path = 'official_releases/qt-installer-framework'
 file_name_base = 'QtInstallerFramework'
-file_platform = { macos = 'macOS-x86_64', ubuntu = 'linux-x64', windows = 'windows-x86' }
+file_platform = { macos = 'macOS-x64', ubuntu = 'linux-x64', windows = 'windows-x64' }
 file_ext = { macos = 'dmg', ubuntu = 'run', windows = 'exe' }
 installation_path = { macOS = '/Users/runner/Qt', Linux = '/home/runner/Qt', Windows = 'C:\Qt' }
 
 [ci.ffmpeg.macos]  # https://evermeet.cx/ffmpeg/ffmpeg-4.3.zip
-version = '4.3.1'
+version = '5.1.2'
 base_url = 'https://evermeet.cx/ffmpeg'
 file_name_base = 'ffmpeg-'
 file_ext = '.zip'

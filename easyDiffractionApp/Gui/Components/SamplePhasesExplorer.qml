@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
+// SPDX-FileCopyrightText: 2023 easyDiffraction contributors <support@easydiffraction.org>
 // SPDX-License-Identifier: BSD-3-Clause
 // © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
@@ -21,10 +21,10 @@ EaComponents.TableView {
 
     model: XmlListModel {
         xml: ExGlobals.Constants.proxy.phase.phasesAsXml
-        query: "/root/item"
+        query: "/data/item"
 
         XmlRole { name: "label"; query: "name/string()" }
-        XmlRole { name: "color"; query: "color/string()" }
+        //XmlRole { name: "color"; query: "color/string()" }
     }
 
     // Table rows
@@ -49,7 +49,7 @@ EaComponents.TableView {
         EaComponents.TableViewLabel {
             headerText: "Color"
             //backgroundColor: model.color ? model.color : "transparent"
-            backgroundColor: EaStyle.Colors.chartForegroundsExtra[model.index]
+            backgroundColor: EaStyle.Colors.chartForegroundsExtra[model.index] ? EaStyle.Colors.chartForegroundsExtra[model.index] : "transparent"
         }
 
         EaComponents.TableViewButton {

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
+// SPDX-FileCopyrightText: 2023 easyDiffraction contributors <support@easydiffraction.org>
 // SPDX-License-Identifier: BSD-3-Clause
 // © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
@@ -45,7 +45,7 @@ Column {
 
                 model: XmlListModel {
                     xml: ExGlobals.Constants.proxy.parameters.instrumentParametersAsXml
-                    query: `/root/item`
+                    query: `/data`
 
                     XmlRole { name: "sigma0"; query: "sigma0/value/number()" }
                     XmlRole { name: "sigma1"; query: "sigma1/value/number()" }
@@ -55,9 +55,9 @@ Column {
                     XmlRole { name: "sigma1_enabled"; query: "sigma1/enabled/string()" }
                     XmlRole { name: "sigma2_enabled"; query: "sigma2/enabled/string()" }
 
-                    XmlRole { name: "sigma0Id"; query: "sigma0/key[4]/string()" }
-                    XmlRole { name: "sigma1Id"; query: "sigma1/key[4]/string()" }
-                    XmlRole { name: "sigma2Id"; query: "sigma2/key[4]/string()" }
+                    XmlRole { name: "sigma0Id"; query: "sigma0/__id/string()" }
+                    XmlRole { name: "sigma1Id"; query: "sigma1/__id/string()" }
+                    XmlRole { name: "sigma2Id"; query: "sigma2/__id/string()" }
                 }
 
                 delegate: EaComponents.TableViewDelegate {
@@ -102,7 +102,7 @@ Column {
 
                 model: XmlListModel {
                     xml: ExGlobals.Constants.proxy.parameters.instrumentParametersAsXml
-                    query: `/root/item`
+                    query: `/data`
 
                     XmlRole { name: "gamma0"; query: "gamma0/value/number()" }
                     XmlRole { name: "gamma1"; query: "gamma1/value/number()" }
@@ -112,9 +112,9 @@ Column {
                     XmlRole { name: "gamma1_enabled"; query: "gamma1/enabled/string()" }
                     XmlRole { name: "gamma2_enabled"; query: "gamma2/enabled/string()" }
 
-                    XmlRole { name: "gamma0Id"; query: "gamma0/key[4]/string()" }
-                    XmlRole { name: "gamma1Id"; query: "gamma1/key[4]/string()" }
-                    XmlRole { name: "gamma2Id"; query: "gamma2/key[4]/string()" }
+                    XmlRole { name: "gamma0Id"; query: "gamma0/__id/string()" }
+                    XmlRole { name: "gamma1Id"; query: "gamma1/__id/string()" }
+                    XmlRole { name: "gamma2Id"; query: "gamma2/__id/string()" }
                 }
 
                 delegate: EaComponents.TableViewDelegate {
@@ -163,17 +163,17 @@ Column {
 
                 model: XmlListModel {
                     xml: ExGlobals.Constants.proxy.parameters.instrumentParametersAsXml
-                    query: `/root/item`
+                    query: `/data`
 
                     XmlRole { name: "alpha0"; query: "alpha0/value/number()" }
                     XmlRole { name: "alpha1"; query: "alpha1/value/number()" }
                     XmlRole { name: "beta0"; query: "beta0/value/number()" }
                     XmlRole { name: "beta1"; query: "beta1/value/number()" }
 
-                    XmlRole { name: "alpha0Id"; query: "alpha0/key[4]/string()" }
-                    XmlRole { name: "alpha1Id"; query: "alpha1/key[4]/string()" }
-                    XmlRole { name: "beta0Id"; query: "beta0/key[4]/string()" }
-                    XmlRole { name: "beta1Id"; query: "beta1/key[4]/string()" }
+                    XmlRole { name: "alpha0Id"; query: "alpha0/__id/string()" }
+                    XmlRole { name: "alpha1Id"; query: "alpha1/__id/string()" }
+                    XmlRole { name: "beta0Id"; query: "beta0/__id/string()" }
+                    XmlRole { name: "beta1Id"; query: "beta1/__id/string()" }
                 }
 
                 delegate: EaComponents.TableViewDelegate {

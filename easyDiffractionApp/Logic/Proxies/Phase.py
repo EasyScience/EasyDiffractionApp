@@ -1,6 +1,6 @@
-# SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
+# SPDX-FileCopyrightText: 2023 easyDiffraction contributors <support@easydiffraction.org>
 # SPDX-License-Identifier: BSD-3-Clause
-# © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+# © 2021-2023 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
 import timeit
 
@@ -30,7 +30,6 @@ class PhaseProxy(QObject):
         self.logic.structureParametersChanged.connect(self.structureParametersChanged)
 
         self.logic.phaseAdded.connect(self._onPhaseAdded)
-        self.logic.phaseAdded.connect(self.phasesEnabled)
         self.logic.phasesEnabled.connect(self.phasesEnabled)
         self.logic.phasesAsObjChanged.connect(self.phasesAsObjChanged)
         self.logic.phasesAsObjChanged.connect(self.structureViewChanged)
@@ -186,6 +185,10 @@ class PhaseProxy(QObject):
     def removeAtom(self, atom_label: str):
         self.logic.removeAtom(atom_label)
 
+    @Property(bool, notify=currentPhaseChanged)
+    def hasMsp(self):
+        return self.logic.hasMsp()
+
     ####################################################################################################################
     # Current phase
     ####################################################################################################################
@@ -211,3 +214,4 @@ class PhaseProxy(QObject):
         self.logic.setCurrentPhaseName(name)
         self.structureParametersChanged.emit()
         self.parent._project_proxy.projectInfoChanged.emit()
+

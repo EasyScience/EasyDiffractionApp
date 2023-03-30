@@ -1,0 +1,5 @@
+_name La0.5Ba0.5CoO3
+_short_description 'neutrons, powder, constant wavelength, HRPT@PSI'
+_samples 'LBCO'
+_experiments 'HRPT@PSI'
+_modified '06.02.2023 11:09'

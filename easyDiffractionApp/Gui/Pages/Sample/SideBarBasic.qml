@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
+// SPDX-FileCopyrightText: 2023 easyDiffraction contributors <support@easydiffraction.org>
 // SPDX-License-Identifier: BSD-3-Clause
 // © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
@@ -98,12 +98,17 @@ EaComponents.SideBarColumn {
 
     EaElements.GroupBox {
         title: qsTr("Atomic displacement parameters")
-        last: true
         enabled: ExGlobals.Constants.proxy.phase.samplesPresent
-
         ExComponents.SampleAdps {}
-
         Component.onCompleted: ExGlobals.Variables.adpsGroup = this
+    }
+
+    EaElements.GroupBox {
+        title: qsTr("Magnetic susceptibility parameters")
+        last: true
+        enabled: ExGlobals.Constants.proxy.phase.samplesPresent &&
+            (ExGlobals.Constants.proxy.experiment.isSpinPolarized || ExGlobals.Constants.proxy.phase.hasMsp)
+        ExComponents.SampleMsps{}
     }
 
     // Open phase CIF file dialog

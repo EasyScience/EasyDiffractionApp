@@ -1,6 +1,6 @@
-# SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
+# SPDX-FileCopyrightText: 2023 easyDiffraction contributors <support@easydiffraction.org>
 # SPDX-License-Identifier: BSD-3-Clause
-# © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+# © 2021-2023 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
 __author__ = "github.com/AndrewSazonov"
 __version__ = '0.0.1'
@@ -9,7 +9,8 @@ import os, sys
 import glob
 import site
 import PySide2, shiboken2
-import cryspy, GSASII
+import periodictable
+import cryspy
 import easyCore, easyCrystallography, easyDiffractionLib, easyApp
 import Functions, Config
 from PyInstaller.__main__ import run as pyInstallerMain
@@ -41,7 +42,6 @@ def addedData():
     # Add main data
     data = [{'from': CONFIG.package_name, 'to': CONFIG.package_name},
             {'from': cryspy.__path__[0], 'to': 'cryspy'},
-            {'from': GSASII.__path__[0], 'to': '.'},
             {'from': easyCore.__path__[0], 'to': 'easyCore'},
             {'from': easyDiffractionLib.__path__[0], 'to': 'easyDiffractionLib'},
             {'from': easyCrystallography.__path__[0], 'to': 'easyCrystallography'},
@@ -60,7 +60,11 @@ def addedData():
         for lib_name in missing_calculator_libs:
             lib_path = os.path.join(site_packages_path, lib_name)
             data.append({'from': lib_path, 'to': lib_name})
-    # Format for pyinstaller  
+    # Add missing module data (e.g. periodictable data)
+    pt_data = os.path.join(periodictable.__path__[0], 'xsf')
+    pt_data_target = os.path.join('periodictable-data', 'xsf')
+    data.append({'from': pt_data, 'to': pt_data_target})
+    # Format for pyinstaller
     separator = CONFIG['ci']['pyinstaller']['separator'][CONFIG.os]
     formatted = []
     for element in data:
@@ -150,7 +154,7 @@ def runPyInstaller():
         sys.exit(1)
     else:
         Functions.printSuccessMessage(message)
-        
+
 if __name__ == "__main__":
     copyMissingLibs()
     copyMissingPlugins()

@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
+// SPDX-FileCopyrightText: 2023 easyDiffraction contributors <support@easydiffraction.org>
 // SPDX-License-Identifier: BSD-3-Clause
 // © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
@@ -17,7 +17,7 @@ import Gui.Globals 1.0 as ExGlobals
 EaComponents.TableView { 
     property bool enableDelButton:
         typeof ExGlobals.Constants.proxy.phase.phasesAsObj[ExGlobals.Constants.proxy.phase.currentPhaseIndex] !== 'undefined'
-        && ExGlobals.Constants.proxy.phase.phasesAsObj[ExGlobals.Constants.proxy.phase.currentPhaseIndex].atoms.data.length > 1
+        && ExGlobals.Constants.proxy.phase.phasesAsObj[ExGlobals.Constants.proxy.phase.currentPhaseIndex]['atoms'].length > 1
         ? true
         : false
 
@@ -27,22 +27,21 @@ EaComponents.TableView {
         property int phaseIndex: ExGlobals.Constants.proxy.phase.currentPhaseIndex + 1
 
         xml: ExGlobals.Constants.proxy.phase.phasesAsXml
-        query: `/root/item[${phaseIndex}]/atoms/data/item`
+        query: `/data/item/atoms/data`
 
         XmlRole { name: "label"; query: "label/value/string()" }
         XmlRole { name: "type"; query: "specie/value/string()" }
-        //XmlRole { name: "color"; query: "color/string()" }
         XmlRole { name: "x"; query: "fract_x/value/number()" }
         XmlRole { name: "y"; query: "fract_y/value/number()" }
         XmlRole { name: "z"; query: "fract_z/value/number()" }
         XmlRole { name: "occupancy"; query: "occupancy/value/number()" }
 
-        XmlRole { name: "labelId"; query: "label/key[4]/string()" }
-        XmlRole { name: "typeId"; query: "specie/key[4]/string()" }
-        XmlRole { name: "xId"; query: "fract_x/key[4]/string()" }
-        XmlRole { name: "yId"; query: "fract_y/key[4]/string()" }
-        XmlRole { name: "zId"; query: "fract_z/key[4]/string()" }
-        XmlRole { name: "occupancyId"; query: "occupancy/key[4]/string()" }
+        XmlRole { name: "labelId"; query: "label/__id/string()" }
+        XmlRole { name: "typeId"; query: "specie__id/string()" }
+        XmlRole { name: "xId"; query: "fract_x/__id/string()" }
+        XmlRole { name: "yId"; query: "fract_y/__id/string()" }
+        XmlRole { name: "zId"; query: "fract_z/__id/string()" }
+        XmlRole { name: "occupancyId"; query: "occupancy/__id/string()" }
     }
 
     // Table rows
@@ -65,14 +64,6 @@ EaComponents.TableView {
             onEditingFinished: editDescriptorValue(model.labelId, text)
         }
 
-        /*
-        EaComponents.TableViewComboBox {
-            width: atomLabel.width
-            currentIndex: model.indexOf(modelType)
-            headerText: "Atom"
-            model: ["Mn", "Fe", "Co", "Ni", "Cu", "Si", "O"]
-        }
-        */
         EaComponents.TableViewTextInput {
             width: atomLabel.width
             horizontalAlignment: Text.AlignLeft
@@ -258,9 +249,19 @@ EaComponents.TableView {
             'Ts' : '#000000',
             'Og' : '#000000'
         }
+        // Simple case, e.g. Co
         if (colors.hasOwnProperty(symbol)) {
             return colors[symbol]
         }
+        // First 2 symbols, if valency is given for 2 characters element, e.g. Mn3+
+        if (colors.hasOwnProperty(symbol.substring(0, 2))) {
+            return colors[symbol.substring(0, 2)]
+        }
+        // First symbol, if valency is given for 1 characters element, e.g. O2-
+        if (colors.hasOwnProperty(symbol.substring(0, 1))) {
+            return colors[symbol.substring(0, 1)]
+        }
+        // Transparent color if no elements found
         return 'transparent'
     }
 

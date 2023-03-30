@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
+// SPDX-FileCopyrightText: 2023 easyDiffraction contributors <support@easydiffraction.org>
 // SPDX-License-Identifier: BSD-3-Clause
 // © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
@@ -18,9 +18,32 @@ import Gui.Pages.Summary 1.0 as ExSummaryPage
 
 EaComponents.SideBarColumn {
 
+    // TEMPORARILY DISABLED
+    // EaElements.GroupBox {
+    //     title: qsTr("Create report")
+    //     // enabled: !ExGlobals.Constants.proxy.project.readOnly
+    //     enabled: true
+    //     collapsible: false
+    //     last: true
+
+    //     // Create button
+    //     EaElements.SideBarButton {
+    //         wide: true
+    //         fontIcon: "flask"
+    //         text: qsTr("Create")
+
+    //         onClicked: {
+    //             ExGlobals.Constants.proxy.project.requestReport()
+    //         }
+
+    //         Component.onCompleted: ExGlobals.Variables.exportReportButton = this
+    //     }
+    // }
+
     EaElements.GroupBox {
         title: qsTr("Export report")
-        enabled: ExGlobals.Constants.proxy.project.currentProjectPath !== '--- EXAMPLE ---' && ExGlobals.Constants.proxy.project.projectCreated
+        // enabled: !ExGlobals.Constants.proxy.project.readOnly
+        enabled: true
         collapsible: false
         last: true
 
@@ -97,7 +120,7 @@ EaComponents.SideBarColumn {
                 horizontalAlignment: TextInput.AlignLeft
 
                 placeholderText: qsTr("Enter report location here")
-                text: ExGlobals.Constants.proxy.project.currentProjectPath !== '--- EXAMPLE ---' && ExGlobals.Constants.proxy.project.projectCreated ?
+                text: ExGlobals.Constants.proxy.project.projectCreated ?
                           EaLogic.Utils.urlToLocalFile(reportParentDirDialog.folder + '/' + reportNameField.text + '.' + reportFormatField.currentValue) :
                           ''
 

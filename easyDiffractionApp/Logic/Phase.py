@@ -1,15 +1,18 @@
-# SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
+# SPDX-FileCopyrightText: 2023 easyDiffraction contributors <support@easydiffraction.org>
 # SPDX-License-Identifier: BSD-3-Clause
-# © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+# © 2021-2023 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
 
 import re
-from dicttoxml import dicttoxml
 
 from PySide2.QtCore import Signal, QObject
 
 from easyCore import np, borg
+from easyCore.Utils.io.xml import XMLSerializer
+
 from easyDiffractionLib import Phases, Phase, Lattice, Site, SpaceGroup
+from easyCrystallography.Components.AtomicDisplacement import AtomicDisplacement
+from easyCrystallography.Components.Susceptibility import MagneticSusceptibility
 from easyCrystallography.Symmetry.tools import SpacegroupInfo
 from easyApp.Logic.Utils.Utils import generalizePath
 
@@ -21,7 +24,7 @@ class PhaseLogic(QObject):
     phaseAdded = Signal()
     updateProjectInfo = Signal(tuple)
     structureParametersChanged = Signal()
-    phasesEnabled = Signal()  # from other logics
+    phasesEnabled = Signal()
     phasesAsObjChanged = Signal()
     phasesReplaced = Signal()
 
@@ -29,12 +32,13 @@ class PhaseLogic(QObject):
         super().__init__(parent)
         self.parent = parent
         self._interface = interface
-        self.state = parent.l_parameters
-        self.phases = Phases(interface=interface)
+        self.phases = Phases()
         self._phases_as_obj = []
         self._phases_as_xml = ""
         self._phases_as_cif = ""
         self._current_phase_index = 0
+        self.has_msp = False
+        # self.addDefaultPhase()
 
     ####################################################################################################################
     ####################################################################################################################
@@ -71,17 +75,17 @@ class PhaseLogic(QObject):
             idx = known_phases.count(default_phase.name)
             default_phase.name = default_phase.name + str(idx)
         # print('Disabling scale')
-        # default_phase.scale.enabled = False
+        default_phase.scale.fixed = True
         self.phases.append(default_phase)
         borg.stack.enabled = True
 
-    @staticmethod
-    def _defaultPhase():
-        space_group = SpaceGroup.from_pars('P 42/n c m')
-        cell = Lattice.from_pars(8.56, 8.56, 6.12, 90, 90, 90)
-        atom = Site.from_pars(label='Cl1', specie='Cl', fract_x=0.125, fract_y=0.167, fract_z=0.107)  # noqa: E501
-        atom.add_adp('Uiso', Uiso=0.0)
-        phase = Phase('Dichlorine', spacegroup=space_group, cell=cell)
+    # @staticmethod
+    def _defaultPhase(self):
+        space_group = SpaceGroup('F d -3:2')
+        cell = Lattice(5.0, 3.0, 4.0, 90, 90, 90)
+        adp = AtomicDisplacement("Uiso")
+        atom = Site(label='O', specie='O', fract_x=0.0, fract_y=0.0, fract_z=0.0, adp=adp, interface=self._interface)
+        phase = Phase('Test', spacegroup=space_group, cell=cell, interface=self._interface)
         phase.add_atom(atom)
         return phase
 
@@ -89,6 +93,7 @@ class PhaseLogic(QObject):
         self.phases.name = 'Phases'
         name = self.phases[self._current_phase_index].name
         self.updateProjectInfo.emit(('samples', name))
+        self.parent.sample().interface = self._interface
 
     def currentCrystalSystem(self):
         phases = self.phases
@@ -109,7 +114,7 @@ class PhaseLogic(QObject):
     def currentPhaseAsExtendedCif(self):
         if len(self.phases) == 0:
             return
-        symm_ops = self.phases[self._current_phase_index].spacegroup.symmetry_opts
+        symm_ops = self.phases[self._current_phase_index].spacegroup.symmetry_ops
         symm_ops_cif_loop = "loop_\n _symmetry_equiv_pos_as_xyz\n"
         for symm_op in symm_ops:
             symm_ops_cif_loop += f' {symm_op.as_xyz_string()}\n'
@@ -120,17 +125,17 @@ class PhaseLogic(QObject):
         if self._phases_as_cif == phases_as_cif:
             return
         self.phases = Phases.from_cif_str(phases_as_cif)
-        self.parent.l_sample._sample.phases = self.phases
+        self.parent.setPhasesOnSample(self.phases)
         self.updateParameters()
 
     def _setPhasesAsObj(self):
-        self._phases_as_obj = self.phases.as_dict(skip=['interface'])['data']
-        self.parent.l_plotting1d.setCalculatedDataForPhase()
+        self._phases_as_obj = self.phases.as_dict(skip=['interface', 'msp_values'])['data']
+        self.parent.setCalculatedDataForPhase()
         # phase set - update xml so parameter table is also updated
-        self.parent.l_parameters.parametersChanged.emit()
+        self.parent.emitParametersChanged()
 
     def _setPhasesAsXml(self):
-        self._phases_as_xml = dicttoxml(self._phases_as_obj, attr_type=True).decode()  # noqa: E501
+        self._phases_as_xml = XMLSerializer().encode({"item":self._phases_as_obj}, skip=['interface'])
 
     def _setPhasesAsCif(self):
         self._phases_as_cif = str(self.phases.cif)
@@ -140,10 +145,11 @@ class PhaseLogic(QObject):
         if phases[self._current_phase_index].spacegroup.space_group_HM_name == new_name:  # noqa: E501
             return
         phases[self._current_phase_index].spacegroup.space_group_HM_name = new_name  # noqa: E501
+        self._updateCalculatedData()
 
     def updateParameters(self):
         self.parent.parametersChanged.emit()
-        self.parent.l_parameters.parametersChanged.emit()
+        self.parent.emitParametersChanged()
 
     def _spaceGroupSettingList(self):
         phases = self.phases
@@ -212,10 +218,11 @@ class PhaseLogic(QObject):
             return 0
 
         settings = self._spaceGroupSettingList()
-        # current_setting = phases[self._current_phase_index].spacegroup.space_group_HM_name.raw_value  # noqa: E501
-        current_setting = phases[self._current_phase_index].spacegroup.hermann_mauguin  # noqa: E501
-        current_number = settings.index(current_setting)
-        return current_number
+        current_setting = phases[self._current_phase_index].spacegroup.space_group_HM_name.raw_value  # noqa: E501
+        for setting in settings:
+            if current_setting in setting:
+                return settings.index(setting)
+        return 0
 
     def setCurrentSpaceGroupSetting(self, new_number: int):
         settings = self._spaceGroupSettingList()
@@ -228,12 +235,14 @@ class PhaseLogic(QObject):
     def addDefaultAtom(self):
         index = len(self.phases[0].atoms.atom_labels) + 1
         label = f'Label{index}'
-        atom = Site.from_pars(label=label,
-                              specie='O',
-                              fract_x=0.05,
-                              fract_y=0.05,
-                              fract_z=0.05)
-        atom.add_adp('Uiso', Uiso=0.0)
+        adp = AtomicDisplacement("Uiso")
+        atom = Site(label=label,
+                    specie='Cl',
+                    fract_x=0.5,
+                    fract_y=0.5,
+                    fract_z=0.5,
+                    adp=adp)
+
         self.phases[self._current_phase_index].add_atom(atom)
         self.updateParameters()
 
@@ -242,9 +251,9 @@ class PhaseLogic(QObject):
         self.updateParameters()
 
     def setCurrentExperimentDatasetName(self, name):
-        if self.parent.l_parameters._data.experiments[0].name == name:
+        if self.parent.experiments()[0].name == name:
             return
-        self.parent.l_parameters._data.experiments[0].name = name
+        self.parent.setExperimentName(name)
         self.updateProjectInfo.emit(('experiments', name))
 
     def addSampleFromCif(self, cif_url):
@@ -255,14 +264,19 @@ class PhaseLogic(QObject):
             phases = Phases.from_cif_file(cif_path)
             self.phases.interface = self._interface
             for phase in phases:
-                # print('Disabling scale')
-                # phase.scale.enabled = False
+                phase.scale.fixed = True
                 self.phases.append(phase)
+                # see if MSP is present (or just default)
+                msps = [hasattr(atom, 'msp') for atom in phase.atoms]  # noqa: E501
+                self.has_msp = any(msps)
             self.phasesReplaced.emit()
             borg.stack.enabled = True
 
     def getCurrentPhaseName(self):
         return self.phases[self._current_phase_index].name
+
+    def hasMsp(self):
+        return self.has_msp
 
     def setCurrentPhaseName(self, name):
         if self.phases[self._current_phase_index].name == name:
@@ -276,4 +290,4 @@ class PhaseLogic(QObject):
         return result
 
     def _updateCalculatedData(self):
-        self.state._updateCalculatedData()
+        self.parent.updateCalculatedData()

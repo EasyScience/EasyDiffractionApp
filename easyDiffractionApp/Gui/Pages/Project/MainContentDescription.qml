@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
+// SPDX-FileCopyrightText: 2023 easyDiffraction contributors <support@easydiffraction.org>
 // SPDX-License-Identifier: BSD-3-Clause
 // © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
@@ -47,12 +47,14 @@ Rectangle {
             }
 
             EaElements.Label {
-                visible: ExGlobals.Constants.proxy.project.currentProjectPath !== '--- EXAMPLE ---'
+                visible: ExGlobals.Constants.proxy.project.projectCreated &&
+                !ExGlobals.Constants.proxy.project.readOnly
                 font.bold: true
                 text: qsTr("Location:")
             }
             EaElements.Label {
-                visible: ExGlobals.Constants.proxy.project.currentProjectPath !== '--- EXAMPLE ---'
+                visible: ExGlobals.Constants.proxy.project.projectCreated &&
+                !ExGlobals.Constants.proxy.project.readOnly
                 text: ExGlobals.Constants.proxy.project.currentProjectPath
             }
 

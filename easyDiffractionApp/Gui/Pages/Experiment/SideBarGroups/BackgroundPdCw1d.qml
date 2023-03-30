@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
+// SPDX-FileCopyrightText: 2023 easyDiffraction contributors <support@easydiffraction.org>
 // SPDX-License-Identifier: BSD-3-Clause
 // © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
@@ -43,15 +43,15 @@ Column {
 
             model: XmlListModel {
                 xml: ExGlobals.Constants.proxy.background.asXml
-                query: "/root/item"
+                query: "/data/data"
 
                 XmlRole { name: "x"; query: "x/value/number()" }
                 XmlRole { name: "y"; query: "y/value/number()" }
 
                 XmlRole { name: "pointName"; query: "name/string()" }
 
-                XmlRole { name: "xId"; query: "x/key[4]/string()" }
-                XmlRole { name: "yId"; query: "y/key[4]/string()" }
+                XmlRole { name: "xId"; query: "x/__id/string()" }
+                XmlRole { name: "yId"; query: "y/__id/string()" }
             }
 
             // Table rows
@@ -103,7 +103,7 @@ Column {
         EaElements.SideBarButton {
             fontIcon: "plus-circle"
             text: qsTr("Append new point")
-            onClicked: ExGlobals.Constants.proxy.background.addPoint()
+            onClicked: ExGlobals.Constants.proxy.background.addDefaultPoint()
         }
 
         EaElements.SideBarButton {

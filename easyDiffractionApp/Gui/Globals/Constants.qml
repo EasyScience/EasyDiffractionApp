@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
+// SPDX-FileCopyrightText: 2023 easyDiffraction contributors <support@easydiffraction.org>
 // SPDX-License-Identifier: BSD-3-Clause
 // © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
@@ -13,9 +13,11 @@ QtObject {
     readonly property var proxy: typeof _pyQmlProxyObj !== "undefined" && _pyQmlProxyObj !== null ? _pyQmlProxyObj : new ExLogic.PyQmlProxy.PyQmlProxy()
     readonly property bool remote: typeof EaGlobals.Variables.projectConfig.ci.app.info !== 'undefined'
 
-    readonly property string appName: EaGlobals.Variables.projectConfig.release.app_name.toLowerCase()
-    readonly property string appPrefixName: "easy"
+    readonly property string appName: EaGlobals.Variables.projectConfig.release.app_name
+    readonly property string appPrefixName: "Easy"
     readonly property string appSuffixName: appName.replace(appPrefixName, "")
+    readonly property string appPrefixNameLogo: appPrefixName.toLowerCase()
+    readonly property string appSuffixNameLogo: appSuffixName.toLowerCase()
 
     readonly property string appLogo: logo('App.svg')
     readonly property string appUrl: EaGlobals.Variables.projectConfig.tool.poetry.homepage

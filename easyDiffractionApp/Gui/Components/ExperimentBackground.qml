@@ -18,15 +18,14 @@ EaComponents.TableView {
 
     model: XmlListModel {
         xml: ExGlobals.Constants.proxy.backgroundProxy.asXml
-        query: "/root/item"
+        query: "/data/data"
 
         XmlRole { name: "x"; query: "x/value/number()" }
         XmlRole { name: "y"; query: "y/value/number()" }
 
         XmlRole { name: "pointName"; query: "name/string()" }
-
-        XmlRole { name: "xId"; query: "x/key[4]/string()" }
-        XmlRole { name: "yId"; query: "y/key[4]/string()" }
+        XmlRole { name: "xId"; query: "x/__id/string()" }
+        XmlRole { name: "yId"; query: "y/__id/string()" }
     }
 
     // Table rows

@@ -1,6 +1,6 @@
-# SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
+# SPDX-FileCopyrightText: 2023 easyDiffraction contributors <support@easydiffraction.org>
 # SPDX-License-Identifier: BSD-3-Clause
-# © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+# © 2021-2023 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
 __author__ = 'github.com/andrewsazonov'
 __version__ = '0.0.1'
@@ -137,3 +137,4 @@ class Plotting1dProxy(QObject):
     @Slot(int, str, result='QBrush')
     def verticalLine(self, size, color):
         return self.logic.verticalLine(size, color)
+

@@ -1,6 +1,6 @@
-# SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
+# SPDX-FileCopyrightText: 2023 easyDiffraction contributors <support@easydiffraction.org>
 # SPDX-License-Identifier: BSD-3-Clause
-# © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+# © 2021-2023 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
 __author__ = 'github.com/wardsimon'
 __version__ = '0.0.1'
@@ -9,13 +9,15 @@ from abc import abstractmethod
 from typing import Union, overload, TypeVar
 
 from easyCore import np
-from easyCore.Utils.json import MSONable, MontyDecoder
+# from easyCore.Utils.json import MSONable, MontyDecoder
+from easyCore.Objects.core import ComponentSerializer  # old MSONable
+from easyCore.Utils.io.dict import DictSerializer  # old MontyDecoder
 from collections.abc import Sequence
 
 T = TypeVar('T')
 
 
-class ProjectData(MSONable):
+class ProjectData(ComponentSerializer):
     def __init__(self, name='DataStore', exp_data=None, sim_data=None):
         self.name = name
         if exp_data is None:
@@ -26,7 +28,7 @@ class ProjectData(MSONable):
         self.sim_data = sim_data
 
 
-class DataStore(Sequence, MSONable):
+class DataStore(Sequence, ComponentSerializer):
 
     def __init__(self, *args, name='DataStore'):
         self.name = name
@@ -56,8 +58,10 @@ class DataStore(Sequence, MSONable):
         items = d['items']
         del d['items']
         obj = cls.from_dict(d)
-        decoder = MontyDecoder()
-        obj.items = [decoder.process_decoded(item) for item in items]
+        # decoder = MontyDecoder()
+        decoder = DictSerializer()
+        # obj.items = [decoder.process_decoded(item) for item in items]
+        obj.items = [decoder.decode(item) for item in items]
         return obj
 
     @property
@@ -69,12 +73,14 @@ class DataStore(Sequence, MSONable):
         return [self[idx] for idx in range(len(self)) if self[idx].is_simulation]
 
 
-class DataSet1D(MSONable):
+class DataSet1D(ComponentSerializer):
 
     def __init__(self, name: str = 'Series',
                  x: Union[np.ndarray, list] = None,
                  y: Union[np.ndarray, list] = None,
+                 yb: Union[np.ndarray, list] = None,
                  e: Union[np.ndarray, list] = None,
+                 eb: Union[np.ndarray, list] = None,
                  data_type: str = 'simulation',
                  x_label: str = 'x',
                  y_label: str = 'y'):
@@ -87,19 +93,22 @@ class DataSet1D(MSONable):
         if x is None:
             x = np.array([])
         if y is None:
-            y = np.array([])
+            y = yb = np.array([])
         if e is None:
-            e = np.zeros_like(x)
+            e = eb = np.zeros_like(x)
 
         self.name = name
         if not isinstance(x, np.ndarray):
             x = np.array(x)
         if not isinstance(y, np.ndarray):
             y = np.array(y)
+            yb = np.array(yb)
 
         self.x = x
         self.y = y
+        self.yb = yb
         self.e = e
+        self.eb = eb
 
         self.x_label = x_label
         self.y_label = y_label

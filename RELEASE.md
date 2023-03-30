@@ -1,3 +1,9 @@
 ### Changes
 
-- The Python-based backend framework has been updated from version 3.7 to 3.8.
+- GSAS-II calculation engine has been removed.
+- Overall application performance has been significantly improved.
+
+### Bug Fixes
+
+- Summary report export widget is now properly enabled for custom projects.
+- Undo/redo functionality has been fixed.

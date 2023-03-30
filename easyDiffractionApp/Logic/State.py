@@ -1,14 +1,12 @@
 # noqa: E501
-# SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
+# SPDX-FileCopyrightText: 2023 easyDiffraction contributors <support@easydiffraction.org>
 # SPDX-License-Identifier: BSD-3-Clause
-# © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
-
-from dicttoxml import dicttoxml
+# © 2021-2023 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
 from PySide2.QtCore import Signal, QObject
 
 from easyCore import np
-
+from easyCore.Utils.io.xml import XMLSerializer
 
 class StateLogic(QObject):
     """
@@ -44,7 +42,6 @@ class StateLogic(QObject):
             {"label": "Minimization",
              "value": f'{current_engine} ({current_minimizer})'}  # noqa: E501
         ]
-        xml = dicttoxml(model, attr_type=False)
-        xml = xml.decode()
+        xml = XMLSerializer().encode({"item":model})
         return xml
 

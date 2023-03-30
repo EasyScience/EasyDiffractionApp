@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
+// SPDX-FileCopyrightText: 2023 easyDiffraction contributors <support@easydiffraction.org>
 // SPDX-License-Identifier: BSD-3-Clause
 // © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
@@ -78,6 +78,7 @@ EaComponents.SideBarColumn {
                         { value: ".atoms.", text: formatFilterText("gem", "atom", "Atoms") },
                         { value: ".fract_", text: formatFilterText("gem", "map-marker-alt", "Coordinates") },
                         { value: ".adp.", text: formatFilterText("gem", "arrows-alt", "ADPs") },
+                        { value: ".msp.", text: formatFilterText("gem", "arrows-alt", "MSPs") },
                         { value: ".resolution_", text: formatFilterText("microscope", "grip-lines-vertical", "Resolution") }, //"delicious"//"grip-lines"//"flipboard"
                         { value: ".background.", text: formatFilterText("microscope", "wave-square", "Background") } //"water"
                     ]
@@ -112,15 +113,19 @@ EaComponents.SideBarColumn {
                         if (typeof ExGlobals.Constants.proxy.phase.phasesAsObj === 'undefined' || typeof ExGlobals.Constants.proxy.phase.phasesAsObj[0] === 'undefined' ) {
                             return []
                         }
-                        const phaseName = ExGlobals.Constants.proxy.phase.phasesAsObj[0].name
+                        const phaseName = ExGlobals.Constants.proxy.phase.phasesAsObj[0]['name']
                         const datasetName = ExGlobals.Constants.proxy.experiment.experimentDataAsObj[0].name
                         let m = [
                                 { value: "", text: qsTr("All names") },
                                 { value: `.${phaseName}.`, text: formatFilterText("gem", "", phaseName) },
                                 { value: `.${datasetName}.`, text: formatFilterText("microscope", "", datasetName) },
                                 ]
-                        for (let i in ExGlobals.Constants.proxy.phase.phasesAsObj[0].atoms.data) {
-                            const atomLabel = ExGlobals.Constants.proxy.phase.phasesAsObj[0].atoms.data[i].label.value
+                        // for (let i in ExGlobals.Constants.proxy.phase.phasesAsObj[0].atoms.data) {
+                        //     const atomLabel = ExGlobals.Constants.proxy.phase.phasesAsObj[0].atoms.data[i].label.value
+                        //     m.push({ value: `.${atomLabel}.`, text: formatFilterText("gem", "atom", atomLabel) })
+                        // }
+                        for (let i in ExGlobals.Constants.proxy.phase.phasesAsObj[0]['atoms']) {
+                            const atomLabel = ExGlobals.Constants.proxy.phase.phasesAsObj[0]['atoms'][i]['label']['value']
                             m.push({ value: `.${atomLabel}.`, text: formatFilterText("gem", "atom", atomLabel) })
                         }
                         return m

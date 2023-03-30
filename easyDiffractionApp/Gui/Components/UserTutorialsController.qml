@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
+// SPDX-FileCopyrightText: 2023 easyDiffraction contributors <support@easydiffraction.org>
 // SPDX-License-Identifier: BSD-3-Clause
 // © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
@@ -246,7 +246,7 @@ EaElements.RemoteController {
         //rc.keyClick(Qt.Key_Right)
         //rc.keyClick(Qt.Key_Right)
         rc.deleteCharacters(6)
-        rc.typeText("7.00")
+        rc.typeText("6.00")
         rc.keyClick(Qt.Key_Enter) // DOESN'T WORK ON CI XVFB ?
         rc.showPointer()
 
@@ -378,8 +378,8 @@ EaElements.RemoteController {
         rc.mouseClick(ExGlobals.Variables.fitCellCCheckBox)
         rc.mouseClick(ExGlobals.Variables.parametersFilterTypeSelector)
         rc.mouseClick(ExGlobals.Variables.parametersFilterTypeSelector, x_pos, y_pos)
-        rc.mouseClick(ExGlobals.Variables.fitZeroShiftCheckBox)
-        rc.mouseClick(ExGlobals.Variables.fitScaleCheckBox)
+        //rc.mouseClick(ExGlobals.Variables.fitZeroShiftCheckBox)
+        //rc.mouseClick(ExGlobals.Variables.fitScaleCheckBox)
         x_pos = typeof ExGlobals.Variables.fitResolutionYValue !== 'undefined' ?
                     ExGlobals.Variables.fitResolutionYValue.width :
                     0

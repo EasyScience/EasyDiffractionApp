@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
+// SPDX-FileCopyrightText: 2023 easyDiffraction contributors <support@easydiffraction.org>
 // SPDX-License-Identifier: BSD-3-Clause
 // © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
@@ -133,7 +133,7 @@ EaComponents.SideBarColumn {
     EaElements.GroupBox {
         title: qsTr("Fitting constraints")
         enabled: ExGlobals.Constants.proxy.experiment.experimentLoaded
-        last: true
+        last: !ExGlobals.Constants.proxy.experiment.isSpinPolarized
 
         ExComponents.AnalysisConstraints {}
 
@@ -165,7 +165,7 @@ EaComponents.SideBarColumn {
                         textRole: ExGlobals.Variables.iconifiedNames ? "iconified_label" : "label"
                         model: XmlListModel {
                             xml: ExGlobals.Constants.proxy.parameters.parametersAsXml
-                            query: "/root/item"
+                            query: "/data/item"
                             XmlRole { name: "label"; query: "label_with_index/string()" }
                             XmlRole { name: "iconified_label"; query: "iconified_label_with_index/string()" }
                             onXmlChanged: dependentParCurrentIndex2 = dependentPar2.currentIndex
@@ -239,7 +239,7 @@ EaComponents.SideBarColumn {
                         textRole: ExGlobals.Variables.iconifiedNames ? "iconified_label" : "label"
                         model: XmlListModel {
                             xml: ExGlobals.Constants.proxy.parameters.parametersAsXml
-                            query: "/root/item"
+                            query: "/data/item"
                             XmlRole { name: "label"; query: "label_with_index/string()" }
                             XmlRole { name: "iconified_label"; query: "iconified_label_with_index/string()" }
                             onXmlChanged: dependentParCurrentIndex = dependentPar.currentIndex
@@ -277,7 +277,7 @@ EaComponents.SideBarColumn {
                         textRole: ExGlobals.Variables.iconifiedNames ? "iconified_label" : "label"
                         model: XmlListModel {
                             xml: ExGlobals.Constants.proxy.parameters.parametersAsXml
-                            query: "/root/item"
+                            query: "/data/item"
                             XmlRole { name: "label"; query: "label_with_index/string()" }
                             XmlRole { name: "iconified_label"; query: "iconified_label_with_index/string()" }
                             onXmlChanged: independentParCurrentIndex = independentPar.currentIndex
@@ -329,5 +329,21 @@ EaComponents.SideBarColumn {
             // Type 2 END
 
         }
+    }
+
+    EaElements.GroupBox {
+        title: qsTr("Fitting componenets")
+        last: true
+        visible: ExGlobals.Constants.proxy.experiment.isSpinPolarized
+        enabled: ExGlobals.Constants.proxy.experiment.experimentLoaded ||
+                 ExGlobals.Constants.proxy.experiment.experimentSkipped
+
+        Loader {
+            source: {
+                    return 'SideBarGroups/Refinement.qml'
+            }
+        }
+
+        Component.onCompleted: ExGlobals.Variables.associatedPhasesGroup = this
     }
 }

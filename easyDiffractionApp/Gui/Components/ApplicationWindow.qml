@@ -355,10 +355,11 @@ EaComponents.ApplicationWindow {
 
     statusBar: EaElements.StatusBar {
         visible: EaGlobals.Variables.appBarCurrentIndex !== 0
+        fittingInProgress: !ExGlobals.Constants.proxy.fitting.isFitFinished
 
         model: XmlListModel {
             xml: ExGlobals.Constants.proxy.project.statusModelAsXml
-            query: "/data"
+            query: "/data/item"
 
             XmlRole { name: "label"; query: "label/string()" }
             XmlRole { name: "value"; query: "value/string()" }

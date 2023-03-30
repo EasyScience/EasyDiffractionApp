@@ -194,7 +194,7 @@ class ExperimentLogic(QObject):
         return [{'name': experiment.name} for experiment in self.parent.experiments()]
 
     def _setExperimentDataAsXml(self):
-        self._experiment_data_as_xml = XMLSerializer().encode(self.experiments)
+        self._experiment_data_as_xml = XMLSerializer().encode({"item":self.experiments}, skip=['interface'])
 
     def addExperimentDataFromCif(self, file_url):
         self.parent.shouldProfileBeCalculated = False # don't run update until we're done with setting parameters

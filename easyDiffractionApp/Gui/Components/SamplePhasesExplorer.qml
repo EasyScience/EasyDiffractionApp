@@ -24,7 +24,7 @@ EaComponents.TableView {
         query: "/data/item"
 
         XmlRole { name: "label"; query: "name/string()" }
-        XmlRole { name: "color"; query: "color/string()" }
+        //XmlRole { name: "color"; query: "color/string()" }
     }
 
     // Table rows

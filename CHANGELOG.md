@@ -1,8 +1,8 @@
-# Version 0.8.5-beta (28 Mar 2023)
+# Version 0.8.5-beta (29 Mar 2023)
 
 ### Changes
 
-- GSASII calculation engine has been removed.
+- GSAS-II calculation engine has been removed.
 - Overall application performance has been significantly improved.
 
 ### Bug Fixes

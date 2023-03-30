@@ -42,6 +42,6 @@ class StateLogic(QObject):
             {"label": "Minimization",
              "value": f'{current_engine} ({current_minimizer})'}  # noqa: E501
         ]
-        xml = XMLSerializer().encode(model)
+        xml = XMLSerializer().encode({"item":model})
         return xml
 

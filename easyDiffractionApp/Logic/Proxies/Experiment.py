@@ -4,6 +4,7 @@
 # © 2021-2023 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
 import os
+import timeit
 
 from PySide2.QtCore import QObject, Signal, Slot, Property
 
@@ -103,8 +104,9 @@ class ExperimentProxy(QObject):
         return self.logic._experiment_data_as_xml
 
     def _setExperimentDataAsXml(self):
-        print("+ _setExperimentDataAsXml")
+        start_time = timeit.default_timer()
         self.logic._setExperimentDataAsXml()
+        print("+ _setExperimentDataAsXml: {0:.3f} s".format(timeit.default_timer() - start_time))
         self.experimentDataAsXmlChanged.emit()
 
     def _onExperimentDataChanged(self):
@@ -176,6 +178,7 @@ class ExperimentProxy(QObject):
             self.parent.parameters._onParametersChanged()
             self.parent.parameters._onInstrumentParametersChanged()
             self._setPatternParametersAsObj()
+            self._onExperimentDataChanged()
 
     def _onExperimentSkippedChanged(self):
         print("***** _onExperimentSkippedChanged")

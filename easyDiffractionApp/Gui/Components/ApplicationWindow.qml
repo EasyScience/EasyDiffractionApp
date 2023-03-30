@@ -355,6 +355,7 @@ EaComponents.ApplicationWindow {
 
     statusBar: EaElements.StatusBar {
         visible: EaGlobals.Variables.appBarCurrentIndex !== 0
+        fittingInProgress: !ExGlobals.Constants.proxy.fitting.isFitFinished
 
         model: XmlListModel {
             xml: ExGlobals.Constants.proxy.project.statusModelAsXml

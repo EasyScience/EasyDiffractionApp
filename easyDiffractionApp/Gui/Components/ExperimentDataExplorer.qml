@@ -23,7 +23,7 @@ EaComponents.TableView {
 
     model: XmlListModel {
         xml: ExGlobals.Constants.proxy.experiment.experimentDataAsXml
-        query: "/data"
+        query: "/data/item"
 
         XmlRole { name: "label"; query: "name/string()" }
     }
@@ -39,11 +39,12 @@ EaComponents.TableView {
         }
 
         EaComponents.TableViewTextInput {
+            readOnly: true
             horizontalAlignment: Text.AlignLeft
             width: EaStyle.Sizes.fontPixelSize * 27.9
             headerText: "Label"
             text: model.label
-            onEditingFinished: ExGlobals.Constants.proxy.setCurrentExperimentDatasetName(text)
+            onEditingFinished: ExGlobals.Constants.proxy.experiment.setCurrentExperimentDatasetName(text)
         }
 
         EaComponents.TableViewLabel {

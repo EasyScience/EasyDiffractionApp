@@ -1,19 +1,17 @@
-# SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
+# SPDX-FileCopyrightText: 2023 easyDiffraction contributors <support@easydiffraction.org>
 # SPDX-License-Identifier: BSD-3-Clause
-# © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+# © 2021-2023 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
 # noqa: E501
 import os
 import datetime
 from timeit import default_timer as timer
-
-from dicttoxml import dicttoxml
 import json
 
 from PySide2.QtCore import Signal, QObject
 
-from easyCore import np, borg
-
+from easyCore.Datasets.xarray import np
+from easyCore.Utils.io.xml import XMLSerializer
 from easyDiffractionLib.sample import Sample
 from easyApp.Logic.Utils.Utils import generalizePath
 
@@ -24,11 +22,9 @@ class ProjectLogic(QObject):
     projectCreatedChanged = Signal()
     projectInfoChanged = Signal()
     reset = Signal()
-    phasesEnabled = Signal()
     phasesAsObjChanged = Signal()
     structureParametersChanged = Signal()
     experimentDataAdded = Signal()
-    removeExperiment = Signal()
     experimentLoadedChanged = Signal()
 
     def __init__(self, parent=None , interface=None):
@@ -41,9 +37,10 @@ class ProjectLogic(QObject):
         self._project_info = self._defaultProjectInfo()
         self._project_created = False
         self._state_changed = False
+        self._read_only = False
 
         self._report = ""
-        self._currentProjectPath = os.path.expanduser("~")
+        self._currentProjectPath = os.path.join(os.path.expanduser("~"), 'TestProject')
 
     ####################################################################################################################
     ####################################################################################################################
@@ -92,8 +89,8 @@ class ProjectLogic(QObject):
         )
 
     def projectExamplesAsXml(self):
-        model = [
-            {"name": "PbSO4", "description": "neutrons, powder, constant wavelength, D1@ILL",
+        model = { "item": [
+            {"name": "PbSO4", "description": "neutrons, powder, constant wavelength, D1A@ILL",
              "path": "../Resources/Examples/PbSO4/project.json"},
             {"name": "Co2SiO4", "description": "neutrons, powder, constant wavelength, D20@ILL",
              "path": "../Resources/Examples/Co2SiO4/project.json"},
@@ -104,10 +101,17 @@ class ProjectLogic(QObject):
             {"name": "Na2Ca3Al2F14", "description": "neutrons, powder, time-of-flight, Osiris@ISIS",
              "path": "../Resources/Examples/Na2Ca3Al2F14/project.json"},
             {"name": "Si3N4", "description": "neutrons, powder, constant wavelength, multi-phase, 3T2@LLB",
-             "path": "../Resources/Examples/Si3N4/project.json"}
-        ]
-        xml = dicttoxml(model, attr_type=False)
-        xml = xml.decode()
+             "path": "../Resources/Examples/Si3N4/project.json"},
+            {"name": "Fe3O4", "description": "neutrons, powder, constant wavelength, polarised, 6T2@LLB",
+             "path": "../Resources/Examples/Fe3O4/project.json"},
+            {"name": "Ho2Ti2O7", "description": "neutrons, powder, constant wavelength, polarised, VIP@LLB",
+             "path": "../Resources/Examples/Ho2Ti2O7/project.json"},
+            # disbaled until the new Cryspy is available.
+            # {"name": "La0.5Ba0.5CoO3", "description": "neutrons, powder, constant wavelength, HRPT@PSI",
+            #  "path": "../Resources/Examples/La0.5Ba0.5CoO3/project.json"}
+        ]}
+        # XMLSerializer doesn't currently handle lists.
+        xml = XMLSerializer().encode(model, data_only=True)
         return xml
 
     def projectInfoAsCif(self):
@@ -182,59 +186,37 @@ class ProjectLogic(QObject):
                 self._interface.switch(interface_name)
 
         descr['sample']['interface'] = self._interface
-        self.parent.l_sample._sample = Sample.from_dict(descr['sample'])
+        sample_descr = Sample.from_dict(descr['sample'])
 
-        self.parent.l_phase.phases = self.parent.l_sample._sample._phases
-        self.parent.l_phase.phasesAsObjChanged.emit()
-
-        self.parent.proxy.sample.updateExperimentType()
-
-        # send signal to tell the proxy we changed phases
-        self.phasesEnabled.emit()
-        self.phasesAsObjChanged.emit()
-        # self.structureParametersChanged.emit()
-        self.parent.l_background._setAsXml()
-
-        # experiment
-        if 'experiments' in descr:
-            self.parent.l_experiment.experimentLoaded(True)
-            self.parent.l_experiment.experimentSkipped(False)
-            self.parent.l_parameters._data.experiments[0].x = np.array(descr['experiments'][0])
-            self.parent.l_parameters._data.experiments[0].y = np.array(descr['experiments'][1])
-            self.parent.l_parameters._data.experiments[0].e = np.array(descr['experiments'][2])
-            self.parent.l_experiment._experiment_data = self.parent.l_parameters._data.experiments[0]
-            self.parent.l_experiment.experiments = [{'name': descr['project_info']['experiments']}]
-            self.parent.l_experiment.setCurrentExperimentDatasetName(descr['project_info']['experiments'])
-
-            # send signal to tell the proxy we changed experiment
-            self.experimentDataAdded.emit()
-            self.parent.parametersChanged.emit()
-            self.experimentLoadedChanged.emit()
-
-        else:
-            # delete existing experiment
-            self.parent.l_experiment.removeExperiment()
-            self.parent.l_experiment.experimentLoaded(False)
-            if descr['experiment_skipped']:
-                self.parent.l_experiment.experimentSkipped(True)
-                self.parent.l_experiment.experimentSkippedChanged.emit()
+        self.parent.assignToSample(sample_descr)
 
         # project info
         self._project_info = descr['project_info']
+
+        # read only flag
+        self._read_only = descr['read_only']
+
+        # experiment
+        if 'experiments' in descr:
+            data = descr['experiments']
+            exp_name = descr['project_info']['experiments']
+
+            self.parent.sendToExperiment(data, exp_name)
+        else:
+            # delete existing experiment
+            self.parent.removeExperiment(skipped=descr['experiment_skipped'])
 
         new_minimizer_settings = descr.get('minimizer', None)
         if new_minimizer_settings is not None:
             new_engine = new_minimizer_settings['engine']
             new_method = new_minimizer_settings['method']
+            self.parent.setNewEngine(engine=new_engine, method=new_method)
 
-            new_engine_index = self.parent.l_fitting.fitter.available_engines.index(new_engine)
-            self.parent.l_fitting.setCurrentMinimizerIndex(new_engine_index)
-            new_method_index = self.parent.l_fitting.minimizerMethodNames().index(new_method)
-            self.parent.l_fitting.currentMinimizerMethodIndex(new_method_index)
+        self.parent.setSampleOnFitter()
 
-        self.parent.l_fitting.fitter.fit_object = self.parent.l_sample._sample
-        self.parent.l_stack.resetUndoRedoStack()
-        self.parent.l_stack.undoRedoChanged.emit()
+        # tell the LC that the stack needs resetting
+        self.parent.resetStack()
+
         self.setProjectCreated(True)
         print("\nProject loading time: {0:.3f} s\n".format(timer() - start_time))
 
@@ -244,24 +226,21 @@ class ProjectLogic(QObject):
         projectPath = self._currentProjectPath
         project_save_filepath = os.path.join(projectPath, 'project.json')
         descr = {
-            'sample': self.parent.l_sample._sample.as_dict(skip=['interface','calculator'])
+            'sample': self.parent.getSampleAsDict()
         }
-        if self.parent.l_parameters._data.experiments:
-            experiments_x = self.parent.l_parameters._data.experiments[0].x
-            experiments_y = self.parent.l_parameters._data.experiments[0].y
-            experiments_e = self.parent.l_parameters._data.experiments[0].e
-            descr['experiments'] = [experiments_x, experiments_y, experiments_e]
+        if not self.parent.isExperimentSkipped():
+            descr['experiments'] = self.parent.getExperiments()
 
-        descr['experiment_skipped'] = self.parent.l_experiment._experiment_skipped
+        descr['experiment_skipped'] = self.parent.isExperimentSkipped()
+        descr['read_only'] = self._read_only
         descr['project_info'] = self._project_info
 
         descr['interface'] = self._interface.current_interface_name
 
-        descr['minimizer'] = {
-            'engine': self.parent.l_fitting.fitter.current_engine.name,
-            'method': self.parent.l_fitting._current_minimizer_method_name
-        }
+        descr['minimizer'] = self.parent.fittingNamesDict()
+
         content_json = json.dumps(descr, indent=4, default=self.default)
+
         path = generalizePath(project_save_filepath)
         createFile(path, content_json)
         self.stateHasChanged(False)
@@ -279,16 +258,18 @@ class ProjectLogic(QObject):
         self.setProjectCreated(False)
         self.projectInfoChanged.emit()
         self.project_save_filepath = ""
-        self.removeExperiment.emit()
-        if self.parent.l_phase.samplesPresent():
-            self.parent.l_phase.removeAllPhases()
-        self.reset.emit()
+        self.parent.resetState()
 
     def updateProjectInfo(self, key_value):
         if len(key_value) == 2:
             self._project_info[key_value[0]] = key_value[1]
             self.projectInfoChanged.emit()
 
+    def statusModelAsObj(self):
+        return self.parent.statusModelAsObj()
+
+    def statusModelAsXml(self):
+        return self.parent.statusModelAsXml()
 
 def createFile(path, content):
     if os.path.exists(path):

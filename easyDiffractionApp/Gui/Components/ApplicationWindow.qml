@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
+// SPDX-FileCopyrightText: 2023 easyDiffraction contributors <support@easydiffraction.org>
 // SPDX-License-Identifier: BSD-3-Clause
 // © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
@@ -34,7 +34,8 @@ EaComponents.ApplicationWindow {
 
         EaElements.ToolButton {
             enabled: ExGlobals.Constants.proxy.project.stateHasChanged &&
-                     ExGlobals.Constants.proxy.project.currentProjectPath !== '--- EXAMPLE ---'
+                     ExGlobals.Constants.proxy.project.projectCreated &&
+                     !ExGlobals.Constants.proxy.project.readOnly
             highlighted: true
             fontIcon: "save"
             ToolTip.text: qsTr("Save current state of the project")
@@ -155,7 +156,10 @@ EaComponents.ApplicationWindow {
             fontIcon: "clipboard-list"
             text: qsTr("Summary")
             ToolTip.text: qsTr("Summary of the work done")
-            Component.onCompleted: ExGlobals.Variables.summaryTabButton = summaryTabButton
+            onClicked: {
+                ExGlobals.Constants.proxy.project.requestReport()
+            }
+            Component.onCompleted: ExGlobals.Variables.summaryTabButton = this
         }
 
     ]
@@ -351,10 +355,11 @@ EaComponents.ApplicationWindow {
 
     statusBar: EaElements.StatusBar {
         visible: EaGlobals.Variables.appBarCurrentIndex !== 0
+        fittingInProgress: !ExGlobals.Constants.proxy.fitting.isFitFinished
 
         model: XmlListModel {
-            xml: ExGlobals.Constants.proxy.statusModelAsXml
-            query: "/root/item"
+            xml: ExGlobals.Constants.proxy.project.statusModelAsXml
+            query: "/data/item"
 
             XmlRole { name: "label"; query: "label/string()" }
             XmlRole { name: "value"; query: "value/string()" }

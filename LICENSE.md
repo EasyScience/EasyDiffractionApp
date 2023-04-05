@@ -1,6 +1,6 @@
 BSD 3-Clause License
 
-Copyright (c) 2021-2022, easyDiffraction contributors (https://github.com/easyScience/easyDiffraction).
+Copyright (c) 2021-2023, easyDiffraction contributors (https://github.com/easyScience/easyDiffraction).
 
 All rights reserved.
 

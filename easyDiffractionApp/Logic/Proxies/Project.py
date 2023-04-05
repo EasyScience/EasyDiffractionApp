@@ -1,6 +1,6 @@
-# SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
+# SPDX-FileCopyrightText: 2023 easyDiffraction contributors <support@easydiffraction.org>
 # SPDX-License-Identifier: BSD-3-Clause
-# © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+# © 2021-2023 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
 from PySide2.QtCore import QObject, Signal, Slot, Property
 
@@ -11,7 +11,8 @@ class ProjectProxy(QObject):
     dummySignal = Signal()
     stateChanged = Signal(bool)
     htmlExportingFinished = Signal(bool, str)
-    removeExperiment = Signal()
+    statusInfoChanged = Signal()
+    reportRequested = Signal()
 
     def __init__(self, parent=None, logic=None):  # , interface=None):
         super().__init__(parent)
@@ -20,7 +21,6 @@ class ProjectProxy(QObject):
         self.stateChanged.connect(self._onStateChanged)
         self.logic.projectCreatedChanged.connect(self.projectCreatedChanged)
         self.logic.projectInfoChanged.connect(self.projectInfoChanged)
-        self.logic.removeExperiment.connect(self.removeExperiment)
 
     @Property('QVariant', notify=projectInfoChanged)
     def projectInfoAsJson(self):
@@ -72,18 +72,19 @@ class ProjectProxy(QObject):
     def loadProjectAs(self, filepath):
         self.logic._loadProjectAs(filepath)
         self.stateChanged.emit(False)
+        self.parent.fitting.calculatorListChanged.emit()
 
     @Slot()
     def loadProject(self):
         self.logic._loadProject()
-        # self._background_proxy.onAsObjChanged()
         self.stateChanged.emit(False)
+        self.parent.fitting.calculatorListChanged.emit()
 
     @Slot(str)
     def loadExampleProject(self, filepath):
         self.logic._loadProjectAs(filepath)
-        self.currentProjectPath = '--- EXAMPLE ---'
         self.stateChanged.emit(False)
+        self.parent.fitting.calculatorListChanged.emit()
 
     @Property(str, notify=dummySignal)
     def projectFilePath(self):
@@ -100,8 +101,13 @@ class ProjectProxy(QObject):
     @Slot()
     def resetState(self):
         self.logic.resetState()
+        self.parent.experiment.removeExperiment()
         self.logic.stateHasChanged(False)
         self.stateChanged.emit(False)
+
+    @Property(bool, notify=projectCreatedChanged)
+    def readOnly(self):
+        return self.logic._read_only
 
     @Property(bool, notify=stateChanged)
     def stateHasChanged(self):
@@ -126,3 +132,18 @@ class ProjectProxy(QObject):
         success = self.logic.saveReport(filepath)
         self.htmlExportingFinished.emit(success, filepath)
 
+    @Slot()
+    def requestReport(self):
+        """
+        Request a report generation
+        """
+        self.reportRequested.emit()
+
+    # status
+    @Property('QVariant', notify=statusInfoChanged)
+    def statusModelAsObj(self):
+        return self.logic.statusModelAsObj()
+
+    @Property(str, notify=statusInfoChanged)
+    def statusModelAsXml(self):
+        return self.logic.statusModelAsXml()

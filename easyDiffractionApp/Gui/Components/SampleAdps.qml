@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
+// SPDX-FileCopyrightText: 2023 easyDiffraction contributors <support@easydiffraction.org>
 // SPDX-License-Identifier: BSD-3-Clause
 // © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
@@ -15,6 +15,17 @@ import easyApp.Gui.Logic 1.0 as EaLogic
 import Gui.Globals 1.0 as ExGlobals
 
 EaComponents.TableView {
+    property int numColumnWidth: EaStyle.Sizes.fontPixelSize * 2.5
+    property int labelColumnWidth: EaStyle.Sizes.fontPixelSize * 2.5
+    property int typeColumnWidth: EaStyle.Sizes.fontPixelSize * 4.0
+    property int numFixedColumn: 3
+    property int numFlexColumn: 7
+    property int flexColumnWidth: (width -
+                                    numColumnWidth -
+                                    labelColumnWidth -
+                                    typeColumnWidth -
+                                    EaStyle.Sizes.tableColumnSpacing * (numFixedColumn + numFlexColumn - 1)) /
+                                    numFlexColumn
 
     // Table model
 
@@ -22,7 +33,7 @@ EaComponents.TableView {
         property int phaseIndex: ExGlobals.Constants.proxy.phase.currentPhaseIndex + 1
 
         xml: ExGlobals.Constants.proxy.phase.phasesAsXml
-        query: `/root/item[${phaseIndex}]/atoms/data/item`
+        query: `/data/item/atoms/data`
 
         XmlRole { name: "label"; query: "label/value/string()" }
         XmlRole { name: "adpType"; query: "adp/adp_type/value/string()" }
@@ -34,13 +45,13 @@ EaComponents.TableView {
         XmlRole { name: "adpAni13"; query: "adp_ani_13/number()" }
         XmlRole { name: "adpAni23"; query: "adp_ani_23/number()" }
 
-        XmlRole { name: "adpIsoId"; query: "adp/adp_class/Uiso/key[4]/string()" }
-        XmlRole { name: "adpAni11Id"; query: "adp_ani_11/key[4]/string()" }
-        XmlRole { name: "adpAni22Id"; query: "adp_ani_22/key[4]/string()" }
-        XmlRole { name: "adpAni33Id"; query: "adp_ani_33/key[4]/string()" }
-        XmlRole { name: "adpAni12Id"; query: "adp_ani_12/key[4]/string()" }
-        XmlRole { name: "adpAni13Id"; query: "adp_ani_13/key[4]/string()" }
-        XmlRole { name: "adpAni23Id"; query: "adp_ani_23/key[4]/string()" }
+        XmlRole { name: "adpIsoId"; query: "adp/adp_class/Uiso/__id/string()" }
+        XmlRole { name: "adpAni11Id"; query: "adp_ani_11/__id/string()" }
+        XmlRole { name: "adpAni22Id"; query: "adp_ani_22/__id/string()" }
+        XmlRole { name: "adpAni33Id"; query: "adp_ani_33/__id/string()" }
+        XmlRole { name: "adpAni12Id"; query: "adp_ani_12/__id/string()" }
+        XmlRole { name: "adpAni13Id"; query: "adp_ani_13/__id/string()" }
+        XmlRole { name: "adpAni23Id"; query: "adp_ani_23/__id/string()" }
     }
 
     // Table rows
@@ -49,22 +60,21 @@ EaComponents.TableView {
         property string modelAdpType: model.adpType
 
         EaComponents.TableViewLabel {
-            width: EaStyle.Sizes.fontPixelSize * 2.5
+            width: numColumnWidth
             headerText: "No."
             text: model.index + 1
         }
 
         EaComponents.TableViewLabel {
-            id: adpAtomLabel
             horizontalAlignment: Text.AlignLeft
-            width: EaStyle.Sizes.fontPixelSize * 3.8
+            width: labelColumnWidth
             headerText: "Label"
             text: model.label
         }
 
         EaComponents.TableViewComboBox {
             enabled: false
-            width: adpAtomLabel.width * 1.2
+            width: typeColumnWidth
             headerText: "Type"
             model: ["Uiso", "Uani", "Biso", "Bani"]
             //currentIndex: model.indexOf(modelAdpType)
@@ -72,49 +82,49 @@ EaComponents.TableView {
         }
 
         EaComponents.TableViewTextInput {
-            width: adpAtomLabel.width
+            width: flexColumnWidth
             headerText: "Iso"
             text: EaLogic.Utils.toFixed(model.adpIso)
             onEditingFinished: editParameterValue(model.adpIsoId, text)
         }
 
         EaComponents.TableViewTextInput {
-            width: adpAtomLabel.width
+            width: flexColumnWidth
             headerText: "Ani11"
             text: EaLogic.Utils.toFixed(model.adpAni11)
             onEditingFinished: editParameterValue(model.adpAniId11, text)
         }
 
         EaComponents.TableViewTextInput {
-            width: adpAtomLabel.width
+            width: flexColumnWidth
             headerText: "Ani22"
             text: EaLogic.Utils.toFixed(model.adpAni22)
             onEditingFinished: editParameterValue(model.adpAniId22, text)
         }
 
         EaComponents.TableViewTextInput {
-            width: adpAtomLabel.width
+            width: flexColumnWidth
             headerText: "Ani33"
             text: EaLogic.Utils.toFixed(model.adpAni33)
             onEditingFinished: editParameterValue(model.adpAniId33, text)
         }
 
         EaComponents.TableViewTextInput {
-            width: adpAtomLabel.width
+            width: flexColumnWidth
             headerText: "Ani12"
             text: EaLogic.Utils.toFixed(model.adpAni12)
             onEditingFinished: editParameterValue(model.adpAniId12, text)
         }
 
         EaComponents.TableViewTextInput {
-            width: adpAtomLabel.width
+            width: flexColumnWidth
             headerText: "Ani13"
             text: EaLogic.Utils.toFixed(model.adpAni13)
             onEditingFinished: editParameterValue(model.adpAniId13, text)
         }
 
         EaComponents.TableViewTextInput {
-            width: adpAtomLabel.width
+            width: flexColumnWidth
             headerText: "Ani23"
             text: EaLogic.Utils.toFixed(model.adpAni23)
             onEditingFinished: editParameterValue(model.adpAniId23, text)

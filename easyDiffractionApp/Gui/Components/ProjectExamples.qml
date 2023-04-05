@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
+// SPDX-FileCopyrightText: 2023 easyDiffraction contributors <support@easydiffraction.org>
 // SPDX-License-Identifier: BSD-3-Clause
 // © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
@@ -17,14 +17,14 @@ import Gui.Globals 1.0 as ExGlobals
 EaComponents.TableView {
     id: tableView
 
-    maxRowCountShow: 8
+    maxRowCountShow: 9
     defaultInfoText: qsTr("No Examples Available")
 
     // Table model
 
     model: XmlListModel {
         xml: ExGlobals.Constants.proxy.project.projectExamplesAsXml
-        query: "/root/item"
+        query: "/data/item"
 
         XmlRole { name: "name"; query: "name/string()" }
         XmlRole { name: "description"; query: "description/string()" }
@@ -58,7 +58,7 @@ EaComponents.TableView {
             text: model.name
         }
 
-        EaComponents.TableViewLabel {
+        EaComponents.TableViewLabelControl {
             id: descriptionColumn
 
             width: EaStyle.Sizes.fontPixelSize * 24
@@ -67,6 +67,7 @@ EaComponents.TableView {
 
             headerText: "Description"
             text: model.description
+            ToolTip.text: model.description
         }
 
         EaComponents.TableViewButton {

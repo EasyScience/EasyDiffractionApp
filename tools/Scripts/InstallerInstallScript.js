@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
+// SPDX-FileCopyrightText: 2023 easyDiffraction contributors <support@easydiffraction.org>
 // SPDX-License-Identifier: BSD-3-Clause
 // © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
@@ -13,6 +13,7 @@ function Component()
   //{
     installer.setDefaultPageVisible(QInstaller.ComponentSelection, false)
     installer.installationStarted.connect(this, Component.prototype.onInstallationStarted)
+    if (systemInfo.productType === "windows") { installer.installationFinished.connect(this, Component.prototype.installVCRedist); }
   //}
   //installer.setDefaultPageVisible(QInstaller.LicenseCheck, false)
 }
@@ -24,6 +25,33 @@ Component.prototype.onInstallationStarted = function()
             component.installerbaseBinaryPath = "@TargetDir@/signedmaintenancetool.exe"
         }
         installer.setInstallerBaseBinary(component.installerbaseBinaryPath)
+    }
+}
+
+Component.prototype.installVCRedist = function()
+{
+    var registryVC2017x64 = installer.execute("reg", new Array("QUERY", "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Microsoft\\VisualStudio\\14.0\\VC\\Runtimes\\x64", "/v", "Installed"))[0];
+    var install_str = "No";
+    var doInstall = false;
+    if (!registryVC2017x64) {
+        doInstall = true;
+        install_str = "Yes";
+    }
+    else
+    {
+        var bld = installer.execute("reg", new Array("QUERY", "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Microsoft\\VisualStudio\\14.0\\VC\\Runtimes\\x64", "/v", "Bld"))[0];
+        var elements = bld.split(" ");
+        bld = parseInt(elements[elements.length-1]);
+        if (bld < 26706)
+        {
+            doInstall = true;
+        }
+    }
+    if (doInstall)
+    {
+        QMessageBox.information("vcRedist.install", "Install VS Redistributables", "The application requires Visual Studio 2017 Redistributables. Please follow the steps to install it now.", QMessageBox.OK);
+        var dir = installer.value("TargetDir") + "/" + installer.value("ProductName");
+        installer.execute(dir + "/VC_redist.x64.exe", "/norestart", "/passive");
     }
 }
 
@@ -55,6 +83,15 @@ Component.prototype.createOperations = function()
       "iconPath=@TargetDir@/@ProductName@/@ProductName@.exe", "iconId=0",
       "description=@ProductName@"
     )
+       // Add shortcut for maintenance tool.
+       component.addOperation(
+       "CreateShortcut",
+       "@TargetDir@/maintenancetool.exe",
+       "@StartMenuDir@/@ProductName@/Maintenance Tool.lnk",
+       "workingDirectory=@TargetDir@",
+       "iconPath=@TargetDir@/maintenancetool.exe",
+       "iconId=0",
+       "description=Update or remove@ProductName@");
 
     // Add start menu shortcut for the app uninstaller
     /*
@@ -97,15 +134,15 @@ Component.prototype.createOperations = function()
 
     component.addOperation(
       "Copy",
-      "@TargetDir@/easyDiffraction.desktop",
-      "@HomeDir@/.local/share/applications/easyDiffraction.desktop"
+      "@TargetDir@/@ProductName@.desktop",
+      "@HomeDir@/.local/share/applications/@ProductName@.desktop"
     )
 
     /*
     component.addOperation(
       "Copy",
-      "@TargetDir@/easyDiffraction.desktop",
-      "/usr/share/applications/easyDiffraction.desktop"
+      "@TargetDir@/@ProductName@.desktop",
+      "/usr/share/applications/@ProductName@.desktop"
     )
     */
   }

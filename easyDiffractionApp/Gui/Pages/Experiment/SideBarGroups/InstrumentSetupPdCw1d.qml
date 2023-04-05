@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
+// SPDX-FileCopyrightText: 2023 easyDiffraction contributors <support@easydiffraction.org>
 // SPDX-License-Identifier: BSD-3-Clause
 // © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
@@ -13,7 +13,7 @@ import Gui.Globals 1.0 as ExGlobals
 
 
 Grid {
-    columns: 2
+    columns: ExGlobals.Constants.proxy.experiment.isSpinPolarized ? 3 : 2
     columnSpacing: EaStyle.Sizes.fontPixelSize
 
     Column {
@@ -41,6 +41,22 @@ Grid {
             units: "Å" //ExGlobals.Constants.proxy.parameters.instrumentParametersAsObj.wavelength.units
             text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.parameters.instrumentParametersAsObj.wavelength.value)
             onEditingFinished: editParameterValue(ExGlobals.Constants.proxy.parameters.instrumentParametersAsObj.wavelength["@id"], text)
+        }
+    }
+
+    Column {
+        visible: ExGlobals.Constants.proxy.experiment.isSpinPolarized
+
+        EaElements.Label {
+            enabled: false
+            text: qsTr("Magnetic field")
+        }
+
+        EaElements.Parameter {
+            width: inputFieldWidth()
+            units: "T"
+            text: EaLogic.Utils.toFixed(ExGlobals.Constants.proxy.parameters.patternParametersAsObj.field.value)
+            onEditingFinished: editParameterValue(ExGlobals.Constants.proxy.parameters.patternParametersAsObj.field["@id"], text)
         }
     }
 

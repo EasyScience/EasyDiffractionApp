@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
+// SPDX-FileCopyrightText: 2023 easyDiffraction contributors <support@easydiffraction.org>
 // SPDX-License-Identifier: BSD-3-Clause
 // © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
@@ -45,15 +45,15 @@ Column {
 
                 model: XmlListModel {
                     xml: ExGlobals.Constants.proxy.parameters.instrumentParametersAsXml
-                    query: `/root/item`
+                    query: `/data`
 
                     XmlRole { name: "u"; query: "resolution_u/value/number()" }
                     XmlRole { name: "v"; query: "resolution_v/value/number()" }
                     XmlRole { name: "w"; query: "resolution_w/value/number()" }
 
-                    XmlRole { name: "uId"; query: "resolution_u/key[4]/string()" }
-                    XmlRole { name: "vId"; query: "resolution_v/key[4]/string()" }
-                    XmlRole { name: "wId"; query: "resolution_w/key[4]/string()" }
+                    XmlRole { name: "uId"; query: "resolution_u/__id/string()" }
+                    XmlRole { name: "vId"; query: "resolution_v/__id/string()" }
+                    XmlRole { name: "wId"; query: "resolution_w/__id/string()" }
                 }
 
                 delegate: EaComponents.TableViewDelegate {
@@ -95,13 +95,13 @@ Column {
 
                 model: XmlListModel {
                     xml: ExGlobals.Constants.proxy.parameters.instrumentParametersAsXml
-                    query: `/root/item`
+                    query: `/data`
 
                     XmlRole { name: "x"; query: "resolution_x/value/number()" }
                     XmlRole { name: "y"; query: "resolution_y/value/number()" }
 
-                    XmlRole { name: "xId"; query: "resolution_x/key[4]/string()" }
-                    XmlRole { name: "yId"; query: "resolution_y/key[4]/string()" }
+                    XmlRole { name: "xId"; query: "resolution_x/__id/string()" }
+                    XmlRole { name: "yId"; query: "resolution_y/__id/string()" }
                 }
 
                 delegate: EaComponents.TableViewDelegate {

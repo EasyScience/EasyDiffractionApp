@@ -1,6 +1,6 @@
-# SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
+# SPDX-FileCopyrightText: 2023 easyDiffraction contributors <support@easydiffraction.org>
 # SPDX-License-Identifier: BSD-3-Clause
-# © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+# © 2021-2023 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
 # noqa: E501
 from PySide2.QtCore import QObject, Signal, Property
@@ -19,12 +19,6 @@ from easyDiffractionApp.Logic.Proxies.Stack import StackProxy
 
 
 class PyQmlProxy(QObject):
-    # SIGNALS
-    currentCalculatorChanged = Signal()
-    parametersChanged = Signal()
-
-    # Status info
-    statusInfoChanged = Signal()
 
     # Misc
     dummySignal = Signal()
@@ -45,20 +39,9 @@ class PyQmlProxy(QObject):
         self._stack_proxy = StackProxy(self, logic=self.lc)
         self._parameters_proxy = ParametersProxy(self, logic=self.lc)
         self._project_proxy = ProjectProxy(self, logic=self.lc)
-        self._experiment_proxy = ExperimentProxy(self, logic=self.lc)
         self._phase_proxy = PhaseProxy(self, logic=self.lc)
+        self._experiment_proxy = ExperimentProxy(self, logic=self.lc)
         self._sample_proxy = SampleProxy(self, logic=self.lc)
-
-        ################## signals from other proxies #################
-        self.parametersChanged.connect(self.lc.parametersChanged)
-        self.currentCalculatorChanged.connect(self.statusInfoChanged)
-        self._fitting_proxy.currentMinimizerChanged.connect(self.statusInfoChanged)
-        self._fitting_proxy.currentMinimizerMethodChanged.connect(self.statusInfoChanged)
-        self._project_proxy.removeExperiment.connect(self._experiment_proxy.removeExperiment)
-        # Constraints
-        self._fitting_proxy.constraintsModified.connect(self._parameters_proxy._setParametersAsObj)
-        self._fitting_proxy.constraintsModified.connect(self._parameters_proxy._setParametersAsXml)
-        self._fitting_proxy.constraintsModified.connect(self._parameters_proxy._onSimulationParametersChanged)
 
         # start the undo/redo stack
         self.lc.initializeBorg()
@@ -118,15 +101,6 @@ class PyQmlProxy(QObject):
     @Property('QVariant', notify=dummySignal)
     def parameters(self):
         return self._parameters_proxy
-
-    # status
-    @Property('QVariant', notify=statusInfoChanged)
-    def statusModelAsObj(self):
-        return self.lc.statusModelAsObj()
-
-    @Property(str, notify=statusInfoChanged)
-    def statusModelAsXml(self):
-        return self.lc.statusModelAsXml()
 
     # screen recorder
     @Property('QVariant', notify=dummySignal)

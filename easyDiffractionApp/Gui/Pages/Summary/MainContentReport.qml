@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
+// SPDX-FileCopyrightText: 2023 easyDiffraction contributors <support@easydiffraction.org>
 // SPDX-License-Identifier: BSD-3-Clause
 // © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
@@ -83,9 +83,18 @@ Item {
             saveConfirmationDialog.open()
         }
 
+        // handlers for clicking the "Create Report" button in the side bar
+        signal reportRequested()
+        onReportRequested: {
+            ExGlobals.Constants.proxy.project.setReport(html)
+            webView.loadHtml(html)
+        }
+
         Component.onCompleted: {
             ExGlobals.Variables.reportWebView = this
+            // Notify the python proxies
             ExGlobals.Constants.proxy.project.htmlExportingFinished.connect(htmlExportingFinished)
+            ExGlobals.Constants.proxy.project.reportRequested.connect(reportRequested)
         }
     }
 
@@ -135,14 +144,23 @@ Item {
         }
     }
 
-    //}
-
     onHtmlChanged: {
-        //print(html)
-        ExGlobals.Constants.proxy.project.setReport(html)
-        webView.loadHtml(html)
+        // when the state changes, the html display is reset
+        const list = [
+            '<!DOCTYPE html>',
+            '<html>\n',
+            '<head>\n',
+            head+'\n',
+            '</head>\n',
+            '<body>\n',
+            '</body>\n',
+            '</html>'
+        ]
+        const empty_html = list.join('\n')
+        ExGlobals.Constants.proxy.project.setReport(empty_html)
+        webView.loadHtml(empty_html)
     }
-
+ 
     /////////////
     // HTML parts
     /////////////
@@ -386,7 +404,7 @@ Item {
 
                 hasMeasured: ExGlobals.Variables.analysisChart.hasMeasuredData,
                 hasCalculated: ExGlobals.Variables.analysisChart.hasCalculatedData,
-                hasPhase: ExGlobals.Constants.proxy.plotting1d.hasSinglePhaseData,
+                hasPhase: typeof ExGlobals.Constants.proxy.plotting1d.hasSinglePhaseData !== "undefined" ? ExGlobals.Constants.proxy.plotting1d.hasSinglePhaseData : false,
                 hasDifference: ExGlobals.Variables.analysisChart.hasDifferenceData,
                 hasBragg: ExGlobals.Variables.analysisChart.hasBraggData,
                 hasBackground: ExGlobals.Variables.analysisChart.hasBackgroundData,
@@ -497,8 +515,8 @@ Item {
                   `<b>Analysis:</b> <a href="${ExGlobals.Constants.appUrl}">${ExGlobals.Constants.appName} v${ExGlobals.Constants.appVersion}</a><br>`,
                   `<b>Structure chart:</b> <a href="${ExGlobals.Variables.chemDoodleStructureChart.info.url}"> ChemDoodle Web Components v${ExGlobals.Variables.chemDoodleStructureChart.info.version}</a><br>`,
                   `<b>Data chart:</b> <a href="${dataChartLibUrl}"> BokehJS v${dataChartLibVersion}</a><br>`,
-                  `<b>Calculation engine:</b> ${ExGlobals.Constants.proxy.statusModelAsObj.calculation}<br>`,
-                  isFitting ? `<b>Minimization:</b> ${ExGlobals.Constants.proxy.statusModelAsObj.minimization}<br>` : '',
+                  `<b>Calculation engine:</b> ${ExGlobals.Constants.proxy.project.statusModelAsObj.calculation}<br>`,
+                  isFitting ? `<b>Minimization:</b> ${ExGlobals.Constants.proxy.project.statusModelAsObj.minimization}<br>` : '',
                   '</div>'
               ]
         return list.join('\n')
@@ -525,13 +543,16 @@ Item {
     property string fittingInfo: {
         if (!isFitting)
             return ''
-        const redchi2 = ExGlobals.Constants.proxy.fitResults.redchi2.toFixed(2)
-        let list = [
-                '<p>',
-                `<b>Goodness-of-fit (reduced \u03c7\u00b2):</b> ${redchi2}<br>`,
-                '</p>'
-            ]
-        return list.join('\n')
+        if (typeof ExGlobals.Constants.proxy.fitResults !== 'undefined') {
+            const redchi2 = ExGlobals.Constants.proxy.fitResults.redchi2.toFixed(2)
+            let list = [
+                    '<p>',
+                    `<b>Goodness-of-fit (reduced \u03c7\u00b2):</b> ${redchi2}<br>`,
+                    '</p>'
+                ]
+            return list.join('\n')
+        }
+        return ''
     }
 
     property string analysisSection: {

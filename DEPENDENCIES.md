@@ -6,7 +6,6 @@ The following Open Source projects are used in easyDiffraction (if there are any
 
 - [CrysPy](https://github.com/ikibalin/cryspy): [MIT License](https://raw.githubusercontent.com/ikibalin/cryspy/master/LICENSE)
 - [CrysFML](https://code.ill.fr/scientific-software/crysfml): [GNU Lesser General Public License (LGPL)](https://raw.githubusercontent.com/easyScience/libsDarwin/main/libsDarwin/CFML_api/LICENSE)
-- [GSAS-II](https://subversion.xray.aps.anl.gov/trac/pyGSAS): [License](https://raw.githubusercontent.com/easyScience/libsDarwin/main/libsDarwin/GSASII/license2013.txt)
 
 ## Visualization libraries
 
@@ -22,7 +21,3 @@ The following Open Source projects are used in easyDiffraction (if there are any
 - [PT Sans](https://fonts.google.com/specimen/PT+Sans): [SIL Open Font Licence (OFL)](https://scripts.sil.org/OFL)
 - [PT Mono](https://fonts.google.com/specimen/PT+Mono): [SIL Open Font Licence (OFL)](https://scripts.sil.org/OFL)
 - [Font Awesome](https://github.com/FortAwesome/Font-Awesome): [SIL Open Font Licence (OFL)](https://scripts.sil.org/OFL)
-
-## Notes
-
-- GSAS-II: This product includes software produced by UChicago Argonne, LLC under Contract No. DE-AC02-06CH11357 with the Department of Energy.

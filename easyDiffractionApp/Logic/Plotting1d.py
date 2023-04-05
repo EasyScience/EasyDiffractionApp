@@ -1,6 +1,6 @@
-# SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
+# SPDX-FileCopyrightText: 2023 easyDiffraction contributors <support@easydiffraction.org>
 # SPDX-License-Identifier: BSD-3-Clause
-# © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+# © 2021-2023 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
 import numpy as np
 import scipy
@@ -42,7 +42,6 @@ class Plotting1dLogic(QObject):
         # Lib
         self._libs = ['bokeh', 'qtcharts']
         self._current_lib = 'bokeh'
-        self.currentLibChanged.connect(self.onCurrentLibChanged)
 
         # Ranges
         self._measured_min_x = 999999
@@ -102,6 +101,7 @@ class Plotting1dLogic(QObject):
         if self._current_lib == lib:
             return
         self._current_lib = lib
+        self.onCurrentLibChanged()
         self.currentLibChanged.emit()
 
     def clearBackendState(self):
@@ -213,10 +213,13 @@ class Plotting1dLogic(QObject):
             self._setQtChartsBraggDataObj()
 
     def setBackgroundData(self, xarray, yarray):
-        if not xarray.size:
+        if xarray.size < 2:
             return
         interp_func = scipy.interpolate.interp1d(xarray, yarray, fill_value="extrapolate")
-        self._setBackgroundDataArrays(self._measured_xarray, interp_func(self._measured_xarray))
+        extrapolated_y = interp_func(self._measured_xarray)
+        if len(extrapolated_y) == 0:
+            return
+        self._setBackgroundDataArrays(self._measured_xarray, extrapolated_y)
         self._setBokehBackgroundDataObj()
         self._setBokehPhasesDataObj()
         if self.currentLib == 'qtcharts':
@@ -271,6 +274,8 @@ class Plotting1dLogic(QObject):
 
     def _setCalculatedDataArrays(self, xarray, yarray):
         self._calculated_xarray = xarray
+        if type(yarray)!=np.ndarray:
+            yarray = np.array(yarray)
         self._calculated_yarray = yarray
 
     def _setDifferenceDataArrays(self):
@@ -302,11 +307,28 @@ class Plotting1dLogic(QObject):
         self.bokehMeasuredDataObjChanged.emit()
 
     def _setBokehPhasesDataObj(self):
-        for phase_index in range(len(self.parent.l_phase.phases)):
+        for phase_index in range(len(self.parent.phases())):
             # skip this step with try-except block until instrumental parameters are defined/loaded
             try:
-                yarray = self._interface.get_calculated_y_for_phase(phase_index)
-                if self._background_yarray.size:
+                if not self.parent.isSpinPolarized():
+                    # yarray = self._interface.get_calculated_y_for_phase(phase_index)
+                    yarray = self._interface().calculator.get_calculated_y_for_phase(phase_index)
+                    is_diff = False
+                else:
+                    phases_y = list(self._interface.get_component('phases').values())[phase_index]
+                    component = self.parent.spinComponent()
+                    is_diff = False
+                    if component == "Sum":
+                        yarray = phases_y["components"]["up"] + phases_y["components"]["down"]
+                    elif component == "Difference":
+                        yarray = phases_y["components"]["up"] - phases_y["components"]["down"]
+                        is_diff = True
+                    elif component == "Up":
+                        yarray = phases_y["components"]["up"]
+                    elif component == "Down":
+                        yarray = phases_y["components"]["down"]
+
+                if self._background_yarray.size and not is_diff:
                     self._bokeh_phases_data_obj[f'{phase_index}'] = {
                         'x': Plotting1dLogic.aroundX(self._calculated_xarray),
                         'y_upper': Plotting1dLogic.aroundY(yarray + self._background_yarray),

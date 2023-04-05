@@ -19,15 +19,16 @@ EaComponents.TableView {
 
     model: XmlListModel {
         xml: ExGlobals.Constants.proxy.instrumentParametersAsXml
-        query: `/root/item`
+        query: `/data/data`
+
 
         XmlRole { name: "u"; query: "resolution_u/value/number()" }
         XmlRole { name: "v"; query: "resolution_v/value/number()" }
         XmlRole { name: "w"; query: "resolution_w/value/number()" }
 
-        XmlRole { name: "uId"; query: "resolution_u/key[4]/string()" }
-        XmlRole { name: "vId"; query: "v_resolution/key[4]/string()" }
-        XmlRole { name: "wId"; query: "resolution_w/key[4]/string()" }
+        XmlRole { name: "uId"; query: "resolution_u/__id/string()" }
+        XmlRole { name: "vId"; query: "v_resolution/__id/string()" }
+        XmlRole { name: "wId"; query: "resolution_w/__id/string()" }
     }
 
     // Table rows

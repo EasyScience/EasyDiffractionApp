@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2022 easyDiffraction contributors <support@easydiffraction.org>
+// SPDX-FileCopyrightText: 2023 easyDiffraction contributors <support@easydiffraction.org>
 // SPDX-License-Identifier: BSD-3-Clause
 // © 2021-2022 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
@@ -49,13 +49,13 @@ Item {
                 font.family: parent.fontFamily
                 font.pixelSize: parent.fontPixelSize
                 font.weight: Font.Light
-                text: ExGlobals.Constants.appPrefixName
+                text: ExGlobals.Constants.appPrefixNameLogo
             }
             EaElements.Label {
                 font.family: parent.fontFamily
                 font.pixelSize: parent.fontPixelSize
                 font.weight: Font.DemiBold
-                text: ExGlobals.Constants.appSuffixName
+                text: ExGlobals.Constants.appSuffixNameLogo
             }
         }
 

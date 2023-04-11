@@ -138,7 +138,8 @@ EaComponents.SideBarColumn {
 
                         model: [
                             { value: "powder1DCW", text: qsTr("Constant wavelength") },
-                            { value: "powder1DTOF", text: qsTr("Time-of-Flight") }
+                            { value: "powder1DTOF", text: qsTr("Time-of-Flight") },
+                            { value: "powder1DPDF", text: qsTr("Pair Distribution Function")}
                         ]
 
                         onExperimentTypeChanged: {
@@ -146,7 +147,10 @@ EaComponents.SideBarColumn {
                                 currentIndex = 0
                             } else if (experimentType === "powder1DTOF") {
                                 currentIndex = 1
+                            } else if (experimentType === "powder1DPDF") {
+                                currentIndex = 2
                             }
+
                         }
 
                         onActivated: {
@@ -223,6 +227,8 @@ EaComponents.SideBarColumn {
                     return 'SideBarGroups/RangesPdCw1d.qml'
                 } else if (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DTOF') {
                     return 'SideBarGroups/RangesPdTof1d.qml'
+                } else if (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DPDF') {
+                    return 'SideBarGroups/RangesPdPdf1d.qml'
                 }
             }
         }
@@ -239,6 +245,8 @@ EaComponents.SideBarColumn {
                     return 'SideBarGroups/InstrumentSetupPdCw1d.qml'
                 } else if (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DTOF') {
                     return 'SideBarGroups/InstrumentSetupPdTof1d.qml'
+                } else if (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DPDF') {
+                    return 'SideBarGroups/InstrumentSetupPdPdf1d.qml'
                 }
             }
         }
@@ -281,6 +289,8 @@ EaComponents.SideBarColumn {
                     return 'SideBarGroups/PeakProfilePdCw1d.qml'
                 } else if (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DTOF') {
                     return 'SideBarGroups/PeakProfilePdTof1d.qml'
+                } else if (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DPDF') {
+                    return 'SideBarGroups/PeakProfilePdPdf1d.qml'
                 }
             }
         }

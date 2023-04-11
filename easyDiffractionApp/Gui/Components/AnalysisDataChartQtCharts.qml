@@ -22,6 +22,8 @@ EaCharts.BaseQtCharts {
             return "2θ (deg)"
         } else if (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DTOF') {
             return "TOF (μs)"
+        } else if (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DPDF') {
+            return "q (Å⁻¹)"
         }
     }
     yMainAxisTitle: {

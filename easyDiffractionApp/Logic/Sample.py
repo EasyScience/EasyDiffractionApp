@@ -5,8 +5,8 @@
 from PySide2.QtCore import Signal, QObject
 
 from easyCore.Datasets.xarray import xr
-from easyDiffractionLib.Profiles.P1D import Instrument1DCWParameters, Instrument1DTOFParameters, Instrument1DCWPolParameters
-from easyDiffractionLib.Jobs import Powder1DCW, Powder1DTOF, PolPowder1DCW
+from easyDiffractionLib.Profiles.P1D import Instrument1DCWParameters, Instrument1DTOFParameters, Instrument1DCWPolParameters, PDFParameters
+from easyDiffractionLib.Jobs import Powder1DCW, Powder1DTOF, PolPowder1DCW, Powder1DPDF
 
 
 class SampleLogic(QObject):
@@ -82,6 +82,20 @@ class SampleLogic(QObject):
         job.parameters.resolution_beta1 = 0
         return job
 
+    def _defaultPDFJob(self, name=None):
+        if name is None:
+            name = 'default_pdf_job'
+        job = Powder1DPDF(name, phases=self._phases.phases, interface=self._interface)
+        job.pattern.zero_shift = 0.1
+        job.pattern.scale = 1.0
+        job.parameters.qmax = 30.0
+        job.parameters.qdamp = 0.01
+        job.parameters.qbroad = 0.0
+        job.parameters.delta1 = 0.0
+        job.parameters.delta2 = 0.0
+        job.parameters.spdiameter = 0.0
+        return job
+
     @property
     def experimentType(self):
         exp_type = None
@@ -91,6 +105,8 @@ class SampleLogic(QObject):
             exp_type = 'powder1DCW'
         elif issubclass(type(self._sample.parameters), Instrument1DTOFParameters):
             exp_type = 'powder1DTOF'
+        elif issubclass(type(self._sample.parameters), PDFParameters):
+            exp_type = 'powder1DPDF'
         else:
             raise AttributeError('Unknown EXP type')
         return exp_type
@@ -107,6 +123,9 @@ class SampleLogic(QObject):
             self._sample = self._defaultTOFJob()
             if new_exp_type == 'powder1DTOF':
                 new_exp_type = 'powder1DTOFunp'
+        elif new_exp_type == 'powder1DPDF':
+            self._sample = self._defaultPDFJob()
+            new_exp_type = 'powder1DPDFunp'
         else:
             raise AttributeError('Unknown Experiment type')
 

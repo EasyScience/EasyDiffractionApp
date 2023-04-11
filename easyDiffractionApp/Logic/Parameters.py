@@ -253,6 +253,7 @@ class ParametersLogic(QObject):
             par_path = par_path.replace('Instrument1DTOFParameters.', f'Instrument.{exp_name}.')
             par_path = par_path.replace('PolPowder1DParameters.', f'Instrument.{exp_name}.')
             par_path = par_path.replace('Powder1DParameters.', f'Instrument.{exp_name}.')
+            par_path = par_path.replace('PDFParameters.', f'Instrument.{exp_name}.')
             par_path = par_path.replace('.sigma0', '.resolution_sigma0')
             par_path = par_path.replace('.sigma1', '.resolution_sigma1')
             par_path = par_path.replace('.sigma2', '.resolution_sigma2')
@@ -263,7 +264,12 @@ class ParametersLogic(QObject):
             par_path = par_path.replace('.alpha1', '.resolution_alpha1')
             par_path = par_path.replace('.beta0', '.resolution_beta0')
             par_path = par_path.replace('.beta1', '.resolution_beta1')
-            par_path = par_path.replace('.from_cif', '.atoms')
+            par_path = par_path.replace('.qmax', '.q_cutoff')
+            par_path = par_path.replace('.qdamp', '.q_resolution')
+            par_path = par_path.replace('.delta1', '.r_peak_sharpening')
+            par_path = par_path.replace('.delta2', '.r2_peak_sharpening')
+            par_path = par_path.replace('.qbroad', '.quad_broadening')
+            par_path = par_path.replace('.spdiameter', '.spherical_diameter')
 
             if self._parameters_filter_criteria.lower() not in par_path.lower():  # noqa: E501
                 continue
@@ -414,6 +420,12 @@ def defaultSimulationParams(exp_type='powder1DCW', jsonify=True):
             'x_min':  5000,
             'x_max':  17000,
             'x_step': 10
+        }
+    elif 'powder1DPDF' in exp_type:
+        params = {
+            'x_min':  20,
+            'x_max':  140,
+            'x_step': 0.1
         }
     else:
         raise AttributeError('Unknown Experiment type')

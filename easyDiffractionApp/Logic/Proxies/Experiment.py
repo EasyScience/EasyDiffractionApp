@@ -103,6 +103,14 @@ class ExperimentProxy(QObject):
     def experimentDataAsXml(self):
         return self.logic._experiment_data_as_xml
 
+    @Property(str, notify=experimentDataAsXmlChanged)
+    def experimentAsCif(self):
+        return self.logic._experiment_data_as_cif
+
+    @experimentAsCif.setter
+    def experimentAsCif(self, experiment_as_cif):
+        _ = self.logic.experimentFromCifString(experiment_as_cif)
+
     def _setExperimentDataAsXml(self):
         start_time = timeit.default_timer()
         self.logic._setExperimentDataAsXml()

@@ -60,7 +60,7 @@ class ExperimentLogic(QObject):
         print("+ _loadExperimentCif")
         file_path = generalizePath(file_url)
         block = cif.read(file_path).sole_block()
-        data = self.experimentFromCifString(block)
+        data = self.experimentFromCifBlock(block)
 
         # job name from file name
         job_name = pathlib.Path(file_path).stem
@@ -71,14 +71,25 @@ class ExperimentLogic(QObject):
 
         return data
 
-    def experimentFromCifString(self, block):
+    def _loadExperimentCifString(self, cif_string):
+        print("+ _loadExperimentCifString")
+        block = cif.read_string(cif_string).sole_block()
+        data = self.experimentFromCifBlock(block)
+        # Update job's instrument data
+        self.job.from_cif_string(cif_string)
+        self.parent.l_sample._sample = self.job
+        return data
+
+    def experimentFromCifBlock(self, block):
         """
         Loads experimental parameters from cif string
         """
         data = self.parent.experiments()[0]
+        if type(block) is str:
+            block = cif.read_string(block).sole_block()
         # at this point self.job is not yet defined, so query block
-        if block.find_loop("_tof_meas_time") is not None or block.find_loop("_tof_meas_time_of_flight") is not None:
-            #header = "_pd_meas_time_of_flight"
+        if block.find_loop("_tof_meas_time").tag is not None or block.find_loop("_tof_meas_time_of_flight").tag is not None:
+            #header = "_pd_meas_time_of_flight" # ?? which format is correct?
             header = "_tof_meas_time"
             prefix = "_tof_"
         else:
@@ -90,12 +101,6 @@ class ExperimentLogic(QObject):
         data.e = np.fromiter(block.find_loop(prefix+"meas_intensity_up_sigma"), float)
         data.yb = np.fromiter(block.find_loop(prefix+"meas_intensity_down"), float)
         data.eb = np.fromiter(block.find_loop(prefix+"meas_intensity_down_sigma"), float)
-        # data.x = np.fromiter(block.find_loop("_pd_meas_2theta"), float)
-        # data.y = np.fromiter(block.find_loop("_pd_meas_intensity_up"), float)
-        # data.e = np.fromiter(block.find_loop("_pd_meas_intensity_up_sigma"), float)
-        # data.yb = np.fromiter(block.find_loop("_pd_meas_intensity_down"), float)
-        # data.eb = np.fromiter(block.find_loop("_pd_meas_intensity_down_sigma"), float)
-        #self.spin_polarized = True
         spin_polarized = True
         # Unpolarized case
         if not np.any(data.y):
@@ -104,7 +109,6 @@ class ExperimentLogic(QObject):
             data.e = np.fromiter(block.find_loop(prefix+"meas_intensity_sigma"), float)
             data.yb = np.zeros(len(data.y))
             data.eb = np.zeros(len(data.e))
-            #self.spin_polarized = False
             spin_polarized = False
         # setting spin polarization needs to be done first, before experiment is loaded
         self.setPolarized(spin_polarized)

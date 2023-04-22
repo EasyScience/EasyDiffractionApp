@@ -22,7 +22,7 @@ Item {
             font.family: EaStyle.Fonts.monoFontFamily
             textFormat: TextEdit.RichText
             text: ExLogic.Helpers.highlightCifSyntax(ExGlobals.Constants.proxy.experiment.experimentAsCif)
-            onEditingFinished: ExGlobals.Constants.proxy.phase.experimentAsCif = ExLogic.Helpers.removeCifSyntaxHighlighting(text)
+            onEditingFinished: ExGlobals.Constants.proxy.experiment.experimentAsCif = ExLogic.Helpers.removeCifSyntaxHighlighting(text)
         }
     }
 

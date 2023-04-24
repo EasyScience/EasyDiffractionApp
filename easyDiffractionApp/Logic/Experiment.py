@@ -28,6 +28,7 @@ class ExperimentLogic(QObject):
     # signals controlled by our proxy
     patternParametersAsObjChanged = Signal()
     structureParametersChanged = Signal()
+    experimentDataAsXmlChanged = Signal()
 
     def __init__(self, parent=None, interface=None):
         super().__init__(parent)
@@ -307,6 +308,10 @@ class ExperimentLogic(QObject):
         self.parent.setPatternParametersAsObj()
         # slot in Exp proxy -> notify Param proxy
         self.patternParametersAsObjChanged.emit()
+        # Now, update the CIF representation
+        self._setExperimentDataAsXml()
+        # and notify the proxy that CIF changed
+        self.experimentDataAsXmlChanged.emit()
 
     def onClearFrontendState(self):
         self.parent.clearFrontendState()
@@ -540,6 +545,7 @@ class ExperimentLogic(QObject):
         Returns a CIF representation of the TOF instrument parameters
         '''
         cif_tof_data = ""
+        cif_tof_data += "\n_tof_parameters_zero " + str(self.job.pattern.zero_shift.raw_value)
         cif_tof_data += "\n_tof_parameters_dtt1 " + str(self.job.parameters.dtt1.raw_value)
         cif_tof_data += "\n_tof_parameters_dtt2 " + str(self.job.parameters.dtt2.raw_value)
         cif_tof_data += "\n_tof_parameters_2theta_bank " + str(self.job.parameters.ttheta_bank.raw_value)

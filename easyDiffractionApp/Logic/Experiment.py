@@ -538,6 +538,11 @@ class ExperimentLogic(QObject):
         cif_pat_data = ""
         cif_pat_data += "\n_diffrn_radiation_polarization " + str(self.job.pattern.beam.polarization.raw_value)
         cif_pat_data += "\n_diffrn_radiation_efficiency " + str(self.job.pattern.efficiency.raw_value)
+        cif_pat_data += "\n_setup_field " + str(self.job.pattern.field.raw_value)
+        cif_pat_data += "\n_chi2_sum " + str(self._refine_sum)
+        cif_pat_data += "\n_chi2_diff " + str(self._refine_diff)
+        cif_pat_data += "\n_chi2_up " + str(self._refine_up)
+        cif_pat_data += "\n_chi2_down " + str(self._refine_down)
         return cif_pat_data
 
     def tof_param_as_cif(self):

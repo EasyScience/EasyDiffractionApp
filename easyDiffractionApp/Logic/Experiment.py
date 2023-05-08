@@ -63,10 +63,21 @@ class ExperimentLogic(QObject):
         block = cif.read(file_path).sole_block()
         data = self.experimentFromCifBlock(block)
 
-        # job name from file name
+        # load content of the cif file as string
+        # This will assume that generated CIF is the same as the one loaded
+        with open(file_path, 'r') as f:
+            cif_string = f.read()
+        self._experiment_data_as_cif = cif_string
+
+        # job name from file nameF_onExperimentDataAdded
         job_name = pathlib.Path(file_path).stem
-        _, self.job = get_job_from_file(file_path, job_name, phases=self.parent.phases(), interface=self._interface)
-        self.job.from_cif_file(file_path, experiment_name=job_name)
+        if not hasattr(self, 'job') or self.job is None:
+            _, self.job = get_job_from_file(file_path, job_name, phases=self.parent.phases(), interface=self._interface)
+        else:
+            self.job.from_cif_file(file_path, experiment_name=job_name)
+
+        self._interface.interface_obj.set_exp_cif(self._experiment_data_as_cif)
+        # self._interface._InterfaceFactoryTemplate__interface_obj.set_exp_cif(self._experiment_data_as_cif)
         # Update job on sample
         self.parent.l_sample._sample = self.job
 
@@ -75,6 +86,7 @@ class ExperimentLogic(QObject):
     def _loadExperimentCifString(self, cif_string):
         print("+ _loadExperimentCifString")
         block = cif.read_string(cif_string).sole_block()
+        # this now contains no data, since we don't want to flood the text viewer
         data = self.experimentFromCifBlock(block)
         # Update job's instrument data
         self.job.from_cif_string(cif_string)
@@ -296,13 +308,20 @@ class ExperimentLogic(QObject):
         # notify parameter proxy
         params_json = json.dumps(self._experiment_parameters)
         self.parent.shouldProfileBeCalculated = True # now we can run update
-        self.parent.setSimulationParameters(params_json)
 
+        self._experiment_data_as_cif = self.as_cif() # need to redo this here
+        self._interface.interface_obj.set_exp_cif(self._experiment_data_as_cif)
+
+        self.parent.setSimulationParameters(params_json)
         if len(self.parent.sampleBackgrounds()) == 0:
             self.parent.initializeContainer()
 
         self.parent.setExperimentNameFromParameters()
         self.parent.notifyProjectChanged()
+
+        # another go after setting the background
+        # self._interface._InterfaceFactoryTemplate__interface_obj.set_exp_cif(self._experiment_data_as_cif)
+        # self._interface.interface_obj.set_exp_cif(self._experiment_data_as_cif)
 
     def _onPatternParametersChanged(self):
         self.parent.setPatternParametersAsObj()
@@ -464,7 +483,11 @@ class ExperimentLogic(QObject):
         if self._experiment_data is None:
             return ""
 
-        cif_exp_data = "loop_"
+        cif_exp_data = "_range_2theta_min " + str(self._experiment_data.x[0]) + "\n"
+        cif_exp_data += "_range_2theta_max " + str(self._experiment_data.x[-1]) + "\n"
+        cif_exp_data += "_setup_radiation neutrons\n"
+
+        cif_exp_data += "\nloop_"
 
         if self.is_tof():
             cif_exp_data += "\n_tof_meas_time"

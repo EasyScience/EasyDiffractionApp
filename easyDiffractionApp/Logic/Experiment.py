@@ -76,7 +76,7 @@ class ExperimentLogic(QObject):
         else:
             self.job.from_cif_file(file_path, experiment_name=job_name)
 
-        self._interface.interface_obj.set_exp_cif(self._experiment_data_as_cif)
+        # self._interface.interface_obj.set_exp_cif(self._experiment_data_as_cif)
         # self._interface._InterfaceFactoryTemplate__interface_obj.set_exp_cif(self._experiment_data_as_cif)
         # Update job on sample
         self.parent.l_sample._sample = self.job
@@ -310,7 +310,8 @@ class ExperimentLogic(QObject):
         self.parent.shouldProfileBeCalculated = True # now we can run update
 
         self._experiment_data_as_cif = self.as_cif() # need to redo this here
-        self._interface.interface_obj.set_exp_cif(self._experiment_data_as_cif)
+
+        ## self._interface.interface_obj.set_exp_cif(self._experiment_data_as_cif)
 
         self.parent.setSimulationParameters(params_json)
         if len(self.parent.sampleBackgrounds()) == 0:

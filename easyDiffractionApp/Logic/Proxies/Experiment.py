@@ -147,7 +147,7 @@ class ExperimentProxy(QObject):
     def _addExperimentDataFromCif(self, file_url):
         self.logic.addExperimentDataFromCif(file_url)
         self.logic.initializeBackground()
-        ## self.logic.addBackgroundDataFromCif(file_url)
+        self.logic.updateBackgroundData() # bg is now read in the lib
         self.logic._onExperimentDataAdded()
         self.experimentLoadedChanged.emit()
 

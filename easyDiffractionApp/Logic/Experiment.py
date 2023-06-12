@@ -71,13 +71,9 @@ class ExperimentLogic(QObject):
 
         # job name from file nameF_onExperimentDataAdded
         job_name = pathlib.Path(file_path).stem
-        if not hasattr(self, 'job') or self.job is None:
-            _, self.job = get_job_from_file(file_path, job_name, phases=self.parent.phases(), interface=self._interface)
-        else:
-            self.job.from_cif_file(file_path, experiment_name=job_name)
 
-        # self._interface.interface_obj.set_exp_cif(self._experiment_data_as_cif)
-        # self._interface._InterfaceFactoryTemplate__interface_obj.set_exp_cif(self._experiment_data_as_cif)
+        _, self.job = get_job_from_file(file_path, job_name, phases=self.parent.phases(), interface=self._interface)
+
         # Update job on sample
         self.parent.l_sample._sample = self.job
 
@@ -265,6 +261,9 @@ class ExperimentLogic(QObject):
         background_intensities = np.fromiter(block.find_loop(y_label), float)
         self.parent.setBackgroundPoints(background_2thetas, background_intensities)
 
+    def updateBackgroundData(self):
+        self.parent.updateBackgroundData()
+
     def removeExperiment(self):
         self.parent.removeBackgroundPoints()
         self.parent.l_sample.reset()
@@ -311,18 +310,12 @@ class ExperimentLogic(QObject):
 
         self._experiment_data_as_cif = self.as_cif() # need to redo this here
 
-        ## self._interface.interface_obj.set_exp_cif(self._experiment_data_as_cif)
-
         self.parent.setSimulationParameters(params_json)
         if len(self.parent.sampleBackgrounds()) == 0:
             self.parent.initializeContainer()
 
         self.parent.setExperimentNameFromParameters()
         self.parent.notifyProjectChanged()
-
-        # another go after setting the background
-        # self._interface._InterfaceFactoryTemplate__interface_obj.set_exp_cif(self._experiment_data_as_cif)
-        # self._interface.interface_obj.set_exp_cif(self._experiment_data_as_cif)
 
     def _onPatternParametersChanged(self):
         self.parent.setPatternParametersAsObj()

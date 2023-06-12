@@ -292,6 +292,10 @@ class LogicController(QObject):
 
     def setBackgroundPoints(self, bg_2thetas, bg_intensities):
         self.l_background.addPoints(bg_2thetas, bg_intensities)
+        self.updateBackgroundData()
+
+    def updateBackgroundData(self):
+        self.l_background.onAsObjChanged()
         self.l_background._setAsXml()
         self.l_plotting1d.bokehBackgroundDataObjChanged.emit()
 

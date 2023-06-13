@@ -107,11 +107,11 @@ class ExperimentProxy(QObject):
     @Property(str, notify=experimentDataAsXmlChanged)
     # @Property(str, notify=experimentLoadedChanged)
     def experimentAsCif(self):
-        return self.logic._experiment_data_as_cif
+        return self.logic._experiment_no_data_as_cif
 
     @experimentAsCif.setter
     def experimentAsCif(self, experiment_as_cif):
-        _ = self.logic._loadExperimentCifString(experiment_as_cif)
+        self.logic.loadCifNoData(experiment_as_cif)
         self.experimentLoadedChanged.emit()
         self.experimentDataAsXmlChanged.emit()
 

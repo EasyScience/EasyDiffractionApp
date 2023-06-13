@@ -36,7 +36,7 @@ class ExperimentLogic(QObject):
         self._interface = interface
         self._experiment_parameters = None
         self._experiment_data_as_xml = ""
-        self._experiment_data_as_cif = ""
+        self._experiment_no_data_as_cif = ""
         self.experiment_data = None
         self._experiment_data = None
         self._experiment_loaded = False
@@ -63,12 +63,6 @@ class ExperimentLogic(QObject):
         block = cif.read(file_path).sole_block()
         data = self.experimentFromCifBlock(block)
 
-        # load content of the cif file as string
-        # This will assume that generated CIF is the same as the one loaded
-        with open(file_path, 'r') as f:
-            cif_string = f.read()
-        self._experiment_data_as_cif = cif_string
-
         # job name from file nameF_onExperimentDataAdded
         job_name = pathlib.Path(file_path).stem
 
@@ -79,10 +73,17 @@ class ExperimentLogic(QObject):
 
         return data
 
+    def loadCifNoData(self, cif_string):
+        print("+ loadCifNoData")
+        # update no data cifstring with data, if available
+        data_cif = self.exp_data_as_cif()
+        cif_string += "\n" + data_cif
+        self.job.from_cif_string(cif_string)
+        self.parent.l_sample._sample = self.job
+
     def _loadExperimentCifString(self, cif_string):
         print("+ _loadExperimentCifString")
         block = cif.read_string(cif_string).sole_block()
-        # this now contains no data, since we don't want to flood the text viewer
         data = self.experimentFromCifBlock(block)
         # Update job's instrument data
         self.job.from_cif_string(cif_string)
@@ -228,7 +229,7 @@ class ExperimentLogic(QObject):
 
     def _setExperimentDataAsXml(self):
         self._experiment_data_as_xml = XMLSerializer().encode({"item":self.experiments}, skip=['interface'])
-        self._experiment_data_as_cif = self.as_cif()
+        self._experiment_no_data_as_cif = self.as_cif(no_data=True)
 
     def addExperimentDataFromCif(self, file_url):
         self.parent.shouldProfileBeCalculated = False # don't run update until we're done with setting parameters
@@ -307,8 +308,7 @@ class ExperimentLogic(QObject):
         # notify parameter proxy
         params_json = json.dumps(self._experiment_parameters)
         self.parent.shouldProfileBeCalculated = True # now we can run update
-
-        self._experiment_data_as_cif = self.as_cif() # need to redo this here
+        self._experiment_no_data_as_cif = self.as_cif(no_data=True)
 
         self.parent.setSimulationParameters(params_json)
         if len(self.parent.sampleBackgrounds()) == 0:
@@ -434,7 +434,7 @@ class ExperimentLogic(QObject):
     def is_pol(self):
         return "pol" in str(self.job).replace(" `"+self.job.name+"`", "").lower()
 
-    def as_cif(self):
+    def as_cif(self, no_data=False):
         '''
         Returns a CIF representation of the experiment.
         (pattern, background, instrument, data points etc.)
@@ -453,7 +453,8 @@ class ExperimentLogic(QObject):
 
         cif += self.phases_as_cif() + "\n\n"
         cif += self.background_as_cif() + "\n\n"
-        cif += self.exp_data_as_cif() + "\n\n"
+        if not no_data:
+            cif += self.exp_data_as_cif() + "\n\n"
         return cif
 
     def phases_as_cif(self):

@@ -257,18 +257,17 @@ EaComponents.SideBarColumn {
         }
     }
 
-    // TEMPORARILTY DISABLED
-    // EaElements.GroupBox {
-    //     title: qsTr("Peak asymmetry")
-    //     enabled: ExGlobals.Constants.proxy.experiment.experimentLoaded ||
-    //              ExGlobals.Constants.proxy.experiment.experimentSkipped
+    EaElements.GroupBox {
+        title: qsTr("Peak asymmetry")
+        enabled: ExGlobals.Constants.proxy.experiment.experimentLoaded ||
+                 ExGlobals.Constants.proxy.experiment.experimentSkipped
 
-    //     Loader {
-    //         source: {
-    //                 return 'SideBarGroups/PeakAsymmetry.qml'
-    //         }
-    //     }
-    // }
+        Loader {
+            source: {
+                    return 'SideBarGroups/PeakAsymmetry.qml'
+            }
+        }
+    }
 
     EaElements.GroupBox {
         title: qsTr("Peak profile")

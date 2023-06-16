@@ -107,8 +107,8 @@ class ProjectLogic(QObject):
             {"name": "Ho2Ti2O7", "description": "neutrons, powder, constant wavelength, polarised, VIP@LLB",
              "path": "../Resources/Examples/Ho2Ti2O7/project.json"},
             # disbaled until the new Cryspy is available.
-            # {"name": "La0.5Ba0.5CoO3", "description": "neutrons, powder, constant wavelength, HRPT@PSI",
-            #  "path": "../Resources/Examples/La0.5Ba0.5CoO3/project.json"}
+            {"name": "La0.5Ba0.5CoO3", "description": "neutrons, powder, constant wavelength, HRPT@PSI",
+             "path": "../Resources/Examples/La0.5Ba0.5CoO3/project.json"}
         ]}
         # XMLSerializer doesn't currently handle lists.
         xml = XMLSerializer().encode(model, data_only=True)

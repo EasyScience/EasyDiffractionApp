@@ -20,6 +20,7 @@ EaComponents.TableView {
     property int typeColumnWidth: EaStyle.Sizes.fontPixelSize * 4.0
     property int numFixedColumn: 3
     property int numFlexColumn: 7
+    property bool adpIso: true
     property int flexColumnWidth: (width -
                                     numColumnWidth -
                                     labelColumnWidth -
@@ -37,21 +38,21 @@ EaComponents.TableView {
 
         XmlRole { name: "label"; query: "label/value/string()" }
         XmlRole { name: "adpType"; query: "adp/adp_type/value/string()" }
-        XmlRole { name: "adpIso"; query: `adp/adp_class/Uiso/value/number()` }
-        XmlRole { name: "adpAni11"; query: "adp_ani_11/number()" }
-        XmlRole { name: "adpAni22"; query: "adp_ani_22/number()" }
-        XmlRole { name: "adpAni33"; query: "adp_ani_33/number()" }
-        XmlRole { name: "adpAni12"; query: "adp_ani_12/number()" }
-        XmlRole { name: "adpAni13"; query: "adp_ani_13/number()" }
-        XmlRole { name: "adpAni23"; query: "adp_ani_23/number()" }
+        XmlRole { name: "adpIso"; query: "adp/adp_class/Uiso/value/number()" }
+        XmlRole { name: "adpAni11"; query: "adp/adp_class/U_11/value/number()" }
+        XmlRole { name: "adpAni22"; query: "adp/adp_class/U_22/value/number()" }
+        XmlRole { name: "adpAni33"; query: "adp/adp_class/U_33/value/number()" }
+        XmlRole { name: "adpAni12"; query: "adp/adp_class/U_12/value/number()" }
+        XmlRole { name: "adpAni13"; query: "adp/adp_class/U_13/value/number()" }
+        XmlRole { name: "adpAni23"; query: "adp/adp_class/U_23/value/number()" }
 
         XmlRole { name: "adpIsoId"; query: "adp/adp_class/Uiso/__id/string()" }
-        XmlRole { name: "adpAni11Id"; query: "adp_ani_11/__id/string()" }
-        XmlRole { name: "adpAni22Id"; query: "adp_ani_22/__id/string()" }
-        XmlRole { name: "adpAni33Id"; query: "adp_ani_33/__id/string()" }
-        XmlRole { name: "adpAni12Id"; query: "adp_ani_12/__id/string()" }
-        XmlRole { name: "adpAni13Id"; query: "adp_ani_13/__id/string()" }
-        XmlRole { name: "adpAni23Id"; query: "adp_ani_23/__id/string()" }
+        XmlRole { name: "adpAniId11"; query: "adp/adp_class/U_11/__id/string()" }
+        XmlRole { name: "adpAniId22"; query: "adp/adp_class/U_22/__id/string()" }
+        XmlRole { name: "adpAniId33"; query: "adp/adp_class/U_33/__id/string()" }
+        XmlRole { name: "adpAniId12"; query: "adp/adp_class/U_12/__id/string()" }
+        XmlRole { name: "adpAniId13"; query: "adp/adp_class/U_13/__id/string()" }
+        XmlRole { name: "adpAniId23"; query: "adp/adp_class/_23/__id/string()" }
     }
 
     // Table rows
@@ -73,15 +74,23 @@ EaComponents.TableView {
         }
 
         EaComponents.TableViewComboBox {
-            enabled: false
+            id: adpTypeComboBox
+            enabled: true
             width: typeColumnWidth
             headerText: "Type"
-            model: ["Uiso", "Uani", "Biso", "Bani"]
-            //currentIndex: model.indexOf(modelAdpType)
-            Component.onCompleted: currentIndex = model.indexOf(modelAdpType)
+            // model: ["Uiso", "Uani", "Biso", "Bani"]
+            model: ["Uiso", "Uani"]
+            currentIndex: model.indexOf(modelAdpType)
+            Component.onCompleted: {
+                currentIndex = model.indexOf(modelAdpType)
+                if (currentIndex === -1) {
+                    currentIndex = 0
+                }
+            }
         }
 
         EaComponents.TableViewTextInput {
+            enabled: adpTypeComboBox.currentText === "Uiso" || adpTypeComboBox.currentText === "Biso"
             width: flexColumnWidth
             headerText: "Iso"
             text: EaLogic.Utils.toFixed(model.adpIso)
@@ -89,6 +98,7 @@ EaComponents.TableView {
         }
 
         EaComponents.TableViewTextInput {
+            enabled: adpTypeComboBox.currentText === "Uani" || adpTypeComboBox.currentText === "Bani"
             width: flexColumnWidth
             headerText: "Ani11"
             text: EaLogic.Utils.toFixed(model.adpAni11)
@@ -96,6 +106,7 @@ EaComponents.TableView {
         }
 
         EaComponents.TableViewTextInput {
+            enabled: adpTypeComboBox.currentText === "Uani" || adpTypeComboBox.currentText === "Bani"
             width: flexColumnWidth
             headerText: "Ani22"
             text: EaLogic.Utils.toFixed(model.adpAni22)
@@ -103,6 +114,7 @@ EaComponents.TableView {
         }
 
         EaComponents.TableViewTextInput {
+            enabled: adpTypeComboBox.currentText === "Uani" || adpTypeComboBox.currentText === "Bani"
             width: flexColumnWidth
             headerText: "Ani33"
             text: EaLogic.Utils.toFixed(model.adpAni33)
@@ -110,6 +122,7 @@ EaComponents.TableView {
         }
 
         EaComponents.TableViewTextInput {
+            enabled: adpTypeComboBox.currentText === "Uani" || adpTypeComboBox.currentText === "Bani"
             width: flexColumnWidth
             headerText: "Ani12"
             text: EaLogic.Utils.toFixed(model.adpAni12)
@@ -117,6 +130,7 @@ EaComponents.TableView {
         }
 
         EaComponents.TableViewTextInput {
+            enabled: adpTypeComboBox.currentText === "Uani" || adpTypeComboBox.currentText === "Bani"
             width: flexColumnWidth
             headerText: "Ani13"
             text: EaLogic.Utils.toFixed(model.adpAni13)
@@ -124,6 +138,7 @@ EaComponents.TableView {
         }
 
         EaComponents.TableViewTextInput {
+            enabled: adpTypeComboBox.currentText === "Uani" || adpTypeComboBox.currentText === "Bani"
             width: flexColumnWidth
             headerText: "Ani23"
             text: EaLogic.Utils.toFixed(model.adpAni23)

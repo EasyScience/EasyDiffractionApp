@@ -334,6 +334,26 @@ class ParametersLogic(QObject):
                 self._updateCalculatedData() # called in  updateBackground() triggered by parametersValuesChanged
             self.parametersChanged.emit()
 
+    def updateUiso(self, obj_id: str, atom_id: int,  new_value: Union[bool, float, str]):
+        # Isotropic ADP changed. Modify the parameter and cast corresponding values
+        # onto anisotropic components for this atom
+        if not isinstance(new_value, float):
+            return
+        adp_obj = self._parameterObj(obj_id)
+
+        if adp_obj is not None:
+            # first, modify the isotropic ADP
+            adp_obj.value.raw_value = new_value
+            # then, modify the anisotropic ADP
+            print("Changing ADP on atom ", str(atom_id) ," to: ", new_value)
+            # atom = 
+            #adp_obj.U_11.raw_value = adp_obj.U_22.raw_value = adp_obj.U_33.raw_value = new_value
+        self.parametersChanged.emit()
+        self.undoRedoChanged.emit()
+
+    def updateAdpType(self, atom_id: str, type_str: str):
+        print("Changing ADP type on atom ", atom_id ," to: ", type_str)
+
     def _parameterObj(self, obj_id: str):
         if not obj_id:
             return

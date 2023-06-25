@@ -52,13 +52,14 @@ EaComponents.TableView {
         XmlRole { name: "adpAniId33"; query: "adp/adp_class/U_33/__id/string()" }
         XmlRole { name: "adpAniId12"; query: "adp/adp_class/U_12/__id/string()" }
         XmlRole { name: "adpAniId13"; query: "adp/adp_class/U_13/__id/string()" }
-        XmlRole { name: "adpAniId23"; query: "adp/adp_class/_23/__id/string()" }
+        XmlRole { name: "adpAniId23"; query: "adp/adp_class/U_23/__id/string()" }
     }
 
     // Table rows
 
     delegate: EaComponents.TableViewDelegate {
         property string modelAdpType: model.adpType
+        property int modelIndex: model.index
 
         EaComponents.TableViewLabel {
             width: numColumnWidth
@@ -86,6 +87,8 @@ EaComponents.TableView {
                 if (currentIndex === -1) {
                     currentIndex = 0
                 }
+                // notify the model that the adp type for this atom changed
+                updateAdpType(modelIndex , adpTypeComboBox.currentText)
             }
         }
 
@@ -94,11 +97,16 @@ EaComponents.TableView {
             width: flexColumnWidth
             headerText: "Iso"
             text: EaLogic.Utils.toFixed(model.adpIso)
-            onEditingFinished: editParameterValue(model.adpIsoId, text)
+            onEditingFinished: {
+                // modified the value, overwrite anisotropic values to match
+                updateUiso(model.adpIsoId, modelIndex, text);
+                // editParameterValue(model.adpIsoId, text)
+            }
         }
 
         EaComponents.TableViewTextInput {
             enabled: adpTypeComboBox.currentText === "Uani" || adpTypeComboBox.currentText === "Bani"
+            visible: adpTypeComboBox.currentText === "Uani" || adpTypeComboBox.currentText === "Bani"
             width: flexColumnWidth
             headerText: "Ani11"
             text: EaLogic.Utils.toFixed(model.adpAni11)
@@ -107,6 +115,7 @@ EaComponents.TableView {
 
         EaComponents.TableViewTextInput {
             enabled: adpTypeComboBox.currentText === "Uani" || adpTypeComboBox.currentText === "Bani"
+            visible: adpTypeComboBox.currentText === "Uani" || adpTypeComboBox.currentText === "Bani"
             width: flexColumnWidth
             headerText: "Ani22"
             text: EaLogic.Utils.toFixed(model.adpAni22)
@@ -115,6 +124,7 @@ EaComponents.TableView {
 
         EaComponents.TableViewTextInput {
             enabled: adpTypeComboBox.currentText === "Uani" || adpTypeComboBox.currentText === "Bani"
+            visible: adpTypeComboBox.currentText === "Uani" || adpTypeComboBox.currentText === "Bani"
             width: flexColumnWidth
             headerText: "Ani33"
             text: EaLogic.Utils.toFixed(model.adpAni33)
@@ -123,6 +133,7 @@ EaComponents.TableView {
 
         EaComponents.TableViewTextInput {
             enabled: adpTypeComboBox.currentText === "Uani" || adpTypeComboBox.currentText === "Bani"
+            visible: adpTypeComboBox.currentText === "Uani" || adpTypeComboBox.currentText === "Bani"
             width: flexColumnWidth
             headerText: "Ani12"
             text: EaLogic.Utils.toFixed(model.adpAni12)
@@ -131,6 +142,7 @@ EaComponents.TableView {
 
         EaComponents.TableViewTextInput {
             enabled: adpTypeComboBox.currentText === "Uani" || adpTypeComboBox.currentText === "Bani"
+            visible: adpTypeComboBox.currentText === "Uani" || adpTypeComboBox.currentText === "Bani"
             width: flexColumnWidth
             headerText: "Ani13"
             text: EaLogic.Utils.toFixed(model.adpAni13)
@@ -139,6 +151,7 @@ EaComponents.TableView {
 
         EaComponents.TableViewTextInput {
             enabled: adpTypeComboBox.currentText === "Uani" || adpTypeComboBox.currentText === "Bani"
+            visible: adpTypeComboBox.currentText === "Uani" || adpTypeComboBox.currentText === "Bani"
             width: flexColumnWidth
             headerText: "Ani23"
             text: EaLogic.Utils.toFixed(model.adpAni23)
@@ -148,7 +161,12 @@ EaComponents.TableView {
     }
 
     // Logic
-
+    function updateAdpType(index, text) {
+        ExGlobals.Constants.proxy.parameters.updateAdpType(index, text)
+    }
+    function updateUiso(id, atom_id, value){
+        ExGlobals.Constants.proxy.parameters.updateUiso(id, parseInt(atom_id), parseFloat(value))
+    }
     function editParameterValue(id, value) {
         ExGlobals.Constants.proxy.parameters.editParameter(id, parseFloat(value))
     }

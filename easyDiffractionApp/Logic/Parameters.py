@@ -334,26 +334,72 @@ class ParametersLogic(QObject):
                 self._updateCalculatedData() # called in  updateBackground() triggered by parametersValuesChanged
             self.parametersChanged.emit()
 
-    def updateUiso(self, obj_id: str, atom_id: int,  new_value: Union[bool, float, str]):
-        # Isotropic ADP changed. Modify the parameter and cast corresponding values
-        # onto anisotropic components for this atom
-        if not isinstance(new_value, float):
+    # the following two functions can probably be either merged or greatly refactored to editParameter()
+    def updateAniFromIso(self, obj_id: str, atom_id: int,  new_value: float):
+        # Isotropic ADP changed. Cast corresponding values onto anisotropic components for this atom
+        if not obj_id:
+            return  
+        adp_obj = self._parameterObj(obj_id)
+        if adp_obj is None:
+            return
+
+        # first, modify the isotropic ADP
+        adp_obj.value = new_value
+
+        atom = self.parent.l_phase.getAtom(atom_id)
+
+        # assume simple ellipsoid
+        atom.adp.U_11.value = new_value
+        atom.adp.U_22.value = new_value
+        atom.adp.U_33.value = new_value
+        atom.adp.U_12.value = 0.0
+        atom.adp.U_13.value = 0.0
+        atom.adp.U_23.value = 0.0
+
+        self.parametersValuesChanged.emit()
+        if self.parent.experimentSkipped():
+            self._updateCalculatedData()
+        self.parametersChanged.emit()
+
+    def updateIsoFromAni(self, obj_id: str, atom_id: int,  new_value: float):
+        # Anisotropic ADP changed. Cast corresponding value onto the isotropic component for this atom
+        if not obj_id:
+            return  
+        adp_obj = self._parameterObj(obj_id)
+        if adp_obj is None:
+            return
+
+        print("Changing aniso ADP value on parameter ", obj_id, " to: ", new_value)
+        # first, modify the anisotropic ADP
+        adp_obj.value = new_value
+
+        atom = self.parent.l_phase.getAtom(atom_id)
+
+        # assume simple ellipsoid. This should be redone depending on space group
+        atom.adp.Uiso.value = (atom.adp.U_11.value + atom.adp.U_22.value + atom.adp.U_33.value)/3.0
+
+        print("Changing iso ADP value on atom ", atom_id, " to: ", atom.adp.Uiso.value)
+
+        self.parametersValuesChanged.emit()
+        if self.parent.experimentSkipped():
+            self._updateCalculatedData()
+        self.parametersChanged.emit()
+
+    def updateAdpType(self, obj_id: str, atom_id: int, type_str: str):
+        print("Changing ADP type on atom ", atom_id ," to: ", type_str)
+        print("Changing ADP type on parameter ", obj_id)
+        if not type_str:
             return
         adp_obj = self._parameterObj(obj_id)
+        if adp_obj is None:
+            return
+        atom = self.parent.l_phase.getAtom(atom_id)
+        atom.adp.isAni = 'ani' in type_str.lower()
 
-        if adp_obj is not None:
-            # first, modify the isotropic ADP
-            adp_obj.value.raw_value = new_value
-            # then, modify the anisotropic ADP
-            print("Changing ADP on atom ", str(atom_id) ," to: ", new_value)
-            # atom = 
-            #adp_obj.U_11.raw_value = adp_obj.U_22.raw_value = adp_obj.U_33.raw_value = new_value
-        self.parametersChanged.emit()
-        self.undoRedoChanged.emit()
-
-    def updateAdpType(self, atom_id: str, type_str: str):
-        print("Changing ADP type on atom ", atom_id ," to: ", type_str)
-
+        if not atom.adp.isAni:
+            # Do we need this at all? Uiso is set up at instantiation
+            atom.adp.Uiso.value = (atom.adp.U_11.value + atom.adp.U_22.value + atom.adp.U_33.value)/3.0
+ 
     def _parameterObj(self, obj_id: str):
         if not obj_id:
             return

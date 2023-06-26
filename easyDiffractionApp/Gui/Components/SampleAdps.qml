@@ -60,6 +60,7 @@ EaComponents.TableView {
     delegate: EaComponents.TableViewDelegate {
         property string modelAdpType: model.adpType
         property int modelIndex: model.index
+        property string adpIsoId: model.adpIsoId
 
         EaComponents.TableViewLabel {
             width: numColumnWidth
@@ -87,8 +88,9 @@ EaComponents.TableView {
                 if (currentIndex === -1) {
                     currentIndex = 0
                 }
-                // notify the model that the adp type for this atom changed
-                updateAdpType(modelIndex , adpTypeComboBox.currentText)
+            }
+            onCurrentIndexChanged: {
+                updateAdpType(adpIsoId, modelIndex, textAt(currentIndex))
             }
         }
 
@@ -98,9 +100,9 @@ EaComponents.TableView {
             headerText: "Iso"
             text: EaLogic.Utils.toFixed(model.adpIso)
             onEditingFinished: {
-                // modified the value, overwrite anisotropic values to match
-                updateUiso(model.adpIsoId, modelIndex, text);
+                // updateUiso(model.adpIsoId, modelIndex, text);
                 // editParameterValue(model.adpIsoId, text)
+                updateAniFromIso(model.adpIsoId, modelIndex, text)
             }
         }
 
@@ -110,7 +112,7 @@ EaComponents.TableView {
             width: flexColumnWidth
             headerText: "Ani11"
             text: EaLogic.Utils.toFixed(model.adpAni11)
-            onEditingFinished: editParameterValue(model.adpAniId11, text)
+            onEditingFinished: updateIsoFromAni(model.adpAniId11, modelIndex, text)
         }
 
         EaComponents.TableViewTextInput {
@@ -119,7 +121,7 @@ EaComponents.TableView {
             width: flexColumnWidth
             headerText: "Ani22"
             text: EaLogic.Utils.toFixed(model.adpAni22)
-            onEditingFinished: editParameterValue(model.adpAniId22, text)
+            onEditingFinished: updateIsoFromAni(model.adpAniId22, modelIndex, text)
         }
 
         EaComponents.TableViewTextInput {
@@ -128,7 +130,7 @@ EaComponents.TableView {
             width: flexColumnWidth
             headerText: "Ani33"
             text: EaLogic.Utils.toFixed(model.adpAni33)
-            onEditingFinished: editParameterValue(model.adpAniId33, text)
+            onEditingFinished: updateIsoFromAni(model.adpAniId33, modelIndex, text)
         }
 
         EaComponents.TableViewTextInput {
@@ -137,7 +139,7 @@ EaComponents.TableView {
             width: flexColumnWidth
             headerText: "Ani12"
             text: EaLogic.Utils.toFixed(model.adpAni12)
-            onEditingFinished: editParameterValue(model.adpAniId12, text)
+            onEditingFinished: updateIsoFromAni(model.adpAniId12, modelIndex, text)
         }
 
         EaComponents.TableViewTextInput {
@@ -146,7 +148,7 @@ EaComponents.TableView {
             width: flexColumnWidth
             headerText: "Ani13"
             text: EaLogic.Utils.toFixed(model.adpAni13)
-            onEditingFinished: editParameterValue(model.adpAniId13, text)
+            onEditingFinished: updateIsoFromAni(model.adpAniId13, modelIndex, text)
         }
 
         EaComponents.TableViewTextInput {
@@ -155,17 +157,20 @@ EaComponents.TableView {
             width: flexColumnWidth
             headerText: "Ani23"
             text: EaLogic.Utils.toFixed(model.adpAni23)
-            onEditingFinished: editParameterValue(model.adpAniId23, text)
+            onEditingFinished: updateIsoFromAni(model.adpAniId23, modelIndex, text)
         }
 
     }
 
     // Logic
-    function updateAdpType(index, text) {
-        ExGlobals.Constants.proxy.parameters.updateAdpType(index, text)
+    function updateAdpType(id, atom_id, value) {
+        ExGlobals.Constants.proxy.parameters.updateAdpType(id, parseInt(atom_id), value)
     }
-    function updateUiso(id, atom_id, value){
-        ExGlobals.Constants.proxy.parameters.updateUiso(id, parseInt(atom_id), parseFloat(value))
+    function updateAniFromIso(id, atom_id, value){
+        ExGlobals.Constants.proxy.parameters.updateAniFromIso(id, parseInt(atom_id), parseFloat(value))
+    }
+    function updateIsoFromAni(id, atom_id, value){
+        ExGlobals.Constants.proxy.parameters.updateIsoFromAni(id, parseInt(atom_id), parseFloat(value))
     }
     function editParameterValue(id, value) {
         ExGlobals.Constants.proxy.parameters.editParameter(id, parseFloat(value))

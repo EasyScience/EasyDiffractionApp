@@ -50,6 +50,7 @@ class ExperimentLogic(QObject):
         self._refine_up = False
         self._refine_down = False
         self.fn_aggregate = self.pol_sum
+        self._excluded_regions = {1: [40.0, 60.0]}
 
     def _defaultExperiment(self):
         return {
@@ -434,6 +435,9 @@ class ExperimentLogic(QObject):
     def is_pol(self):
         return "pol" in str(self.job).replace(" `"+self.job.name+"`", "").lower()
 
+    ##############################
+    # CIF representation
+    ##############################
     def as_cif(self, no_data=False):
         '''
         Returns a CIF representation of the experiment.
@@ -583,3 +587,33 @@ class ExperimentLogic(QObject):
         cif_tof_data += "\n_tof_profile_beta0 " + str(self.job.parameters.beta0.raw_value)
         cif_tof_data += "\n_tof_profile_beta1 " + str(self.job.parameters.beta1.raw_value)
         return cif_tof_data
+
+    ##########################################
+    #  Excluded Regions
+    ##########################################
+    def excluded_default(self):
+        # default excluded regions
+        self._excluded_regions = {}
+
+    def add_region(self, key, region: list):
+        # assure the region consists of two values
+        if len(region) != 2:
+            raise ValueError("Region must consist of two values: min and max.")
+        # add/replace an excluded region
+        # NOTE: no check of possible overlap with other regions
+        self._excluded_regions[key] = region
+
+    def remove_region(self, key):
+        # remove an excluded region
+        if key in self._excluded_regions:
+            del self._excluded_regions[key]
+        else:
+            raise ValueError("Region not found.")
+
+    def excluded_points(self, x: list):
+        # calculate excluded points inside x
+        excluded_points = np.any([np.logical_and(x >= self._excluded_regions[i][0], x <= self._excluded_regions[i][1]) 
+                                  for i in self._excluded_regions], axis=0)
+        return excluded_points
+
+

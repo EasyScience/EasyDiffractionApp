@@ -18,6 +18,7 @@ class ExperimentProxy(QObject):
     experimentDataAsXmlChanged = Signal()
     experimentLoadedChanged = Signal()
     experimentSkippedChanged = Signal()
+    regionsAsXmlChanged = Signal()
 
     def __init__(self, parent=None, logic=None):
         super().__init__(parent)
@@ -26,6 +27,7 @@ class ExperimentProxy(QObject):
         self.logic.experimentLoadedChanged.connect(self.experimentLoadedChanged)
         self.logic.experimentSkippedChanged.connect(self.experimentSkippedChanged)
         self.logic.experimentDataAsXmlChanged.connect(self.experimentDataAsXmlChanged)
+        # self.logic.regionsAsXmlChanged.connect(self.regionsAsXmlChanged)
         self.experimentDataChanged.connect(self._onExperimentDataChanged)
         self.experimentSkippedChanged.connect(self._onExperimentSkippedChanged)
         self.experimentLoadedChanged.connect(self._onExperimentLoadedChanged)
@@ -202,3 +204,37 @@ class ExperimentProxy(QObject):
 
     def _setPatternParametersAsObj(self):
         self.logic._onPatternParametersChanged()
+
+    ####################################################################################################################
+    # Experiment data: excluded regions
+    ####################################################################################################################
+
+    @Property(str, notify=regionsAsXmlChanged)
+    def regionsAsXml(self):
+        return self.logic.regionsAsXml()
+
+    @Slot()
+    def addDefaultRegion(self):
+        self.logic.addDefaultRegion()
+        self.regionsAsXmlChanged.emit()
+
+    @Slot()
+    def resetRegions(self):
+        self.logic.excludedRegionsDefault()
+        self.regionsAsXmlChanged.emit()
+
+    @Slot(list)
+    def addRegion(self, region):
+        self.logic.addRegion(region)
+        self.regionsAsXmlChanged.emit()
+
+    @Slot(str)
+    def removeRegion(self, region_id):
+        self.logic.removeRegion(region_id)
+        self.regionsAsXmlChanged.emit()
+
+    @Slot(str, int, str)
+    def editExcludedRegion(self, point_name, region_id, text):
+        self.logic.editExcludedRegion(point_name, region_id, text)
+        self.regionsAsXmlChanged.emit()
+        self.parent.parameters._onInstrumentParametersChanged()

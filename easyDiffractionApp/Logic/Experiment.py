@@ -50,7 +50,7 @@ class ExperimentLogic(QObject):
         self._refine_up = False
         self._refine_down = False
         self.fn_aggregate = self.pol_sum
-        self._excluded_regions = {1: [40.0, 60.0]}
+        self._excluded_regions = {}
 
     def _defaultExperiment(self):
         return {
@@ -591,29 +591,51 @@ class ExperimentLogic(QObject):
     ##########################################
     #  Excluded Regions
     ##########################################
-    def excluded_default(self):
+    def excludedRegionsDefault(self):
         # default excluded regions
         self._excluded_regions = {}
 
-    def add_region(self, key, region: list):
+    def addDefaultRegion(self):
+        # add a default excluded region
+        self.addRegion([0, 0.1])
+
+    def regionsAsXml(self):
+        # prepare dictionary to xml-ise
+        d = []
+        for item, value in self._excluded_regions.items():
+            dd = {}
+            dd['name'] = str(item)
+            dd['min'] = value[0]
+            dd['max'] = value[1]
+            d.append(dd)
+
+        xml = XMLSerializer().encode({"data":d})
+        return xml
+
+    def addRegion(self, region: list):
         # assure the region consists of two values
         if len(region) != 2:
             raise ValueError("Region must consist of two values: min and max.")
-        # add/replace an excluded region
-        # NOTE: no check of possible overlap with other regions
-        self._excluded_regions[key] = region
+        # add the excluded region
+        last_index = len(self._excluded_regions)
+        self._excluded_regions["p" + str(last_index)] = region
 
-    def remove_region(self, key):
+    def removeRegion(self, key):
         # remove an excluded region
         if key in self._excluded_regions:
             del self._excluded_regions[key]
         else:
             raise ValueError("Region not found.")
 
-    def excluded_points(self, x: list):
+    def excludedPoints(self, x: list):
         # calculate excluded points inside x
-        excluded_points = np.any([np.logical_and(x >= self._excluded_regions[i][0], x <= self._excluded_regions[i][1]) 
+        excluded_points = np.any([np.logical_and(x >= self._excluded_regions[str(i)][0], x <= self._excluded_regions[str(i)][1])
                                   for i in self._excluded_regions], axis=0)
         return excluded_points
 
+    def editExcludedRegion(self, point_name, region_id, text):
+        if point_name not in self._excluded_regions:
+            print("point name not found")
+            return
+        self._excluded_regions[point_name][region_id] = float(text)
 

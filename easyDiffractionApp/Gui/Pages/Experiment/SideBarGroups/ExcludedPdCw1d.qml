@@ -17,18 +17,6 @@ import Gui.Globals 1.0 as ExGlobals
 Column {
     spacing: EaStyle.Sizes.fontPixelSize * 0.5
 
-    // Column {
-    //     EaElements.Label {
-    //         enabled: false
-    //         text: qsTr("Type")
-    //     }
-
-    //     EaElements.ComboBox {
-    //         width: EaStyle.Sizes.sideBarContentWidth
-    //         model: ["Point background"]
-    //     }
-    // }
-
     Column {
         EaElements.Label {
             enabled: false
@@ -40,19 +28,15 @@ Column {
             defaultInfoText: qsTr("No Excluded Regions Added")
 
             // Table model
-
             model: XmlListModel {
-                xml: ExGlobals.Constants.proxy.background.asXml
-                // xml: ExGlobals.Constants.proxy.experiment.regionsAsXml
+                xml: ExGlobals.Constants.proxy.experiment.regionsAsXml
                 query: "/data/data"
 
-                XmlRole { name: "x"; query: "x/value/number()" }
-                XmlRole { name: "y"; query: "y/value/number()" }
+                XmlRole { name: "min"; query: "min/number()" }
+                XmlRole { name: "max"; query: "max/number()" }
 
                 XmlRole { name: "pointName"; query: "name/string()" }
 
-                XmlRole { name: "xId"; query: "x/__id/string()" }
-                XmlRole { name: "yId"; query: "y/__id/string()" }
             }
 
             // Table rows
@@ -70,8 +54,8 @@ Column {
                     horizontalAlignment: Text.AlignRight
                     width: EaStyle.Sizes.fontPixelSize * 11.6
                     headerText: "From (deg)"
-                    text: EaLogic.Utils.toFixed(model.x)
-                    onEditingFinished: editParameterValue(model.xId, text)
+                    text: EaLogic.Utils.toFixed(model.min)
+                    onEditingFinished: ExGlobals.Constants.proxy.experiment.editExcludedRegion(model.pointName, 0, text)
                 }
 
                 EaComponents.TableViewTextInput {
@@ -79,8 +63,8 @@ Column {
                     horizontalAlignment: Text.AlignRight
                     width: xLabel.width
                     headerText: "To (deg)"
-                    text: EaLogic.Utils.toFixed(model.y)
-                    onEditingFinished: editParameterValue(model.yId, text)
+                    text: EaLogic.Utils.toFixed(model.max)
+                    onEditingFinished: ExGlobals.Constants.proxy.experiment.editExcludedRegion(model.pointName, 1, text)
                 }
 
                 EaComponents.TableViewLabel {
@@ -91,7 +75,7 @@ Column {
                     headerText: "Del."
                     fontIcon: "minus-circle"
                     ToolTip.text: qsTr("Remove this point")
-                    onClicked: ExGlobals.Constants.proxy.background.removePoint(model.pointName)
+                    onClicked: ExGlobals.Constants.proxy.experiment.removeRegion(model.pointName)
                 }
 
             }
@@ -104,20 +88,14 @@ Column {
         EaElements.SideBarButton {
             fontIcon: "plus-circle"
             text: qsTr("Append new region")
-            onClicked: ExGlobals.Constants.proxy.background.addDefaultPoint()
+            onClicked: ExGlobals.Constants.proxy.experiment.addDefaultRegion()
         }
 
         EaElements.SideBarButton {
             fontIcon: "undo-alt"
             text: qsTr("Reset all regions")
-            onClicked: ExGlobals.Constants.proxy.background.setDefaultPoints()
+            onClicked: ExGlobals.Constants.proxy.experiment.resetRegions()
         }
-    }
-
-    // Logic
-
-    function editParameterValue(id, value) {
-        ExGlobals.Constants.proxy.parameters.editParameter(id, parseFloat(value))
     }
 }
 

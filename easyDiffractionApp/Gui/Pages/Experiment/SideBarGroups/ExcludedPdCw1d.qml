@@ -18,10 +18,6 @@ Column {
     spacing: EaStyle.Sizes.fontPixelSize * 0.5
 
     Column {
-        EaElements.Label {
-            enabled: false
-            text: qsTr("Regions")
-        }
 
         EaComponents.TableView {
 
@@ -93,8 +89,8 @@ Column {
 
         EaElements.SideBarButton {
             fontIcon: "undo-alt"
-            text: qsTr("Reset all regions")
-            onClicked: ExGlobals.Constants.proxy.experiment.resetRegions()
+            text: qsTr("Remove all regions")
+            onClicked: ExGlobals.Constants.proxy.experiment.removeRegions()
         }
     }
 }

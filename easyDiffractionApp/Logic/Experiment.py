@@ -594,10 +594,11 @@ class ExperimentLogic(QObject):
     def excludedRegionsDefault(self):
         # default excluded regions
         self._excluded_regions = {}
+        self.updateExcludedPlot()
 
     def addDefaultRegion(self):
         # add a default excluded region
-        self.addRegion([0, 0.1])
+        self.addRegion([0.0, 20.0])
 
     def regionsAsXml(self):
         # prepare dictionary to xml-ise
@@ -608,7 +609,6 @@ class ExperimentLogic(QObject):
             dd['min'] = value[0]
             dd['max'] = value[1]
             d.append(dd)
-
         xml = XMLSerializer().encode({"data":d})
         return xml
 
@@ -619,6 +619,7 @@ class ExperimentLogic(QObject):
         # add the excluded region
         last_index = len(self._excluded_regions)
         self._excluded_regions["p" + str(last_index)] = region
+        self.updateExcludedPlot()
 
     def removeRegion(self, key):
         # remove an excluded region
@@ -626,6 +627,7 @@ class ExperimentLogic(QObject):
             del self._excluded_regions[key]
         else:
             raise ValueError("Region not found.")
+        self.updateExcludedPlot()
 
     def excludedPoints(self, x: list):
         # calculate excluded points inside x
@@ -639,3 +641,10 @@ class ExperimentLogic(QObject):
             return
         self._excluded_regions[point_name][region_id] = float(text)
 
+        self.updateExcludedPlot()
+
+    def updateExcludedPlot(self):
+        self.parent.l_parameters.parametersValuesChanged.emit()
+        # This needs to be called only when no experiment is loaded
+        if self.parent.experimentSkipped():
+            self.parent.l_parameters._updateCalculatedData()

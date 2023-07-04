@@ -282,6 +282,11 @@ class Plotting1dLogic(QObject):
         self._difference_yarray = np.subtract(self._measured_yarray, self._calculated_yarray)
         self._difference_yarray_upper = np.add(self._difference_yarray, self._measured_syarray)
         self._difference_yarray_lower = np.subtract(self._difference_yarray, self._measured_syarray)
+        # Exclude points should not contribute to the difference plot
+        excluded_points = self._interface.get_component('excluded')
+        self._difference_yarray[excluded_points == True] = 0.0
+        self._difference_yarray_upper[excluded_points == True] = 0.0
+        self._difference_yarray_lower[excluded_points == True] = 0.0
 
     def _setBraggDataArrays(self, phase_index, xarray, harray, karray, larray):
         self._bragg_arrays[phase_index] = {

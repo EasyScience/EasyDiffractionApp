@@ -219,7 +219,7 @@ class ExperimentProxy(QObject):
         self.regionsAsXmlChanged.emit()
 
     @Slot()
-    def resetRegions(self):
+    def removeRegions(self):
         self.logic.excludedRegionsDefault()
         self.regionsAsXmlChanged.emit()
 
@@ -237,4 +237,6 @@ class ExperimentProxy(QObject):
     def editExcludedRegion(self, point_name, region_id, text):
         self.logic.editExcludedRegion(point_name, region_id, text)
         self.regionsAsXmlChanged.emit()
-        self.parent.parameters._onInstrumentParametersChanged()
+        self.parent.parameters._onParametersChanged()
+
+

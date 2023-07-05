@@ -142,7 +142,7 @@ class ParametersProxy(QObject):
     def updateIsoFromAni(self, obj_id: str, atom_id: int, new_value: Union[float, str]):
         self.logic.updateIsoFromAni(obj_id, atom_id, new_value)
 
-    @Slot(str, int, str)
-    def updateAdpType(self, obj_id: str, atom_id: int, type_str: str):
-        self.logic.updateAdpType(obj_id, atom_id, type_str)
+    @Slot(int, str)
+    def updateAdpType(self, atom_id: int, type_str: str):
+        self.logic.updateAdpType(atom_id, type_str)
 

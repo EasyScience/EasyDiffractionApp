@@ -46,7 +46,7 @@ EaComponents.TableView {
         XmlRole { name: "adpAni13"; query: "adp/adp_class/U_13/value/number()" }
         XmlRole { name: "adpAni23"; query: "adp/adp_class/U_23/value/number()" }
 
-        XmlRole { name: "adpIsoId"; query: "adp/adp_class/Uiso/__id/string()" }
+        XmlRole { name: "adpIsoId";   query: "adp/adp_class/Uiso/__id/string()" }
         XmlRole { name: "adpAniId11"; query: "adp/adp_class/U_11/__id/string()" }
         XmlRole { name: "adpAniId22"; query: "adp/adp_class/U_22/__id/string()" }
         XmlRole { name: "adpAniId33"; query: "adp/adp_class/U_33/__id/string()" }
@@ -90,34 +90,33 @@ EaComponents.TableView {
                 }
             }
             onCurrentIndexChanged: {
-                updateAdpType(adpIsoId, modelIndex, textAt(currentIndex))
+                updateAdpType(modelIndex, textAt(currentIndex))
             }
         }
 
         EaComponents.TableViewTextInput {
             enabled: adpTypeComboBox.currentText === "Uiso" || adpTypeComboBox.currentText === "Biso"
+            visible: true
             width: flexColumnWidth
             headerText: "Iso"
             text: EaLogic.Utils.toFixed(model.adpIso)
             onEditingFinished: {
-                // updateUiso(model.adpIsoId, modelIndex, text);
-                // editParameterValue(model.adpIsoId, text)
-                updateAniFromIso(model.adpIsoId, modelIndex, text)
+                updateAniFromIso(adpIsoId, modelIndex, text)
             }
         }
 
         EaComponents.TableViewTextInput {
             enabled: adpTypeComboBox.currentText === "Uani" || adpTypeComboBox.currentText === "Bani"
-            visible: adpTypeComboBox.currentText === "Uani" || adpTypeComboBox.currentText === "Bani"
             width: flexColumnWidth
             headerText: "Ani11"
             text: EaLogic.Utils.toFixed(model.adpAni11)
-            onEditingFinished: updateIsoFromAni(model.adpAniId11, modelIndex, text)
+            onEditingFinished: {
+                updateIsoFromAni(model.adpAniId11, modelIndex, text)
+            }
         }
 
         EaComponents.TableViewTextInput {
             enabled: adpTypeComboBox.currentText === "Uani" || adpTypeComboBox.currentText === "Bani"
-            visible: adpTypeComboBox.currentText === "Uani" || adpTypeComboBox.currentText === "Bani"
             width: flexColumnWidth
             headerText: "Ani22"
             text: EaLogic.Utils.toFixed(model.adpAni22)
@@ -126,7 +125,6 @@ EaComponents.TableView {
 
         EaComponents.TableViewTextInput {
             enabled: adpTypeComboBox.currentText === "Uani" || adpTypeComboBox.currentText === "Bani"
-            visible: adpTypeComboBox.currentText === "Uani" || adpTypeComboBox.currentText === "Bani"
             width: flexColumnWidth
             headerText: "Ani33"
             text: EaLogic.Utils.toFixed(model.adpAni33)
@@ -135,7 +133,6 @@ EaComponents.TableView {
 
         EaComponents.TableViewTextInput {
             enabled: adpTypeComboBox.currentText === "Uani" || adpTypeComboBox.currentText === "Bani"
-            visible: adpTypeComboBox.currentText === "Uani" || adpTypeComboBox.currentText === "Bani"
             width: flexColumnWidth
             headerText: "Ani12"
             text: EaLogic.Utils.toFixed(model.adpAni12)
@@ -144,7 +141,6 @@ EaComponents.TableView {
 
         EaComponents.TableViewTextInput {
             enabled: adpTypeComboBox.currentText === "Uani" || adpTypeComboBox.currentText === "Bani"
-            visible: adpTypeComboBox.currentText === "Uani" || adpTypeComboBox.currentText === "Bani"
             width: flexColumnWidth
             headerText: "Ani13"
             text: EaLogic.Utils.toFixed(model.adpAni13)
@@ -153,7 +149,6 @@ EaComponents.TableView {
 
         EaComponents.TableViewTextInput {
             enabled: adpTypeComboBox.currentText === "Uani" || adpTypeComboBox.currentText === "Bani"
-            visible: adpTypeComboBox.currentText === "Uani" || adpTypeComboBox.currentText === "Bani"
             width: flexColumnWidth
             headerText: "Ani23"
             text: EaLogic.Utils.toFixed(model.adpAni23)
@@ -163,8 +158,8 @@ EaComponents.TableView {
     }
 
     // Logic
-    function updateAdpType(id, atom_id, value) {
-        ExGlobals.Constants.proxy.parameters.updateAdpType(id, parseInt(atom_id), value)
+    function updateAdpType(atom_id, value) {
+        ExGlobals.Constants.proxy.parameters.updateAdpType(parseInt(atom_id), value)
     }
     function updateAniFromIso(id, atom_id, value){
         ExGlobals.Constants.proxy.parameters.updateAniFromIso(id, parseInt(atom_id), parseFloat(value))

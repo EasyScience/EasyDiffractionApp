@@ -267,7 +267,6 @@ class ParametersLogic(QObject):
 
             if self._parameters_filter_criteria.lower() not in par_path.lower():  # noqa: E501
                 continue
-
             self._parameters_as_obj.append({
                 "id":     str(par_id),
                 "number": par_index + 1,
@@ -338,23 +337,9 @@ class ParametersLogic(QObject):
     def updateAniFromIso(self, obj_id: str, atom_id: int,  new_value: float):
         # Isotropic ADP changed. Cast corresponding values onto anisotropic components for this atom
         if not obj_id:
-            return  
-        adp_obj = self._parameterObj(obj_id)
-        if adp_obj is None:
             return
-
-        # first, modify the isotropic ADP
-        adp_obj.value = new_value
-
         atom = self.parent.l_phase.getAtom(atom_id)
-
-        # assume simple ellipsoid
-        atom.adp.U_11.value = new_value
-        atom.adp.U_22.value = new_value
-        atom.adp.U_33.value = new_value
-        atom.adp.U_12.value = 0.0
-        atom.adp.U_13.value = 0.0
-        atom.adp.U_23.value = 0.0
+        atom.adp.Uiso.value = new_value
 
         self.parametersValuesChanged.emit()
         if self.parent.experimentSkipped():
@@ -369,7 +354,6 @@ class ParametersLogic(QObject):
         if adp_obj is None:
             return
 
-        print("Changing aniso ADP value on parameter ", obj_id, " to: ", new_value)
         # first, modify the anisotropic ADP
         adp_obj.value = new_value
 
@@ -378,28 +362,36 @@ class ParametersLogic(QObject):
         # assume simple ellipsoid. This should be redone depending on space group
         atom.adp.Uiso.value = (atom.adp.U_11.value + atom.adp.U_22.value + atom.adp.U_33.value)/3.0
 
-        print("Changing iso ADP value on atom ", atom_id, " to: ", atom.adp.Uiso.value)
-
         self.parametersValuesChanged.emit()
         if self.parent.experimentSkipped():
             self._updateCalculatedData()
         self.parametersChanged.emit()
 
-    def updateAdpType(self, obj_id: str, atom_id: int, type_str: str):
-        print("Changing ADP type on atom ", atom_id ," to: ", type_str)
-        print("Changing ADP type on parameter ", obj_id)
+    def updateAdpType(self, atom_id: int, type_str: str):
         if not type_str:
             return
-        adp_obj = self._parameterObj(obj_id)
-        if adp_obj is None:
-            return
+        p1 = p2 = p3 = 0.0
         atom = self.parent.l_phase.getAtom(atom_id)
-        atom.adp.isAni = 'ani' in type_str.lower()
+        if hasattr(atom.adp, 'U_11'):
+            p1 = atom.adp.U_11.raw_value
+            p2 = atom.adp.U_22.raw_value
+            p3 = atom.adp.U_33.raw_value
+        else:
+            p1 = atom.adp.Uiso.raw_value
 
-        if not atom.adp.isAni:
-            # Do we need this at all? Uiso is set up at instantiation
-            atom.adp.Uiso.value = (atom.adp.U_11.value + atom.adp.U_22.value + atom.adp.U_33.value)/3.0
+        atom.adp.switch_type(type_str)
+
+        if hasattr(atom.adp, 'U_11'):
+            atom.adp.U_11.value = atom.adp.U_22.value = atom.adp.U_33.value = p1
+        else:
+            # This is currently the simplest case of orthogonal cell
+            atom.adp.Uiso.value = (p1 + p2 + p3)/3.0
  
+        self.parametersValuesChanged.emit()
+        if self.parent.experimentSkipped():
+            self._updateCalculatedData()
+        self.parametersChanged.emit()
+
     def _parameterObj(self, obj_id: str):
         if not obj_id:
             return

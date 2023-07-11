@@ -253,14 +253,17 @@ EaComponents.ApplicationWindow {
             mainContent: EaComponents.MainContent {
                 tabs: [
                     EaElements.TabButton { text: qsTr("Plot view") },
-                    EaElements.TabButton { enabled: false; text: qsTr("Table view"); Component.onCompleted: ExGlobals.Variables.experimentTableTab = this },
-                    EaElements.TabButton { enabled: false; text: qsTr("Text View") + " (CIF)"; Component.onCompleted: ExGlobals.Variables.experimentCifTab = this }
+                    EaElements.TabButton {
+                        text: qsTr("Text View") + " (CIF)"
+                        Component.onCompleted: ExGlobals.Variables.experimentCifTab = this
+                    },
+                    EaElements.TabButton { enabled: false; text: qsTr("Table view"); Component.onCompleted: ExGlobals.Variables.experimentTableTab = this }
                 ]
 
                 items: [
                     ExExperimentPage.MainContentPlotView {},
-                    ExExperimentPage.MainContentTableView {},
-                    ExExperimentPage.MainContentTextView {}
+                    ExExperimentPage.MainContentTextView {},
+                    ExExperimentPage.MainContentTableView {}
                 ]
 
                 Component.onCompleted: ExGlobals.Variables.experimentPageMainContent = this

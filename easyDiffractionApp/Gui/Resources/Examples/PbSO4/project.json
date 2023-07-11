@@ -3,7 +3,7 @@
         "@module": "easyDiffractionLib.Jobs",
         "@class": "Powder1DCW",
         "@version": "0.0.1",
-        "name": "default_job_9999",
+        "name": "pd",
         "phases": {
             "@module": "easyDiffractionLib.components.phase",
             "@class": "Phases",

@@ -332,7 +332,7 @@ EaComponents.SideBarColumn {
     }
 
     EaElements.GroupBox {
-        title: qsTr("Fitting componenets")
+        title: qsTr("Fitting components")
         last: true
         visible: ExGlobals.Constants.proxy.experiment.isSpinPolarized
         enabled: ExGlobals.Constants.proxy.experiment.experimentLoaded ||

@@ -25,6 +25,7 @@ class ExperimentProxy(QObject):
         self.logic = logic.l_experiment
         self.logic.experimentLoadedChanged.connect(self.experimentLoadedChanged)
         self.logic.experimentSkippedChanged.connect(self.experimentSkippedChanged)
+        self.logic.experimentDataAsXmlChanged.connect(self.experimentDataAsXmlChanged)
         self.experimentDataChanged.connect(self._onExperimentDataChanged)
         self.experimentSkippedChanged.connect(self._onExperimentSkippedChanged)
         self.experimentLoadedChanged.connect(self._onExperimentLoadedChanged)
@@ -103,6 +104,17 @@ class ExperimentProxy(QObject):
     def experimentDataAsXml(self):
         return self.logic._experiment_data_as_xml
 
+    @Property(str, notify=experimentDataAsXmlChanged)
+    # @Property(str, notify=experimentLoadedChanged)
+    def experimentAsCif(self):
+        return self.logic._experiment_no_data_as_cif
+
+    @experimentAsCif.setter
+    def experimentAsCif(self, experiment_as_cif):
+        self.logic.loadCifNoData(experiment_as_cif)
+        self.experimentLoadedChanged.emit()
+        self.experimentDataAsXmlChanged.emit()
+
     def _setExperimentDataAsXml(self):
         start_time = timeit.default_timer()
         self.logic._setExperimentDataAsXml()
@@ -135,7 +147,7 @@ class ExperimentProxy(QObject):
     def _addExperimentDataFromCif(self, file_url):
         self.logic.addExperimentDataFromCif(file_url)
         self.logic.initializeBackground()
-        self.logic.addBackgroundDataFromCif(file_url)
+        self.logic.updateBackgroundData() # bg is now read in the lib
         self.logic._onExperimentDataAdded()
         self.experimentLoadedChanged.emit()
 

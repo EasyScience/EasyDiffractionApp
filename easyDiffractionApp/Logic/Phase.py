@@ -124,7 +124,11 @@ class PhaseLogic(QObject):
     def phasesAsCif(self, phases_as_cif):
         if self._phases_as_cif == phases_as_cif:
             return
-        self.phases = Phases.from_cif_str(phases_as_cif)
+        phases = Phases()
+        for phase in Phases.from_cif_string(phases_as_cif):
+            phases.append(phase)
+        self.phases = phases
+
         self.parent.setPhasesOnSample(self.phases)
         self.updateParameters()
 

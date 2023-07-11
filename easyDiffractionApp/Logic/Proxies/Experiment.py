@@ -164,6 +164,7 @@ class ExperimentProxy(QObject):
         self.logic.removeExperiment()
         self.experimentDataChanged.emit()
         self.experimentLoadedChanged.emit()
+        self.regionsAsXmlChanged.emit()
 
     def _loadExperimentData(self, file_url):
         print("+ _loadExperimentData")

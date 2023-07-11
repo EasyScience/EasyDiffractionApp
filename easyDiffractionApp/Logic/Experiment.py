@@ -270,6 +270,7 @@ class ExperimentLogic(QObject):
         self.parent.removeBackgroundPoints()
         self.parent.l_sample.reset()
         self.parent.removeAllConstraints()
+        self.excludedRegionsDefault()
         self._current_spin_component = 'Sum'
         self.experiments.clear()
         self._experiment_data = None

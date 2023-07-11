@@ -282,6 +282,9 @@ class PhaseLogic(QObject):
     def hasMsp(self):
         return self.has_msp
 
+    def getAtom(self, index):
+        return self.phases[self._current_phase_index].atoms[index]
+
     def setCurrentPhaseName(self, name):
         if self.phases[self._current_phase_index].name == name:
             return

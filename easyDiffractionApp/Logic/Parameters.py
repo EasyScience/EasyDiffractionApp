@@ -267,7 +267,6 @@ class ParametersLogic(QObject):
 
             if self._parameters_filter_criteria.lower() not in par_path.lower():  # noqa: E501
                 continue
-
             self._parameters_as_obj.append({
                 "id":     str(par_id),
                 "number": par_index + 1,
@@ -296,6 +295,8 @@ class ParametersLogic(QObject):
     # Any parameter
     ####################################################################################################################
     def editParameter(self, obj_id: str, new_value: Union[bool, float, str]):  # noqa: E501
+
+        print("Changing parameter: ", obj_id, new_value)
 
         if not obj_id:
             return
@@ -331,6 +332,65 @@ class ParametersLogic(QObject):
             if self.parent.experimentSkipped():
                 self._updateCalculatedData() # called in  updateBackground() triggered by parametersValuesChanged
             self.parametersChanged.emit()
+
+    # the following two functions can probably be either merged or greatly refactored to editParameter()
+    def updateAniFromIso(self, obj_id: str, atom_id: int,  new_value: float):
+        # Isotropic ADP changed. Cast corresponding values onto anisotropic components for this atom
+        if not obj_id:
+            return
+        atom = self.parent.l_phase.getAtom(atom_id)
+        atom.adp.Uiso.value = new_value
+
+        self.parametersValuesChanged.emit()
+        if self.parent.experimentSkipped():
+            self._updateCalculatedData()
+        self.parametersChanged.emit()
+
+    def updateIsoFromAni(self, obj_id: str, atom_id: int,  new_value: float):
+        # Anisotropic ADP changed. Cast corresponding value onto the isotropic component for this atom
+        if not obj_id:
+            return  
+        adp_obj = self._parameterObj(obj_id)
+        if adp_obj is None:
+            return
+
+        # first, modify the anisotropic ADP
+        adp_obj.value = new_value
+
+        atom = self.parent.l_phase.getAtom(atom_id)
+
+        # assume simple ellipsoid. This should be redone depending on space group
+        atom.adp.Uiso.value = (atom.adp.U_11.value + atom.adp.U_22.value + atom.adp.U_33.value)/3.0
+
+        self.parametersValuesChanged.emit()
+        if self.parent.experimentSkipped():
+            self._updateCalculatedData()
+        self.parametersChanged.emit()
+
+    def updateAdpType(self, atom_id: int, type_str: str):
+        if not type_str:
+            return
+        p1 = p2 = p3 = 0.0
+        atom = self.parent.l_phase.getAtom(atom_id)
+        if hasattr(atom.adp, 'U_11'):
+            p1 = atom.adp.U_11.raw_value
+            p2 = atom.adp.U_22.raw_value
+            p3 = atom.adp.U_33.raw_value
+        else:
+            p1 = atom.adp.Uiso.raw_value
+
+        atom.adp.switch_type(type_str)
+
+        if hasattr(atom.adp, 'U_11'):
+            atom.adp.U_11.value = atom.adp.U_22.value = atom.adp.U_33.value = p1
+        else:
+            # This is currently the simplest case of orthogonal cell
+            atom.adp.Uiso.value = (p1 + p2 + p3)/3.0
+ 
+        self.parametersValuesChanged.emit()
+        if self.parent.experimentSkipped():
+            self._updateCalculatedData()
+        self.parametersChanged.emit()
 
     def _parameterObj(self, obj_id: str):
         if not obj_id:

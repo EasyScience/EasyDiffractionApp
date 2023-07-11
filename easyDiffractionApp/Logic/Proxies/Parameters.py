@@ -134,3 +134,15 @@ class ParametersProxy(QObject):
     def editParameter(self, obj_id: str, new_value: Union[bool, float, str]):
         self.logic.editParameter(obj_id, new_value)
 
+    @Slot(str, int, 'QVariant')
+    def updateAniFromIso(self, obj_id: str, atom_id: int, new_value: Union[float, str]):
+        self.logic.updateAniFromIso(obj_id, atom_id, new_value)
+
+    @Slot(str, int, 'QVariant')
+    def updateIsoFromAni(self, obj_id: str, atom_id: int, new_value: Union[float, str]):
+        self.logic.updateIsoFromAni(obj_id, atom_id, new_value)
+
+    @Slot(int, str)
+    def updateAdpType(self, atom_id: int, type_str: str):
+        self.logic.updateAdpType(atom_id, type_str)
+

@@ -50,6 +50,7 @@ class ExperimentLogic(QObject):
         self._refine_up = False
         self._refine_down = False
         self.fn_aggregate = self.pol_sum
+        self._excluded_regions = {}
 
     def _defaultExperiment(self):
         return {
@@ -434,6 +435,9 @@ class ExperimentLogic(QObject):
     def is_pol(self):
         return "pol" in str(self.job).replace(" `"+self.job.name+"`", "").lower()
 
+    ##############################
+    # CIF representation
+    ##############################
     def as_cif(self, no_data=False):
         '''
         Returns a CIF representation of the experiment.
@@ -583,3 +587,64 @@ class ExperimentLogic(QObject):
         cif_tof_data += "\n_tof_profile_beta0 " + str(self.job.parameters.beta0.raw_value)
         cif_tof_data += "\n_tof_profile_beta1 " + str(self.job.parameters.beta1.raw_value)
         return cif_tof_data
+
+    ##########################################
+    #  Excluded Regions
+    ##########################################
+    def excludedRegionsDefault(self):
+        # default excluded regions
+        self._excluded_regions = {}
+        self.updateExcludedPlot()
+
+    def addDefaultRegion(self):
+        # add a default excluded region
+        self.addRegion([0.0, 20.0])
+
+    def regionsAsXml(self):
+        # prepare dictionary to xml-ise
+        d = []
+        for item, value in self._excluded_regions.items():
+            dd = {}
+            dd['name'] = str(item)
+            dd['min'] = value[0]
+            dd['max'] = value[1]
+            d.append(dd)
+        xml = XMLSerializer().encode({"data":d})
+        return xml
+
+    def addRegion(self, region: list):
+        # assure the region consists of two values
+        if len(region) != 2:
+            raise ValueError("Region must consist of two values: min and max.")
+        # add the excluded region
+        last_index = len(self._excluded_regions)
+        self._excluded_regions["p" + str(last_index)] = region
+        self.updateExcludedPlot()
+
+    def removeRegion(self, key):
+        # remove an excluded region
+        if key in self._excluded_regions:
+            del self._excluded_regions[key]
+        else:
+            raise ValueError("Region not found.")
+        self.updateExcludedPlot()
+
+    def excludedPoints(self, x: list):
+        # calculate excluded points inside x
+        excluded_points = np.any([np.logical_and(x >= self._excluded_regions[str(i)][0], x <= self._excluded_regions[str(i)][1])
+                                  for i in self._excluded_regions], axis=0)
+        return excluded_points
+
+    def editExcludedRegion(self, point_name, region_id, text):
+        if point_name not in self._excluded_regions:
+            print("point name not found")
+            return
+        self._excluded_regions[point_name][region_id] = float(text)
+
+        self.updateExcludedPlot()
+
+    def updateExcludedPlot(self):
+        self.parent.l_parameters.parametersValuesChanged.emit()
+        # This needs to be called only when no experiment is loaded
+        if self.parent.experimentSkipped():
+            self.parent.l_parameters._updateCalculatedData()

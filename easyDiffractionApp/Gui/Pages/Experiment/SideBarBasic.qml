@@ -302,6 +302,22 @@ EaComponents.SideBarColumn {
     }
 
     EaElements.GroupBox {
+        title: qsTr("Exclude regions")
+        enabled: ExGlobals.Constants.proxy.experiment.experimentLoaded ||
+                 ExGlobals.Constants.proxy.experiment.experimentSkipped
+
+        Loader {
+            source: {
+                if ((ExGlobals.Constants.proxy.sample.experimentType === 'powder1DCW') || (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DCWpol')) {
+                    return 'SideBarGroups/ExcludedPdCw1d.qml'
+                } //else if (ExGlobals.Constants.proxy.sample.experimentType === 'powder1DTOF') {
+                //     return 'SideBarGroups/BackgroundPdTof1d.qml'
+                // }
+            }
+        }
+    }
+
+    EaElements.GroupBox {
         title: qsTr("Associated phases")
         last: true
         enabled: ExGlobals.Constants.proxy.experiment.experimentLoaded ||

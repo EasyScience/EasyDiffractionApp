@@ -388,6 +388,10 @@ class ParametersLogic(QObject):
         if self.parent.isSpinPolarized():
             fn = self.parent.fnAggregate()
             kwargs["pol_fn"] = fn
+
+        #if self.parent.l_experiment._excluded_regions:
+        kwargs["excluded_points"] = self.parent.l_experiment.excludedPoints(sim.x)
+
         sim.y = self.parent.l_sample._sample.create_simulation(sim.x, **kwargs)
 
         if self.parent.isSpinPolarized():

@@ -460,6 +460,7 @@ class ParametersLogic(QObject):
         for phase_index, phase_name in enumerate([str(phase._borg.map.convert_id(phase).int) for phase in self.parent.phases()]):
             hkl = self._interface.get_hkl(x_array=sim.x, phase_name=phase_name, encoded_name=True)
             if 'ttheta' in hkl.keys():
+                hkl['ttheta'] = np.degrees(hkl['ttheta']) # convert from radians to degrees
                 self.plotBraggDataSignal.emit((phase_index, hkl['ttheta'], hkl['h'], hkl['k'], hkl['l']))  # noqa: E501
             if 'time' in hkl.keys():
                 self.plotBraggDataSignal.emit((phase_index, hkl['time'], hkl['h'], hkl['k'], hkl['l']))  # noqa: E501

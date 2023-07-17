@@ -296,8 +296,6 @@ class ParametersLogic(QObject):
     ####################################################################################################################
     def editParameter(self, obj_id: str, new_value: Union[bool, float, str]):  # noqa: E501
 
-        print("Changing parameter: ", obj_id, new_value)
-
         if not obj_id:
             return
 
@@ -360,7 +358,7 @@ class ParametersLogic(QObject):
         atom = self.parent.l_phase.getAtom(atom_id)
 
         # assume simple ellipsoid. This should be redone depending on space group
-        atom.adp.Uiso.value = (atom.adp.U_11.value + atom.adp.U_22.value + atom.adp.U_33.value)/3.0
+        atom.adp.Uiso_ani = (atom.adp.U_11.value + atom.adp.U_22.value + atom.adp.U_33.value)/3.0
 
         self.parametersValuesChanged.emit()
         if self.parent.experimentSkipped():
@@ -462,6 +460,7 @@ class ParametersLogic(QObject):
         for phase_index, phase_name in enumerate([str(phase._borg.map.convert_id(phase).int) for phase in self.parent.phases()]):
             hkl = self._interface.get_hkl(x_array=sim.x, phase_name=phase_name, encoded_name=True)
             if 'ttheta' in hkl.keys():
+                hkl['ttheta'] = np.degrees(hkl['ttheta']) # convert from radians to degrees
                 self.plotBraggDataSignal.emit((phase_index, hkl['ttheta'], hkl['h'], hkl['k'], hkl['l']))  # noqa: E501
             if 'time' in hkl.keys():
                 self.plotBraggDataSignal.emit((phase_index, hkl['time'], hkl['h'], hkl['k'], hkl['l']))  # noqa: E501

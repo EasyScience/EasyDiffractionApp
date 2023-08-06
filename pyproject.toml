@@ -26,7 +26,7 @@ python = '^3.8'
 toml = '^0.10.2'
 # EasyScience Dependencies
 easyDiffraction = { git = 'https://github.com/easyScience/easyDiffractionLib.git', rev = 'develop' }
-easyApp = { git = 'https://github.com/easyScience/easyApp.git', rev = 'master' }
+easyApp = { git = 'https://github.com/easyScience/easyApp.git', rev = 'qt6_intermediate_1' }
 # Graphical Dependencies
 darkdetect = '^0.8.0'
 pyobjc-core = { version = '^9.0.1', platform = 'darwin' }

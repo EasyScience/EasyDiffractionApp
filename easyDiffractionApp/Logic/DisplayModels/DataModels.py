@@ -7,8 +7,9 @@ __version__ = '0.0.1'
 
 from random import random
 
-from PySide2.QtCore import QPointF
-from PySide2.QtCharts import QtCharts
+from PySide6.QtCore import QPointF
+# from PySide6.QtCharts import QtCharts
+from PySide6 import QtCharts
 from easyDiffractionApp.Logic.MatplotlibBackend import DisplayBridge
 
 

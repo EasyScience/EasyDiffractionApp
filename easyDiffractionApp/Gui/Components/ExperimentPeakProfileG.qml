@@ -1,6 +1,6 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
-import QtQuick.XmlListModel 2.13
+import QtQml.XmlListModel
 
 import easyApp.Gui.Globals 1.0 as EaGlobals
 import easyApp.Gui.Style 1.0 as EaStyle
@@ -18,17 +18,17 @@ EaComponents.TableView {
     // Table model
 
     model: XmlListModel {
-        xml: ExGlobals.Constants.proxy.instrumentParametersAsXml
-        query: `/data/data`
+        // xml: ExGlobals.Constants.proxy.instrumentParametersAsXml
+        // query: `/data/data`
 
 
-        XmlRole { name: "u"; query: "resolution_u/value/number()" }
-        XmlRole { name: "v"; query: "resolution_v/value/number()" }
-        XmlRole { name: "w"; query: "resolution_w/value/number()" }
+        // XmlListModelRole { name: "u"; query: "resolution_u/value/number()" }
+        // XmlListModelRole { name: "v"; query: "resolution_v/value/number()" }
+        // XmlListModelRole { name: "w"; query: "resolution_w/value/number()" }
 
-        XmlRole { name: "uId"; query: "resolution_u/__id/string()" }
-        XmlRole { name: "vId"; query: "v_resolution/__id/string()" }
-        XmlRole { name: "wId"; query: "resolution_w/__id/string()" }
+        // XmlListModelRole { name: "uId"; query: "resolution_u/__id/string()" }
+        // XmlListModelRole { name: "vId"; query: "v_resolution/__id/string()" }
+        // XmlListModelRole { name: "wId"; query: "resolution_w/__id/string()" }
     }
 
     // Table rows

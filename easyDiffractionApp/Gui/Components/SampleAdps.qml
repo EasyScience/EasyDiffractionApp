@@ -4,7 +4,7 @@
 
 import QtQuick 2.13
 import QtQuick.Controls 2.13
-import QtQuick.XmlListModel 2.13
+import QtQml.XmlListModel
 
 import easyApp.Gui.Globals 1.0 as EaGlobals
 import easyApp.Gui.Style 1.0 as EaStyle
@@ -31,28 +31,28 @@ EaComponents.TableView {
     // Table model
 
     model: XmlListModel {
-        property int phaseIndex: ExGlobals.Constants.proxy.phase.currentPhaseIndex + 1
+        // property int phaseIndex: ExGlobals.Constants.proxy.phase.currentPhaseIndex + 1
 
-        xml: ExGlobals.Constants.proxy.phase.phasesAsXml
-        query: `/data/item/atoms/data`
+        // xml: ExGlobals.Constants.proxy.phase.phasesAsXml
+        // query: `/data/item/atoms/data`
 
-        XmlRole { name: "label"; query: "label/value/string()" }
-        XmlRole { name: "adpType"; query: "adp/adp_type/value/string()" }
-        XmlRole { name: "adpIso"; query: "adp/adp_class/Uiso/value/number()" }
-        XmlRole { name: "adpAni11"; query: "adp/adp_class/U_11/value/number()" }
-        XmlRole { name: "adpAni22"; query: "adp/adp_class/U_22/value/number()" }
-        XmlRole { name: "adpAni33"; query: "adp/adp_class/U_33/value/number()" }
-        XmlRole { name: "adpAni12"; query: "adp/adp_class/U_12/value/number()" }
-        XmlRole { name: "adpAni13"; query: "adp/adp_class/U_13/value/number()" }
-        XmlRole { name: "adpAni23"; query: "adp/adp_class/U_23/value/number()" }
+        // XmlListModelRole { name: "label"; query: "label/value/string()" }
+        // XmlListModelRole { name: "adpType"; query: "adp/adp_type/value/string()" }
+        // XmlListModelRole { name: "adpIso"; query: "adp/adp_class/Uiso/value/number()" }
+        // XmlListModelRole { name: "adpAni11"; query: "adp/adp_class/U_11/value/number()" }
+        // XmlListModelRole { name: "adpAni22"; query: "adp/adp_class/U_22/value/number()" }
+        // XmlListModelRole { name: "adpAni33"; query: "adp/adp_class/U_33/value/number()" }
+        // XmlListModelRole { name: "adpAni12"; query: "adp/adp_class/U_12/value/number()" }
+        // XmlListModelRole { name: "adpAni13"; query: "adp/adp_class/U_13/value/number()" }
+        // XmlListModelRole { name: "adpAni23"; query: "adp/adp_class/U_23/value/number()" }
 
-        XmlRole { name: "adpIsoId";   query: "adp/adp_class/Uiso/__id/string()" }
-        XmlRole { name: "adpAniId11"; query: "adp/adp_class/U_11/__id/string()" }
-        XmlRole { name: "adpAniId22"; query: "adp/adp_class/U_22/__id/string()" }
-        XmlRole { name: "adpAniId33"; query: "adp/adp_class/U_33/__id/string()" }
-        XmlRole { name: "adpAniId12"; query: "adp/adp_class/U_12/__id/string()" }
-        XmlRole { name: "adpAniId13"; query: "adp/adp_class/U_13/__id/string()" }
-        XmlRole { name: "adpAniId23"; query: "adp/adp_class/U_23/__id/string()" }
+        // XmlListModelRole { name: "adpIsoId";   query: "adp/adp_class/Uiso/__id/string()" }
+        // XmlListModelRole { name: "adpAniId11"; query: "adp/adp_class/U_11/__id/string()" }
+        // XmlListModelRole { name: "adpAniId22"; query: "adp/adp_class/U_22/__id/string()" }
+        // XmlListModelRole { name: "adpAniId33"; query: "adp/adp_class/U_33/__id/string()" }
+        // XmlListModelRole { name: "adpAniId12"; query: "adp/adp_class/U_12/__id/string()" }
+        // XmlListModelRole { name: "adpAniId13"; query: "adp/adp_class/U_13/__id/string()" }
+        // XmlListModelRole { name: "adpAniId23"; query: "adp/adp_class/U_23/__id/string()" }
     }
 
     // Table rows

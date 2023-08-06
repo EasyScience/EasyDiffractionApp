@@ -4,7 +4,7 @@
 
 import QtQuick 2.13
 import QtQuick.Controls 2.13
-import QtQuick.XmlListModel 2.13
+import QtQml.XmlListModel
 
 import easyApp.Gui.Style 1.0 as EaStyle
 import easyApp.Gui.Elements 1.0 as EaElements
@@ -25,13 +25,13 @@ Column {
 
             // Table model
             model: XmlListModel {
-                xml: ExGlobals.Constants.proxy.experiment.regionsAsXml
-                query: "/data/data"
+                // xml: ExGlobals.Constants.proxy.experiment.regionsAsXml
+                // query: "/data/data"
 
-                XmlRole { name: "min"; query: "min/number()" }
-                XmlRole { name: "max"; query: "max/number()" }
+                // XmlListModelRole { name: "min"; query: "min/number()" }
+                // XmlListModelRole { name: "max"; query: "max/number()" }
 
-                XmlRole { name: "pointName"; query: "name/string()" }
+                // XmlListModelRole { name: "pointName"; query: "name/string()" }
 
             }
 

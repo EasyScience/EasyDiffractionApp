@@ -4,7 +4,7 @@
 
 import numpy as np
 
-from PySide2.QtCore import QObject, Signal
+from PySide6.QtCore import QObject, Signal
 
 from easyDiffractionApp.Logic.Background import BackgroundLogic
 from easyDiffractionApp.Logic.Experiment import ExperimentLogic

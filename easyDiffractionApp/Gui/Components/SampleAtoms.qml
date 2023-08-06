@@ -4,7 +4,7 @@
 
 import QtQuick 2.13
 import QtQuick.Controls 2.13
-import QtQuick.XmlListModel 2.13
+import QtQml.XmlListModel
 
 import easyApp.Gui.Globals 1.0 as EaGlobals
 import easyApp.Gui.Style 1.0 as EaStyle
@@ -24,24 +24,24 @@ EaComponents.TableView {
     // Table model
 
     model: XmlListModel {
-        property int phaseIndex: ExGlobals.Constants.proxy.phase.currentPhaseIndex + 1
+        // property int phaseIndex: ExGlobals.Constants.proxy.phase.currentPhaseIndex + 1
 
-        xml: ExGlobals.Constants.proxy.phase.phasesAsXml
-        query: `/data/item/atoms/data`
+        // xml: ExGlobals.Constants.proxy.phase.phasesAsXml
+        // query: `/data/item/atoms/data`
 
-        XmlRole { name: "label"; query: "label/value/string()" }
-        XmlRole { name: "type"; query: "specie/value/string()" }
-        XmlRole { name: "x"; query: "fract_x/value/number()" }
-        XmlRole { name: "y"; query: "fract_y/value/number()" }
-        XmlRole { name: "z"; query: "fract_z/value/number()" }
-        XmlRole { name: "occupancy"; query: "occupancy/value/number()" }
+        // XmlListModelRole { name: "label"; query: "label/value/string()" }
+        // XmlListModelRole { name: "type"; query: "specie/value/string()" }
+        // XmlListModelRole { name: "x"; query: "fract_x/value/number()" }
+        // XmlListModelRole { name: "y"; query: "fract_y/value/number()" }
+        // XmlListModelRole { name: "z"; query: "fract_z/value/number()" }
+        // XmlListModelRole { name: "occupancy"; query: "occupancy/value/number()" }
 
-        XmlRole { name: "labelId"; query: "label/__id/string()" }
-        XmlRole { name: "typeId"; query: "specie__id/string()" }
-        XmlRole { name: "xId"; query: "fract_x/__id/string()" }
-        XmlRole { name: "yId"; query: "fract_y/__id/string()" }
-        XmlRole { name: "zId"; query: "fract_z/__id/string()" }
-        XmlRole { name: "occupancyId"; query: "occupancy/__id/string()" }
+        // XmlListModelRole { name: "labelId"; query: "label/__id/string()" }
+        // XmlListModelRole { name: "typeId"; query: "specie__id/string()" }
+        // XmlListModelRole { name: "xId"; query: "fract_x/__id/string()" }
+        // XmlListModelRole { name: "yId"; query: "fract_y/__id/string()" }
+        // XmlListModelRole { name: "zId"; query: "fract_z/__id/string()" }
+        // XmlListModelRole { name: "occupancyId"; query: "occupancy/__id/string()" }
     }
 
     // Table rows

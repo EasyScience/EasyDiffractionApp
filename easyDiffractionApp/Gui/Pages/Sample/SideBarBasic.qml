@@ -4,7 +4,7 @@
 
 import QtQuick 2.14
 import QtQuick.Controls 2.14
-import QtQuick.Dialogs 1.3 as Dialogs1
+import QtQuick.Dialogs as Dialogs1
 
 import easyApp.Gui.Globals 1.0 as EaGlobals
 import easyApp.Gui.Style 1.0 as EaStyle
@@ -115,7 +115,7 @@ EaComponents.SideBarColumn {
 
     Dialogs1.FileDialog{
         id: loadPhaseFileDialog
-        selectMultiple: true
+        //selectMultiple: true
         nameFilters: [ "CIF files (*.cif)"]
         onAccepted: ExGlobals.Constants.proxy.phase.addSampleFromCif(fileUrls)
     }

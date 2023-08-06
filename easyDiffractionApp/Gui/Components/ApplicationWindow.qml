@@ -4,8 +4,8 @@
 
 import QtQuick 2.13
 import QtQuick.Controls 2.13
-import QtQuick.Dialogs 1.3 as Dialogs1
-import QtQuick.XmlListModel 2.13
+import QtQuick.Dialogs as Dialogs1
+import QtQml.XmlListModel
 
 import easyApp.Gui.Style 1.0 as EaStyle
 import easyApp.Gui.Globals 1.0 as EaGlobals
@@ -107,14 +107,14 @@ EaComponents.ApplicationWindow {
             Component.onCompleted: ExGlobals.Variables.homeTabButton = this
         },
 
-        // Project tab
-        EaElements.AppBarTabButton {
-            enabled: ExGlobals.Variables.projectPageEnabled
-            fontIcon: "archive"
-            text: qsTr("Project")
-            ToolTip.text: qsTr("Project description page")
-            Component.onCompleted: ExGlobals.Variables.projectTabButton = this
-        },
+        // // Project tab
+        // EaElements.AppBarTabButton {
+        //     enabled: ExGlobals.Variables.projectPageEnabled
+        //     fontIcon: "archive"
+        //     text: qsTr("Project")
+        //     ToolTip.text: qsTr("Project description page")
+        //     Component.onCompleted: ExGlobals.Variables.projectTabButton = this
+        // },
 
         // Sample tab
         EaElements.AppBarTabButton {
@@ -123,44 +123,44 @@ EaComponents.ApplicationWindow {
             text: qsTr("Sample")
             ToolTip.text: qsTr("Sample model description page")
             Component.onCompleted: ExGlobals.Variables.sampleTabButton = this
-        },
-
-        // Experiment tab
-        EaElements.AppBarTabButton {
-            id: experimentTabButton
-            enabled: ExGlobals.Constants.proxy.phase.samplesPresent
-            fontIcon: "microscope"
-            text: qsTr("Experiment")
-            ToolTip.text: qsTr("Experimental settings and data page")
-            Component.onCompleted: ExGlobals.Variables.experimentTabButton = this
-        },
-
-        // Analysis tab
-        EaElements.AppBarTabButton {
-            id: analysisTabButton
-            enabled: ExGlobals.Constants.proxy.phase.samplesPresent &&
-                     (ExGlobals.Constants.proxy.experiment.experimentSkipped ||
-                      ExGlobals.Constants.proxy.experiment.experimentLoaded)
-            fontIcon: "calculator"
-            text: qsTr("Analysis")
-            ToolTip.text: qsTr("Simulation and fitting page")
-            Component.onCompleted: ExGlobals.Variables.analysisTabButton = analysisTabButton
-        },
-
-        // Summary tab
-        EaElements.AppBarTabButton {
-            id: summaryTabButton
-            enabled: ExGlobals.Constants.proxy.phase.samplesPresent &&
-                     (ExGlobals.Constants.proxy.experiment.experimentSkipped ||
-                      ExGlobals.Constants.proxy.experiment.experimentLoaded)
-            fontIcon: "clipboard-list"
-            text: qsTr("Summary")
-            ToolTip.text: qsTr("Summary of the work done")
-            onClicked: {
-                ExGlobals.Constants.proxy.project.requestReport()
-            }
-            Component.onCompleted: ExGlobals.Variables.summaryTabButton = this
         }
+
+        // // Experiment tab
+        // EaElements.AppBarTabButton {
+        //     id: experimentTabButton
+        //     enabled: ExGlobals.Constants.proxy.phase.samplesPresent
+        //     fontIcon: "microscope"
+        //     text: qsTr("Experiment")
+        //     ToolTip.text: qsTr("Experimental settings and data page")
+        //     Component.onCompleted: ExGlobals.Variables.experimentTabButton = this
+        // },
+
+        // // Analysis tab
+        // EaElements.AppBarTabButton {
+        //     id: analysisTabButton
+        //     enabled: ExGlobals.Constants.proxy.phase.samplesPresent &&
+        //              (ExGlobals.Constants.proxy.experiment.experimentSkipped ||
+        //               ExGlobals.Constants.proxy.experiment.experimentLoaded)
+        //     fontIcon: "calculator"
+        //     text: qsTr("Analysis")
+        //     ToolTip.text: qsTr("Simulation and fitting page")
+        //     Component.onCompleted: ExGlobals.Variables.analysisTabButton = analysisTabButton
+        // },
+
+        // // Summary tab
+        // EaElements.AppBarTabButton {
+        //     id: summaryTabButton
+        //     enabled: ExGlobals.Constants.proxy.phase.samplesPresent &&
+        //              (ExGlobals.Constants.proxy.experiment.experimentSkipped ||
+        //               ExGlobals.Constants.proxy.experiment.experimentLoaded)
+        //     fontIcon: "clipboard-list"
+        //     text: qsTr("Summary")
+        //     ToolTip.text: qsTr("Summary of the work done")
+        //     onClicked: {
+        //         ExGlobals.Constants.proxy.project.requestReport()
+        //     }
+        //     Component.onCompleted: ExGlobals.Variables.summaryTabButton = this
+        // }
 
     ]
 
@@ -358,14 +358,14 @@ EaComponents.ApplicationWindow {
 
     statusBar: EaElements.StatusBar {
         visible: EaGlobals.Variables.appBarCurrentIndex !== 0
-        fittingInProgress: !ExGlobals.Constants.proxy.fitting.isFitFinished
+        //fittingInProgress: !ExGlobals.Constants.proxy.fitting.isFitFinished
 
         model: XmlListModel {
-            xml: ExGlobals.Constants.proxy.project.statusModelAsXml
-            query: "/data/item"
+            // xml: ExGlobals.Constants.proxy.project.statusModelAsXml
+            // query: "/data/item"
 
-            XmlRole { name: "label"; query: "label/string()" }
-            XmlRole { name: "value"; query: "value/string()" }
+            // XmlListModelRole { name: "label"; query: "label/string()" }
+            // XmlListModelRole { name: "value"; query: "value/string()" }
         }
     }
 

@@ -11,12 +11,12 @@ import darkdetect
 import pip, toml # for PyInstaller to include these modules from utils.py
 
 # PySide
-from PySide2.QtCore import QUrl
-from PySide2.QtWidgets import QApplication
-from PySide2.QtGui import Qt, QIcon
-from PySide2.QtQml import QQmlApplicationEngine, qmlRegisterType
-from PySide2.QtWebEngine import QtWebEngine
-from PySide2.QtWebEngineWidgets import QWebEnginePage, QWebEngineView  # to call hook-PySide2.QtWebEngineWidgets.py
+from PySide6.QtCore import QUrl
+from PySide6.QtWidgets import QApplication
+from PySide6.QtGui import Qt, QIcon
+from PySide6.QtQml import QQmlApplicationEngine, qmlRegisterType
+from PySide6.QtWebEngineQuick import QtWebEngineQuick
+# from PySide6.QtWebEngineWidgets import QWebEnginePage, QWebEngineView  # to call hook-PySide2.QtWebEngineWidgets.py
 
 # easyScience
 import utils
@@ -70,7 +70,7 @@ def main():
     translations_path = os.path.join(package_path, *translations_dir.split('/'))
 
     # QtWebEngine
-    QtWebEngine.initialize()
+    QtWebEngineQuick.initialize()
 
     # Application
     app = App(sys.argv)

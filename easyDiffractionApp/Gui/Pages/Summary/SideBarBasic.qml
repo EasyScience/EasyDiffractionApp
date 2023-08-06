@@ -4,7 +4,7 @@
 
 import QtQuick 2.13
 import QtQuick.Controls 2.13
-import QtQuick.Dialogs 1.3 as QtQuickDialogs1
+import QtQuick.Dialogs as QtQuickDialogs1
 import Qt.labs.settings 1.0
 import QtWebEngine 1.10
 
@@ -163,10 +163,10 @@ EaComponents.SideBarColumn {
         id: reportParentDirDialog
 
         title: qsTr("Choose report parent directory")
-        selectFolder: true
-        selectMultiple: false
+        //selectFolder: true
+        //selectMultiple: false
 
-        folder: ExGlobals.Constants.proxy.project.currentProjectPath
+        //folder: ExGlobals.Constants.proxy.project.currentProjectPath
     }
 
 }

@@ -8,7 +8,7 @@ import datetime
 from timeit import default_timer as timer
 import json
 
-from PySide2.QtCore import Signal, QObject
+from PySide6.QtCore import Signal, QObject
 
 from easyCore.Datasets.xarray import np
 from easyCore.Utils.io.xml import XMLSerializer

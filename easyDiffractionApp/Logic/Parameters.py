@@ -7,7 +7,7 @@ from typing import Union
 
 import json
 
-from PySide2.QtCore import Signal, QObject
+from PySide6.QtCore import Signal, QObject
 
 from easyCore import np, borg
 from easyCore.Utils.io.xml import XMLSerializer

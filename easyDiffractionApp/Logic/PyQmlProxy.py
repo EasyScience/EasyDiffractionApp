@@ -3,7 +3,7 @@
 # © 2021-2023 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
 # noqa: E501
-from PySide2.QtCore import QObject, Signal, Property
+from PySide6.QtCore import QObject, Signal, Property
 
 from easyDiffractionApp.Logic.LogicController import LogicController
 from easyDiffractionApp.Logic.Proxies.Background import BackgroundProxy

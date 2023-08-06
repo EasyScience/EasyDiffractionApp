@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # © 2021-2023 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
-from PySide2.QtCore import Signal, QObject
+from PySide6.QtCore import Signal, QObject
 
 from easyCore.Datasets.xarray import xr
 from easyDiffractionLib.Profiles.P1D import Instrument1DCWParameters, Instrument1DTOFParameters, Instrument1DCWPolParameters

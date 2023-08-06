@@ -4,7 +4,7 @@
 
 import QtQuick 2.13
 import QtQuick.Controls 2.13
-import QtQuick.XmlListModel 2.13
+import QtQml.XmlListModel
 
 import easyApp.Gui.Globals 1.0 as EaGlobals
 import easyApp.Gui.Style 1.0 as EaStyle
@@ -22,10 +22,10 @@ EaComponents.TableView {
     // Table model
 
     model: XmlListModel {
-        xml: ExGlobals.Constants.proxy.experiment.experimentDataAsXml
-        query: "/data/item"
+        // xml: ExGlobals.Constants.proxy.experiment.experimentDataAsXml
+        // query: "/data/item"
 
-        XmlRole { name: "label"; query: "name/string()" }
+        // XmlListModelRole { name: "label"; query: "name/string()" }
     }
 
     // Table rows

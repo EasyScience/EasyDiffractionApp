@@ -4,7 +4,7 @@
 
 import QtQuick 2.13
 import QtQuick.Controls 2.13
-import QtQuick.XmlListModel 2.13
+import QtQml.XmlListModel
 
 import easyApp.Gui.Globals 1.0 as EaGlobals
 import easyApp.Gui.Style 1.0 as EaStyle
@@ -19,31 +19,31 @@ EaComponents.TableView {
     // Table model
 
     model: XmlListModel {
-        property int phaseIndex: ExGlobals.Constants.proxy.phase.currentPhaseIndex + 1
+        // property int phaseIndex: ExGlobals.Constants.proxy.phase.currentPhaseIndex + 1
 
-        xml: ExGlobals.Constants.proxy.phase.phasesAsXml
-        query: `/data/item/cell`
+        // xml: ExGlobals.Constants.proxy.phase.phasesAsXml
+        // query: `/data/item/cell`
 
-        XmlRole { name: "a"; query: "length_a/value/number()" }
-        XmlRole { name: "b"; query: "length_b/value/number()" }
-        XmlRole { name: "c"; query: "length_c/value/number()" }
-        XmlRole { name: "alpha"; query: "angle_alpha/value/number()" }
-        XmlRole { name: "beta"; query: "angle_beta/value/number()" }
-        XmlRole { name: "gamma"; query: "angle_gamma/value/number()" }
+        // XmlListModelRole { name: "a"; query: "length_a/value/number()" }
+        // XmlListModelRole { name: "b"; query: "length_b/value/number()" }
+        // XmlListModelRole { name: "c"; query: "length_c/value/number()" }
+        // XmlListModelRole { name: "alpha"; query: "angle_alpha/value/number()" }
+        // XmlListModelRole { name: "beta"; query: "angle_beta/value/number()" }
+        // XmlListModelRole { name: "gamma"; query: "angle_gamma/value/number()" }
 
-        XmlRole { name: "a_enabled"; query: "length_a/enabled/string()"}
-        XmlRole { name: "b_enabled"; query: "length_b/enabled/string()"}
-        XmlRole { name: "c_enabled"; query: "length_c/enabled/string()"}
-        XmlRole { name: "alpha_enabled"; query: "angle_alpha/enabled/string()" }
-        XmlRole { name: "beta_enabled"; query: "angle_beta/enabled/string()"}
-        XmlRole { name: "gamma_enabled"; query: "angle_gamma/enabled/string()"}
+        // XmlListModelRole { name: "a_enabled"; query: "length_a/enabled/string()"}
+        // XmlListModelRole { name: "b_enabled"; query: "length_b/enabled/string()"}
+        // XmlListModelRole { name: "c_enabled"; query: "length_c/enabled/string()"}
+        // XmlListModelRole { name: "alpha_enabled"; query: "angle_alpha/enabled/string()" }
+        // XmlListModelRole { name: "beta_enabled"; query: "angle_beta/enabled/string()"}
+        // XmlListModelRole { name: "gamma_enabled"; query: "angle_gamma/enabled/string()"}
 
-        XmlRole { name: "aId"; query: "length_a/__id/string()" }
-        XmlRole { name: "bId"; query: "length_b/__id/string()" }
-        XmlRole { name: "cId"; query: "length_c/__id/string()" }
-        XmlRole { name: "alphaId"; query: "angle_alpha/__id/string()" }
-        XmlRole { name: "betaId"; query: "angle_beta/__id/string()" }
-        XmlRole { name: "gammaId"; query: "angle_gamma/__id/string()" }
+        // XmlListModelRole { name: "aId"; query: "length_a/__id/string()" }
+        // XmlListModelRole { name: "bId"; query: "length_b/__id/string()" }
+        // XmlListModelRole { name: "cId"; query: "length_c/__id/string()" }
+        // XmlListModelRole { name: "alphaId"; query: "angle_alpha/__id/string()" }
+        // XmlListModelRole { name: "betaId"; query: "angle_beta/__id/string()" }
+        // XmlListModelRole { name: "gammaId"; query: "angle_gamma/__id/string()" }
     }
 
     // Table rows

@@ -12,8 +12,8 @@ QtObject {
 
     // Initial application components accessibility
     property bool homePageEnabled: isDebugMode ? true : true
-    property bool projectPageEnabled: isDebugMode ? true : false
-    property bool samplePageEnabled: isDebugMode ? true : false
+    property bool projectPageEnabled: isDebugMode ? true : true
+    property bool samplePageEnabled: isDebugMode ? true : true
 
     // //////////
     // HTML parts

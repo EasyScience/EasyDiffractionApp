@@ -4,7 +4,7 @@
 
 import QtQuick 2.13
 import QtQuick.Controls 2.13
-import QtQuick.XmlListModel 2.13
+import QtQml.XmlListModel
 
 import easyApp.Gui.Style 1.0 as EaStyle
 import easyApp.Gui.Elements 1.0 as EaElements
@@ -44,16 +44,16 @@ Column {
                 width: EaStyle.Sizes.sideBarContentWidth * 3 / 5 - EaStyle.Sizes.fontPixelSize / 2
 
                 model: XmlListModel {
-                    xml: ExGlobals.Constants.proxy.parameters.instrumentParametersAsXml
-                    query: `/data`
+                    // xml: ExGlobals.Constants.proxy.parameters.instrumentParametersAsXml
+                    // query: `/data`
 
-                    XmlRole { name: "u"; query: "resolution_u/value/number()" }
-                    XmlRole { name: "v"; query: "resolution_v/value/number()" }
-                    XmlRole { name: "w"; query: "resolution_w/value/number()" }
+                    // XmlListModelRole { name: "u"; query: "resolution_u/value/number()" }
+                    // XmlListModelRole { name: "v"; query: "resolution_v/value/number()" }
+                    // XmlListModelRole { name: "w"; query: "resolution_w/value/number()" }
 
-                    XmlRole { name: "uId"; query: "resolution_u/__id/string()" }
-                    XmlRole { name: "vId"; query: "resolution_v/__id/string()" }
-                    XmlRole { name: "wId"; query: "resolution_w/__id/string()" }
+                    // XmlListModelRole { name: "uId"; query: "resolution_u/__id/string()" }
+                    // XmlListModelRole { name: "vId"; query: "resolution_v/__id/string()" }
+                    // XmlListModelRole { name: "wId"; query: "resolution_w/__id/string()" }
                 }
 
                 delegate: EaComponents.TableViewDelegate {
@@ -94,14 +94,14 @@ Column {
                 width: EaStyle.Sizes.sideBarContentWidth * 2 / 5 - EaStyle.Sizes.fontPixelSize / 2
 
                 model: XmlListModel {
-                    xml: ExGlobals.Constants.proxy.parameters.instrumentParametersAsXml
-                    query: `/data`
+                    // xml: ExGlobals.Constants.proxy.parameters.instrumentParametersAsXml
+                    // query: `/data`
 
-                    XmlRole { name: "x"; query: "resolution_x/value/number()" }
-                    XmlRole { name: "y"; query: "resolution_y/value/number()" }
+                    // XmlListModelRole { name: "x"; query: "resolution_x/value/number()" }
+                    // XmlListModelRole { name: "y"; query: "resolution_y/value/number()" }
 
-                    XmlRole { name: "xId"; query: "resolution_x/__id/string()" }
-                    XmlRole { name: "yId"; query: "resolution_y/__id/string()" }
+                    // XmlListModelRole { name: "xId"; query: "resolution_x/__id/string()" }
+                    // XmlListModelRole { name: "yId"; query: "resolution_y/__id/string()" }
                 }
 
                 delegate: EaComponents.TableViewDelegate {

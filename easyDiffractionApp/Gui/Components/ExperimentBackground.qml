@@ -1,6 +1,6 @@
 import QtQuick 2.13
 import QtQuick.Controls 2.13
-import QtQuick.XmlListModel 2.13
+import QtQml.XmlListModel
 
 import easyApp.Gui.Globals 1.0 as EaGlobals
 import easyApp.Gui.Style 1.0 as EaStyle
@@ -17,15 +17,15 @@ EaComponents.TableView {
     // Table model
 
     model: XmlListModel {
-        xml: ExGlobals.Constants.proxy.backgroundProxy.asXml
-        query: "/data/data"
+        // xml: ExGlobals.Constants.proxy.backgroundProxy.asXml
+        // query: "/data/data"
 
-        XmlRole { name: "x"; query: "x/value/number()" }
-        XmlRole { name: "y"; query: "y/value/number()" }
+        // XmlListModelRole { name: "x"; query: "x/value/number()" }
+        // XmlListModelRole { name: "y"; query: "y/value/number()" }
 
-        XmlRole { name: "pointName"; query: "name/string()" }
-        XmlRole { name: "xId"; query: "x/__id/string()" }
-        XmlRole { name: "yId"; query: "y/__id/string()" }
+        // XmlListModelRole { name: "pointName"; query: "name/string()" }
+        // XmlListModelRole { name: "xId"; query: "x/__id/string()" }
+        // XmlListModelRole { name: "yId"; query: "y/__id/string()" }
     }
 
     // Table rows

@@ -6,7 +6,7 @@ __author__ = 'github.com/wardsimon'
 __version__ = '0.0.1'
 
 from typing import List
-from PySide2.QtCore import QPointF
+from PySide6.QtCore import QPointF
 
 
 class QtDataStore():

@@ -4,7 +4,7 @@ on: [push, pull_request]
 
 jobs:
   make-installer:
-    timeout-minutes: 30
+    timeout-minutes: 45
 
     runs-on: ${{ matrix.os }}
 
@@ -99,7 +99,7 @@ jobs:
       - name: Create freezed python app bundle
         run: python ${{ env.SCRIPTS_PATH }}/FreezeApp.py
 
-      - name: Create offline and online app installers from freezed app bundle
+      - name: Create offline app installer from freezed app bundle
         run: >
           python ${{ env.SCRIPTS_PATH }}/MakeInstaller.py
           ${{ env.BRANCH_NAME }} ${{ matrix.os }}

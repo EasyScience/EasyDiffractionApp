@@ -171,6 +171,11 @@ jobs:
         shell: bash
         run: echo "BRANCH_NAME=$GITHUB_HEAD_REF" >> $GITHUB_ENV
 
+      - name: Add extra info to pyproject.toml
+        run: |
+          python -m pip install toml
+          python utils.py --update
+
       - name: Declare env variables on push and pull_request
         shell: bash
         run: |

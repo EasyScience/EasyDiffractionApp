@@ -1,5 +1,0 @@
-_name Ho2Ti2O7
-_short_description 'neutrons, powder, constant wavelength, polarised, VIP@LLB'
-_samples 'Ho2Ti2O7'
-_experiments 'VIP@LLB-5K5T'
-_modified '24.05.2022 09:52'

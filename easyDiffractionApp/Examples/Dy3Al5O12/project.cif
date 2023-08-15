@@ -1,0 +1,11 @@
+data_Dy3Al5O12
+
+_description "neutrons, powder, constant wavelength, G41@LLB"
+
+loop_
+_model_cif_file_name
+dy3al5o12.cif 
+
+loop_
+_experiment_cif_file_name
+g41.cif

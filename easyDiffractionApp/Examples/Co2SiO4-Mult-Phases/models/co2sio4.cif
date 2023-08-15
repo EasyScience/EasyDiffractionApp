@@ -1,0 +1,28 @@
+data_co2sio4
+
+_cell_length_a 10.3()
+_cell_length_b 6.0()
+_cell_length_c 4.7()
+_cell_angle_alpha 90
+_cell_angle_beta 90
+_cell_angle_gamma 90
+_space_group_name_H-M_alt "P n m a"
+_space_group_IT_coordinate_system_code abc
+
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_occupancy
+_atom_site_adp_type
+_atom_site_B_iso_or_equiv
+_atom_site_multiplicity
+_atom_site_Wyckoff_symbol
+Co1 Co 0 0 0 1 Biso 0.3 4 a
+Co2 Co 0.279 0.25 0.985 1 Biso 0.3 4 c
+Si Si 0.094 0.25 0.429 1 Biso 0.34 4 c
+O1 O 0.091 0.25 0.771 1 Biso 0.63 4 c
+O2 O 0.448 0.25 0.217 1 Biso 0.59 4 c
+O3 O 0.164 0.032 0.28 1 Biso 0.83 8 d

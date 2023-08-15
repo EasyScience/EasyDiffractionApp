@@ -1,0 +1,12 @@
+data_Si3N4
+
+_description "neutrons, powder, constant wavelength, multi-phase, 3T2@LLB"
+
+loop_
+_model_cif_file_name
+si3n4_a.cif
+si3n4_b.cif
+
+loop_
+_experiment_cif_file_name
+3t2.cif

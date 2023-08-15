@@ -2,9 +2,6 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # © 2021-2023 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
-__author__ = "github.com/AndrewSazonov"
-__version__ = '0.0.1'
-
 import os, sys
 import time
 import requests
@@ -13,7 +10,7 @@ import dephell_licenses
 import Functions, Config
 
 
-CONFIG = Config.Config()
+CONFIG = Config.Config(sys.argv[1], sys.argv[2])
 
 def qtifwSetupFileName():
     file_version = CONFIG['ci']['qtifw']['setup']['version']
@@ -105,7 +102,7 @@ def onlineRepositoryUrl():
 def installerConfigXml():
     try:
         message = f"create {CONFIG['ci']['app']['setup']['build']['config_xml']} content"
-        app_url = CONFIG['tool']['poetry']['homepage']
+        app_url = CONFIG['release']['homepage']
         maintenance_tool_suffix = CONFIG['ci']['app']['setup']['maintenance_tool_suffix']
         maintenance_tool_name = maintenance_tool_suffix #f'{CONFIG.app_name}{maintenance_tool_suffix}'
         config_control_script = CONFIG['ci']['scripts']['config_control']
@@ -158,13 +155,13 @@ def installerConfigXml():
 def appPackageXml():
     try:
         message = f"create app package content"
-        license_id = CONFIG['tool']['poetry']['license'].replace('-only', '')
+        license_id = CONFIG['project']['license'].replace('-only', '')
         license_name = dephell_licenses.licenses.get_by_id(license_id).name.replace('"', "'")
         requires_root = 'false'
         raw_xml = Functions.dict2xml({
             'Package': {
                 'DisplayName': CONFIG.app_name,
-                'Description': CONFIG['tool']['poetry']['description'],
+                'Description': CONFIG['project']['description'],
                 'Version': CONFIG.app_version,
                 'ReleaseDate': CONFIG['ci']['app']['info']['date_for_qtifw'],
                 'Default': 'true',
@@ -233,6 +230,7 @@ def osDependentPreparation():
         Functions.printNeutralMessage(f'No preparation needed for os {CONFIG.os}')
 
 def installQtInstallerFramework():
+    osDependentPreparation()
     if os.path.exists(qtifwDirPath()):
         Functions.printNeutralMessage(f'QtInstallerFramework was already installed to {qtifwDirPath()}')
         return
@@ -360,9 +358,8 @@ def addFilesToLocalRepository():
 
 if __name__ == "__main__":
     downloadQtInstallerFramework()
-    osDependentPreparation()
     installQtInstallerFramework()
     createInstallerSourceDir()
     createOfflineInstaller()
-    createOnlineRepositoryLocally()
-    addFilesToLocalRepository()
+    #createOnlineRepositoryLocally()
+    #addFilesToLocalRepository()

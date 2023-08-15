@@ -1,0 +1,11 @@
+data_PbSO4
+
+_description "neutrons, powder, constant wavelength, D1A@ILL"
+
+loop_
+_model_cif_file_name
+pbso4.cif 
+
+loop_
+_experiment_cif_file_name
+d1a.cif

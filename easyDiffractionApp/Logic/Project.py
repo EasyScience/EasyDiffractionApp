@@ -1,283 +1,433 @@
-# SPDX-FileCopyrightText: 2023 easyDiffraction contributors <support@easydiffraction.org>
+# SPDX-FileCopyrightText: 2023 EasyExample contributors
 # SPDX-License-Identifier: BSD-3-Clause
-# © 2021-2023 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+# © 2023 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
 
-# noqa: E501
 import os
-import datetime
-from timeit import default_timer as timer
-import json
+import time
+from pycifstar.data import Data as PycifstarData
+from PySide6.QtCore import QObject, Signal, Slot, Property, QUrl
+from PySide6.QtCore import QFile, QTextStream, QIODevice
 
-from PySide2.QtCore import Signal, QObject
-
-from easyCore.Datasets.xarray import np
-from easyCore.Utils.io.xml import XMLSerializer
-from easyDiffractionLib.sample import Sample
-from easyApp.Logic.Utils.Utils import generalizePath
+from EasyApp.Logic.Logging import console
+from Logic.Helpers import IO
+from Logic.Calculators import Parameter, CryspyParser
 
 
-class ProjectLogic(QObject):
-    """
-    """
-    projectCreatedChanged = Signal()
-    projectInfoChanged = Signal()
-    reset = Signal()
-    phasesAsObjChanged = Signal()
-    structureParametersChanged = Signal()
-    experimentDataAdded = Signal()
-    experimentLoadedChanged = Signal()
+_EMPTY_DATA = {
+    'name': '',
+    'params': {},
+    'loops': {}
+}
 
-    def __init__(self, parent=None , interface=None):
+_EMPTY_DESCRIPTION = dict(Parameter(
+                        '.',
+                        name='_description',
+                        prettyName='Description',
+                        url='https://easydiffraction.org'
+                    ))
+_EXAMPLES = [
+    {
+        'name': 'La0.5Ba0.5CoO3',
+        'description': 'neutrons, powder, constant wavelength, HRPT@PSI',
+        'path': ':/Examples/La0.5Ba0.5CoO3/project.cif'
+
+     },
+     {
+         'name': 'La0.5Ba0.5CoO3-Raw',
+         'description': 'neutrons, powder, constant wavelength, HRPT@PSI',
+         'path': ':/Examples/La0.5Ba0.5CoO3-Raw/project.cif'
+
+      },
+    {
+        'name': 'Co2SiO4',
+        'description': 'neutrons, powder, constant wavelength, D20@ILL',
+        'path': ':/Examples/Co2SiO4/project.cif'
+
+     },
+    {
+        'name': 'Dy3Al5O12',
+        'description': 'neutrons, powder, constant wavelength, G41@LLB',
+        'path': ':/Examples/Dy3Al5O12/project.cif'
+
+     },
+     {
+        'name': 'PbSO4',
+        'description': 'neutrons, powder, constant wavelength, D1A@ILL',
+        'path': ':/Examples/PbSO4/project.cif'
+
+     },
+     {
+         'name': 'Co2SiO4-Mult-Phases',
+         'description': 'neutrons, powder, constant wavelength, D20@ILL, 2 phases',
+         'path': ':/Examples/Co2SiO4-Mult-Phases/project.cif'
+     },
+     #{
+     #    'name': 'Si3N4',
+     #    'description': 'neutrons, powder, constant wavelength, multi-phase, 3T2@LLB',
+     #    'path': ':/Examples/Si3N4/project.cif'
+     #}
+]
+
+_DEFAULT_CIF = """data_DefaultProject
+_description 'Default project description'
+"""
+
+
+class Project(QObject):
+    createdChanged = Signal()
+    needSaveChanged = Signal()
+    dataBlockChanged = Signal()
+    dataBlockCifChanged = Signal()
+    recentChanged = Signal()
+    locationChanged = Signal()
+    dateCreatedChanged = Signal()
+    dateLastModifiedChanged = Signal()
+
+    def __init__(self, parent=None):
         super().__init__(parent)
-        self.parent = parent
-        self._interface = interface
-        self._interface_name = interface.current_interface_name
-        self.project_save_filepath = ""
-        self.project_load_filepath = ""
-        self._project_info = self._defaultProjectInfo()
-        self._project_created = False
-        self._state_changed = False
-        self._read_only = False
+        self._proxy = parent
 
-        self._report = ""
-        self._currentProjectPath = os.path.join(os.path.expanduser("~"), 'TestProject')
+        self.resetAll()
 
-    ####################################################################################################################
-    ####################################################################################################################
-    # Reporting
-    ####################################################################################################################
-    ####################################################################################################################
+    @Slot()
+    def resetAll(self):
+        self._dataBlock = self.createDataBlockFromCif(_DEFAULT_CIF)
+        self._dataBlockCif = _DEFAULT_CIF
+        self._examples = _EXAMPLES
+        self._created = False
+        self._needSave = False
+        self._recent = []
+        self._isExample = False
 
-    def setReport(self, report):
-        """
-        Keep the QML generated HTML report for saving
-        """
-        self._report = report
-
-    def saveReport(self, filepath):
-        """
-        Save the generated report to the specified file
-        Currently only html
-        """
-        try:
-            with open(filepath, 'w', encoding='utf-8') as f:
-                f.write(self._report)
-            success = True
-        except IOError:
-            success = False
-        return success
-
-    def setProjectCreated(self, created: bool):
-        if self._project_created == created:
-            return
-        self._project_created = created
-        self.projectCreatedChanged.emit()
-
-    ####################################################################################################################
-    ####################################################################################################################
-    # project
-    ####################################################################################################################
-    ####################################################################################################################
-
-    def _defaultProjectInfo(self):
-        return dict(
-            name="Example Project",
-            short_description="diffraction, powder, 1D",
-            samples="Not loaded",
-            experiments="Not loaded",
-            modified=datetime.datetime.now().strftime("%d.%m.%Y %H:%M")
-        )
-
-    def projectExamplesAsXml(self):
-        model = { "item": [
-            {"name": "PbSO4", "description": "neutrons, powder, constant wavelength, D1A@ILL",
-             "path": "../Resources/Examples/PbSO4/project.json"},
-            {"name": "Co2SiO4", "description": "neutrons, powder, constant wavelength, D20@ILL",
-             "path": "../Resources/Examples/Co2SiO4/project.json"},
-            {"name": "Dy3Al5O12", "description": "neutrons, powder, constant wavelength, G41@LLB",
-             "path": "../Resources/Examples/Dy3Al5O12/project.json"},
-            {"name": "CeCuAl3", "description": "neutrons, powder, time-of-flight, Polaris@ISIS",
-             "path": "../Resources/Examples/CeCuAl3/project.json"},
-            {"name": "Na2Ca3Al2F14", "description": "neutrons, powder, time-of-flight, Osiris@ISIS",
-             "path": "../Resources/Examples/Na2Ca3Al2F14/project.json"},
-            {"name": "Si3N4", "description": "neutrons, powder, constant wavelength, multi-phase, 3T2@LLB",
-             "path": "../Resources/Examples/Si3N4/project.json"},
-            {"name": "Fe3O4", "description": "neutrons, powder, constant wavelength, polarised, 6T2@LLB",
-             "path": "../Resources/Examples/Fe3O4/project.json"},
-            {"name": "Ho2Ti2O7", "description": "neutrons, powder, constant wavelength, polarised, VIP@LLB",
-             "path": "../Resources/Examples/Ho2Ti2O7/project.json"},
-            # disbaled until the new Cryspy is available.
-            {"name": "La0.5Ba0.5CoO3", "description": "neutrons, powder, constant wavelength, HRPT@PSI",
-             "path": "../Resources/Examples/La0.5Ba0.5CoO3/project.json"}
-        ]}
-        # XMLSerializer doesn't currently handle lists.
-        xml = XMLSerializer().encode(model, data_only=True)
-        return xml
-
-    def projectInfoAsCif(self):
-        cif_list = []
-        for key, value in self._project_info.items():
-            if ' ' in value:
-                value = f"'{value}'"
-            cif_list.append(f'_{key} {value}')
-        cif_str = '\n'.join(cif_list)
-        return cif_str
-
-    def projectInfoAsJson(self, json_str):
-        self._project_info = json.loads(json_str)
-
-    def editProjectInfo(self, key, value):
-        if key == 'location':
-            self._currentProjectPath = value
-            return
-        else:
-            if self._project_info[key] == value:
-                return
-            self._project_info[key] = value
-
-    def currentProjectPath(self, new_path):
-        if self._currentProjectPath == new_path:
-            return
-        self._currentProjectPath = new_path
-
-    def createProject(self):
-        projectPath = self._currentProjectPath
-        mainCif = os.path.join(projectPath, 'project.cif')
-        samplesPath = os.path.join(projectPath, 'samples')
-        experimentsPath = os.path.join(projectPath, 'experiments')
-        calculationsPath = os.path.join(projectPath, 'calculations')
-        if not os.path.exists(projectPath):
-            os.makedirs(projectPath)
-            os.makedirs(samplesPath)
-            os.makedirs(experimentsPath)
-            os.makedirs(calculationsPath)
-            with open(mainCif, 'w') as file:
-                file.write(self.projectInfoAsCif())
-        else:
-            print(f"ERROR: Directory {projectPath} already exists")
-
-    def stateHasChanged(self, changed: bool):
-        if self._state_changed == changed:
-            return
-        self._state_changed = changed
-
-    def _loadProjectAs(self, filepath):
-        """
-        """
-        self.project_load_filepath = filepath
-        print("LoadProjectAs " + filepath)
-        self._loadProject()
-
-    def _loadProject(self):
-        """
-        """
-        start_time = timer()
-        path = generalizePath(self.project_load_filepath)
-        if not os.path.isfile(path):
-            print("Failed to find project: '{0}'".format(path))
-            return
-        with open(path, 'r') as xml_file:
-            descr: dict = json.load(xml_file)
-
-        interface_name = descr.get('interface', None)
-        if interface_name is not None:
-            old_interface_name = self._interface.current_interface_name
-            if old_interface_name != interface_name:
-                self._interface.switch(interface_name)
-
-        descr['sample']['interface'] = self._interface
-        sample_descr = Sample.from_dict(descr['sample'])
-
-        self.parent.assignToSample(sample_descr)
-
-        # project info
-        self._project_info = descr['project_info']
-
-        # read only flag
-        self._read_only = descr['read_only']
-
-        # experiment
-        if 'experiments' in descr:
-            data = descr['experiments']
-            exp_name = descr['project_info']['experiments']
-
-            self.parent.sendToExperiment(data, exp_name)
-        else:
-            # delete existing experiment
-            self.parent.removeExperiment(skipped=descr['experiment_skipped'])
-
-        new_minimizer_settings = descr.get('minimizer', None)
-        if new_minimizer_settings is not None:
-            new_engine = new_minimizer_settings['engine']
-            new_method = new_minimizer_settings['method']
-            self.parent.setNewEngine(engine=new_engine, method=new_method)
-
-        self.parent.setSampleOnFitter()
-
-        # tell the LC that the stack needs resetting
-        self.parent.resetStack()
-
-        self.setProjectCreated(True)
-        print("\nProject loading time: {0:.3f} s\n".format(timer() - start_time))
-
-    def saveProject(self):
-        """
-        """
-        projectPath = self._currentProjectPath
-        project_save_filepath = os.path.join(projectPath, 'project.json')
-        descr = {
-            'sample': self.parent.getSampleAsDict()
+        self._location = ''
+        self._dateCreated = ''
+        self._dateLastModified = ''
+        self._dirNames = {
+            'models': 'models',
+            'experiments': 'experiments',
+            'analysis': 'analysis',
+            'summary': 'summary'
         }
-        if not self.parent.isExperimentSkipped():
-            descr['experiments'] = self.parent.getExperiments()
 
-        descr['experiment_skipped'] = self.parent.isExperimentSkipped()
-        descr['read_only'] = self._read_only
-        descr['project_info'] = self._project_info
+    @Property('QVariant', notify=dataBlockChanged)
+    def dataBlock(self):
+        return self._dataBlock
 
-        descr['interface'] = self._interface.current_interface_name
+    @Property(str, notify=dataBlockCifChanged)
+    def dataBlockCif(self):
+        return self._dataBlockCif
 
-        descr['minimizer'] = self.parent.fittingNamesDict()
+    @Property('QVariant', constant=True)
+    def examples(self):
+        return self._examples
 
-        content_json = json.dumps(descr, indent=4, default=self.default)
+    @Property(bool, notify=createdChanged)
+    def created(self):
+        return self._created
 
-        path = generalizePath(project_save_filepath)
-        createFile(path, content_json)
-        self.stateHasChanged(False)
+    @created.setter
+    def created(self, newValue):
+        if self._created == newValue:
+            return
+        self._created = newValue
+        self.createdChanged.emit()
 
-    def default(self, obj):
-        if type(obj).__module__ == np.__name__:
-            if isinstance(obj, np.ndarray):
-                return obj.tolist()
-            else:
-                return obj.item()
-        raise TypeError('Unknown type:', type(obj))
+    @Property(bool, notify=needSaveChanged)
+    def needSave(self):
+        return self._needSave and self._isExample == False
 
-    def resetState(self):
-        self._project_info = self._defaultProjectInfo()
-        self.setProjectCreated(False)
-        self.projectInfoChanged.emit()
-        self.project_save_filepath = ""
-        self.parent.resetState()
+    @needSave.setter
+    def needSave(self, newValue):
+        if self._needSave == newValue:
+            return
+        self._needSave = newValue
+        self.needSaveChanged.emit()
 
-    def updateProjectInfo(self, key_value):
-        if len(key_value) == 2:
-            self._project_info[key_value[0]] = key_value[1]
-            self.projectInfoChanged.emit()
+    @Slot()
+    def setNeedSaveToTrue(self):
+        self.needSave = True
 
-    def statusModelAsObj(self):
-        return self.parent.statusModelAsObj()
+    @Property('QVariant', notify=recentChanged)
+    def recent(self):
+        return self._recent
 
-    def statusModelAsXml(self):
-        return self.parent.statusModelAsXml()
+    @recent.setter
+    def recent(self, newValue):
+        newValue = newValue.toVariant()
+        if self._recent == newValue:
+            return
+        self._recent = newValue
+        self.recentChanged.emit()
 
-def createFile(path, content):
-    if os.path.exists(path):
-        print(f'File already exists {path}. Overwriting...')
-        os.unlink(path)
-    try:
-        message = f'create file {path}'
-        with open(path, "w") as file:
-            file.write(content)
-    except Exception as exception:
-        print(message, exception)
+    @Property(str, notify=locationChanged)
+    def location(self):
+        return self._location
+
+    @location.setter
+    def location(self, newValue):
+        if self._location == newValue:
+            return
+        self._location = newValue
+        self.locationChanged.emit()
+
+    @Property(str, notify=dateCreatedChanged)
+    def dateCreated(self):
+        return self._dateCreated
+
+    @dateCreated.setter
+    def dateCreated(self, newValue):
+        if self._dateCreated == newValue:
+            return
+        self._dateCreated = newValue
+        self.dateCreatedChanged.emit()
+
+    @Property(str, notify=dateLastModifiedChanged)
+    def dateLastModified(self):
+        return self._dateLastModified
+
+    @dateLastModified.setter
+    def dateLastModified(self, newValue):
+        if self._dateLastModified == newValue:
+            return
+        self._dateLastModified = newValue
+        self.dateLastModifiedChanged.emit()
+
+    @Property('QVariant', constant=True)
+    def dirNames(self):
+        return self._dirNames
+
+    def createDataBlockFromCif(self, edCif):
+        starObj = PycifstarData()
+        starObj.take_from_string(edCif)
+        dataBlock = CryspyParser.starObjToEdProject(starObj)
+        return dataBlock
+
+    @Slot('QVariant')
+    def loadRecentFromFile(self, fpath):
+        #fpath = fpath.toLocalFile()
+        #fpath = IO.generalizePath(fpath)
+        self.loadProjectFromFile(fpath)
+
+    @Slot(str)
+    def loadExampleFromSoure(self, fpath):
+        self._isExample = True
+        self.loadProjectFromSource(fpath)
+
+    @Slot('QVariant')
+    def loadProject(self, fpath):
+        fpath = fpath.toLocalFile()
+        fpath = IO.generalizePath(fpath)
+
+        if fpath in self._recent:
+            self._recent.remove(fpath)
+        self._recent.insert(0, fpath)
+        self._recent = self._recent[:10]
+        self.recentChanged.emit()
+
+        self.loadProjectFromFile(fpath)
+
+    def loadProjectFromSource(self, fpath):
+        console.debug(f"Loading project from: {fpath}")
+        file = QFile(fpath)
+        if not file.open(QIODevice.ReadOnly | QIODevice.Text):
+            console.error('Not found in resources')
+            return
+
+        stream = QTextStream(file)
+        edCif = stream.readAll()
+
+        starObj = PycifstarData()
+        starObj.take_from_string(edCif)
+        self._dataBlock = CryspyParser.starObjToEdProject(starObj)
+
+        self.location = os.path.dirname(fpath)
+
+        modelFileNames = [item['_name']['value'] for item in self._dataBlock['loops']['_model_cif_file']]
+        modelFilePaths = [os.path.join(self._location, self._dirNames['models'], fileName) for fileName in modelFileNames]
+        self._proxy.model.loadModelsFromResources(modelFilePaths)
+
+        if '_experiment_cif_file' in self._dataBlock['loops']:
+            experimentFileNames = [item['_name']['value'] for item in self._dataBlock['loops']['_experiment_cif_file']]
+            experimentFilePaths = [os.path.join(self._location, self._dirNames['experiments'], fileName) for fileName in experimentFileNames]
+            self._proxy.experiment.loadExperimentsFromResources(experimentFilePaths)
+
+        reportFileName = 'report.cif'
+        reportFilePath = os.path.join(self._location, self._dirNames['summary'], reportFileName)
+        self._proxy.summary.loadReportFromResources(reportFilePath)
+
+        if '_description' not in self._dataBlock['params']:
+            self._dataBlock['params']['_description'] = _EMPTY_DESCRIPTION
+
+        self.dataBlockChanged.emit()
+        self.created = True
+        self.needSave = False
+
+    def loadProjectFromFile(self, fpath):
+        console.debug(f"Loading project from: {fpath}")
+        with open(fpath, 'r') as file:
+            edCif = file.read()
+
+        starObj = PycifstarData()
+        starObj.take_from_string(edCif)
+        self._dataBlock = CryspyParser.starObjToEdProject(starObj)
+
+        st = os.stat(fpath)
+        fmt = "%d %b %Y %H:%M"
+        #self.dateCreated = time.strftime(fmt, time.localtime(st.st_birthtime))
+        self.dateLastModified = time.strftime(fmt, time.localtime(st.st_mtime))
+
+        self.location = os.path.dirname(fpath)
+
+        modelFileNames = [item['_name']['value'] for item in self._dataBlock['loops']['_model_cif_file']]
+        modelFilePaths = [os.path.join(self._location, self._dirNames['models'], fileName) for fileName in modelFileNames]
+        modelFilePaths = [QUrl.fromLocalFile(path) for path in modelFilePaths]
+        self._proxy.model.loadModelsFromFiles(modelFilePaths)
+
+        if '_experiment_cif_file' in self._dataBlock['loops']:
+            experimentFileNames = [item['_name']['value'] for item in self._dataBlock['loops']['_experiment_cif_file']]
+            experimentFilePaths = [os.path.join(self._location, self._dirNames['experiments'], fileName) for fileName in experimentFileNames]
+            experimentFilePaths = [QUrl.fromLocalFile(path) for path in experimentFilePaths]
+            self._proxy.experiment.loadExperimentsFromFiles(experimentFilePaths)
+
+        reportFileName = 'report.cif'
+        reportFilePath = os.path.join(self._location, self._dirNames['summary'], reportFileName)
+        reportFilePath = QUrl.fromLocalFile(reportFilePath)
+        self._proxy.summary.loadReportFromFile(reportFilePath)
+
+        if '_description' not in self._dataBlock['params']:
+            self._dataBlock['params']['_description'] = _EMPTY_DESCRIPTION
+
+        self.dataBlockChanged.emit()
+        self.created = True
+        self.needSave = True
+
+    @Slot(str)
+    def setName(self, value):
+        oldValue = self._dataBlock['name']['value']
+        if oldValue == value:
+            return
+        self._dataBlock['name']['value'] = value
+        console.debug(IO.formatMsg('sub', 'Intern dict', f'{oldValue} → {value}', 'project.name'))
+        self.dataBlockChanged.emit()
+
+    def setModels(self):
+        names = [f"{block['name']['value']}" for block in self._proxy.model.dataBlocks]
+        oldNames = []
+        if '_model_cif_file' in self._dataBlock['loops']:
+            oldNames = [os.path.splitext(item['_name']['value'])[0] for item in self._dataBlock['loops']['_model_cif_file']]
+        if oldNames == names:
+            return
+
+        self._dataBlock['loops']['_model_cif_file'] = []
+        for name in names:
+            edModel = {}
+            edModel['_name'] = dict(Parameter(
+                f'{name}.cif',
+                name='_name',
+                prettyName='Model file(s)',
+                url='https://easydiffraction.org'
+            ))
+            self._dataBlock['loops']['_model_cif_file'].append(edModel)
+
+        console.debug(IO.formatMsg('sub', 'Intern dict', f'{oldNames} → {names}'))
+        self.dataBlockChanged.emit()
+
+    def setExperiments(self):
+        names = [f"{block['name']['value']}" for block in self._proxy.experiment.dataBlocksNoMeas]
+        oldNames = []
+        if '_experiment_cif_file' in self._dataBlock['loops']:
+            oldNames = [os.path.splitext(item['_name']['value'])[0] for item in self._dataBlock['loops']['_experiment_cif_file']]
+        if oldNames == names:
+            return
+
+        self._dataBlock['loops']['_experiment_cif_file'] = []
+        for name in names:
+            edExperiment = {}
+            edExperiment['_name'] = dict(Parameter(
+                f'{name}.cif',
+                name='_name',
+                prettyName='Experiment file(s)',
+                url='https://easydiffraction.org'
+            ))
+            self._dataBlock['loops']['_experiment_cif_file'].append(edExperiment)
+
+        console.debug(IO.formatMsg('sub', 'Intern dict', f'{oldNames} → {names}'))
+        self.dataBlockChanged.emit()
+
+    @Slot(str, str, 'QVariant')
+    def setMainParam(self, paramName, field, value):
+        changedIntern = self.editDataBlockMainParam(paramName, field, value)
+        if changedIntern:
+            self.dataBlockChanged.emit()
+
+    def editDataBlockMainParam(self, paramName, field, value):
+        blockType = 'project'
+        oldValue = self._dataBlock['params'][paramName][field]
+        if oldValue == value:
+            return False
+        self._dataBlock['params'][paramName][field] = value
+        if type(value) == float:
+            console.debug(IO.formatMsg('sub', 'Intern dict', f'{oldValue} → {value:.6f}', f'{blockType}.{paramName}.{field}'))
+        else:
+            console.debug(IO.formatMsg('sub', 'Intern dict', f'{oldValue} → {value}', f'{blockType}.{paramName}.{field}'))
+        return True
+
+    @Slot()
+    def create(self):
+        self.save()
+
+        fpath = os.path.join(self.location, 'project.cif')
+        st = os.stat(fpath)
+        fmt = "%d %b %Y %H:%M"
+        #self.dateCreated = time.strftime(fmt, time.localtime(st.st_birthtime))
+        self.dateLastModified = time.strftime(fmt, time.localtime(st.st_mtime))
+
+        self.created = True
+
+    @Slot()
+    def save(self):
+        console.debug(IO.formatMsg('main', 'Saving project...'))
+
+        projectDirPath = self.location
+        projectFileName = 'project.cif'
+        projectFilePath = os.path.join(projectDirPath, projectFileName)
+        os.makedirs(projectDirPath, exist_ok=True)
+        with open(projectFilePath, 'w') as file:
+            file.write(self.dataBlockCif)
+            console.debug(IO.formatMsg('sub', f'saved to: {projectFilePath}'))
+
+        if self._proxy.model.defined:
+            modelFileNames = [item['_name']['value'] for item in self._dataBlock['loops']['_model_cif_file']]
+            modelFilePaths = [os.path.join(projectDirPath, self._dirNames['models'], fileName) for fileName in modelFileNames]
+            for (modelFilePath, dataBlockCif) in zip(modelFilePaths, self._proxy.model.dataBlocksCif):
+                dataBlockCif = dataBlockCif[0]
+                os.makedirs(os.path.dirname(modelFilePath), exist_ok=True)
+                with open(modelFilePath, 'w') as file:
+                    file.write(dataBlockCif)
+                    console.debug(IO.formatMsg('sub', f'saved to: {modelFilePath}'))
+
+        if self._proxy.experiment.defined:
+            experimentFileNames = [item['_name']['value'] for item in self._dataBlock['loops']['_experiment_cif_file']]
+            experimentFilePaths = [os.path.join(projectDirPath, self._dirNames['experiments'], fileName) for fileName in experimentFileNames]
+            for (experimentFilePath, dataBlockCifNoMeas, dataBlockCifMeasOnly) in zip(experimentFilePaths, self._proxy.experiment.dataBlocksCifNoMeas, self._proxy.experiment.dataBlocksCifMeasOnly):
+                os.makedirs(os.path.dirname(experimentFilePath), exist_ok=True)
+                dataBlockCif = dataBlockCifNoMeas + '\n\n' + dataBlockCifMeasOnly
+                with open(experimentFilePath, 'w') as file:
+                    file.write(dataBlockCif)
+                    console.debug(IO.formatMsg('sub', f'saved to: {experimentFilePath}'))
+
+        if self._proxy.summary.isCreated:
+            fileName = 'report.cif'
+            reportFilePath = os.path.join(projectDirPath, self._dirNames['summary'], fileName)
+            os.makedirs(os.path.dirname(reportFilePath), exist_ok=True)
+            with open(reportFilePath, 'w') as file:
+                dataBlockCif = self._proxy.summary.dataBlocksCif
+                file.write(dataBlockCif)
+                console.debug(IO.formatMsg('sub', f'saved to: {reportFilePath}'))
+
+        self.needSave = False
+
+    def setDataBlockCif(self):
+        self._dataBlockCif = CryspyParser.dataBlockToCif(self._dataBlock)
+        console.debug(IO.formatMsg('sub', 'Project', '', 'to CIF string', 'converted'))
+        self.dataBlockCifChanged.emit()

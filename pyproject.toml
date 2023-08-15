@@ -1,67 +1,38 @@
-# Build System
+# Use hatch to build the application.
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
-# Define the project
-[tool.poetry]
-name = 'easyDiffractionApp'
-version = '0.8.5-beta'
+# Information about the EasyExampleApp project.
+# Note that while the project is called EasyExampleApp
+# the application itself is EasyExample.
+[project]
+name = "EasyDiffractionApp"
+version = "0.9.0-pre-alpha1"
 description = 'Making diffraction data analysis and modelling easy.'
-license = 'BSD-3-Clause'
-authors = ['Andrew Sazonov', 'Simon Ward', 'Piotr Rozyczko']
-readme = 'README.md'
-homepage = 'https://easydiffraction.org'
-repository = 'https://download.easydiffraction.org/'
-documentation = 'https://easydiffraction.org'
-packages = [ { include = "easyDiffractionApp" } ]
-include = [
-  { path = 'CHANGELOG.md', format = 'wheel'}
+authors = [
+  {name = "Andrew Sazonov", email = "andrew.sazonov@ess.eu"}
 ]
-
-# These are the dependencies. Dependencies for CI and app building are optional
-[tool.poetry.dependencies]
-# Basic Dependencies
-python = '^3.8'
-toml = '^0.10.2'
-# EasyScience Dependencies
-easyDiffraction = { git = 'https://github.com/easyScience/easyDiffractionLib.git', rev = 'develop' }
-easyApp = { git = 'https://github.com/easyScience/easyApp.git', rev = 'master' }
-# Graphical Dependencies
-darkdetect = '^0.8.0'
-pyobjc-core = { version = '^9.0.1', platform = 'darwin' }
-pyobjc-framework-cocoa = { version = '^9.0.1', platform = 'darwin' }
-pywin32-ctypes = { version = '^0.2.0', platform = 'win32' }
-pypiwin32 = { version = '^223', platform = 'win32' }
-pefile = { version = '^2022.5.30', platform = 'win32' }
-# PyInstaller Dependencies
-pyinstaller = {version = '^5.7.0', optional = true} # '4.5.1'  # 4.6-5.2 give "ModuleNotFoundError: No module named 'pip'" on Ubuntu, when run app
-#pyinstaller = { git = 'https://github.com/pyinstaller/pyinstaller.git', rev = 'develop' }
-dephell_licenses = { version = '^0.1.7', optional = true}
-ffmpeg-python = { version = '^0.2.0', optional = true}
-mss = { version = '^7.0.1', optional = true}
-opencv-python = { version = '4.5.1.48', optional = true}
-google-trans-new = { version = '^1.1.9', optional = true}
-gTTS = { version = '^2.3.0', optional = true}
-
-# Define extra install type. e.g. pip install easyDifffraction[ci]
-[tool.poetry.extras]
-ci = ['pyinstaller', 'dephell_licenses', 'ffmpeg-python', 'opencv-python', 'google-trans-new', 'gTTS']
-
-# This is the entry point which can be called from terminal
-[tool.poetry.scripts]
-easyDiffraction = 'easyDiffractionApp.main:main'
-
-# Add the additional pip url. Fallback =  pip install --extra-index-url https://easyscience.github.io/pypi/ .
-[[tool.poetry.source]]
-name = "easyScience"
-url = "https://easyscience.github.io/pypi/"
-secondary = true
+maintainers = [
+  {name = "Andrew Sazonov", email = "andrew.sazonov@ess.eu"}
+]
+license = "BSD-3-Clause"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering",
+    "Development Status :: 4 - Beta"
+]
+requires-python = ">=3.8,<3.11"
+dependencies = [
+    'numpy>=1.24.2',
+    'EasyApp @ git+https://github.com/easyscience/EasyApp.git@new-easy-app'
+]
 
 # CUSTOM CONFIG
 # -------------
 # The information presented from here is to do with release and CI. This can be disregarded
-
 
 [release]
 app_name = 'EasyDiffraction'
@@ -70,6 +41,7 @@ tag_template = 'v{VERSION}'
 title_template = 'Version {VERSION} ({DATE})'
 description_file = 'RELEASE.md'
 changelog_file = 'CHANGELOG.md'
+homepage = 'https://easydiffraction.org'
 
 [ci.project]
 license_file = 'LICENSE.md' # how to combine this with tool.poetry.license???
@@ -161,21 +133,20 @@ separator = { macos = ':', ubuntu = ':', windows = ';' }
 dir_suffix = { macos = '.app', ubuntu = '', windows = '' }
 content_suffix = { macos = 'Contents/MacOS/', ubuntu = '', windows = '' }
 libs = { macos = 'libsDarwin', ubuntu = 'libsLinux', windows = 'libsWin32' }
-missing_calculator_libs = { macos = [], ubuntu = [], windows = ['CFML.libs'] }
-missing_pyside2_files = { macos = ['libshiboken2.abi3.*.dylib'], ubuntu = [], windows = ['shiboken2.abi3.dll', 'MSVCP140.dll'] }
-missing_pyside2_plugins = { macos = [], ubuntu = ['Qt/plugins/xcbglintegrations'], windows = [] } # EGL and GLX plugins
+missing_calculator_libs = { macos = [], ubuntu = [], windows = [] }
+missing_pyside6_files = { macos = ['libshiboken6.abi3.*.dylib'], ubuntu = [], windows = ['shiboken6.abi3.dll', 'MSVCP140.dll'] }
+missing_pyside6_plugins = { macos = [], ubuntu = ['Qt/plugins/xcbglintegrations'], windows = [] } # EGL and GLX plugins
 missing_other_libraries = {macos = [], ubuntu = [], windows = ['libs/libiomp5md.dll', 'libs/opengl32.dll', 'libs/VC_redist.x64.exe'] }
 auto_exclude = { macos = ['_tkinter'], ubuntu = ['_tkinter'], windows = [''], all = [ 'lib2to3', '_bisect',
                 '_codecs_cn', '_codecs_hk', '_codecs_iso2022', '_codecs_jp', '_codecs_kr', '_codecs_tw',
-                '_curses', '_elementtree', '_hashlib', '_heapq', '_multibytecodec',
-                '_opcode', '_queue', '_opcode', '_uuid', '_win32sysloader', 'grp', 'readline', 'termios' ] }
-manual_exclude = [ 'mfc*', 'msvcp*', 'VCRUNTIME*',
-                   '*Qt*3D*', '*Qt*Bluetooth*', '*Qt*Bodymovin*', '*Qt*Gamepad*', '*Qt*Location*',
+                '_curses', '_elementtree', '_hashlib', '_heapq', '_multibytecodec', '_opcode', '_queue',
+                '_opcode', '_uuid', '_win32sysloader', 'grp', 'readline', 'termios' ] }
+manual_exclude = [ 'mfc*', 'msvcp*', 'VCRUNTIME*', '*Qt*Bluetooth*', '*Qt*Bodymovin*', '*Qt*Gamepad*', '*Qt*Location*',
                    '*Qt*Nfc*', '*Qt*Purchasing*', '*Qt*QuickParticles*', '*Qt*QuickShapes*', '*Qt*RemoteObjects*',
                    '*Qt*Scxml*', '*Qt*Sensors*', '*Qt*Sql*', '*Qt*VirtualKeyboard*', '*Qt*Wayland*' ]
 
 [ci.qtifw.setup]
-version = '4.5.1'
+version = '4.6.0'
 https_mirrors = ['download.qt.io', 'ftp.fau.de/qtproject', 'mirrors.dotsrc.org/qtproject']
 base_path = 'official_releases/qt-installer-framework'
 file_name_base = 'QtInstallerFramework'

@@ -1,0 +1,30 @@
+import QmlProject 1.1
+
+Project {
+    mainFile: "EasyExampleApp/Gui/Sandbox/ParamNames.qml"
+
+    // List of module and plugin directories passed to QML runtime
+    importPaths: [ "../EasyApp" ]
+
+    // Include .qml files from specified directory and its subdirectories
+    QmlFiles {
+        directory: "EasyExampleApp/Gui/Sandbox"
+    }
+    QmlFiles {
+        directory: "../EasyApp"
+    }
+
+    // Include Module Definition Files (qmldir), as well as .ts and .qrc
+    // from specified directory and its subdirectories
+    Files {
+        filter: "qmldir;*.ts;*.qrc;*.html;*.png"
+        directory: "EasyExampleApp/Gui/Sandbox"
+        recursive: true
+    }
+    Files {
+        filter: "qmldir;*.ts;*.qrc;*.html"
+        directory: "../EasyApp"
+        recursive: true
+    }
+
+}

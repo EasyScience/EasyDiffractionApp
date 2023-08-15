@@ -1,9 +1,3 @@
-### Changes
+# Version 0.9.0-pre-alpha1 (14 Aug 2023)
 
-- GSAS-II calculation engine has been removed.
-- Overall application performance has been significantly improved.
-
-### Bug Fixes
-
-- Summary report export widget is now properly enabled for custom projects.
-- Undo/redo functionality has been fixed.
+This is a test version of EasyDiffraction with improved GUI and overall performance, which temporarily does not use the EasyScience framework and contains only CrysPy as calculation engine and uses only Lmfit for minimization.  

@@ -8,7 +8,7 @@ __version__ = '0.0.1'
 import os, sys
 import Functions, Config
 
-CONFIG = Config.Config()
+CONFIG = Config.Config(sys.argv[1], sys.argv[2])
 
 
 def setupExePath():
@@ -19,6 +19,22 @@ def setupExePath():
     }
     return os.path.join(CONFIG.dist_dir, d[CONFIG.os])
 
+def fixPermissions():
+    if CONFIG.os == 'macos' or 'ubuntu':
+        try:
+            message = f'fixing permissions for os {CONFIG.os}'
+            Functions.run(
+                'chmod',
+                '+x',
+                setupExePath()
+            )
+        except Exception as exception:
+            Functions.printFailMessage(message, exception)
+            sys.exit(1)
+        else:
+            Functions.printSuccessMessage(message)
+    else:
+        Functions.printNeutralMessage(f'No fixing permissions needed for os {CONFIG.os}')
 
 def runInstallerSilently():
     try:
@@ -38,4 +54,5 @@ def runInstallerSilently():
 
 
 if __name__ == "__main__":
+    fixPermissions()
     runInstallerSilently()

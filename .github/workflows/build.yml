@@ -3,39 +3,151 @@ name: build macOS, Linux, Windows
 on: [push, pull_request]
 
 jobs:
-  build:
-    timeout-minutes: 40
+  make-installer:
+    timeout-minutes: 30
 
     runs-on: ${{ matrix.os }}
 
     strategy:
+      fail-fast: false
       matrix:
-        os: [macos-11, ubuntu-20.04, windows-2019]
+        os: [ubuntu-20.04, ubuntu-22.04, macos-12, windows-2022]
 
     steps:
-      - name: Cancel previous workflow runs
-        uses: n1hility/cancel-previous-runs@v2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Check-out repository
-        uses: actions/checkout@v2
-
-      - name: Set up non-Python dependencies (Linux)
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt-get -o Acquire::Retries=3 update
-          sudo apt-get -o Acquire::Retries=3 install libxcb-xinerama0
-          sudo apt-get -o Acquire::Retries=3 install libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xfixes0
-          sudo apt-get -o Acquire::Retries=3 install libxcb-shape0
-          sudo apt-get -o Acquire::Retries=3 install libpulse-mainloop-glib0
-        # sudo apt-get install libgfortran4
-        # echo "QT_DEBUG_PLUGINS=1" >> $GITHUB_ENV
+        uses: actions/checkout@v3
 
       - name: Set up Python environment
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
-            python-version: 3.8
+            python-version: 3.11
+
+      - name: Upgrade PIP
+        run: python -m pip install --upgrade pip
+
+      - name: Add extra info to pyproject.toml
+        run: |
+          python -m pip install toml
+          python utils.py --update
+
+      - name: Declare env variables on push only
+        if: github.event_name == 'push'
+        shell: bash
+        run: echo "BRANCH_NAME=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+
+      - name: Declare env variables on pull_request only
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: echo "BRANCH_NAME=$GITHUB_HEAD_REF" >> $GITHUB_ENV
+
+      - name: Declare env variables on push and pull_request
+        shell: bash
+        run: |
+          echo "APP_NAME=$(python utils.py --get release.app_name)" >> $GITHUB_ENV
+          echo "RELEASE_TAG=$(python utils.py --get ci.app.info.release_tag)" >> $GITHUB_ENV
+          echo "RELEASE_TITLE=$(python utils.py --get ci.app.info.release_title)" >> $GITHUB_ENV
+          echo "SCRIPTS_PATH=$(python utils.py --get ci.project.subdirs.scripts)" >> $GITHUB_ENV
+          echo "DISTRIBUTION_PATH=$(python utils.py --get ci.project.subdirs.distribution)" >> $GITHUB_ENV
+          echo "DOWNLOAD_PATH=$(python utils.py --get ci.project.subdirs.download)" >> $GITHUB_ENV
+          echo "QTIFW_PATH=$(python utils.py --get ci.qtifw.setup.installation_path.${{ runner.os }})" >> $GITHUB_ENV
+          echo "PYTHON_PACKAGES_PATH=$(python utils.py --get ci.cache.python_packages_path)" >> $GITHUB_ENV
+          echo "GIT_INSTALL_URL=git+$GITHUB_SERVER_URL/$GITHUB_REPOSITORY@${{ env.BRANCH_NAME }}" >> $GITHUB_ENV
+
+      - name: Install Python dependences
+        run: |
+          python -m pip install numpy lmfit orjson jsbeautifier
+          python -m pip install pyinstaller requests dephell_licenses
+          python -m pip install git+https://github.com/ikibalin/cryspy.git@beta
+          python -m pip install git+https://github.com/easyscience/EasyApp.git@new-easy-app2
+
+      #- name: Create python resources file
+      #  run: pyside6-rcc $GITHUB_REPOSITORY/resources.qrc -o $GITHUB_REPOSITORY/resources.py
+
+      #- name: Run pytest (compare app images after previous step)
+      #  run: pytest
+
+      - name: Set up screen (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install libxcb-xinerama0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xfixes0 libxcb-shape0 libxcb-cursor0
+          sudo apt-get install libpulse-mainloop-glib0
+          sudo apt-get install libxkbcommon-x11-0
+          sudo apt-get install libegl1-mesa
+          Xvfb :0 -screen 0 1920x1080x24 -ac &
+          echo "DISPLAY=:0" >> $GITHUB_ENV
+
+      - name: Set up screen (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          "/Library/Application Support/VMware Tools/vmware-resolutionSet" 1920 1080
+          system_profiler SPDisplaysDataType | grep Resolution
+
+      - name: Set up screen (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          Set-DisplayResolution -Width 1920 -Height 1080 -Force
+          Get-DisplayResolution
+
+      - name: Run QML GUI tests
+        run: |
+          cd EasyExampleApp
+          python main.py --testmode
+          cd ..
+
+      - name: Create freezed python app bundle
+        run: python ${{ env.SCRIPTS_PATH }}/FreezeApp.py
+
+      - name: Create offline and online app installers from freezed app bundle
+        run: >
+          python ${{ env.SCRIPTS_PATH }}/MakeInstaller.py
+          ${{ env.BRANCH_NAME }} ${{ matrix.os }}
+
+      - name: Create zip archive of offline app installer for distribution
+        run: >
+          python ${{ env.SCRIPTS_PATH }}/ZipAppInstaller.py
+          ${{ env.BRANCH_NAME }} ${{ matrix.os }}
+
+      - name: Upload zipped offline app installer to GitHub releases (non-master branch)
+        if: github.event_name == 'push' && env.BRANCH_NAME != 'master'
+        uses: ncipollo/release-action@v1
+        with:
+          draft: true
+          prerelease: true
+          allowUpdates: true
+          replacesArtifacts: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+          artifacts: "${{ env.DISTRIBUTION_PATH }}/*.zip"
+          tag: ${{ env.BRANCH_NAME }}
+          name: ${{ env.BRANCH_NAME }}
+          bodyFile: "RELEASE.md"
+
+      - name: Upload zipped offline app installer for the next job step
+        uses: actions/upload-artifact@master
+        with:
+          name: zipped-app-installer
+          path: ${{ env.DISTRIBUTION_PATH }}/*.zip
+
+  test-installer:
+    needs: make-installer
+    
+    timeout-minutes: 15
+
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-20.04, ubuntu-22.04, macos-12, windows-2022]
+
+    steps:
+      - name: Check-out repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python environment
+        uses: actions/setup-python@v4
+        with:
+            python-version: 3.11
 
       - name: Upgrade PIP
         run: python -m pip install --upgrade pip
@@ -50,134 +162,64 @@ jobs:
         shell: bash
         run: echo "BRANCH_NAME=$GITHUB_HEAD_REF" >> $GITHUB_ENV
 
-      - name: Add extra info to pyproject.toml
-        run: |
-          python -m pip install toml
-          python utils.py --update
-
-      - name: Compile and install pyobjc on macos-11
-        if: runner.os == 'macOS'
-        run: |
-          python -m pip install pyobjc-core --no-binary :all:
-          python -m pip install pyobjc-framework-Cocoa --no-binary :all:
-
-      # https://docs.github.com/en/actions/reference/environment-variables
       - name: Declare env variables on push and pull_request
         shell: bash
         run: |
-          echo "APP_NAME=$(python utils.py --get release.app_name)" >> $GITHUB_ENV
-          echo "RELEASE_TAG=$(python utils.py --get ci.app.info.release_tag)" >> $GITHUB_ENV
-          echo "RELEASE_TITLE=$(python utils.py --get ci.app.info.release_title)" >> $GITHUB_ENV
           echo "SCRIPTS_PATH=$(python utils.py --get ci.project.subdirs.scripts)" >> $GITHUB_ENV
-          echo "DISTRIBUTION_PATH=$(python utils.py --get ci.project.subdirs.distribution)" >> $GITHUB_ENV
-          echo "DOWNLOAD_PATH=$(python utils.py --get ci.project.subdirs.download)" >> $GITHUB_ENV
-          echo "QTIFW_PATH=$(python utils.py --get ci.qtifw.setup.installation_path.${{ runner.os }})" >> $GITHUB_ENV
-          echo "PYTHON_PACKAGES_PATH=$(python utils.py --get ci.cache.python_packages_path)" >> $GITHUB_ENV
-          echo "GIT_INSTALL_URL=git+$GITHUB_SERVER_URL/$GITHUB_REPOSITORY@${{ env.BRANCH_NAME }}" >> $GITHUB_ENV
-
-      - name: Cache dependencies
-        if: False  # disable caching
-        uses: actions/cache@v2
-        id: cache
-        with:
-          path: |
-            ${{ env.DOWNLOAD_PATH }}
-            ${{ env.QTIFW_PATH }}
-            ${{ env.PYTHON_PACKAGES_PATH }}
-          key: ${{ matrix.os }}-${{ hashFiles('pyproject.toml') }}
 
       - name: Install Python dependences
-        run: pip install '.[ci]' --extra-index-url https://easyscience.github.io/pypi
+        run: |
+          python -m pip install requests
 
-      - name: Create freezed python app bundle
-        run: python ${{ env.SCRIPTS_PATH }}/FreezeApp.py
+      - name: Set up screen (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install libxcb-xinerama0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xfixes0 libxcb-shape0 libxcb-cursor0
+          sudo apt-get install libpulse-mainloop-glib0
+          sudo apt-get install libxkbcommon-x11-0
+          sudo apt-get install libegl1-mesa
+          Xvfb :0 -screen 0 1920x1080x24 -ac &
+          echo "DISPLAY=:0" >> $GITHUB_ENV
 
-      - name: Create offline and online app installers from freezed app bundle
-        run: python ${{ env.SCRIPTS_PATH }}/MakeInstaller.py
-
-      - name: Set up screen recording dependencies (macOS)
+      - name: Set up screen (macOS)
         if: runner.os == 'macOS'
         run: |
           "/Library/Application Support/VMware Tools/vmware-resolutionSet" 1920 1080
           system_profiler SPDisplaysDataType | grep Resolution
 
-      - name: Set up screen recording dependencies (Linux)
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt-get install libxkbcommon-x11-0
-          Xvfb :0 -screen 0 1920x1080x24 -ac &
-          echo "DISPLAY=:0" >> $GITHUB_ENV
-
-      - name: Set up screen recording dependencies (Windows)
+      - name: Set up screen (Windows)
         if: runner.os == 'Windows'
         run: |
           Set-DisplayResolution -Width 1920 -Height 1080 -Force
           Get-DisplayResolution
+
+      - name: Download zipped offline app instalfrom from the previous job step
+        uses: actions/download-artifact@master
+        with:
+          name: zipped-app-installer
+
+      - name: Unzip archive with offline app installer for distribution
+        run: >
+          python ${{ env.SCRIPTS_PATH }}/UnzipAppInstaller.py
+          ${{ env.BRANCH_NAME }} ${{ matrix.os }}
 
       - name: Make dir for .desktop file (Linux)
         if: runner.os == 'Linux'
         run: mkdir -p ~/.local/share/applications/
 
       - name: Install app
-        run: python ${{ env.SCRIPTS_PATH }}/InstallApp.py
+        run: >
+          python ${{ env.SCRIPTS_PATH }}/InstallApp.py
+          ${{ env.BRANCH_NAME }} ${{ matrix.os }}
 
-      - name: Run app in testmode, record screen and quit
+      - name: Check app istallation is done
+        run: python ${{ env.SCRIPTS_PATH }}/CheckAppExists.py
+
+      # Windows 2022 - Have to disable because can't see what is going on there...
+      # macOS 12 - OK
+      # Ubuntu 20.04 - OK?
+      # Ubuntu 22.04 - FAILS - ImportError: libpyside6qml.abi3.so.6.5: cannot open shared object file: No such file or directory - https://github.com/pyinstaller/pyinstaller/issues/7197
+      - name: Run app in testmode and quit (macOS & Linux)
         if: runner.os != 'Windows'
         run: python ${{ env.SCRIPTS_PATH }}/RunApp.py --testmode
-
-      - name: Create bogus tutorial file on Windows
-        if: runner.os == 'Windows'
-        run: echo "Not working currently" > tutorial.mp4
-
-      - name: Rename test videos
-        run: >
-          python ${{ env.SCRIPTS_PATH }}/RenameTestVideos.py
-          ${{ env.BRANCH_NAME }}
-
-      - name: Sign app installer
-        if: github.event_name == 'push' && env.BRANCH_NAME == 'master'
-        run: >
-          python ${{ env.SCRIPTS_PATH }}/SignAppInstaller.py
-          ${{ env.BRANCH_NAME }}
-          ${{ secrets.MACOS_CERTIFICATE_ENCODED }} ${{ secrets.MACOS_CERTIFICATE_PASSWORD }}
-          ${{ secrets.APPSTORE_NOTARIZATION_USERNAME }} ${{ secrets.APPSTORE_NOTARIZATION_PASSWORD }}
-
-      - name: Create zip archive of offline app installer for distribution
-        run: >
-          python ${{ env.SCRIPTS_PATH }}/ZipAppInstaller.py
-          ${{ env.BRANCH_NAME }}
-
-      - name: Upload zipped offline app installer to GitHub releases (non-master branch)
-        if: github.event_name == 'push' && env.BRANCH_NAME != 'master'
-        uses: ncipollo/release-action@v1
-        with:
-          draft: true
-          prerelease: true
-          allowUpdates: true
-          replacesArtifacts: true
-          token: ${{ secrets.GITHUB_TOKEN }}
-          artifacts: "${{ env.DISTRIBUTION_PATH }}/*.zip,${{ env.DISTRIBUTION_PATH }}/*.mp4"
-          tag: ${{ env.BRANCH_NAME }}
-          name: ${{ env.BRANCH_NAME }}
-          bodyFile: "RELEASE.md"
-
-      - name: Upload zipped offline app installer to GitHub releases (master branch)
-        if: github.event_name == 'push' && env.BRANCH_NAME == 'master'
-        uses: ncipollo/release-action@v1
-        with:
-          draft: true
-          prerelease: true
-          allowUpdates: true
-          replacesArtifacts: true
-          token: ${{ secrets.GITHUB_TOKEN }}
-          artifacts: "${{ env.DISTRIBUTION_PATH }}/*.zip"
-          tag: ${{ env.RELEASE_TAG }}
-          name: ${{ env.RELEASE_TITLE }}
-          bodyFile: "RELEASE.md"
-
-      - name: Upload online app installer to repository via FTP
-        if: github.event_name == 'push'
-        run: >
-          python ${{ env.SCRIPTS_PATH }}/UploadToFtp.py
-          ${{ env.BRANCH_NAME }}
-          ${{ secrets.APP_REPO_FTP_PASSWORD }}

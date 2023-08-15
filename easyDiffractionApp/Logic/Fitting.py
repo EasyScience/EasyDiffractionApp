@@ -1,410 +1,334 @@
-# SPDX-FileCopyrightText: 2023 easyDiffraction contributors <support@easydiffraction.org>
+# SPDX-FileCopyrightText: 2023 EasyExample contributors
 # SPDX-License-Identifier: BSD-3-Clause
-# © 2021-2023 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+# © 2023 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
 
-from PySide2.QtCore import Signal, QObject, QThread
+import copy
+import lmfit
 
 import numpy as np
-from typing import Callable, List
 
-from threading import Thread
+from PySide6.QtCore import QObject, Signal, Slot, Property, QThreadPool
 
-from easyDiffractionLib.interface import InterfaceFactory as Calculator
-from easyCore.Fitting.Fitting import Fitter as CoreFitter
-from easyCore.Utils.io.xml import XMLSerializer
-from easyCore.Fitting.Constraints import ObjConstraint, NumericConstraint
+from EasyApp.Logic.Logging import console
+from Logic.Helpers import IO
+from Logic.Data import Data
 
-from distutils.util import strtobool
-
-
-def _defaultFitResults():
-    return {
-        "success": None,
-        "nvarys":  None,
-        # "GOF":     None,
-        "redchi2": None
-    }
+try:
+    from cryspy.procedure_rhochi.rhochi_by_dictionary import \
+        rhochi_calc_chi_sq_by_dictionary
+    console.debug('CrysPy module imported')
+except ImportError:
+    console.error('No CrysPy module found')
 
 
-class FittingLogic(QObject):
-    """
-    Logic related to the fitter setup
-    """
-    fitFinished = Signal()
-    fitStarted = Signal()
-    currentMinimizerChanged = Signal()
-    currentMinimizerMethodChanged = Signal()
-    currentCalculatorChanged = Signal()
-    finished = Signal(dict)
-    failed = Signal(str)
-    constraintsRemoved = Signal()
+SCALE = 1
 
-    def __init__(self, parent=None, interface=None):
-        super().__init__(parent)
+class Worker(QObject):
+    finished = Signal()
 
-        self.parent = parent
-        self.interface = interface
-        # self.fitter = CoreFitter(self.parent.sample(), self.interface.fit_func)
-        self.fitter = CoreFitter(self.parent.sample(), self.parent.sample().create_simulation)
+    def __init__(self, proxy):
+        super().__init__()
+        self._proxy = proxy
+        self._needCancel = False
 
-        # Multithreading
-        # self._fitter_thread = None
-        self._fit_finished = True
-        self._fit_results = _defaultFitResults()
-        self.data = None
-        self.is_fitting_now = False
-        self._current_minimizer_method_index = 0
-        self._current_minimizer_method_name = self.fitter.available_methods()[0]  # noqa: E501
-        self.currentMinimizerChanged.connect(self.onCurrentMinimizerChanged)
+        self._cryspyDictInitial = copy.deepcopy(self._proxy.data._cryspyDict)
+        self._cryspyUsePrecalculatedData = False
+        self._cryspyCalcAnalyticalDerivatives = False
 
-        self.fit_thread = Thread(target=self.fit_threading)
-        self.finished.connect(self.onSuccess)
-        self.failed.connect(self.onFailed)
+        #self._paramsInit = lmfit.Parameters()
+        self._paramsFinal = lmfit.Parameters()
 
-    def fit_nonpolar(self):
-        data = self.data
-        method = self._current_minimizer_method_name
+        self._gofPrevIter = None
+        self._gofLastIter = None
 
-        self._fit_finished = False
-        self.fitStarted.emit()
-        exp_data = data.experiments[0]
-
-        x = exp_data.x
-        y = exp_data.y
-        weights = 1 / exp_data.e
-
-        kwargs = {
-            'weights': weights,
-            'method': method
-        }
-
-        local_kwargs = {}
-        if method == 'least_squares':
-            kwargs['minimizer_kwargs'] = {'diff_step': 1e-5}
-
-        # save some kwargs on the interface object for use in the calculator
-        self.interface._InterfaceFactoryTemplate__interface_obj.saved_kwargs = local_kwargs
-        try:
-            res = self.fitter.fit(x, y, **kwargs)
-
-        except Exception as ex:
-            self.failed.emit(str(ex))
-            return
-        self.finished.emit(res)
-
-    def fit_polar(self):
-        data = self.data
-        method = self._current_minimizer_method_name
-        self._fit_finished = False
-        self.fitStarted.emit()
-        exp_data = data.experiments[0]
-        x = exp_data.x
-
-        refinement = self.parent.refinementMethods()
-        targets = [component for component in refinement if refinement[component]]
-        try:
-            x_, y_, fit_func = self.generate_pol_fit_func(x, exp_data.y, exp_data.yb, targets)
-        except Exception as ex:
-            raise NotImplementedError('This is not implemented for this calculator yet')
-        weights = 1/exp_data.e
-        weights = np.tile(weights, len(targets))
-
-        kwargs = {
-            'weights': weights,
-            'method': method
-        }
-
-        local_kwargs = {}
-        if method == 'least_squares':
-            kwargs['minimizer_kwargs'] = {'diff_step': 1e-5}
-
-        # save some kwargs on the interface object for use in the calculator
-        # TODO FIX THIS THIS IS NOT THE WAY TO DO IT :-/
-        self.interface._InterfaceFactoryTemplate__interface_obj.saved_kwargs = local_kwargs
-        try:
-            obj = self.fitter.fit_object
-            fitter = CoreFitter(obj, fit_func)
-            res = fitter.fit(x_, y_, **kwargs)
-        except Exception as ex:
-            self.failed.emit(str(ex))
-            return
-        self.finished.emit(res)
-
-    def generate_pol_fit_func(
-        self,
-        x_array: np.ndarray,
-        spin_up: np.ndarray,
-        spin_down: np.ndarray,
-        components: List[Callable],
-    ) -> Callable:
-        num_components = len(components)
-        dummy_x = np.repeat(x_array[..., np.newaxis], num_components, axis=x_array.ndim)
-        calculated_y = np.array(
-            [fun(spin_up, spin_down) for fun in components]
-        ).swapaxes(0, x_array.ndim)
-
-        def pol_fit_fuction(dummy_x: np.ndarray, **kwargs) -> np.ndarray:
-            results, results_dict = self.interface().full_callback(
-                x_array, pol_fn=components[0], **kwargs
-            )
-            phases = list(results_dict["phases"].keys())[0]
-            up, down = (
-                results_dict["phases"][phases]["components"]["up"],
-                results_dict["phases"][phases]["components"]["down"],
-            )
-            bg = results_dict["f_background"]
-            sim_y = np.array(
-                [fun(up, down) + fun(bg, bg) for fun in components]
-            ).swapaxes(0, x_array.ndim)
-            return sim_y.flatten()
-
-        return dummy_x.flatten(), calculated_y.flatten(), pol_fit_fuction
-
-    def fit_threading(self):
-        if self.parent.isSpinPolarized():
-            self.fit_polar()
-        else:
-            self.fit_nonpolar()
-
-    def setFailedFitResults(self):
-        self._fit_results = _defaultFitResults()
-        self._fit_results['success'] = 'Failure'  # not None but a string
-
-    def setSuccessFitResults(self, res):
-        self._fit_results = {
-            "success": res.success,
-            "nvarys":  res.n_pars,
-            # "GOF":     float(res.goodness_of_fit),
-            "redchi2": float(res.reduced_chi)
-        }
-
-    def resetErrors(self):
-        # Reset all errors to zero
-        all_pars = set(self.parent.sample().get_parameters())
-        fit_pars = {par for par in all_pars if par.enabled and not par.fixed}
-        to_zero = all_pars.difference(fit_pars)
-        borg = self.parent.sample()._borg
-        borg.stack.beginMacro('reset errors')
-        for par in to_zero:
-            par.error = 0.
-        borg.stack.endMacro()
-        macro = borg.stack.history.popleft()
-        for command in macro._commands:
-            borg.stack.history[0]._commands.appendleft(command)
-
-    def joinFitThread(self):
-        if self.fit_thread.is_alive():
-            self.fit_thread.join()
-
-    def finishFit(self):
-        self._fit_finished = True
-        self.fitFinished.emit()
-        # TODO: remove once background is correctly implemented in polarized
-        if self.parent.isSpinPolarized():
-            self.parent.setSpinComponent()
-        # must re-instantiate the thread object
-        self.fit_thread = Thread(target=self.fit_threading)
-
-    def onSuccess(self, res):
-        self.joinFitThread()
-        self.resetErrors()
-        self.setSuccessFitResults(res)
-        self.finishFit()
-
-    def onFailed(self, ex):
-        print("**** onFailed: fit FAILED with:\n {}".format(str(ex)))
-        self.joinFitThread()
-        self.setFailedFitResults()
-        self.finishFit()
-
-    def fit(self):
-        self.data = self.parent.pdata()
-        if not self.fit_thread.is_alive():
-            self.is_fitting_now = True
-            self.fit_thread.start()
-
-    def currentMinimizerIndex(self):
-        current_name = self.fitter.current_engine.name
-        index = self.fitter.available_engines.index(current_name)
-        return index
-
-    def setCurrentMinimizerIndex(self, new_index: int):
-        if self.currentMinimizerIndex() == new_index:
-            return
-        new_name = self.fitter.available_engines[new_index]
-        self.fitter.switch_engine(new_name)
-
-    def onCurrentMinimizerChanged(self):
-        idx = 0
-        minimizer_name = self.fitter.current_engine.name
-        if minimizer_name == 'lmfit':
-            idx = self.minimizerMethodNames().index('least_squares')
-        elif minimizer_name == 'bumps':
-            idx = self.minimizerMethodNames().index('lm')
-        if -1 < idx != self._current_minimizer_method_index:
-            # Bypass the property as it would be added to the stack.
-            self._current_minimizer_method_index = idx
-            self._current_minimizer_method_name = self.minimizerMethodNames()[idx]  # noqa: E501
-        return
-
-    def minimizerMethodNames(self):
-        current_minimizer = self.fitter.available_engines[self.currentMinimizerIndex()]  # noqa: E501
-        tested_methods = {
-            'lmfit': ['least_squares', 'leastsq'], # 'least_squares', 'powell', 'cobyla', 'leastsq'
-            'bumps': ['lm'], # 'newton', 'lm'
-            'DFO_LS': ['leastsq']
-        }
-        return tested_methods[current_minimizer]
-
-    def currentMinimizerMethodIndex(self, new_index: int):
-        if self._current_minimizer_method_index == new_index:
-            return
-
-        self._current_minimizer_method_index = new_index
-        self._current_minimizer_method_name = self.minimizerMethodNames()[new_index]  # noqa: E501
-
-    def setNewEngine(self, engine=None, method=None):
-        new_engine_index = self.fitter.available_engines.index(engine)
-        self.setCurrentMinimizerIndex(new_engine_index)
-        new_method_index = self.minimizerMethodNames().index(method)
-        self.currentMinimizerMethodIndex(new_method_index)
-
-    def fittingNamesDict(self):
-        return {
-            'engine': self.fitter.current_engine.name,
-            'method': self._current_minimizer_method_name
-            }
-
-    ####################################################################################################################
-    # Calculator
-    ####################################################################################################################
-
-    def calculatorNames(self):
-        interfaces = self.interface.interface_compatability("Npowder1DCWunp")     ## (self.parent.sample().exp_type_str)
-        return interfaces
-
-    def currentCalculatorIndex(self):
-        interfaces = self.interface.interface_compatability("Npowder1DCWunp")    #(self.parent.sample().exp_type_str)
-        return interfaces.index(self.interface.current_interface_name)
-
-    def setCurrentCalculatorIndex(self, new_index: int):
-        if self.currentCalculatorIndex == new_index:
-            return
-        interfaces = self.interface.interface_compatability("Npowder1DCWunp")
-        new_name = interfaces[new_index]
-
-        self.interface.switch(new_name, fitter=self.fitter)
-
-        # recreate the fitter with the new interface
-        self.fitter = CoreFitter(self.parent.sample(), self.parent.sample().create_simulation)
-
-        print("***** _onCurrentCalculatorChanged")
-        data = self.parent.pdata().simulations[0]
-        data.name = f'{self.interface.current_interface_name} engine'
-        # update interface on job
-        job = self.parent.sample()
-        job.interface = self.interface
-        self.parent.updateCalculatedData()
-
-    # Constraints
-    def addConstraint(self, dependent_par_idx, relational_operator,
-                      value, arithmetic_operator, independent_par_idx):
-        if dependent_par_idx == -1 or value == "":
-            print("Failed to add constraint: Unsupported type")
-            return
-        # if independent_par_idx == -1:
-        #    print(f"Add constraint: {self.fitablesList()[dependent_par_idx]['label']}{relational_operator}{value}")
-        # else:
-        #    print(f"Add constraint: {self.fitablesList()[dependent_par_idx]['label']}{relational_operator}{value}{arithmetic_operator}{self.fitablesList()[independent_par_idx]['label']}")
-        pars = [par for par in self.fitter.fit_object.get_parameters() if par.enabled]
-        if arithmetic_operator != "" and independent_par_idx > -1:
-            c = ObjConstraint(pars[dependent_par_idx],
-                              str(float(value)) + arithmetic_operator,
-                              pars[independent_par_idx])
-        elif arithmetic_operator == "" and independent_par_idx == -1:
-            c = NumericConstraint(pars[dependent_par_idx],
-                                  relational_operator.replace("=", "=="),
-                                  float(value))
-        else:
-            print("Failed to add constraint: Unsupported type")
-            return
-        # print(c)
-        c()
-        self.fitter.add_fit_constraint(c)
-
-    def constraintsList(self):
-        constraint_list = []
-        for index, constraint in enumerate(self.fitter.fit_constraints()):
-            if type(constraint) is ObjConstraint:
-                independent_name = constraint.get_obj(constraint.independent_obj_ids).name
-                relational_operator = "="
-                value = float(constraint.operator[:-1])
-                arithmetic_operator = constraint.operator[-1]
-            elif type(constraint) is NumericConstraint:
-                independent_name = ""
-                relational_operator = constraint.operator.replace("==", "=")
-                value = constraint.value
-                arithmetic_operator = ""
-            else:
-                print(f"Failed to get constraint: Unsupported type {type(constraint)}")
-                return
-            number = index + 1
-            dependent_name = constraint.get_obj(constraint.dependent_obj_ids).name
-            enabled = int(constraint.enabled)
-            constraint_list.append(
-                {"number": number,
-                 "dependentName": dependent_name,
-                 "relationalOperator": relational_operator,
-                 "value": value,
-                 "arithmeticOperator": arithmetic_operator,
-                 "independentName": independent_name,
-                 "enabled": enabled}
-            )
-        return constraint_list
-
-    def constraintsAsXml(self):
-        xml = XMLSerializer().encode(self.constraintsList())
-        return xml
-
-    def removeConstraintByIndex(self, index: int):
-        self.fitter.remove_fit_constraint(index)
-
-    def toggleConstraintByIndex(self, index, enabled):
-        constraint = self.fitter.fit_constraints()[index]
-        constraint.enabled = bool(strtobool(enabled))
-
-    def removeAllConstraints(self):
-        for _ in range(len(self.fitter.fit_constraints())):
-            self.removeConstraintByIndex(0)
-        self.constraintsRemoved.emit()
-
-
-class Fitter(QThread):
-    """
-    Simple wrapper for calling a function in separate thread
-    """
-    failed = Signal(str)
-    finished = Signal(dict)
-
-    def __init__(self, parent, obj, method_name, *args, **kwargs):
-        QThread.__init__(self, parent)
-        self._obj = obj
-        self.method_name = method_name
-        self.args = args
-        self.kwargs = kwargs
+        #QThread.setTerminationEnabled()
 
     def run(self):
-        res = {}
-        if hasattr(self._obj, self.method_name):
-            func = getattr(self._obj, self.method_name)
-            try:
-                res = func(*self.args, **self.kwargs)
-            except Exception as ex:
-                self.failed.emit(str(ex))
-                return str(ex)
-            self.finished.emit(res)
-        return res
 
-    def stop(self):
-        self.terminate()
-        self.wait()  # to assure proper termination
+        def callbackFunc(params, iter, resid, *args, **kws):
+            chiSq = np.sum(np.square(resid))
+            #pointsCount = resid.size
+            #freeParamsCount = len(params.valuesdict())
+            self._proxy.fitting.chiSq = chiSq / (self._proxy.fitting._pointsCount - self._proxy.fitting._freeParamsCount)
+            console.info(IO.formatMsg('main', f'Iteration: {iter:5d}', f'Reduced Chi2: {self._proxy.fitting.chiSq:16g}'))
+
+            # Check if fitting termination is requested
+            if self._needCancel:
+                self._needCancel = False
+                #self._proxy.data._cryspyDict = copy.deepcopy(self._cryspyDictInitial)
+                console.error('Terminating the execution of the optimization thread')
+                #QThread.terminate()  # Not needed for Lmfit
+                return True  # Cancel minimization and return back to after lmfit.minimize
+
+            # Update iteration number in the status bar
+            self._proxy.status.fitIteration = f'{iter}'
+
+            # Calc goodness-of-fit (GOF) value shift between iterations
+            gofStart = self._proxy.fitting.chiSqStart
+            if iter == 1:
+                self._gofPrevIter = self._proxy.fitting.chiSqStart
+            self._gofLastIter = self._proxy.fitting.chiSq
+            gofShift = abs(self._gofLastIter - self._gofPrevIter)
+            self._gofPrevIter = self._gofLastIter
+            # Update goodness-of-fit (GOF) value updated in the status bar
+            if iter == 1 or gofShift > 0.01:
+                self._proxy.status.goodnessOfFit = f'{gofStart:0.2f} → {self._gofLastIter:0.2f}'  # NEED move to connection
+                self._proxy.fitting.chiSqSignificantlyChanged.emit()
+
+            return False  # Continue minimization
+
+        def residFunc(params):
+
+            # Update CrysPy dict from Lmfit params
+            for param in params:
+                block, group, idx = Data.strToCryspyDictParamPath(param)
+                self._proxy.data._cryspyDict[block][group][idx] = params[param].value
+
+            # Calculate diffraction pattern
+            rhochi_calc_chi_sq_by_dictionary(
+                self._proxy.data._cryspyDict,
+                dict_in_out=self._proxy.data._cryspyInOutDict,
+                flag_use_precalculated_data=self._cryspyUsePrecalculatedData,
+                flag_calc_analytical_derivatives=self._cryspyCalcAnalyticalDerivatives)
+
+            # Total residual
+            totalResid = np.empty(0)
+            for dataBlock in self._proxy.experiment.dataBlocksNoMeas:
+                ed_name = dataBlock['name']['value']
+                cryspy_name = f'pd_{ed_name}'
+                cryspyInOutDict = self._proxy.data._cryspyInOutDict
+
+                y_meas_array = cryspyInOutDict[cryspy_name]['signal_exp'][0]
+                sy_meas_array = cryspyInOutDict[cryspy_name]['signal_exp'][1]
+                y_bkg_array = cryspyInOutDict[cryspy_name]['signal_background']
+                y_calc_all_phases_array = cryspyInOutDict[cryspy_name]['signal_plus'] + \
+                                          cryspyInOutDict[cryspy_name]['signal_minus']
+                y_calc_all_phases_array_with_bkg = y_calc_all_phases_array + y_bkg_array
+
+                resid = (y_calc_all_phases_array_with_bkg - y_meas_array) / sy_meas_array
+                totalResid = np.append(totalResid, resid)
+
+            return totalResid
+
+        self._proxy.fitting._freezeChiSqStart = True
+
+        # Save initial state of cryspyDict if cancel fit is requested
+        self._cryspyDictInitial = copy.deepcopy(self._proxy.data._cryspyDict)
+
+        # Preliminary calculations
+        self._cryspyUsePrecalculatedData = False
+        self._cryspyCalcAnalyticalDerivatives = False
+        #self._proxy.fitting.chiSq, self._proxy.fitting._pointsCount, _, _, freeParamNames = rhochi_calc_chi_sq_by_dictionary(
+        chiSq, pointsCount, _, _, freeParamNames = rhochi_calc_chi_sq_by_dictionary(
+            self._proxy.data._cryspyDict,
+            dict_in_out=self._proxy.data._cryspyInOutDict,
+            flag_use_precalculated_data=self._cryspyUsePrecalculatedData,
+            flag_calc_analytical_derivatives=self._cryspyCalcAnalyticalDerivatives)
+
+        # Number of measured data points
+        self._proxy.fitting._pointsCount = pointsCount
+
+        # Number of free parameters
+        self._proxy.fitting._freeParamsCount = len(freeParamNames)
+        if self._proxy.fitting._freeParamsCount != self._proxy.fittables._freeParamsCount:
+            console.error(f'Number of free parameters differs. Expected {self._proxy.fittables._freeParamsCount}, got {self._proxy.fitting._freeParamsCount}')
+
+        # Reduced chi-squared goodness-of-fit (GOF)
+        self._proxy.fitting.chiSq = chiSq / (self._proxy.fitting._pointsCount - self._proxy.fitting._freeParamsCount)
+
+        # Create lmfit parameters to be varied
+        freeParamValuesStart = [self._proxy.data._cryspyDict[way[0]][way[1]][way[2]] for way in freeParamNames]
+        paramsLmfit = lmfit.Parameters()
+        for cryspyParamPath, val in zip(freeParamNames, freeParamValuesStart):
+            lmfitParamName = Data.cryspyDictParamPathToStr(cryspyParamPath)  # Only ascii letters and numbers allowed for lmfit.Parameters()???
+            left = self._proxy.model.paramValueByFieldAndCrypyParamPath('min', cryspyParamPath)
+            if left is None:
+                left = self._proxy.experiment.paramValueByFieldAndCrypyParamPath('min', cryspyParamPath)
+            if left is None:
+                left = -np.inf
+            right = self._proxy.model.paramValueByFieldAndCrypyParamPath('max', cryspyParamPath)
+            if right is None:
+                right = self._proxy.experiment.paramValueByFieldAndCrypyParamPath('max', cryspyParamPath)
+            if right is None:
+                right = np.inf
+            paramsLmfit.add(lmfitParamName, value=val, min=left, max=right)
+
+        # Minimization: lmfit.minimize
+        self._proxy.fitting.chiSqStart = self._proxy.fitting.chiSq
+        self._cryspyUsePrecalculatedData = True
+        method = 'BFGS'
+        tol = 1e+3
+        method = 'L-BFGS-B'
+        tol = 1e-2
+        method = self._proxy.fitting.minimizerMethod
+        tol = self._proxy.fitting.minimizerTol
+        reduce_fcn = None  # None : sum-of-squares of residual (default) = (r*r).sum()
+        result = lmfit.minimize(residFunc,
+                                paramsLmfit,
+                                args=(),
+                                method=method,
+                                reduce_fcn=reduce_fcn,
+                                iter_cb=callbackFunc,
+                                tol=tol)
+
+        #lmfit.report_fit(result)
+
+        # Optimization status
+        if result.success:  # NEED FIX: Move to connections. Pass names via signal.emit(names)
+            console.info('Optimization successfully finished')
+            self._proxy.status.fitStatus = 'Success'
+        else:
+            if result.aborted:
+                console.info('Optimization aborted')
+                self._proxy.status.fitStatus = 'Aborted'
+                #self.cancelled.emit()
+            else:
+                console.info('Optimization failed')
+                self._proxy.status.fitStatus = 'Failure'
+                ## Restore cryspyDict from the state before minimization started
+                #self._proxy.data._cryspyDict = copy.deepcopy(self._cryspyDictInitial)
+
+        # Update CrysPy dict with the best params after minimization finished/aborted/failed
+        for param in result.params:
+            block, group, idx = Data.strToCryspyDictParamPath(param)
+            self._proxy.data._cryspyDict[block][group][idx] = result.params[param].value
+
+        # Calculate optimal chi2
+        self._cryspyUsePrecalculatedData = False
+        self._cryspyCalcAnalyticalDerivatives = False
+        chiSq, _, _, _, _ = rhochi_calc_chi_sq_by_dictionary(
+            self._proxy.data._cryspyDict,
+            dict_in_out=self._proxy.data._cryspyInOutDict,
+            flag_use_precalculated_data=self._cryspyUsePrecalculatedData,
+            flag_calc_analytical_derivatives=self._cryspyCalcAnalyticalDerivatives)
+        self._proxy.fitting.chiSq = chiSq / (self._proxy.fitting._pointsCount - self._proxy.fitting._freeParamsCount)
+        console.info(f"Optimal reduced chi2 per {self._proxy.fitting._pointsCount} points and {self._proxy.fitting._freeParamsCount} free params: {self._proxy.fitting.chiSq:.2f}")
+        self._proxy.status.goodnessOfFit = f'{self._proxy.fitting.chiSqStart:0.2f} → {self._proxy.fitting.chiSq:0.2f}'  # NEED move to connection
+        self._proxy.fitting.chiSqSignificantlyChanged.emit()
+
+        # Update internal dicts with the best params
+        #names = [Data.cryspyDictParamPathToStr(name) for name in parameter_names_free]
+        #self._proxy.experiment.editDataBlockByCryspyDictParams(names)
+        #self._proxy.model.editDataBlockByCryspyDictParams(names)
+        self._proxy.experiment.editDataBlockByLmfitParams(result.params)
+        self._proxy.model.editDataBlockByLmfitParams(result.params)
+
+        # Finishing
+        self._proxy.fitting._freezeChiSqStart = False
+        self.finished.emit()
+        console.info('Optimization process has been finished')
+
+
+class Fitting(QObject):
+    isFittingNowChanged = Signal()
+    fitFinished = Signal()
+    chiSqStartChanged = Signal()
+    chiSqChanged = Signal()
+    chiSqSignificantlyChanged = Signal()
+    minimizerMethodChanged = Signal()
+    minimizerTolChanged = Signal()
+
+    def __init__(self, parent):
+        super().__init__(parent)
+        self._proxy = parent
+        self._threadpool = QThreadPool.globalInstance()
+        self._worker = Worker(self._proxy)
+        self._isFittingNow = False
+
+        self._chiSq = None
+        self._chiSqStart = None
+        self._freezeChiSqStart = False
+
+        self._pointsCount = None
+        self._freeParamsCount = 0
+
+        self._minimizerMethod = 'BFGS'
+        self._minimizerTol = 1e+3
+
+        self._worker.finished.connect(self.setIsFittingNowToFalse)
+        self._worker.finished.connect(self.fitFinished)
+
+    @Property(str, notify=minimizerMethodChanged)
+    def minimizerMethod(self):
+        return self._minimizerMethod
+
+    @minimizerMethod.setter
+    def minimizerMethod(self, newValue):
+        if self._minimizerMethod == newValue:
+            return
+        self._minimizerMethod = newValue
+        self.minimizerMethodChanged.emit()
+
+    @Property(float, notify=minimizerTolChanged)
+    def minimizerTol(self):
+        return self._minimizerTol
+
+    @minimizerTol.setter
+    def minimizerTol(self, newValue):
+        if self._minimizerTol == newValue:
+            return
+        self._minimizerTol = newValue
+        self.minimizerTolChanged.emit()
+
+    @Property(bool, notify=isFittingNowChanged)
+    def isFittingNow(self):
+        return self._isFittingNow
+
+    @isFittingNow.setter
+    def isFittingNow(self, newValue):
+        if self._isFittingNow == newValue:
+            return
+        self._isFittingNow = newValue
+        self.isFittingNowChanged.emit()
+
+    @Property(float, notify=chiSqStartChanged)
+    def chiSqStart(self):
+        return self._chiSqStart
+
+    @chiSqStart.setter
+    def chiSqStart(self, newValue):
+        if self._chiSqStart == newValue:
+            return
+        self._chiSqStart = newValue
+        self.chiSqStartChanged.emit()
+
+    @Property(float, notify=chiSqChanged)
+    def chiSq(self):
+        return self._chiSq
+
+    @chiSq.setter
+    def chiSq(self, newValue):
+        if self._chiSq == newValue:
+            return
+        self._chiSq = newValue
+        self.chiSqChanged.emit()
+
+    @Slot()
+    def startStop(self):
+        self._proxy.status.fitStatus = ''
+
+        if self._worker._needCancel:
+            console.debug('Minimization process has been already requested to cancel')
+            return
+
+        if self.isFittingNow:
+            self._worker._needCancel = True
+            console.debug('Minimization process has been requested to cancel')
+        else:
+            if self._proxy.fittables._freeParamsCount > 0:
+                self.isFittingNow = True
+                #self._worker.run()
+                self._threadpool.start(self._worker.run)
+                console.debug('Minimization process has been started in a separate thread')
+            else:
+                self._proxy.status.fitStatus = 'No free params'
+                console.debug('Minimization process has not been started. No free parameters found.')
+
+    def setIsFittingNowToFalse(self):
+        self.isFittingNow = False
+
+
+#https://stackoverflow.com/questions/30843876/using-qthreadpool-with-qrunnable-in-pyqt4
+#https://stackoverflow.com/questions/70868493/what-is-the-best-way-to-stop-interrupt-qrunnable-in-qthreadpool
+#https://stackoverflow.com/questions/24825441/stop-scipy-minimize-after-set-time
+#https://stackoverflow.com/questions/22390479/qrunnable-trying-to-abort-a-task

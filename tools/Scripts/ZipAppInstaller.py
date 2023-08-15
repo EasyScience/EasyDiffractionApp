@@ -9,7 +9,7 @@ import os, sys
 import Functions, Config
 
 
-CONFIG = Config.Config(sys.argv[1])
+CONFIG = Config.Config(sys.argv[1], sys.argv[2])
 
 def source():
     return CONFIG.setup_exe_path

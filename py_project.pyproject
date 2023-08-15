@@ -1,0 +1,27 @@
+{
+"files": [    
+    "EasyExampleApp/main.py",
+
+    "EasyExampleApp/Logic/Analysis.py",
+    "EasyExampleApp/Logic/Calculators.py",
+    "EasyExampleApp/Logic/Connections.py",
+    "EasyExampleApp/Logic/Data.py",
+    "EasyExampleApp/Logic/Experiment.py",
+    "EasyExampleApp/Logic/Fittables.py",
+    "EasyExampleApp/Logic/Fitting.py",
+    "EasyExampleApp/Logic/Helpers.py",
+    "EasyExampleApp/Logic/Model.py",
+    "EasyExampleApp/Logic/Plotting.py",
+    "EasyExampleApp/Logic/Project.py",
+    "EasyExampleApp/Logic/PyProxy.py",
+    "EasyExampleApp/Logic/Status.py",
+    "EasyExampleApp/Logic/Summary.py",
+    "EasyExampleApp/Logic/Tables.py",
+
+    "EasyExampleApp/Gui/main.qml",
+
+    "EasyExampleApp/resources.qrc",
+
+    "EasyApp/Logic/Logging.py"
+    ]
+}

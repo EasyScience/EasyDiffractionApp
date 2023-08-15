@@ -1,0 +1,11 @@
+data_La0.5Ba0.5CoO3
+
+_description "neutrons, powder, constant wavelength, HRPT@PSI"
+
+loop_
+_model_cif_file_name
+lbco.cif 
+
+loop_
+_experiment_cif_file_name
+hrpt.cif

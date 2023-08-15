@@ -51,7 +51,7 @@ def extraDict():
     commit_sha_short = commit_sha[:6]
     commit_url = f'{github_repo_url}/commit/{commit_sha}'
 
-    app_version = getValue(conf(), 'tool.poetry.version')
+    app_version = getValue(conf(), 'project.version')
     release_tag = f'v{app_version}'
     release_title = f'Version {app_version} ({build_date})'
 

@@ -1,0 +1,43 @@
+import QmlProject 1.1
+
+Project {
+    mainFile: "EasyExampleApp/Gui/main.qml"
+
+    // List of module and plugin directories passed to QML runtime
+    importPaths: [
+        "EasyExampleApp",
+        "../EasyApp",
+    ]
+
+    // Include .qml files from specified directory and its subdirectories
+    QmlFiles {
+        directory: "EasyExampleApp"
+    }
+    QmlFiles {
+        directory: "../EasyApp"
+    }
+
+    // Include .js files from specified directory and its subdirectories
+    JavaScriptFiles {
+        directory: "EasyExampleApp"
+    }
+    JavaScriptFiles {
+        directory: "../EasyApp"
+    }
+
+    // Include Module Definition Files (qmldir), as well as .ts and .qrc
+    // from specified directory and its subdirectories
+    Files {
+        filter: "qmldir;*.ts;*.qrc;*.html;*.png"
+        directory: "EasyExampleApp"
+        recursive: true
+    }
+    Files {
+        filter: "qmldir;*.ts;*.qrc;*.html"
+        directory: "../EasyApp"
+        recursive: true
+    }
+
+
+    mainUiFile: "EasyExampleApp/Gui/Components/Pages/Experiment/SideBarBasic/PdMeas2Theta.qml"
+}

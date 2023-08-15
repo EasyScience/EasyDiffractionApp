@@ -1,653 +1,974 @@
-# SPDX-FileCopyrightText: 2023 easyDiffraction contributors <support@easydiffraction.org>
+# SPDX-FileCopyrightText: 2023 EasyExample contributors
 # SPDX-License-Identifier: BSD-3-Clause
-# © 2021-2023 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
+# © 2023 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
 
-# noqa: E501
-
-from gemmi import cif
+import os
+import copy
 import numpy as np
-import pathlib
-import json
+from PySide6.QtCore import QObject, Signal, Slot, Property
+from PySide6.QtCore import QFile, QTextStream, QIODevice
+from PySide6.QtQml import QJSValue
 
-from PySide2.QtCore import Signal, QObject
+from EasyApp.Logic.Logging import console
+from Logic.Helpers import IO
+from Logic.Calculators import CryspyParser
+from Logic.Data import Data
 
-from easyCore import np
-from easyCore.Utils.io.xml import XMLSerializer
-from easyApp.Logic.Utils.Utils import generalizePath
-from easyDiffractionLib.Jobs import get_job_from_file
+try:
+    import cryspy
+    from cryspy.H_functions_global.function_1_cryspy_objects import \
+        str_to_globaln
+    from cryspy.procedure_rhochi.rhochi_by_dictionary import \
+        rhochi_calc_chi_sq_by_dictionary
+    console.debug('CrysPy module imported')
+except ImportError:
+    console.debug('No CrysPy module found')
 
 
-class ExperimentLogic(QObject):
-    """
-    """
-    # signals controlled by LC
-    experimentLoadedChanged = Signal()
-    experimentSkippedChanged = Signal()
-    clearFrontendState = Signal()
+_DEFAULT_DATA_BLOCK_NO_MEAS = """data_pnd
 
-    # signals controlled by our proxy
-    patternParametersAsObjChanged = Signal()
-    structureParametersChanged = Signal()
-    experimentDataAsXmlChanged = Signal()
+_diffrn_radiation_probe neutron
+_diffrn_radiation_wavelength 1.9
 
-    def __init__(self, parent=None, interface=None):
+_pd_meas_2theta_offset 0.0
+
+_pd_instr_resolution_u 0.04
+_pd_instr_resolution_v -0.05
+_pd_instr_resolution_w 0.06
+_pd_instr_resolution_x 0
+_pd_instr_resolution_y 0
+
+_pd_instr_reflex_asymmetry_p1 0
+_pd_instr_reflex_asymmetry_p2 0
+_pd_instr_reflex_asymmetry_p3 0
+_pd_instr_reflex_asymmetry_p4 0
+
+loop_
+_phase_label
+_phase_scale
+ph 1.0
+
+loop_
+_pd_background_2theta
+_pd_background_intensity
+0 100
+180 100
+
+loop_
+_pd_meas_2theta
+_pd_meas_intensity
+_pd_meas_intensity_sigma
+"""
+
+_DEFAULT_DATA_BLOCK = _DEFAULT_DATA_BLOCK_NO_MEAS + """36.5 1    1
+37.0 10   3
+37.5 700  25
+38.0 1100 30
+38.5 50   7
+39.0 1    1
+"""
+
+
+class Experiment(QObject):
+    definedChanged = Signal()
+    currentIndexChanged = Signal()
+    dataBlocksChanged = Signal()
+    dataBlocksNoMeasChanged = Signal()
+    dataBlocksMeasOnlyChanged = Signal()
+    dataBlocksCifChanged = Signal()
+    dataBlocksCifNoMeasChanged = Signal()
+    dataBlocksCifMeasOnlyChanged = Signal()
+    yMeasArraysChanged = Signal()
+    yBkgArraysChanged = Signal()
+    yCalcTotalArraysChanged = Signal()
+    yResidArraysChanged = Signal()
+    xBraggDictsChanged = Signal()
+    chartRangesChanged = Signal()
+
+    def __init__(self, parent):
         super().__init__(parent)
-        self.parent = parent
-        self._interface = interface
-        self._experiment_parameters = None
-        self._experiment_data_as_xml = ""
-        self._experiment_no_data_as_cif = ""
-        self.experiment_data = None
-        self._experiment_data = None
-        self._experiment_loaded = False
-        self._experiment_skipped = False
-        self.experiments = self._defaultExperiments()
-        self.clearFrontendState.connect(self.onClearFrontendState)
-        self.spin_polarized = False
-        self._current_spin_component = 'Sum'
-        self._refine_sum = True
-        self._refine_diff = True
-        self._refine_up = False
-        self._refine_down = False
-        self.fn_aggregate = self.pol_sum
-        self._excluded_regions = {}
+        self._proxy = parent
 
-    def _defaultExperiment(self):
-        return {
-            "label": "D1A@ILL",
-            "color": "#00a3e3"
-        }
+        self._defined = False
+        self._currentIndex = -1
 
-    def _loadExperimentCif(self, file_url):
-        print("+ _loadExperimentCif")
-        file_path = generalizePath(file_url)
-        block = cif.read(file_path).sole_block()
-        data = self.experimentFromCifBlock(block)
+        self._dataBlocksNoMeas = []
+        self._dataBlocksMeasOnly = []
 
-        # job name from file nameF_onExperimentDataAdded
-        job_name = pathlib.Path(file_path).stem
+        self._dataBlocksCif = []
+        self._dataBlocksCifNoMeas = []
+        self._dataBlocksCifMeasOnly = []
 
-        _, self.job = get_job_from_file(file_path, job_name, phases=self.parent.phases(), interface=self._interface)
+        self._xArrays = []
+        self._yMeasArrays = []
+        self._syMeasArrays = []
+        self._yBkgArrays = []
+        self._yCalcTotalArrays = []
+        self._yResidArrays = []
+        self._xBraggDicts = []
 
-        # Update job on sample
-        self.parent.l_sample._sample = self.job
+        self._chartRanges = []
 
-        return data
+    # QML accessible properties
 
-    def loadCifNoData(self, cif_string):
-        print("+ loadCifNoData")
-        # update no data cifstring with data, if available
-        data_cif = self.exp_data_as_cif()
-        cif_string += "\n" + data_cif
-        self.job.from_cif_string(cif_string)
-        self.parent.l_sample._sample = self.job
+    @Property('QVariant', notify=chartRangesChanged)
+    def chartRanges(self):
+        return self._chartRanges
 
-    def _loadExperimentCifString(self, cif_string):
-        print("+ _loadExperimentCifString")
-        block = cif.read_string(cif_string).sole_block()
-        data = self.experimentFromCifBlock(block)
-        # Update job's instrument data
-        self.job.from_cif_string(cif_string)
-        self.parent.l_sample._sample = self.job
-        return data
+    @Property(bool, notify=definedChanged)
+    def defined(self):
+        return self._defined
 
-    def experimentFromCifBlock(self, block):
-        """
-        Loads experimental parameters from cif string
-        """
-        data = self.parent.experiments()[0]
-        if type(block) is str:
-            block = cif.read_string(block).sole_block()
-        # at this point self.job is not yet defined, so query block
-        if block.find_loop("_tof_meas_time").tag is not None or block.find_loop("_tof_meas_time_of_flight").tag is not None:
-            #header = "_pd_meas_time_of_flight" # ?? which format is correct?
-            header = "_tof_meas_time"
-            prefix = "_tof_"
+    @defined.setter
+    def defined(self, newValue):
+        if self._defined == newValue:
+            return
+        self._defined = newValue
+        console.debug(IO.formatMsg('main', f'Experiment defined: {newValue}'))
+        self.definedChanged.emit()
+
+    @Property(int, notify=currentIndexChanged)
+    def currentIndex(self):
+        return self._currentIndex
+
+    @currentIndex.setter
+    def currentIndex(self, newValue):
+        if self._currentIndex == newValue:
+            return
+        self._currentIndex = newValue
+        console.debug(f"Current experiment index: {newValue}")
+        self.currentIndexChanged.emit()
+
+    @Property('QVariant', notify=dataBlocksMeasOnlyChanged)
+    def dataBlocksMeasOnly(self):
+        #console.error('EXPERIMENT DATABLOCK (MEAS ONLY) GETTER')
+        return self._dataBlocksMeasOnly
+
+    @Property('QVariant', notify=dataBlocksNoMeasChanged)
+    def dataBlocksNoMeas(self):
+        #console.error('EXPERIMENT DATABLOCK (NO MEAS) GETTER')
+        return self._dataBlocksNoMeas
+
+    @Property('QVariant', notify=dataBlocksCifChanged)
+    def dataBlocksCif(self):
+        return self._dataBlocksCif
+
+    @Property('QVariant', notify=dataBlocksCifNoMeasChanged)
+    def dataBlocksCifNoMeas(self):
+        return self._dataBlocksCifNoMeas
+
+    @Property('QVariant', notify=dataBlocksCifMeasOnlyChanged)
+    def dataBlocksCifMeasOnly(self):
+        return self._dataBlocksCifMeasOnly
+
+    # QML accessible methods
+
+    @Slot()
+    def addDefaultExperiment(self):
+        console.debug('Adding default experiment')
+        self.loadExperimentsFromEdCif(_DEFAULT_DATA_BLOCK)
+
+    @Slot('QVariant')
+    def loadExperimentsFromResources(self, fpaths):
+        if type(fpaths) == QJSValue:
+            fpaths = fpaths.toVariant()
+        for fpath in fpaths:
+            console.debug(f"Loading experiment(s) from: {fpath}")
+            file = QFile(fpath)
+            if not file.open(QIODevice.ReadOnly | QIODevice.Text):
+                console.error('Not found in resources')
+                return
+            stream = QTextStream(file)
+            edCif = stream.readAll()
+            self.loadExperimentsFromEdCif(edCif)
+
+    @Slot('QVariant')
+    def loadExperimentsFromFiles(self, fpaths):
+        if type(fpaths) == QJSValue:
+            fpaths = fpaths.toVariant()
+        for fpath in fpaths:
+            fpath = fpath.toLocalFile()
+            fpath = IO.generalizePath(fpath)
+            _, fext = os.path.splitext(fpath)
+            console.debug(f"Loading experiment(s) from: {fpath}")
+            with open(fpath, 'r') as file:
+                fileContent = file.read()
+            if fext == '.xye':
+                fileContent = _DEFAULT_DATA_BLOCK_NO_MEAS + fileContent
+            self.loadExperimentsFromEdCif(fileContent)
+
+    @Slot(str)
+    def loadExperimentsFromEdCif(self, edCif):
+        cryspyObj = self._proxy.data._cryspyObj
+        cryspyCif = CryspyParser.edCifToCryspyCif(edCif)
+        cryspyExperimentsObj = str_to_globaln(cryspyCif)
+
+        # Add/modify CryspyObj with ranges based on the measured data points in _pd_meas loop
+        pd_meas_2theta_range_min = 0  # default value to be updated later
+        pd_meas_2theta_range_max = 180  # default value to be updated later
+        defaultEdRangeCif = f'_pd_meas_2theta_range_min {pd_meas_2theta_range_min}\n_pd_meas_2theta_range_max {pd_meas_2theta_range_max}'
+        cryspyRangeCif = CryspyParser.edCifToCryspyCif(defaultEdRangeCif)
+        cryspyRangeObj = str_to_globaln(cryspyRangeCif).items
+        for dataBlock in cryspyExperimentsObj.items:
+            for item in dataBlock.items:
+                if type(item) == cryspy.C_item_loop_classes.cl_1_pd_meas.PdMeasL:
+                    pd_meas_2theta_range_min = item.items[0].ttheta
+                    pd_meas_2theta_range_max = item.items[-1].ttheta
+                    cryspyRangeObj[0].ttheta_min = pd_meas_2theta_range_min
+                    cryspyRangeObj[0].ttheta_max = pd_meas_2theta_range_max
+            dataBlock.add_items(cryspyRangeObj)
+
+        # Add/modify CryspyObj with phases based on the already loaded phases
+        loadedModelNames = [block['name']['value'] for block in self._proxy.model.dataBlocks]
+        for dataBlock in cryspyExperimentsObj.items:
+            for itemIdx, item in enumerate(dataBlock.items):
+                if type(item) == cryspy.C_item_loop_classes.cl_1_phase.PhaseL:
+                    cryspyModelNames = [phase.label for phase in item.items]
+                    for modelIdx, modelName in enumerate(cryspyModelNames):
+                        if modelName not in loadedModelNames:
+                            del item.items[modelIdx]
+                    if not len(item.items):
+                        del dataBlock.items[itemIdx]
+            itemTypes = [type(item) for item in dataBlock.items]
+            if cryspy.C_item_loop_classes.cl_1_phase.PhaseL not in itemTypes:
+                defaultEdModelsCif = 'loop_\n_phase_label\n_phase_scale'
+                for modelName in loadedModelNames:
+                    defaultEdModelsCif += f'\n{modelName} 1.0'
+                cryspyPhasesCif = CryspyParser.edCifToCryspyCif(defaultEdModelsCif)
+                cryspyPhasesObj = str_to_globaln(cryspyPhasesCif).items
+                dataBlock.add_items(cryspyPhasesObj)
+
+        experimentsCountBefore = len(self.cryspyObjExperiments())
+        cryspyObj.add_items(cryspyExperimentsObj.items)
+        experimentsCountAfter = len(self.cryspyObjExperiments())
+        success = experimentsCountAfter - experimentsCountBefore
+
+        if success:
+            cryspyExperimentsDict = cryspyExperimentsObj.get_dictionary()
+            edExperimentsMeasOnly, edExperimentsNoMeas = CryspyParser.cryspyObjAndDictToEdExperiments(cryspyExperimentsObj,
+                                                                                                      cryspyExperimentsDict)
+
+            self._proxy.data._cryspyDict.update(cryspyExperimentsDict)
+            self._dataBlocksMeasOnly += edExperimentsMeasOnly
+            self._dataBlocksNoMeas += edExperimentsNoMeas
+
+            self._currentIndex = len(self.dataBlocksNoMeas) - 1
+            if not self.defined:
+                self.defined = bool(len(self.dataBlocksNoMeas))
+
+            console.debug(IO.formatMsg('sub', f'{len(edExperimentsMeasOnly)} experiment(s)', 'meas data only', 'to intern dataset', 'added'))
+            console.debug(IO.formatMsg('sub', f'{len(edExperimentsNoMeas)} experiment(s)', 'without meas data', 'to intern dataset', 'added'))
+
+            self.dataBlocksChanged.emit()
         else:
-            header = "_pd_meas_2theta"
-            prefix = "_pd_"
-        # Polarized case
-        data.x = np.fromiter(block.find_loop(header), float)
-        data.y = np.fromiter(block.find_loop(prefix+"meas_intensity_up"), float)
-        data.e = np.fromiter(block.find_loop(prefix+"meas_intensity_up_sigma"), float)
-        data.yb = np.fromiter(block.find_loop(prefix+"meas_intensity_down"), float)
-        data.eb = np.fromiter(block.find_loop(prefix+"meas_intensity_down_sigma"), float)
-        spin_polarized = True
-        # Unpolarized case
-        if not np.any(data.y):
-            data.x = np.fromiter(block.find_loop(header), float)
-            data.y = np.fromiter(block.find_loop(prefix+"meas_intensity"), float)
-            data.e = np.fromiter(block.find_loop(prefix+"meas_intensity_sigma"), float)
-            data.yb = np.zeros(len(data.y))
-            data.eb = np.zeros(len(data.e))
-            spin_polarized = False
-        # setting spin polarization needs to be done first, before experiment is loaded
-        self.setPolarized(spin_polarized)
+            console.debug(IO.formatMsg('sub', 'No experiment(s)', '', 'to intern dataset', 'added'))
 
-        # Get phase parameters
-        sample_phase_labels = self.parent.getPhaseNames()
-        experiment_phase_labels = list(block.find_loop("_phase_label"))
-        experiment_phase_scales = np.fromiter(block.find_loop("_phase_scale"), float)
-        for (phase_label, phase_scale) in zip(experiment_phase_labels, experiment_phase_scales):
-            if phase_label in sample_phase_labels:
-                self.parent.setPhaseScale(phase_label, phase_scale)
+    @Slot(str)
+    def replaceExperiment(self, edCif=''):
+        console.debug("Cryspy obj and dict need to be replaced")
 
-        return data
+        currentDataBlock = self.dataBlocksNoMeas[self.currentIndex]
+        currentExperimentName = currentDataBlock['name']['value']
 
-    def _loadExperimentData(self, file_url):
-        print("+ _loadExperimentData")
-        file_path = generalizePath(file_url)
-        job_name = pathlib.Path(file_path).stem
+        cryspyObjBlockNames = [item.data_name for item in self._proxy.data._cryspyObj.items]
+        cryspyObjBlockIdx = cryspyObjBlockNames.index(currentExperimentName)
 
-        data = self.parent.experiments()[0]
-        # TODO: figure out how to tell ToF from CW
-        try:
-            data.x, data.y, data.e, data.yb, data.eb = np.loadtxt(file_path, unpack=True)
-            self.setPolarized(True)
-            self.job = self.parent.l_sample._defaultCWPolJob(name=job_name)
-        except Exception as e:
-            data.x, data.y, data.e = np.loadtxt(file_path, unpack=True)
-            data.yb = np.zeros(len(data.y))
-            data.eb = np.zeros(len(data.e))
-            self.setPolarized(False)
-            # check if set to ToF
-            current_type = self.parent.experimentType()
-            if 'TOF' in current_type:
-                self.job = self.parent.l_sample._defaultTOFJob(name=job_name)
-            else:
-                self.job = self.parent.l_sample._defaultCWJob(name=job_name)
+        cryspyDictBlockName = f'pd_{currentExperimentName}'
 
-        # Update job on sample
-        self.parent.l_sample._sample = self.job
-        return data
+        if not edCif:
+            edCif = CryspyParser.dataBlockToCif(currentDataBlock)
+        cryspyCif = CryspyParser.edCifToCryspyCif(edCif)
+        cryspyExperimentsObj = str_to_globaln(cryspyCif)
+        cryspyExperimentsDict = cryspyExperimentsObj.get_dictionary()
+        _, edExperimentsNoMeas = CryspyParser.cryspyObjAndDictToEdExperiments(cryspyExperimentsObj,
+                                                                              cryspyExperimentsDict)
 
-    def _experimentDataParameters(self, data):
-        x_min = data.x[0]
-        x_max = data.x[-1]
-        x_step = (x_max - x_min) / (len(data.x) - 1)
-        parameters = {
-            "x_min":  x_min,
-            "x_max":  x_max,
-            "x_step": x_step
-        }
-        return parameters
+        self._proxy.data._cryspyObj.items[cryspyObjBlockIdx] = cryspyExperimentsObj.items[0]
+        self._proxy.data._cryspyDict[cryspyDictBlockName] = cryspyExperimentsDict[cryspyDictBlockName]
+        self._dataBlocksNoMeas[self.currentIndex] = edExperimentsNoMeas[0]
 
-    def _defaultExperiments(self):
-        return []
+        console.debug(f"Experiment data block '{currentExperimentName}' (no. {self.currentIndex + 1}) (without measured data) has been replaced")
+        self.dataBlocksNoMeasChanged.emit()  # self.dataBlocksNoMeasChanged.emit(blockIdx)
 
-    def refinement(self):
-        return {"sum": self._refine_sum, "diff": self._refine_diff, "up": self._refine_up, "down": self._refine_down}
+#        # remove experiment from self._proxy.data._cryspyDict
+#        currentExperimentName = self.dataBlocks[self.currentIndex]['name']
+#        del self._proxy.data._cryspyDict[f'pd_{currentExperimentName}']
+#
+#        # add experiment to self._proxy.data._cryspyDict
+#        cifNoMeas = CryspyParser.dataBlocksToCif(self._dataBlocks)
+#        cifMeasOnly = self.dataBlocksCifMeasOnly
+#        edCif = cifNoMeas + '\n' + cifMeasOnly
+#        self.loadExperimentsFromEdCif(edCif)
 
-    def refinement_methods(self):
-        return {self.pol_sum: self._refine_sum, self.pol_diff: self._refine_diff, self.pol_up: self._refine_up, self.pol_down: self._refine_down}
+    @Slot(int)
+    def removeExperiment(self, index):
+        console.debug(f"Removing experiment no. {index + 1}")
+        self.currentIndex = index - 1
+        del self._dataBlocksNoMeas[index]
+        del self._dataBlocksMeasOnly[index]
+        del self._xArrays[index]
+        del self._yMeasArrays[index]
+        del self._yBkgArrays[index]
 
-    def setPolarized(self, polarized: bool):
-        if self.spin_polarized == polarized:
+        self.defined = bool(len(self.dataBlocksNoMeas))
+
+        self.dataBlocksNoMeasChanged.emit()
+        self.dataBlocksMeasOnlyChanged.emit()
+        self.yMeasArraysChanged.emit()
+        self.yBkgArraysChanged.emit()
+        console.debug(f"Experiment no. {index + 1} has been removed")
+
+    @Slot()
+    def resetAll(self):
+        self.defined = False
+        self._currentIndex = -1
+        self._dataBlocksNoMeas = []
+        self._dataBlocksMeasOnly = []
+        self._dataBlocksCif = []
+        self._dataBlocksCifNoMeas = ""
+        self._dataBlocksCifMeasOnly = ""
+        self._xArrays = []
+        self._yMeasArrays = []
+        self._syMeasArrays = []
+        self._yBkgArrays = []
+        self._yCalcTotalArrays = []
+        self._yResidArrays = []
+        self._xBraggDicts = []
+        self._chartRanges = []
+        #self.dataBlocksChanged.emit()
+        console.debug("All experiments removed")
+
+    @Slot(int, str, str, 'QVariant')
+    def setMainParamWithFullUpdate(self, blockIndex, paramName, field, value):
+        changedIntern = self.editDataBlockMainParam(blockIndex, paramName, field, value)
+        if not changedIntern:
+            return
+        self.replaceExperiment()
+
+    @Slot(int, str, str, 'QVariant')
+    def setMainParam(self, blockIndex, paramName, field, value):
+        changedIntern = self.editDataBlockMainParam(blockIndex, paramName, field, value)
+        changedCryspy = self.editCryspyDictByMainParam(blockIndex, paramName, field, value)
+        if changedIntern and changedCryspy:
+            self.dataBlocksNoMeasChanged.emit()
+
+    @Slot(int, str, str, int, str, 'QVariant')
+    def setLoopParamWithFullUpdate(self, blockIndex, loopName, paramName, rowIndex, field, value):
+        changedIntern = self.editDataBlockLoopParam(blockIndex, loopName, paramName, rowIndex, field, value)
+        if not changedIntern:
+            return
+        self.replaceExperiment()
+
+    @Slot(int, str, str, int, str, 'QVariant')
+    def setLoopParam(self, blockIndex, loopName, paramName, rowIndex, field, value):
+        changedIntern = self.editDataBlockLoopParam(blockIndex, loopName, paramName, rowIndex, field, value)
+        changedCryspy = self.editCryspyDictByLoopParam(blockIndex, loopName, paramName, rowIndex, field, value)
+        if changedIntern and changedCryspy:
+            self.dataBlocksNoMeasChanged.emit()
+
+    @Slot(str, int)
+    def removeLoopRow(self, loopName, rowIndex):
+        self.removeDataBlockLoopRow(loopName, rowIndex)
+        self.replaceExperiment()
+
+    @Slot(str)
+    def appendLoopRow(self, loopName):
+        self.appendDataBlockLoopRow(loopName)
+        self.replaceExperiment()
+
+    @Slot()
+    def resetBkgToDefault(self):
+        self.resetDataBlockBkgToDefault()
+        self.replaceExperiment()
+
+    # Private methods
+
+    def cryspyObjExperiments(self):
+        cryspyObj = self._proxy.data._cryspyObj
+        cryspyExperimentType = cryspy.E_data_classes.cl_2_pd.Pd
+        experiments = [block for block in cryspyObj.items if type(block) == cryspyExperimentType]
+        return experiments
+
+    def removeDataBlockLoopRow(self, loopName, rowIndex):
+        block = 'experiment'
+        blockIndex = self._currentIndex
+        del self._dataBlocksNoMeas[blockIndex]['loops'][loopName][rowIndex]
+
+        console.debug(f"Intern dict ▌ {block}[{blockIndex}].{loopName}[{rowIndex}] has been removed")
+
+    def appendDataBlockLoopRow(self, loopName):
+        block = 'experiment'
+        blockIndex = self._currentIndex
+
+        lastBkgPoint = self._dataBlocksNoMeas[blockIndex]['loops'][loopName][-1]
+
+        newBkgPoint = copy.deepcopy(lastBkgPoint)
+        newBkgPoint['_2theta']['value'] += 10
+
+        self._dataBlocksNoMeas[blockIndex]['loops'][loopName].append(newBkgPoint)
+        atomsCount = len(self._dataBlocksNoMeas[blockIndex]['loops'][loopName])
+
+        console.debug(f"Intern dict ▌ {block}[{blockIndex}].{loopName}[{atomsCount}] has been added")
+
+    def resetDataBlockBkgToDefault(self):
+        block = 'experiment'
+        blockIndex = self._currentIndex
+        loopName = '_pd_background'
+
+        firstBkgPoint = copy.deepcopy(self._dataBlocksNoMeas[blockIndex]['loops'][loopName][0])  # copy of the 1st point
+        firstBkgPoint['_2theta']['value'] = 0
+        firstBkgPoint['_intensity']['value'] = 0
+
+        lastBkgPoint = copy.deepcopy(firstBkgPoint)
+        lastBkgPoint['_2theta']['value'] = 180
+
+        self._dataBlocksNoMeas[blockIndex]['loops'][loopName] = [firstBkgPoint, lastBkgPoint]
+
+        console.debug(f"Intern dict ▌ {block}[{blockIndex}].{loopName} has been reset to default values")
+
+    def editDataBlockMainParam(self, blockIndex, paramName, field, value):
+        block = 'experiment'
+        oldValue = self._dataBlocksNoMeas[blockIndex]['params'][paramName][field]
+        if oldValue == value:
             return False
-        current_type = self.parent.experimentType()
-        if 'TOF' in current_type:
-            return False # no polarized for TOF
-
-        self.spin_polarized = polarized
-        if polarized:
-            if 'unp' in current_type:
-                current_type = current_type.replace('unp', 'pol')
-            elif 'pol' in current_type:
-                return False # no change
-            else:
-                # old style unpolarized
-                current_type = current_type + "pol"
+        self._dataBlocksNoMeas[blockIndex]['params'][paramName][field] = value
+        if type(value) == float:
+            console.debug(IO.formatMsg('sub', 'Intern dict', f'{oldValue} → {value:.6f}', f'{block}[{blockIndex}].{paramName}.{field}'))
         else:
-            if 'pol' in current_type:
-                current_type = current_type.replace('pol', 'unp')
-
-        self.parent.setExperimentType(current_type)
-        # need to recalculate the profile
-        self.parent.updateCalculatedData()
+            console.debug(IO.formatMsg('sub', 'Intern dict', f'{oldValue} → {value}', f'{block}[{blockIndex}].{paramName}.{field}'))
         return True
 
-    def updateExperimentData(self, name=None):
-        self._experiment_data = self.parent.experiments()[0]
-        self.experiments = [{'name': name}]
-        self.setCurrentExperimentDatasetName(name)
-        self.setPolarized(self.spin_polarized)
-        self._onExperimentDataAdded()
-
-    def experimentLoaded(self, loaded: bool):
-        if self._experiment_loaded == loaded:
-            return
-        self._experiment_loaded = loaded
-        self.experimentLoadedChanged.emit()
-
-    def experimentSkipped(self, skipped: bool):
-        if self._experiment_skipped == skipped:
-            return
-        self._experiment_skipped = skipped
-        self.experimentSkippedChanged.emit()
-
-    def experimentDataAsObj(self):
-        return [{'name': experiment.name} for experiment in self.parent.experiments()]
-
-    def _setExperimentDataAsXml(self):
-        self._experiment_data_as_xml = XMLSerializer().encode({"item":self.experiments}, skip=['interface'])
-        self._experiment_no_data_as_cif = self.as_cif(no_data=True)
-
-    def addExperimentDataFromCif(self, file_url):
-        self.parent.shouldProfileBeCalculated = False # don't run update until we're done with setting parameters
-        self._experiment_data = self._loadExperimentCif(file_url)
-        self.newExperimentUpdate(file_url)
-
-    def addExperimentDataFromXye(self, file_url):
-        self._experiment_data = self._loadExperimentData(file_url)
-        self.newExperimentUpdate(file_url)
-
-    def newExperimentUpdate(self, file_url):
-        self.parent.setExperimentName(pathlib.Path(file_url).stem)
-        self.experiments = [{'name': experiment.name} for experiment in self.parent.experiments()]
-        self.experimentLoaded(True)
-        self.experimentSkipped(False)
-        # slot in Exp proxy -> notify parameter proxy
-        self.structureParametersChanged.emit()
-
-    def addBackgroundDataFromCif(self, file_url):
-        file_path = generalizePath(file_url)
-        block = cif.read(file_path).sole_block()
-        # Get background
-        if (self.is_tof()):
-            x_label = "_tof_background_time"
-            y_label = "_tof_background_intensity"
-        else:
-            x_label = "_pd_background_2theta"
-            y_label = "_pd_background_intensity"
-        background_2thetas = np.fromiter(block.find_loop(x_label), float)
-        background_intensities = np.fromiter(block.find_loop(y_label), float)
-        self.parent.setBackgroundPoints(background_2thetas, background_intensities)
-
-    def updateBackgroundData(self):
-        self.parent.updateBackgroundData()
-
-    def removeExperiment(self):
-        self.parent.removeBackgroundPoints()
-        self.parent.l_sample.reset()
-        self.parent.removeAllConstraints()
-        self.parent.shouldProfileBeCalculated = False
-        self.excludedRegionsDefault()
-        self.parent.shouldProfileBeCalculated = True
-        self._current_spin_component = 'Sum'
-        self.experiments.clear()
-        self._experiment_data = None
-        self.experimentLoaded(False)
-        self.experimentSkipped(False)
-        self.setPolarized(False)
-        self.parent.clearFrontendState()
-
-    def _onExperimentSkippedChanged(self):
-        self.parent.updateCalculatedData()
-
-    def _onExperimentLoadedChanged(self):
-        self.parent.onPatternParametersChanged()
-
-    def setCurrentExperimentDatasetName(self, name):
-        self.parent.setCurrentExperimentDatasetName(name)
-
-    def initializeBackground(self):
-        self.parent.setMeasuredData(
-                                    self._experiment_data.x,
-                                    self._experiment_data.y + self._experiment_data.yb,
-                                    self._experiment_data.e + self._experiment_data.eb)
-
-        self.parent.setSimulationParameters(json.dumps(self._experiment_parameters))
-        self.parent.initializeContainer()
-
-    def _onExperimentDataAdded(self):
-        print("***** _onExperimentDataAdded")
-        # default settings are up+down
-        self.parent.setMeasuredData(
-                                    self._experiment_data.x,
-                                    self._experiment_data.y + self._experiment_data.yb,
-                                    self._experiment_data.e + self._experiment_data.eb)
-        self._experiment_parameters = \
-            self._experimentDataParameters(self._experiment_data)
-
-        # notify parameter proxy
-        params_json = json.dumps(self._experiment_parameters)
-        self.parent.shouldProfileBeCalculated = True # now we can run update
-        self._experiment_no_data_as_cif = self.as_cif(no_data=True)
-
-        self.parent.setSimulationParameters(params_json)
-        if len(self.parent.sampleBackgrounds()) == 0:
-            self.parent.initializeContainer()
-
-        self.parent.setExperimentNameFromParameters()
-        self.parent.notifyProjectChanged()
-
-    def _onPatternParametersChanged(self):
-        self.parent.setPatternParametersAsObj()
-        # slot in Exp proxy -> notify Param proxy
-        self.patternParametersAsObjChanged.emit()
-        # Now, update the CIF representation
-        self._setExperimentDataAsXml()
-        # and notify the proxy that CIF changed
-        self.experimentDataAsXmlChanged.emit()
-
-    def onClearFrontendState(self):
-        self.parent.clearFrontendState()
-
-    def spinComponent(self):
-        return self._current_spin_component
-
-    @staticmethod
-    def pol_sum(a, b):
-        return a + b
-
-    @staticmethod
-    def pol_diff(a, b):
-        return a - b
-
-    @staticmethod
-    def pol_up(a, b):
-        return a
-
-    @staticmethod
-    def pol_down(a, b):
-        return b
-
-    def setSpinComponent(self, component=None):
-        if self._current_spin_component == component:
+    def editDataBlockLoopParam(self, blockIndex, loopName, paramName, rowIndex, field, value):
+        block = 'experiment'
+        oldValue = self._dataBlocksNoMeas[blockIndex]['loops'][loopName][rowIndex][paramName][field]
+        if oldValue == value:
             return False
-        if component is not None:
-            self._current_spin_component = component
-
-        phase_label = self.parent.getPhaseNames()[0]
-        components = self._interface.get_phase_components(phase_label)
-        calc_y = components['components']['up']
-        calc_yb = components['components']['down']
-        bg = self._interface.get_component('f_background') * 2.0
-
-        self.fn_aggregate = self.pol_sum
-        has_experiment = self._experiment_data is not None
-        if self._current_spin_component == 'Sum':
-            if has_experiment:
-                y = self._experiment_data.y + self._experiment_data.yb
-                e = self._experiment_data.e + self._experiment_data.eb
-            sim_y = calc_y + calc_yb + bg
-            self.fn_aggregate = self.pol_sum
-        elif self._current_spin_component == 'Difference':
-            if has_experiment:
-                y = self._experiment_data.y - self._experiment_data.yb
-                e = self._experiment_data.e + self._experiment_data.eb
-            bg = np.zeros_like(bg)
-            sim_y = calc_y - calc_yb
-            self.fn_aggregate = self.pol_diff
-        elif self._current_spin_component == 'Up':
-            if has_experiment:
-                y = self._experiment_data.y
-                e = self._experiment_data.e
-            bg = bg / 2
-            sim_y = calc_y + bg
-            self.fn_aggregate = self.pol_up
-        elif self._current_spin_component == 'Down':
-            if has_experiment:
-                y = self._experiment_data.yb
-                e = self._experiment_data.eb
-            bg = bg / 2
-            sim_y = calc_yb + bg
-            self.fn_aggregate = self.pol_down
+        self._dataBlocksNoMeas[blockIndex]['loops'][loopName][rowIndex][paramName][field] = value
+        if type(value) == float:
+            console.debug(IO.formatMsg('sub', 'Intern dict', f'{oldValue} → {value:.6f}', f'{block}[{blockIndex}].{loopName}[{rowIndex}].{paramName}.{field}'))
         else:
+            console.debug(IO.formatMsg('sub', 'Intern dict', f'{oldValue} → {value}', f'{block}[{blockIndex}].{loopName}[{rowIndex}].{paramName}.{field}'))
+        return True
+
+    def editCryspyDictByMainParam(self, blockIndex, paramName, field, value):
+        if field != 'value' and field != 'fit':
+            return True
+
+        path, value = self.cryspyDictPathByMainParam(blockIndex, paramName, value)
+        if field == 'fit':
+            path[1] = f'flags_{path[1]}'
+
+        oldValue = self._proxy.data._cryspyDict[path[0]][path[1]][path[2]]
+        if oldValue == value:
             return False
+        self._proxy.data._cryspyDict[path[0]][path[1]][path[2]] = value
 
-        if has_experiment:
-            sim_x = self._experiment_data.x
+        console.debug(IO.formatMsg('sub', 'Cryspy dict', f'{oldValue} → {value}', f'{path}'))
+        return True
+
+    def editCryspyDictByLoopParam(self, blockIndex, loopName, paramName, rowIndex, field, value):
+        if field != 'value' and field != 'fit':
+            return True
+
+        path, value = self.cryspyDictPathByLoopParam(blockIndex, loopName, paramName, rowIndex, value)
+        if field == 'fit':
+            path[1] = f'flags_{path[1]}'
+
+        oldValue = self._proxy.data._cryspyDict[path[0]][path[1]][path[2]]
+        if oldValue == value:
+            return False
+        self._proxy.data._cryspyDict[path[0]][path[1]][path[2]] = value
+
+        console.debug(IO.formatMsg('sub', 'Cryspy dict', f'{oldValue} → {value}', f'{path}'))
+        return True
+
+    def cryspyDictPathByMainParam(self, blockIndex, paramName, value):
+        blockName = self._dataBlocksNoMeas[blockIndex]['name']['value']
+        path = ['','','']
+        path[0] = f"pd_{blockName}"
+
+        # _diffrn_radiation
+        if paramName == '_diffrn_radiation_wavelength':
+            path[1] = 'wavelength'
+            path[2] = 0
+
+        # _pd_meas_2theta_offset
+        elif paramName == '_pd_meas_2theta_offset':
+            path[1] = 'offset_ttheta'
+            path[2] = 0
+            value = np.deg2rad(value)
+
+        # _pd_instr_resolution
+        elif paramName == '_pd_instr_resolution_u':
+            path[1] = 'resolution_parameters'
+            path[2] = 0
+        elif paramName == '_pd_instr_resolution_v':
+            path[1] = 'resolution_parameters'
+            path[2] = 1
+        elif paramName == '_pd_instr_resolution_w':
+            path[1] = 'resolution_parameters'
+            path[2] = 2
+        elif paramName == '_pd_instr_resolution_x':
+            path[1] = 'resolution_parameters'
+            path[2] = 3
+        elif paramName == '_pd_instr_resolution_y':
+            path[1] = 'resolution_parameters'
+            path[2] = 4
+        elif paramName == '_pd_instr_resolution_z':
+            path[1] = 'resolution_parameters'
+            path[2] = 5
+
+        # _pd_instr_reflex_asymmetry
+        elif paramName == '_pd_instr_reflex_asymmetry_p1':
+            path[1] = 'asymmetry_parameters'
+            path[2] = 0
+        elif paramName == '_pd_instr_reflex_asymmetry_p2':
+            path[1] = 'asymmetry_parameters'
+            path[2] = 1
+        elif paramName == '_pd_instr_reflex_asymmetry_p3':
+            path[1] = 'asymmetry_parameters'
+            path[2] = 2
+        elif paramName == '_pd_instr_reflex_asymmetry_p4':
+            path[1] = 'asymmetry_parameters'
+            path[2] = 3
+
+        # undefined
         else:
-            sim_x = self.parent.sim_x()
-        self.parent.setBackgroundData(sim_x, bg)
-        if has_experiment:
-            self.parent.setMeasuredData(self._experiment_data.x, y, e)
+            console.error(f"Undefined parameter name '{paramName}'")
 
-        self.parent.setCalculatedData(sim_x, sim_y)
+        return path, value
 
-        return has_experiment
+    def cryspyDictPathByLoopParam(self, blockIndex, loopName, paramName, rowIndex, value):
+        blockName = self._dataBlocksNoMeas[blockIndex]['name']['value']
+        path = ['','','']
+        path[0] = f"pd_{blockName}"
 
-    def refineSum(self):
-        return self._refine_sum
+        # _pd_background
+        if loopName == '_pd_background':
+            if paramName == '_2theta':
+                path[1] = 'background_ttheta'
+                path[2] = rowIndex
+                value = np.deg2rad(value)
+            if paramName == '_intensity':
+                path[1] = 'background_intensity'
+                path[2] = rowIndex
 
-    def setRefineSum(self, value):
-        self._refine_sum = value
+        # _phase
+        if loopName == '_phase':
+            if paramName == '_scale':
+                path[1] = 'phase_scale'
+                path[2] = rowIndex
 
-    def refineDiff(self):
-        return self._refine_diff
+        return path, value
 
-    def setRefineDiff(self, value):
-        self._refine_diff = value
+    def paramValueByFieldAndCrypyParamPath(self, field, path):  # NEED FIX: code duplicate of editDataBlockByLmfitParams
+        block, group, idx = path
 
-    def refineUp(self):
-        return self._refine_up
+        # pd (powder diffraction) block
+        if block.startswith('pd_'):
+            blockName = block[3:]
+            loopName = None
+            paramName = None
+            rowIndex = None
 
-    def setRefineUp(self, value):
-        self._refine_up = value
+            # wavelength
+            if group == 'wavelength':
+                paramName = '_diffrn_radiation_wavelength'
 
-    def refineDown(self):
-        return self._refine_down
+            # offset_ttheta
+            elif group == 'offset_ttheta':
+                paramName = '_pd_meas_2theta_offset'
 
-    def setRefineDown(self, value):
-        self._refine_down = value
+            # resolution_parameters
+            elif group == 'resolution_parameters':
+                if idx[0] == 0:
+                    paramName = '_pd_instr_resolution_u'
+                elif idx[0] == 1:
+                    paramName = '_pd_instr_resolution_v'
+                elif idx[0] == 2:
+                    paramName = '_pd_instr_resolution_w'
+                elif idx[0] == 3:
+                    paramName = '_pd_instr_resolution_x'
+                elif idx[0] == 4:
+                    paramName = '_pd_instr_resolution_y'
+                elif idx[0] == 5:
+                    paramName = '_pd_instr_resolution_z'
 
-    def is_tof(self):
-        return "tof" in str(self.job).replace(" `"+self.job.name+"`", "").lower()
-    
-    def is_pol(self):
-        return "pol" in str(self.job).replace(" `"+self.job.name+"`", "").lower()
+            # asymmetry_parameters
+            elif group == 'asymmetry_parameters':
+                if idx[0] == 0:
+                    paramName = '_pd_instr_reflex_asymmetry_p1'
+                elif idx[0] == 1:
+                    paramName = '_pd_instr_reflex_asymmetry_p2'
+                elif idx[0] == 2:
+                    paramName = '_pd_instr_reflex_asymmetry_p3'
+                elif idx[0] == 3:
+                    paramName = '_pd_instr_reflex_asymmetry_p4'
 
-    ##############################
-    # CIF representation
-    ##############################
-    def as_cif(self, no_data=False):
-        '''
-        Returns a CIF representation of the experiment.
-        (pattern, background, instrument, data points etc.)
-        '''
-        # header
-        self.job = self.parent.l_sample._sample
-        cif = "data_" + self.job.name + "\n\n"
-        if self.is_tof():
-            cif += self.tof_param_as_cif() + "\n\n"
-            is_tof = True
-        else:
-            cif += self.cw_param_as_cif()+  "\n\n"
+            # background_ttheta
+            elif group == 'background_ttheta':
+                loopName = '_pd_background'
+                paramName = '_2theta'
+                rowIndex = idx[0]
 
-        if self.is_pol():
-            cif += self.polar_param_as_cif() + "\n\n"
+            # background_intensity
+            elif group == 'background_intensity':
+                loopName = '_pd_background'
+                paramName = '_intensity'
+                rowIndex = idx[0]
 
-        cif += self.phases_as_cif() + "\n\n"
-        cif += self.background_as_cif() + "\n\n"
-        if not no_data:
-            cif += self.exp_data_as_cif() + "\n\n"
-        return cif
+            # phase_scale
+            elif group == 'phase_scale':
+                loopName = '_phase'
+                paramName = '_scale'
+                rowIndex = idx[0]
 
-    def phases_as_cif(self):
-        '''
-        Returns a CIF representation of the phases names and scales.
-        '''
-        cif_phase = "loop_\n"
-        cif_phase += "_phase_label\n"
-        cif_phase += "_phase_scale\n"
-        cif_phase += "_phase_igsize\n"
-        for phase in self.parent.l_sample._sample.phases:
-            cif_phase += phase.name + " " + str(phase.scale.raw_value) + " 0.0\n"
-        return cif_phase
+            blockIndex = [block['name']['value'] for block in self._dataBlocksNoMeas].index(blockName)
 
-    def exp_data_as_cif(self):
-        '''
-        Returns a CIF representation of the experimental datapoints x,y,e.
-        '''
-        if not hasattr(self, '_experiment_data'):
-            return ""
-        if self._experiment_data is None:
-            return ""
-
-        cif_exp_data = "_range_2theta_min " + str(self._experiment_data.x[0]) + "\n"
-        cif_exp_data += "_range_2theta_max " + str(self._experiment_data.x[-1]) + "\n"
-        cif_exp_data += "_setup_radiation neutrons\n"
-
-        cif_exp_data += "\nloop_"
-
-        if self.is_tof():
-            cif_exp_data += "\n_tof_meas_time"
-            cif_prefix = "_tof_"
-        else:
-            cif_exp_data += "\n_pd_meas_2theta"
-            cif_prefix = "_pd_"
-
-        if self.is_pol():
-            cif_exp_data += "\n" + \
-                            cif_prefix + "meas_intensity_up\n" + \
-                            cif_prefix + "meas_intensity_up_sigma\n" + \
-                            cif_prefix + "meas_intensity_down\n" + \
-                            cif_prefix + "meas_intensity_down_sigma"
-        else:
-            cif_exp_data += "\n" + \
-                            cif_prefix + "meas_intensity\n" + \
-                            cif_prefix + "meas_intensity_sigma"
-
-        for i in range(len(self._experiment_data.x)):
-            cif_exp_data += "\n" + str(self._experiment_data.x[i]) + " "
-            if self.is_pol():
-                cif_exp_data += str(self._experiment_data.y[i]) + " " + \
-                    str(self._experiment_data.e[i]) + " " + \
-                    str(self._experiment_data.yb[i]) + " " + \
-                    str(self._experiment_data.eb[i])
+            if loopName is None:
+                return self.dataBlocksNoMeas[blockIndex]['params'][paramName][field]
             else:
-                cif_exp_data += str(self._experiment_data.y[i]) + " " + \
-                    str(self._experiment_data.e[i])
+                return self.dataBlocksNoMeas[blockIndex]['loops'][loopName][rowIndex][paramName][field]
 
-        return cif_exp_data
+        return None
 
-    def background_as_cif(self):
-        '''
-        Returns a CIF representation of the background.
-        '''
-        cif_background = ""
-        if self.parent.l_background._background_as_obj is None:
-            return cif_background
+    def editDataBlockByLmfitParams(self, params):
+        for param in params.values():
+            block, group, idx = Data.strToCryspyDictParamPath(param.name)
 
-        if self.is_tof():
-            cif_background += "\nloop_\n_tof_background_time\n_tof_background_intensity"
+            # pd (powder diffraction) block
+            if block.startswith('pd_'):
+                blockName = block[3:]
+                loopName = None
+                paramName = None
+                rowIndex = None
+                value = param.value
+                error = 0
+                if param.stderr is not None:
+                    error = param.stderr
+
+                # wavelength
+                if group == 'wavelength':
+                    paramName = '_diffrn_radiation_wavelength'
+
+                # offset_ttheta
+                elif group == 'offset_ttheta':
+                    paramName = '_pd_meas_2theta_offset'
+                    value = np.rad2deg(value)
+
+                # resolution_parameters
+                elif group == 'resolution_parameters':
+                    if idx[0] == 0:
+                        paramName = '_pd_instr_resolution_u'
+                    elif idx[0] == 1:
+                        paramName = '_pd_instr_resolution_v'
+                    elif idx[0] == 2:
+                        paramName = '_pd_instr_resolution_w'
+                    elif idx[0] == 3:
+                        paramName = '_pd_instr_resolution_x'
+                    elif idx[0] == 4:
+                        paramName = '_pd_instr_resolution_y'
+                    elif idx[0] == 5:
+                        paramName = '_pd_instr_resolution_z'
+
+                # asymmetry_parameters
+                elif group == 'asymmetry_parameters':
+                    if idx[0] == 0:
+                        paramName = '_pd_instr_reflex_asymmetry_p1'
+                    elif idx[0] == 1:
+                        paramName = '_pd_instr_reflex_asymmetry_p2'
+                    elif idx[0] == 2:
+                        paramName = '_pd_instr_reflex_asymmetry_p3'
+                    elif idx[0] == 3:
+                        paramName = '_pd_instr_reflex_asymmetry_p4'
+
+                # background_ttheta
+                elif group == 'background_ttheta':
+                    loopName = '_pd_background'
+                    paramName = '_2theta'
+                    rowIndex = idx[0]
+                    value = np.rad2deg(value)
+
+                # background_intensity
+                elif group == 'background_intensity':
+                    loopName = '_pd_background'
+                    paramName = '_intensity'
+                    rowIndex = idx[0]
+
+                # phase_scale
+                elif group == 'phase_scale':
+                    loopName = '_phase'
+                    paramName = '_scale'
+                    rowIndex = idx[0]
+
+                value = float(value)  # convert float64 to float (needed for QML access)
+                error = float(error)  # convert float64 to float (needed for QML access)
+                blockIndex = [block['name']['value'] for block in self._dataBlocksNoMeas].index(blockName)
+
+                if loopName is None:
+                    self.editDataBlockMainParam(blockIndex, paramName, 'value', value)
+                    self.editDataBlockMainParam(blockIndex, paramName, 'error', error)
+                else:
+                    self.editDataBlockLoopParam(blockIndex, loopName, paramName, rowIndex, 'value', value)
+                    self.editDataBlockLoopParam(blockIndex, loopName, paramName, rowIndex, 'error', error)
+
+    def editDataBlockByCryspyDictParams(self, params):
+        for param in params:
+            block, group, idx = Data.strToCryspyDictParamPath(param)
+
+            # pd (powder diffraction) block
+            if block.startswith('pd_'):
+                blockName = block[3:]
+                loopName = None
+                paramName = None
+                rowIndex = None
+                value = self._proxy.data._cryspyDict[block][group][idx]
+
+                # wavelength
+                if group == 'wavelength':
+                    paramName = '_diffrn_radiation_wavelength'
+
+                # offset_ttheta
+                elif group == 'offset_ttheta':
+                    paramName = '_pd_meas_2theta_offset'
+                    value = np.rad2deg(value)
+
+                # resolution_parameters
+                elif group == 'resolution_parameters':
+                    if idx[0] == 0:
+                        paramName = '_pd_instr_resolution_u'
+                    elif idx[0] == 1:
+                        paramName = '_pd_instr_resolution_v'
+                    elif idx[0] == 2:
+                        paramName = '_pd_instr_resolution_w'
+                    elif idx[0] == 3:
+                        paramName = '_pd_instr_resolution_x'
+                    elif idx[0] == 4:
+                        paramName = '_pd_instr_resolution_y'
+                    elif idx[0] == 5:
+                        paramName = '_pd_instr_resolution_z'
+
+                # asymmetry_parameters
+                elif group == 'asymmetry_parameters':
+                    if idx[0] == 0:
+                        paramName = '_pd_instr_reflex_asymmetry_p1'
+                    elif idx[0] == 1:
+                        paramName = '_pd_instr_reflex_asymmetry_p2'
+                    elif idx[0] == 2:
+                        paramName = '_pd_instr_reflex_asymmetry_p3'
+                    elif idx[0] == 3:
+                        paramName = '_pd_instr_reflex_asymmetry_p4'
+
+                # background_ttheta
+                elif group == 'background_ttheta':
+                    loopName = '_pd_background'
+                    paramName = '_2theta'
+                    rowIndex = idx[0]
+                    value = np.rad2deg(value)
+
+                # background_intensity
+                elif group == 'background_intensity':
+                    loopName = '_pd_background'
+                    paramName = '_intensity'
+                    rowIndex = idx[0]
+
+                # phase_scale
+                elif group == 'phase_scale':
+                    loopName = '_phase'
+                    paramName = '_scale'
+                    rowIndex = idx[0]
+
+                value = float(value)  # convert float64 to float (needed for QML access)
+                blockIndex = [block['name']['value'] for block in self._dataBlocksNoMeas].index(blockName)
+
+                if loopName is None:
+                    self.editDataBlockMainParam(blockIndex, paramName, 'value', value)
+                else:
+                    self.editDataBlockLoopParam(blockIndex, loopName, paramName, rowIndex, 'value', value)
+
+    def runCryspyCalculations(self):
+        result = rhochi_calc_chi_sq_by_dictionary(
+            self._proxy.data._cryspyDict,
+            dict_in_out=self._proxy.data._cryspyInOutDict,
+            flag_use_precalculated_data=False,
+            flag_calc_analytical_derivatives=False)
+
+        console.debug(IO.formatMsg('sub', 'Cryspy calculations', 'finished'))
+
+        chiSq = result[0]
+        self._proxy.fitting._pointsCount = result[1]
+        self._proxy.fitting._freeParamsCount = len(result[4])
+        self._proxy.fitting.chiSq = chiSq / (self._proxy.fitting._pointsCount - self._proxy.fitting._freeParamsCount)
+
+        gofLastIter = self._proxy.fitting.chiSq  # NEED FIX
+        if self._proxy.fitting.chiSqStart is None:
+            self._proxy.status.goodnessOfFit = f'{gofLastIter:0.2f}'                           # NEED move to connection
         else:
-            cif_background += "\nloop_ \n_pd_background_2theta\n_pd_background_intensity"
-        background = self.parent.l_background._background_as_obj
-        for i in range(len(background.data)):
-            cif_background += "\n" + str(background.data[i].x.raw_value) + " " + str(background.data[i].y.raw_value)
-        return cif_background
+            gofStart = self._proxy.fitting.chiSqStart # NEED FIX
+            self._proxy.status.goodnessOfFit = f'{gofStart:0.2f} → {gofLastIter:0.2f}'  # NEED move to connection
+        if not self._proxy.fitting._freezeChiSqStart:
+            self._proxy.fitting.chiSqStart = self._proxy.fitting.chiSq
 
-    def cw_param_as_cif(self):
-        '''
-        Returns a CIF representation of the CW instrument parameters
-        '''
-        cif_ipar_data = ""
-        cif_ipar_data += "\n_setup_wavelength " + str(self.job.parameters.wavelength.raw_value)
-        cif_ipar_data += "\n_setup_offset_2theta  " + str(self.job.pattern.zero_shift.raw_value)
-        cif_ipar_data += "\n"
-        cif_ipar_data += "\n_pd_instr_resolution_u " + str(self.job.parameters.resolution_u.raw_value)
-        cif_ipar_data += "\n_pd_instr_resolution_v " + str(self.job.parameters.resolution_v.raw_value)
-        cif_ipar_data += "\n_pd_instr_resolution_w " + str(self.job.parameters.resolution_w.raw_value)
-        cif_ipar_data += "\n_pd_instr_resolution_x " + str(self.job.parameters.resolution_x.raw_value)
-        cif_ipar_data += "\n_pd_instr_resolution_y " + str(self.job.parameters.resolution_y.raw_value)
-        cif_ipar_data += "\n"
-        cif_ipar_data += "\n_pd_instr_reflex_asymmetry_p1 " + str(self.job.parameters.reflex_asymmetry_p1.raw_value)
-        cif_ipar_data += "\n_pd_instr_reflex_asymmetry_p2 " + str(self.job.parameters.reflex_asymmetry_p2.raw_value)
-        cif_ipar_data += "\n_pd_instr_reflex_asymmetry_p3 " + str(self.job.parameters.reflex_asymmetry_p3.raw_value)
-        cif_ipar_data += "\n_pd_instr_reflex_asymmetry_p4 " + str(self.job.parameters.reflex_asymmetry_p4.raw_value)
-        return cif_ipar_data
+    def setMeasuredArraysForSingleExperiment(self, idx):
+        ed_name = self._proxy.experiment.dataBlocksNoMeas[idx]['name']['value']
+        cryspy_block_name = f'pd_{ed_name}'
+        cryspyInOutDict = self._proxy.data._cryspyInOutDict
 
-    def polar_param_as_cif(self):
-        cif_pat_data = ""
-        cif_pat_data += "\n_diffrn_radiation_polarization " + str(self.job.pattern.beam.polarization.raw_value)
-        cif_pat_data += "\n_diffrn_radiation_efficiency " + str(self.job.pattern.efficiency.raw_value)
-        cif_pat_data += "\n_setup_field " + str(self.job.pattern.field.raw_value)
-        cif_pat_data += "\n_chi2_sum " + str(self._refine_sum)
-        cif_pat_data += "\n_chi2_diff " + str(self._refine_diff)
-        cif_pat_data += "\n_chi2_up " + str(self._refine_up)
-        cif_pat_data += "\n_chi2_down " + str(self._refine_down)
-        return cif_pat_data
+        # X data
+        x_array = cryspyInOutDict[cryspy_block_name]['ttheta']
+        x_array = np.rad2deg(x_array)
+        self.setXArray(x_array, idx)
 
-    def tof_param_as_cif(self):
-        '''
-        Returns a CIF representation of the TOF instrument parameters
-        '''
-        cif_tof_data = ""
-        cif_tof_data += "\n_tof_parameters_zero " + str(self.job.pattern.zero_shift.raw_value)
-        cif_tof_data += "\n_tof_parameters_dtt1 " + str(self.job.parameters.dtt1.raw_value)
-        cif_tof_data += "\n_tof_parameters_dtt2 " + str(self.job.parameters.dtt2.raw_value)
-        cif_tof_data += "\n_tof_parameters_2theta_bank " + str(self.job.parameters.ttheta_bank.raw_value)
-        cif_tof_data += "\n_tof_profile_sigma0 " + str(self.job.parameters.sigma0.raw_value)
-        cif_tof_data += "\n_tof_profile_sigma1 " + str(self.job.parameters.sigma1.raw_value)
-        cif_tof_data += "\n_tof_profile_sigma2 " + str(self.job.parameters.sigma2.raw_value)
-        cif_tof_data += "\n_tof_profile_gamma0 " + str(self.job.parameters.gamma0.raw_value)
-        cif_tof_data += "\n_tof_profile_gamma1 " + str(self.job.parameters.gamma1.raw_value)
-        cif_tof_data += "\n_tof_profile_gamma2 " + str(self.job.parameters.gamma2.raw_value)
-        cif_tof_data += "\n_tof_profile_alpha0 " + str(self.job.parameters.alpha0.raw_value)
-        cif_tof_data += "\n_tof_profile_alpha1 " + str(self.job.parameters.alpha1.raw_value)
-        cif_tof_data += "\n_tof_profile_beta0 " + str(self.job.parameters.beta0.raw_value)
-        cif_tof_data += "\n_tof_profile_beta1 " + str(self.job.parameters.beta1.raw_value)
-        return cif_tof_data
+        # Measured Y data
+        y_meas_array = cryspyInOutDict[cryspy_block_name]['signal_exp'][0]
+        self.setYMeasArray(y_meas_array, idx)
 
-    ##########################################
-    #  Excluded Regions
-    ##########################################
-    def excludedRegionsDefault(self):
-        # default excluded regions
-        self._excluded_regions = {}
-        self.updateExcludedPlot()
+        # Standard deviation of the measured Y data
+        sy_meas_array = cryspyInOutDict[cryspy_block_name]['signal_exp'][1]
+        self.setSYMeasArray(sy_meas_array, idx)
 
-    def addDefaultRegion(self):
-        # add a default excluded region
-        self.addRegion([0.0, 20.0])
+    def setCalculatedArraysForSingleExperiment(self, idx):
+        ed_name = self._proxy.experiment.dataBlocksNoMeas[idx]['name']['value']
+        cryspy_block_name = f'pd_{ed_name}'
+        cryspyInOutDict = self._proxy.data._cryspyInOutDict
 
-    def regionsAsXml(self):
-        # prepare dictionary to xml-ise
-        d = []
-        for item, value in self._excluded_regions.items():
-            dd = {}
-            dd['name'] = str(item)
-            dd['min'] = value[0]
-            dd['max'] = value[1]
-            d.append(dd)
-        xml = XMLSerializer().encode({"data":d})
-        return xml
+        # Background Y data # NED FIX: use calculatedYBkgArray()
+        y_bkg_array = cryspyInOutDict[cryspy_block_name]['signal_background']
+        self.setYBkgArray(y_bkg_array, idx)
 
-    def addRegion(self, region: list):
-        # assure the region consists of two values
-        if len(region) != 2:
-            raise ValueError("Region must consist of two values: min and max.")
-        # add the excluded region
-        last_index = len(self._excluded_regions)
-        self._excluded_regions["p" + str(last_index)] = region
-        self.updateExcludedPlot()
+        # Total calculated Y data (sum of all phases up and down polarisation plus background)
+        y_calc_total_array = cryspyInOutDict[cryspy_block_name]['signal_plus'] + \
+                             cryspyInOutDict[cryspy_block_name]['signal_minus'] + \
+                             y_bkg_array
+        self.setYCalcTotalArray(y_calc_total_array, idx)
 
-    def removeRegion(self, key):
-        # remove an excluded region
-        if key in self._excluded_regions:
-            del self._excluded_regions[key]
-        else:
-            raise ValueError("Region not found.")
-        self.updateExcludedPlot()
+        # Residual (Ymeas -Ycalc)
+        y_meas_array = self._yMeasArrays[idx]
+        y_resid_array = y_meas_array - y_calc_total_array
+        self.setYResidArray(y_resid_array, idx)
 
-    def excludedPoints(self, x: list):
-        # calculate excluded points inside x
-        excluded_points = np.any([np.logical_and(x >= self._excluded_regions[str(i)][0], x <= self._excluded_regions[str(i)][1])
-                                  for i in self._excluded_regions], axis=0)
-        return excluded_points
+        # Bragg peaks data
+        #cryspyInOutDict[cryspy_name]['dict_in_out_co2sio4']['index_hkl'] # [0] - h array, [1] - k array, [2] - l array
+        #cryspyInOutDict[cryspy_name]['dict_in_out_co2sio4']['ttheta_hkl'] # need rad2deg
+        modelNames = [key[12:] for key in cryspyInOutDict[cryspy_block_name].keys() if 'dict_in_out' in key]
+        xBraggDict = {}
+        for modelName in modelNames:
+            x_bragg_array = cryspyInOutDict[cryspy_block_name][f'dict_in_out_{modelName}']['ttheta_hkl']
+            x_bragg_array = np.rad2deg(x_bragg_array)
+            xBraggDict[modelName] = x_bragg_array
+        self.setXBraggDict(xBraggDict, idx)
 
-    def editExcludedRegion(self, point_name, region_id, text):
-        if point_name not in self._excluded_regions:
-            print("point name not found")
-            return
-        self._excluded_regions[point_name][region_id] = float(text)
+    def setChartRangesForSingleExperiment(self, idx):
+        x_array = self._xArrays[idx]
+        y_meas_array = self._yMeasArrays[idx]
+        x_min = float(x_array.min())
+        x_max = float(x_array.max())
+        y_min = float(y_meas_array.min())
+        y_max = float(y_meas_array.max())
+        y_range = y_max - y_min
+        y_extra = y_range * 0.1
+        y_min -= y_extra
+        y_max += y_extra
+        ranges = {'xMin':x_min, 'xMax':x_max, 'yMin':y_min, 'yMax':y_max}
+        self.setChartRanges(ranges, idx)
 
-        self.updateExcludedPlot()
+    def replaceArrays(self):
+        for idx in range(len(self._dataBlocksMeasOnly)):
+            self.setCalculatedArraysForSingleExperiment(idx)
 
-    def updateExcludedPlot(self):
-        self.parent.l_parameters.parametersValuesChanged.emit()
-        # This needs to be called only when no experiment is loaded
-        if self.parent.experimentSkipped():
-            self.parent.l_parameters._updateCalculatedData()
+    def addArraysAndChartRanges(self):
+        for idx in range(len(self._xArrays), len(self._dataBlocksMeasOnly)):
+            self.setMeasuredArraysForSingleExperiment(idx)
+            self.setCalculatedArraysForSingleExperiment(idx)
+            self.setChartRangesForSingleExperiment(idx)
+
+    def setXArray(self, xArray, idx):
+        try:
+            self._xArrays[idx] = xArray
+            console.debug(IO.formatMsg('sub', 'X', f'experiment no. {idx + 1}', 'in intern dataset', 'replaced'))
+        except IndexError:
+            self._xArrays.append(xArray)
+            console.debug(IO.formatMsg('sub', 'X', f'experiment no. {len(self._xArrays)}', 'to intern dataset', 'added'))
+
+    def setYMeasArray(self, yMeasArray, idx):
+        try:
+            self._yMeasArrays[idx] = yMeasArray
+            console.debug(IO.formatMsg('sub', 'Y-meas', f'experiment no. {idx + 1}', 'in intern dataset', 'replaced'))
+        except IndexError:
+            self._yMeasArrays.append(yMeasArray)
+            console.debug(IO.formatMsg('sub', 'Y-meas', f'experiment no. {len(self._yMeasArrays)}', 'to intern dataset', 'added'))
+        self.yMeasArraysChanged.emit()
+
+    def setSYMeasArray(self, syMeasArray, idx):
+        try:
+            self._syMeasArrays[idx] = syMeasArray
+            console.debug(IO.formatMsg('sub', 'sY-meas', f'experiment no. {idx + 1}', 'in intern dataset', 'replaced'))
+        except IndexError:
+            self._syMeasArrays.append(syMeasArray)
+            console.debug(IO.formatMsg('sub', 'sY-meas', f'experiment no. {len(self._syMeasArrays)}', 'to intern dataset', 'added'))
+
+    def setYBkgArray(self, yBkgArray, idx):
+        try:
+            self._yBkgArrays[idx] = yBkgArray
+            console.debug(IO.formatMsg('sub', 'Y-bkg (inter)', f'experiment no. {idx + 1}', 'in intern dataset', 'replaced'))
+        except IndexError:
+            self._yBkgArrays.append(yBkgArray)
+            console.debug(IO.formatMsg('sub', 'Y-bkg (inter)', f'experiment no. {len(self._yBkgArrays)}', 'to intern dataset', 'added'))
+        self.yBkgArraysChanged.emit()
+
+    def setYCalcTotalArray(self, yCalcTotalArray, idx):
+        try:
+            self._yCalcTotalArrays[idx] = yCalcTotalArray
+            console.debug(IO.formatMsg('sub', 'Y-calc (total)', f'experiment no. {idx + 1}', 'in intern dataset', 'replaced'))
+        except IndexError:
+            self._yCalcTotalArrays.append(yCalcTotalArray)
+            console.debug(IO.formatMsg('sub', 'Y-calc (total)', f'experiment no. {len(self._yCalcTotalArrays)}', 'to intern dataset', 'added'))
+        self.yCalcTotalArraysChanged.emit()
+
+    def setYResidArray(self, yResidArray, idx):
+        try:
+            self._yResidArrays[idx] = yResidArray
+            console.debug(IO.formatMsg('sub', 'Y-resid (meas-calc)', f'experiment no. {idx + 1}', 'in intern dataset', 'replaced'))
+        except IndexError:
+            self._yResidArrays.append(yResidArray)
+            console.debug(IO.formatMsg('sub', 'Y-resid (meas-calc)', f'experiment no. {len(self._yResidArrays)}', 'to intern dataset', 'added'))
+        self.yResidArraysChanged.emit()
+
+    def setXBraggDict(self, xBraggDict, idx):
+        try:
+            self._xBraggDicts[idx] = xBraggDict
+            console.debug(IO.formatMsg('sub', 'X-Bragg (peaks)', f'experiment no. {idx + 1}', 'in intern dataset', 'replaced'))
+        except IndexError:
+            self._xBraggDicts.append(xBraggDict)
+            console.debug(IO.formatMsg('sub', 'X-Bragg (peaks)', f'experiment no. {len(self._xBraggDicts)}', 'to intern dataset', 'added'))
+        self.xBraggDictsChanged.emit()
+
+    def setChartRanges(self, ranges, idx):
+        try:
+            self._chartRanges[idx] = ranges
+            console.debug(IO.formatMsg('sub', 'Chart ranges', f'experiment no. {idx + 1}', 'in intern dataset', 'replaced'))
+        except IndexError:
+            self._chartRanges.append(ranges)
+            console.debug(IO.formatMsg('sub', 'Chart ranges', f'experiment no. {len(self._chartRanges)}', 'to intern dataset', 'added'))
+        self.chartRangesChanged.emit()
+
+    def setDataBlocksCifNoMeas(self):
+        self._dataBlocksCifNoMeas = [CryspyParser.dataBlockToCif(block) for block in self._dataBlocksNoMeas]
+        console.debug(IO.formatMsg('sub', f'{len(self._dataBlocksCifNoMeas)} experiment(s)', 'without meas data', 'to CIF string', 'converted'))
+        self.dataBlocksCifNoMeasChanged.emit()
+
+    def setDataBlocksCifMeasOnly(self):
+        self._dataBlocksCifMeasOnly = [CryspyParser.dataBlockToCif(block, includeBlockName=False) for block in self._dataBlocksMeasOnly]
+        console.debug(IO.formatMsg('sub', f'{len(self._dataBlocksCifMeasOnly)} experiment(s)', 'meas data only', 'to CIF string', 'converted'))
+        self.dataBlocksCifMeasOnlyChanged.emit()
+
+    def setDataBlocksCif(self):
+        self.setDataBlocksCifNoMeas()
+        self.setDataBlocksCifMeasOnly()
+        cifMeasOnlyReduced =  [block.split('\n')[:10] + ['...'] + block.split('\n')[-6:] for block in self._dataBlocksCifMeasOnly]
+        cifMeasOnlyReduced = ['\n'.join(block) for block in cifMeasOnlyReduced]
+        cifMeasOnlyReduced = [f'\n{block}' for block in cifMeasOnlyReduced]
+        cifMeasOnlyReduced = [block.rstrip() for block in cifMeasOnlyReduced]
+        self._dataBlocksCif = [[noMeas, measOnlyReduced] for (noMeas, measOnlyReduced) in zip(self._dataBlocksCifNoMeas, cifMeasOnlyReduced)]
+        console.debug(IO.formatMsg('sub', f'{len(self._dataBlocksCif)} experiment(s)', 'simplified meas data', 'to CIF string', 'converted'))
+        self.dataBlocksCifChanged.emit()

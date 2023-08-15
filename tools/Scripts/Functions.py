@@ -196,7 +196,7 @@ def createDir(path):
         return
     try:
         message = f'create dir {path}'
-        os.mkdir(path)
+        os.makedirs(path)
     except Exception as exception:
         printFailMessage(message, exception)
         sys.exit()

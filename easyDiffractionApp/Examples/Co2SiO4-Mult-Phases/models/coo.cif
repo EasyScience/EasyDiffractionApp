@@ -1,0 +1,24 @@
+data_coo
+
+_cell_length_a 4.263
+_cell_length_b 4.263
+_cell_length_c 4.263
+_cell_angle_alpha 90
+_cell_angle_beta 90
+_cell_angle_gamma 90
+_space_group_name_H-M_alt "F m -3 m"
+_space_group_IT_coordinate_system_code 1
+
+loop_
+_atom_site_label
+_atom_site_type_symbol
+_atom_site_fract_x
+_atom_site_fract_y
+_atom_site_fract_z
+_atom_site_occupancy
+_atom_site_adp_type
+_atom_site_B_iso_or_equiv
+_atom_site_multiplicity
+_atom_site_Wyckoff_symbol
+Co Co 0 0 0 1 Biso 0.509 4 a 
+O O 0.5 0.5 0.5 1 Biso 0.67 4 b

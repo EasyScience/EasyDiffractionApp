@@ -2,16 +2,12 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # © 2021-2023 Contributors to the easyDiffraction project <https://github.com/easyScience/easyDiffractionApp>
 
-__author__ = "github.com/AndrewSazonov"
-__version__ = '0.0.1'
-
 import os, sys
 import glob
 import site
-import PySide2, shiboken2
-import periodictable
+import PySide6, shiboken6
 import cryspy
-import easyCore, easyCrystallography, easyDiffractionLib, easyApp
+import EasyApp
 import Functions, Config
 from PyInstaller.__main__ import run as pyInstallerMain
 
@@ -42,10 +38,7 @@ def addedData():
     # Add main data
     data = [{'from': CONFIG.package_name, 'to': CONFIG.package_name},
             {'from': cryspy.__path__[0], 'to': 'cryspy'},
-            {'from': easyCore.__path__[0], 'to': 'easyCore'},
-            {'from': easyDiffractionLib.__path__[0], 'to': 'easyDiffractionLib'},
-            {'from': easyCrystallography.__path__[0], 'to': 'easyCrystallography'},
-            {'from': easyApp.__path__[0], 'to': 'easyApp'},
+            {'from': EasyApp.__path__[0], 'to': 'EasyApp'},
             {'from': 'utils.py', 'to': '.'},
             {'from': 'pyproject.toml', 'to': '.'}]
     # Add other missing libs
@@ -60,10 +53,6 @@ def addedData():
         for lib_name in missing_calculator_libs:
             lib_path = os.path.join(site_packages_path, lib_name)
             data.append({'from': lib_path, 'to': lib_name})
-    # Add missing module data (e.g. periodictable data)
-    pt_data = os.path.join(periodictable.__path__[0], 'xsf')
-    pt_data_target = os.path.join('periodictable-data', 'xsf')
-    data.append({'from': pt_data, 'to': pt_data_target})
     # Format for pyinstaller
     separator = CONFIG['ci']['pyinstaller']['separator'][CONFIG.os]
     formatted = []
@@ -72,18 +61,18 @@ def addedData():
     return formatted
 
 def copyMissingLibs():
-    missing_files = CONFIG['ci']['pyinstaller']['missing_pyside2_files'][CONFIG.os]
+    missing_files = CONFIG['ci']['pyinstaller']['missing_pyside6_files'][CONFIG.os]
     if len(missing_files) == 0:
-        Functions.printNeutralMessage(f'No missing PySide2 libraries for {CONFIG.os}')
+        Functions.printNeutralMessage(f'No missing PySide6 libraries for {CONFIG.os}')
         return
     try:
-        message = 'copy missing PySide2 libraries'
-        pyside2_path = PySide2.__path__[0]
-        shiboken2_path = shiboken2.__path__[0]
+        message = 'copy missing PySide6 libraries'
+        pyside6_path = PySide6.__path__[0]
+        shiboken6_path = shiboken6.__path__[0]
         for file_name in missing_files:
-            file_path = os.path.join(shiboken2_path, file_name)
+            file_path = os.path.join(shiboken6_path, file_name)
             for file_path in glob.glob(file_path): # for cases with '*' in the lib name
-                Functions.copyFile(file_path, pyside2_path)
+                Functions.copyFile(file_path, pyside6_path)
     except Exception as exception:
         Functions.printFailMessage(message, exception)
         sys.exit(1)
@@ -91,17 +80,17 @@ def copyMissingLibs():
         Functions.printSuccessMessage(message)
 
 def copyMissingPlugins():
-    missing_plugins = CONFIG['ci']['pyinstaller']['missing_pyside2_plugins'][CONFIG.os]
+    missing_plugins = CONFIG['ci']['pyinstaller']['missing_pyside6_plugins'][CONFIG.os]
     if len(missing_plugins) == 0:
-        Functions.printNeutralMessage(f'No missing PySide2 plugins for {CONFIG.os}')
+        Functions.printNeutralMessage(f'No missing PySide6 plugins for {CONFIG.os}')
         return
     try:
-        message = 'copy missing PySide2 plugins'
-        pyside2_path = PySide2.__path__[0]
-        app_plugins_path = os.path.join(CONFIG.dist_dir, CONFIG.app_name, 'PySide2', 'plugins')
+        message = 'copy missing PySide6 plugins'
+        pyside6_path = PySide6.__path__[0]
+        app_plugins_path = os.path.join(CONFIG.dist_dir, CONFIG.app_name, 'PySide6', 'plugins')
         for relative_dir_path in missing_plugins:
             src_dir_name = os.path.basename(relative_dir_path)
-            src_dir_path = os.path.join(pyside2_path, relative_dir_path)
+            src_dir_path = os.path.join(pyside6_path, relative_dir_path)
             dst_dir_path = os.path.join(app_plugins_path, src_dir_name)
             Functions.copyDir(src_dir_path, dst_dir_path)
     except Exception as exception:

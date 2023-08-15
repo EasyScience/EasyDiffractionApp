@@ -12,14 +12,15 @@ import Functions
 
 
 class Config():
-    def __init__(self, branch_name=None):
+    def __init__(self, branch_name=None, matrix_os=None):
         # Main
         self.__dict__ = Functions.config()
         self.os = Functions.osName()
         self.branch_name = branch_name
+        self.matrix_os = matrix_os
 
         # Application
-        self.app_version = self.__dict__['tool']['poetry']['version']
+        self.app_version = self.__dict__['project']['version']
         self.app_name = self.__dict__['release']['app_name']
         self.family_name = self.__dict__['release']['family_name']
         self.app_file_ext = self.__dict__['ci']['app']['setup']['file_ext'][self.os]
@@ -38,7 +39,10 @@ class Config():
         # Application setup
         self.setup_os = self.__dict__['ci']['app']['setup']['os'][self.os]
         self.setup_arch = self.__dict__['ci']['app']['setup']['arch'][self.os]
-        self.setup_name_suffix = f'_{self.setup_os}_{self.setup_arch}_v{self.app_version}'
+        #self.setup_name_suffix = f'_{self.setup_os}_{self.setup_arch}_v{self.app_version}'
+        self.setup_name_suffix = f'_v{self.app_version}_{self.setup_os}'
+        if self.matrix_os is not None:
+            self.setup_name_suffix = f'_v{self.app_version}_{self.matrix_os}'
         self.setup_name = f'{self.app_name}{self.setup_name_suffix}'
         self.setup_file_ext = self.__dict__['ci']['app']['setup']['file_ext'][self.os]
         self.setup_full_name = f'{self.setup_name}{self.setup_file_ext}'
@@ -53,7 +57,7 @@ class Config():
         self.repository_dir_suffix = self.__dict__['ci']['app']['setup']['repository_dir_suffix']
 
         # Project
-        self.package_name = self.__dict__['tool']['poetry']['name']
+        self.package_name = self.__dict__['project']['name']
         self.license_file = self.__dict__['ci']['project']['license_file']
 
     def __getitem__(self, key):

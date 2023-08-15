@@ -12,19 +12,14 @@
 # QtCreator CMake
 CMakeLists.txt.user*
 
-# Fortran
-fort.1
-
 # Python
 __pycache__
 .venv
 .coverage
 .pyc
+#resources.py
 
-# Poetry
-dist
-*.egg-info
-poetry.lock
+# C++
 
 # PyInstaller
 build
@@ -42,11 +37,9 @@ build
 ..*
 *.log
 *.zip
-temp.cif
-temp.prm
+*.user
 settings.ini*
 .ci/
 .idea/
-
-#Snap
-*.snap
+.build/
+temp/

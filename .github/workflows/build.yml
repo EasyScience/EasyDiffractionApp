@@ -110,7 +110,7 @@ jobs:
           ${{ env.BRANCH_NAME }} ${{ matrix.os }}
 
       - name: Sign app installer
-        if: github.event_name == 'push' #&& env.BRANCH_NAME == 'master'
+        if: github.event_name == 'push' && env.BRANCH_NAME == 'master'
         run: >
           python ${{ env.SCRIPTS_PATH }}/SignAppInstaller.py
           ${{ env.BRANCH_NAME }} ${{ matrix.os }}

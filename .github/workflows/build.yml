@@ -44,6 +44,7 @@ jobs:
         shell: bash
         run: |
           echo "APP_NAME=$(python utils.py --get release.app_name)" >> $GITHUB_ENV
+          echo "PACKAGE_NAME=$(python utils.py --get project.name)" >> $GITHUB_ENV
           echo "RELEASE_TAG=$(python utils.py --get ci.app.info.release_tag)" >> $GITHUB_ENV
           echo "RELEASE_TITLE=$(python utils.py --get ci.app.info.release_title)" >> $GITHUB_ENV
           echo "SCRIPTS_PATH=$(python utils.py --get ci.project.subdirs.scripts)" >> $GITHUB_ENV
@@ -91,7 +92,7 @@ jobs:
 
       - name: Run QML GUI tests
         run: |
-          cd EasyExampleApp
+          cd ${{ env.PACKAGE_NAME }}
           python main.py --testmode
           cd ..
 
@@ -130,7 +131,7 @@ jobs:
 
   test-installer:
     needs: make-installer
-    
+
     timeout-minutes: 15
 
     runs-on: ${{ matrix.os }}

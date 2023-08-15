@@ -7,7 +7,7 @@ build-backend = "hatchling.build"
 # Note that while the project is called EasyExampleApp
 # the application itself is EasyExample.
 [project]
-name = "EasyDiffractionApp"
+name = "easyDiffractionApp"
 version = "0.9.0-pre-alpha1"
 description = 'Making diffraction data analysis and modelling easy.'
 authors = [

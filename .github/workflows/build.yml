@@ -109,6 +109,14 @@ jobs:
           python ${{ env.SCRIPTS_PATH }}/ZipAppInstaller.py
           ${{ env.BRANCH_NAME }} ${{ matrix.os }}
 
+      - name: Sign app installer
+        if: github.event_name == 'push' && env.BRANCH_NAME == 'master'
+        run: >
+          python ${{ env.SCRIPTS_PATH }}/SignAppInstaller.py
+          ${{ env.BRANCH_NAME }} ${{ matrix.os }}
+          ${{ secrets.MACOS_CERTIFICATE_ENCODED }} ${{ secrets.MACOS_CERTIFICATE_PASSWORD }}
+          ${{ secrets.APPSTORE_NOTARIZATION_USERNAME }} ${{ secrets.APPSTORE_NOTARIZATION_PASSWORD }}
+
       - name: Upload zipped offline app installer to GitHub releases (non-master branch)
         if: github.event_name == 'push' && env.BRANCH_NAME != 'master'
         uses: ncipollo/release-action@v1
@@ -195,7 +203,7 @@ jobs:
           Set-DisplayResolution -Width 1920 -Height 1080 -Force
           Get-DisplayResolution
 
-      - name: Download zipped offline app instalfrom from the previous job step
+      - name: Download zipped offline app installer from from the previous job step
         uses: actions/download-artifact@master
         with:
           name: zipped-app-installer

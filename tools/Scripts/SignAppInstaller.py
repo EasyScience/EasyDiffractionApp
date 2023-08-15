@@ -13,13 +13,13 @@ import Config
 import Functions
 
 
-CONFIG = Config.Config(sys.argv[1])
+CONFIG = Config.Config(sys.argv[1], sys.argv[2])
 
 MACOS_IDENTITY = CONFIG['ci']['codesign']['macos']['identity']
-MACOS_CERTIFICATE_ENCODED = sys.argv[2]       # Encoded content of the certificate.p12 file
-MACOS_CERTIFICATE_PASSWORD = sys.argv[3]      # Password associated with the certificate.p12 file
-APPSTORE_NOTARIZATION_USERNAME = sys.argv[4]  # Apple ID (esss.se personal account) added to https://developer.apple.com
-APPSTORE_NOTARIZATION_PASSWORD = sys.argv[5]  # App specific password for EasyDiffraction from https://appleid.apple.com
+MACOS_CERTIFICATE_ENCODED = sys.argv[3]       # Encoded content of the certificate.p12 file
+MACOS_CERTIFICATE_PASSWORD = sys.argv[4]      # Password associated with the certificate.p12 file
+APPSTORE_NOTARIZATION_USERNAME = sys.argv[5]  # Apple ID (esss.se personal account) added to https://developer.apple.com
+APPSTORE_NOTARIZATION_PASSWORD = sys.argv[6]  # App specific password for EasyDiffraction from https://appleid.apple.com
 
 def signLinux():
     Functions.printNeutralMessage('No code signing needed for linux')

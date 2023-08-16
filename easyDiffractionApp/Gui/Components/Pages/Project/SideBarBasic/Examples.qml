@@ -59,6 +59,7 @@ EaComponents.TableView {
         EaComponents.TableViewLabel {
             text: index + 1
             color: EaStyle.Colors.themeForegroundMinor
+            Component.onCompleted: Globals.Refs.app.projectPage.examples.push(this)
         }
 
         EaComponents.TableViewTwoRowsAdvancedLabel {

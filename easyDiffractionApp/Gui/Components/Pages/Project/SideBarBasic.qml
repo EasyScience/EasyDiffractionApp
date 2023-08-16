@@ -3,6 +3,7 @@
 // © © 2023 Contributors to the EasyDiffraction project <https://github.com/easyscience/EasyDiffractionApp>
 
 import QtQuick
+import QtQuick.Controls
 
 import EasyApp.Gui.Elements as EaElements
 import EasyApp.Gui.Components as EaComponents
@@ -25,6 +26,8 @@ EaComponents.SideBarColumn {
         icon: 'database'
 
         Loader { source: 'SideBarBasic/Examples.qml' }
+
+        Component.onCompleted: Globals.Refs.app.projectPage.examplesGroup = this.titleArea
     }
 
     EaElements.GroupBox {

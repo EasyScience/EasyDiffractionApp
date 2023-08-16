@@ -85,19 +85,27 @@ EaElements.RemoteController {
         rc.mouseClick(Globals.Refs.app.homePage.startButton)
 
         // Project Page
+        rc.mouseClick(Globals.Refs.app.projectPage.examplesGroup)
+        rc.mouseClick(Globals.Refs.app.projectPage.examples[0])
         rc.mouseClick(Globals.Refs.app.projectPage.continueButton)
 
         // Model Page
-        rc.mouseClick(Globals.Refs.app.modelPage.loadNewModelFromFileButton)
+        rc.wait(2000)
         rc.mouseClick(Globals.Refs.app.modelPage.continueButton)
 
         // Experiment page
-        rc.mouseClick(Globals.Refs.app.experimentPage.importDataFromLocalDriveButton)
+        rc.wait(2000)
         rc.mouseClick(Globals.Refs.app.experimentPage.continueButton)
 
         // Analysis page
         rc.mouseClick(Globals.Refs.app.analysisPage.startFittingButton)
+        rc.wait(5000)
+        rc.mouseClick(Globals.Refs.app.analysisPage.fitStatusDialogOkButton)
         rc.mouseClick(Globals.Refs.app.analysisPage.continueButton)
+
+        // Summary page
+        rc.wait(2000)
+        rc.mouseClick(Globals.Refs.app.appbar.resetStateButton)
 
         completeRunTutorial()
     }

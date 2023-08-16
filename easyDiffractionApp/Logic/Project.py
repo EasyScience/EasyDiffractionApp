@@ -4,6 +4,7 @@
 
 import os
 import time
+from pathlib import Path
 from pycifstar.data import Data as PycifstarData
 from PySide6.QtCore import QObject, Signal, Slot, Property, QUrl
 from PySide6.QtCore import QFile, QTextStream, QIODevice
@@ -99,7 +100,7 @@ class Project(QObject):
         self._recent = []
         self._isExample = False
 
-        self._location = ''
+        self._location = str(Path.home())
         self._dateCreated = ''
         self._dateLastModified = ''
         self._dirNames = {

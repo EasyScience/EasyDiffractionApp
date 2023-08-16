@@ -1,6 +1,6 @@
-// SPDX-FileCopyrightText: 2023 EasyExample contributors
+// SPDX-FileCopyrightText: 2023 EasyDiffraction contributors
 // SPDX-License-Identifier: BSD-3-Clause
-// © 2023 Contributors to the EasyExample project <https://github.com/EasyScience/EasyExampleApp>
+// © © 2023 Contributors to the EasyDiffraction project <https://github.com/easyscience/EasyDiffractionApp>
 
 pragma Singleton
 
@@ -10,12 +10,12 @@ import QtQuick
 QtObject { // If "Unknown component. (M300) in QtCreator", try: "Tools > QML/JS > Reset Code Model"
 
     readonly property var projectConfig: QtObject {
-        readonly property var release: QtObject {
+        readonly property var release: QtObject {  // NEED FIX
             readonly property string appName: 'EasyDiffraction'
             readonly property string version: '0.9.0-pre-alpha.1'
-            readonly property string appIssuesUrl: 'https://github.com/EasyScience/EasyExampleApp/issues'
+            readonly property string appIssuesUrl: 'https://github.com/easyscience/EasyDiffractionApp/issues'
             readonly property string homePageUrl: 'https://easydiffraction.org'
-            readonly property string docsUrl: 'https://easydiffraction.org/#docs'
+            readonly property string docsUrl: 'https://docs.easydiffraction.org/app/'
             readonly property string contactUrl: 'https://easydiffraction.org/#contact'
         }
         readonly property var ci: QtObject {

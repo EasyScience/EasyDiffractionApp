@@ -25,19 +25,17 @@ Project {
         directory: "../EasyApp"
     }
 
-    // Include Module Definition Files (qmldir), as well as .ts and .qrc
+    // Include Module Definition Files (qmldir), as well as .ts, .qrc, etc.
     // from specified directory and its subdirectories
     Files {
-        filter: "qmldir;*.ts;*.qrc;*.html;*.png"
+        filter: "qmldir;*.ts;*.qrc;*.html;*.png;*.py"
         directory: "easyDiffractionApp"
         recursive: true
     }
     Files {
-        filter: "qmldir;*.ts;*.qrc;*.html"
+        filter: "qmldir;*.ts;*.qrc;*.html;*.png;*.py"
         directory: "../EasyApp"
         recursive: true
     }
 
-
-    mainUiFile: "easyDiffractionApp/Gui/Components/Pages/Experiment/SideBarBasic/PdMeas2Theta.qml"
 }

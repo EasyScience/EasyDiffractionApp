@@ -191,7 +191,7 @@ class CryspyParser:
         edProject['name'] = dict(Parameter(
             starObj.name,
             icon = 'archive',
-            url = 'https://easydiffraction.org',
+            url = 'https://docs.easydiffraction.org/app/project/dictionaries/',
         ))
 
         for param in starObj.items.items:
@@ -200,7 +200,7 @@ class CryspyParser:
                     param.value,
                     name = param.name,
                     prettyName = 'Description',
-                    url = 'https://easydiffraction.org',
+                    url = 'https://docs.easydiffraction.org/app/project/dictionaries/',
                 ))
 
         for loop in starObj.loops:
@@ -283,7 +283,7 @@ class CryspyParser:
                 ed_phase['name'] = dict(Parameter(
                     data_block_name,
                     icon = 'layer-group',
-                    url = 'https://easydiffraction.org',
+                    url = 'https://docs.easydiffraction.org/app/project/dictionaries/',
                 ))
 
                 for item in cryspy_phase:
@@ -293,7 +293,7 @@ class CryspyParser:
                             item.name_hm_alt,
                             name = '_space_group_name_H-M_alt',
                             title = 'name',
-                            url = 'https://easydiffraction.org',
+                            url = 'https://docs.easydiffraction.org/app/project/dictionaries/_space_group/',
                             cifDict = 'core'
                         ))
                         ed_phase['params']['_space_group_IT_coordinate_system_code'] = dict(Parameter(
@@ -301,14 +301,14 @@ class CryspyParser:
                             permittedValues = list(get_it_coordinate_system_codes_by_it_number(item.it_number)),
                             name = '_space_group_IT_coordinate_system_code',
                             title = 'code',
-                            url = 'https://easydiffraction.org',
+                            url = 'https://docs.easydiffraction.org/app/project/dictionaries/_space_group/',
                             cifDict = 'core'
                         ))
                         ed_phase['params']['_space_group_crystal_system'] = dict(Parameter(
                             item.crystal_system,
                             name = '_space_group_crystal_system',
                             title = 'crystal system',
-                            url = 'https://easydiffraction.org',
+                            url = 'https://docs.easydiffraction.org/app/project/dictionaries/_space_group/',
                             cifDict = 'core',
                             optional = True
                         ))
@@ -316,7 +316,7 @@ class CryspyParser:
                             item.it_number,
                             name = '_space_group_IT_number',
                             title = 'number',
-                            url = 'https://easydiffraction.org',
+                            url = 'https://docs.easydiffraction.org/app/project/dictionaries/_space_group/',
                             cifDict = 'core',
                             optional = True
                         ))
@@ -331,7 +331,7 @@ class CryspyParser:
                             title = 'a',
                             icon = 'ruler',
                             groupIcon = 'cube',
-                            url = 'https://easydiffraction.org',
+                            url = 'https://docs.easydiffraction.org/app/project/dictionaries/_cell/',
                             cifDict = 'core',
                             enabled = not item.length_a_constraint,
                             #min = 1,
@@ -349,7 +349,7 @@ class CryspyParser:
                             title = 'b',
                             icon = 'ruler',
                             groupIcon = 'cube',
-                            url = 'https://easydiffraction.org',
+                            url = 'https://docs.easydiffraction.org/app/project/dictionaries/_cell/',
                             cifDict = 'core',
                             enabled = not item.length_b_constraint,
                             #min = 1,
@@ -367,7 +367,7 @@ class CryspyParser:
                             title = 'c',
                             icon = 'ruler',
                             groupIcon = 'cube',
-                            url = 'https://easydiffraction.org',
+                            url = 'https://docs.easydiffraction.org/app/project/dictionaries/_cell/',
                             cifDict = 'core',
                             enabled = not item.length_c_constraint,
                             #min = 1,
@@ -385,7 +385,7 @@ class CryspyParser:
                             title = 'α',
                             icon = 'ruler',
                             groupIcon = 'less-than',
-                            url = 'https://easydiffraction.org',
+                            url = 'https://docs.easydiffraction.org/app/project/dictionaries/_cell/',
                             cifDict = 'core',
                             enabled = not item.angle_alpha_constraint,
                             #min = 0,
@@ -403,7 +403,7 @@ class CryspyParser:
                             title = 'β',
                             icon = 'ruler',
                             groupIcon = 'less-than',
-                            url = 'https://easydiffraction.org',
+                            url = 'https://docs.easydiffraction.org/app/project/dictionaries/_cell/',
                             cifDict = 'core',
                             enabled = not item.angle_alpha_constraint,
                             #min = 0,
@@ -421,7 +421,7 @@ class CryspyParser:
                             title = 'γ',
                             icon = 'ruler',
                             groupIcon = 'less-than',
-                            url = 'https://easydiffraction.org',
+                            url = 'https://docs.easydiffraction.org/app/project/dictionaries/_cell/',
                             cifDict = 'core',
                             enabled = not item.angle_alpha_constraint,
                             #min = 0,
@@ -445,7 +445,7 @@ class CryspyParser:
                                 name = '_label',
                                 #prettyName = 'label',
                                 title = 'label',
-                                url = 'https://easydiffraction.org',
+                                url = 'https://docs.easydiffraction.org/app/project/dictionaries/_atom_site/',
                                 cifDict = 'core'
                             ))
                             ed_atom['_type_symbol'] = dict(Parameter(
@@ -455,7 +455,7 @@ class CryspyParser:
                                 name = '_type_symbol',
                                 #prettyName = 'type',
                                 title = 'type',
-                                url = 'https://easydiffraction.org',
+                                url = 'https://docs.easydiffraction.org/app/project/dictionaries/_atom_site/',
                                 cifDict = 'core'
                             ))
                             ed_atom['_fract_x'] = dict(Parameter(
@@ -470,7 +470,7 @@ class CryspyParser:
                                 title = 'x',
                                 icon = 'map-marker-alt',
                                 groupIcon = 'atom',
-                                url = 'https://easydiffraction.org',
+                                url = 'https://docs.easydiffraction.org/app/project/dictionaries/_atom_site/',
                                 cifDict = 'core',
                                 enabled = not cryspy_atom.fract_x_constraint,
                                 #min = 0,
@@ -491,7 +491,7 @@ class CryspyParser:
                                 title = 'y',
                                 icon = 'map-marker-alt',
                                 groupIcon = 'atom',
-                                url = 'https://easydiffraction.org',
+                                url = 'https://docs.easydiffraction.org/app/project/dictionaries/_atom_site/',
                                 cifDict = 'core',
                                 enabled = not cryspy_atom.fract_y_constraint,
                                 #min = 0,
@@ -512,7 +512,7 @@ class CryspyParser:
                                 title = 'z',
                                 icon = 'map-marker-alt',
                                 groupIcon = 'atom',
-                                url = 'https://easydiffraction.org',
+                                url = 'https://docs.easydiffraction.org/app/project/dictionaries/_atom_site/',
                                 cifDict = 'core',
                                 enabled = not cryspy_atom.fract_z_constraint,
                                 #min = 0,
@@ -533,7 +533,7 @@ class CryspyParser:
                                 title = 'occ',
                                 icon = 'fill',
                                 groupIcon = 'atom',
-                                url = 'https://easydiffraction.org',
+                                url = 'https://docs.easydiffraction.org/app/project/dictionaries/_atom_site/',
                                 cifDict = 'core',
                                 enabled = not cryspy_atom.occupancy_constraint,
                                 #min = 0,
@@ -549,7 +549,7 @@ class CryspyParser:
                                 name = '_adp_type',
                                 #prettyName = 'type',
                                 title = 'type',
-                                url = 'https://easydiffraction.org',
+                                url = 'https://docs.easydiffraction.org/app/project/dictionaries/_atom_site/',
                                 cifDict = 'core'
                             ))
                             ed_atom['_B_iso_or_equiv'] = dict(Parameter(
@@ -564,7 +564,7 @@ class CryspyParser:
                                 title = 'iso',
                                 icon = 'arrows-alt',
                                 groupIcon = 'atom',
-                                url = 'https://easydiffraction.org',
+                                url = 'https://docs.easydiffraction.org/app/project/dictionaries/_atom_site/',
                                 cifDict = 'core',
                                 enabled = not cryspy_atom.b_iso_or_equiv_constraint,
                                 #min = 0,
@@ -580,14 +580,14 @@ class CryspyParser:
                                 loopName = '_atom_site',
                                 name = '_multiplicity',
                                 #prettyName = '',
-                                url = 'https://easydiffraction.org',
+                                url = 'https://docs.easydiffraction.org/app/project/dictionaries/_atom_site/',
                                 cifDict = 'core'
                             ))
                             ed_atom['_Wyckoff_symbol'] = dict(Parameter(
                                 cryspy_atom.wyckoff_symbol,
                                 name = '_atom_site_Wyckoff_symbol',
                                 #prettyName = '',
-                                url = 'https://easydiffraction.org',
+                                url = 'https://docs.easydiffraction.org/app/project/dictionaries/_atom_site/',
                                 cifDict = 'core'
                             ))
                             ed_atoms.append(ed_atom)
@@ -616,7 +616,7 @@ class CryspyParser:
                 ed_experiment['name'] = dict(Parameter(
                     data_block_name,
                     icon = 'microscope',
-                    url = 'https://easydiffraction.org',
+                    url = 'https://docs.easydiffraction.org/app/project/dictionaries/',
                 ))
 
                 ed_experiment_meas_only = {'name': '',
@@ -624,7 +624,7 @@ class CryspyParser:
                 ed_experiment_meas_only['name'] = dict(Parameter(
                     data_block_name,
                     icon = 'microscope',
-                    url = 'https://easydiffraction.org',
+                    url = 'https://docs.easydiffraction.org/app/project/dictionaries/',
                 ))
 
                 for item in cryspy_experiment:
@@ -638,7 +638,7 @@ class CryspyParser:
                             title = 'min',
                             icon = 'ruler',
                             groupIcon = 'cube',
-                            url = 'https://easydiffraction.org',
+                            url = 'https://docs.easydiffraction.org/app/project/dictionaries/',
                             cifDict = 'pd'
                         ))
                         ed_experiment['params']['_pd_meas_2theta_range_max'] = dict(Parameter(
@@ -646,7 +646,7 @@ class CryspyParser:
                             name = '_pd_meas_2theta_range_max',
                             prettyName = 'range max',
                             title = 'max',
-                            url = 'https://easydiffraction.org',
+                            url = 'https://docs.easydiffraction.org/app/project/dictionaries/',
                             cifDict = 'pd'
                         ))
                         ed_experiment['params']['_pd_meas_2theta_range_inc'] = dict(Parameter(
@@ -654,7 +654,7 @@ class CryspyParser:
                             name = '_pd_meas_2theta_range_inc',
                             prettyName = 'range inc',
                             title = 'inc',
-                            url = 'https://easydiffraction.org',
+                            url = 'https://docs.easydiffraction.org/app/project/dictionaries/',
                             cifDict = 'pd'
                         ))
 
@@ -668,7 +668,7 @@ class CryspyParser:
                             name = '_diffrn_radiation_probe',
                             #prettyName = 'probe',
                             title = 'probe',
-                            url = 'https://easydiffraction.org'
+                            url = 'https://docs.easydiffraction.org/app/project/dictionaries/_diffrn_radiation/'
                         ))
                         ed_experiment['params']['_diffrn_radiation_wavelength'] = dict(Parameter(
                             item.wavelength,
@@ -677,7 +677,7 @@ class CryspyParser:
                             prettyName = 'wavelength',
                             title = 'wavelength',
                             icon = 'radiation',
-                            url = 'https://easydiffraction.org',
+                            url = 'https://docs.easydiffraction.org/app/project/dictionaries/_diffrn_radiation/',
                             #min = 0.5,
                             #max = 2.5,
                             absDelta = 0.01,
@@ -692,7 +692,7 @@ class CryspyParser:
                             prettyName = '2θ offset',
                             title = 'offset',
                             icon = 'arrows-alt-h',
-                            url = 'https://easydiffraction.org',
+                            url = 'https://docs.easydiffraction.org/app/project/dictionaries/_pd_calib/',
                             #min = -1,
                             #max = 1,
                             absDelta = 0.2,
@@ -710,7 +710,7 @@ class CryspyParser:
                             prettyName = 'resolution u',
                             title = 'u',
                             icon = 'grip-lines-vertical',
-                            url = 'https://easydiffraction.org',
+                            url = 'https://docs.easydiffraction.org/app/project/dictionaries/_pd_instr/',
                             #min = 0,
                             #max = 1,
                             absDelta = 0.1,
@@ -724,7 +724,7 @@ class CryspyParser:
                             prettyName = 'resolution v',
                             title = 'v',
                             icon = 'grip-lines-vertical',
-                            url = 'https://easydiffraction.org',
+                            url = 'https://docs.easydiffraction.org/app/project/dictionaries/_pd_instr/',
                             #min = -1,
                             #max = 0,
                             absDelta = 0.1,
@@ -738,7 +738,7 @@ class CryspyParser:
                             prettyName = 'resolution w',
                             title = 'w',
                             icon = 'grip-lines-vertical',
-                            url = 'https://easydiffraction.org',
+                            url = 'https://docs.easydiffraction.org/app/project/dictionaries/_pd_instr/',
                             #min = 0,
                             #max = 1,
                             absDelta = 0.1,
@@ -752,7 +752,7 @@ class CryspyParser:
                             prettyName = 'resolution x',
                             title = 'x',
                             icon = 'grip-lines-vertical',
-                            url = 'https://easydiffraction.org',
+                            url = 'https://docs.easydiffraction.org/app/project/dictionaries/_pd_instr/',
                             #min = 0,
                             #max = 1,
                             absDelta = 0.1,
@@ -766,7 +766,7 @@ class CryspyParser:
                             prettyName = 'resolution y',
                             title = 'y',
                             icon = 'grip-lines-vertical',
-                            url = 'https://easydiffraction.org',
+                            url = 'https://docs.easydiffraction.org/app/project/dictionaries/_pd_instr/',
                             #min = 0,
                             #max = 1,
                             absDelta = 0.1,
@@ -783,7 +783,7 @@ class CryspyParser:
                             prettyName = 'asymmetry p1',
                             title = 'p1',
                             icon = 'balance-scale-left',
-                            url = 'https://easydiffraction.org',
+                            url = 'https://docs.easydiffraction.org/app/project/dictionaries/_pd_instr/',
                             absDelta = 0.5,
                             fittable = True,
                             fit = item.p1_refinement
@@ -795,7 +795,7 @@ class CryspyParser:
                             prettyName = 'asymmetry p2',
                             title = 'p2',
                             icon = 'balance-scale-left',
-                            url = 'https://easydiffraction.org',
+                            url = 'https://docs.easydiffraction.org/app/project/dictionaries/_pd_instr/',
                             absDelta = 0.5,
                             fittable = True,
                             fit = item.p2_refinement
@@ -807,7 +807,7 @@ class CryspyParser:
                             prettyName = 'asymmetry p3',
                             title = 'p3',
                             icon = 'balance-scale-left',
-                            url = 'https://easydiffraction.org',
+                            url = 'https://docs.easydiffraction.org/app/project/dictionaries/_pd_instr/',
                             absDelta = 0.5,
                             fittable = True,
                             fit = item.p3_refinement
@@ -819,7 +819,7 @@ class CryspyParser:
                             prettyName = 'asymmetry p4',
                             title = 'p4',
                             icon = 'balance-scale-left',
-                            url = 'https://easydiffraction.org',
+                            url = 'https://docs.easydiffraction.org/app/project/dictionaries/_pd_instr/',
                             absDelta = 0.5,
                             fittable = True,
                             fit = item.p4_refinement))
@@ -838,7 +838,7 @@ class CryspyParser:
                                 name = '_label',
                                 #prettyName = 'label',
                                 title = 'label',
-                                url = 'https://easydiffraction.org',
+                                url = 'https://docs.easydiffraction.org/app/project/dictionaries/_phase/',
                             ))
                             ed_phase['_scale'] = dict(Parameter(
                                 cryspy_phase.scale,
@@ -852,7 +852,7 @@ class CryspyParser:
                                 title = 'scale',
                                 icon = 'weight',
                                 groupIcon = 'layer-group',
-                                url = 'https://easydiffraction.org',
+                                url = 'https://docs.easydiffraction.org/app/project/dictionaries/_phase/',
                                 #min = 0,
                                 #max = 1000,
                                 pctDelta = 25,
@@ -877,7 +877,7 @@ class CryspyParser:
                                 name = '_2theta',
                                 prettyName = '2θ',
                                 title = '2θ',
-                                url = 'https://easydiffraction.org'
+                                url = 'https://docs.easydiffraction.org/app/project/dictionaries/_pd_background/'
                             ))
                             ed_bkg_point['_intensity'] = dict(Parameter(
                                 cryspy_bkg_point.intensity,
@@ -892,7 +892,7 @@ class CryspyParser:
                                 title = 'Ibkg',
                                 icon = 'mountain',
                                 groupIcon = 'wave-square',
-                                url = 'https://easydiffraction.org',
+                                url = 'https://docs.easydiffraction.org/app/project/dictionaries/_pd_background/',
                                 #min = 0,
                                 #max = 3000,
                                 pctDelta = 25,
@@ -916,7 +916,7 @@ class CryspyParser:
                                 name = '_2theta',
                                 #prettyName = '2θ',
                                 title = '2θ',
-                                url = 'https://easydiffraction.org'
+                                url = 'https://docs.easydiffraction.org/app/project/dictionaries/_pd_meas/'
                             ))
                             ed_meas_point['_intensity'] = dict(Parameter(
                                 cryspy_meas_point.intensity,
@@ -925,7 +925,7 @@ class CryspyParser:
                                 name = '_intensity',
                                 #prettyName = 'I',
                                 title = 'I',
-                                url = 'https://easydiffraction.org'
+                                url = 'https://docs.easydiffraction.org/app/project/dictionaries/_pd_meas/'
                             ))
                             ed_meas_point['_intensity_sigma'] = dict(Parameter(
                                 cryspy_meas_point.intensity_sigma,
@@ -934,7 +934,7 @@ class CryspyParser:
                                 name = '_intensity_sigma',
                                 #prettyName = 'sI',
                                 title = 'sI',
-                                url = 'https://easydiffraction.org'
+                                url = 'https://docs.easydiffraction.org/app/project/dictionaries/_pd_meas/'
                             ))
                             ed_meas_points.append(ed_meas_point)
                         ed_experiment_meas_only['loops']['_pd_meas'] = ed_meas_points

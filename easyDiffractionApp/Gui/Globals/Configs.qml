@@ -81,6 +81,7 @@ ${name} is developed by ESS DMSC`
     }
 
     function githubRawContentUrl(branch, file) {
-        return `https://raw.githubusercontent.com/easyscience/EasyExampleApp/${branch}/${file}`
+        //return `https://raw.githubusercontent.com/easyscience/easyDiffractionApp/${branch}/${file}` // NEED FIX
+        return `https://raw.githubusercontent.com/easyscience/easyDiffractionApp/master/${file}` // NEED FIX
     }
 }

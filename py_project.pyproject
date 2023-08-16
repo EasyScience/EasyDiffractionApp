@@ -1,27 +1,25 @@
 {
 "files": [    
-    "EasyExampleApp/main.py",
+    "easyDiffractionApp/main.py",
 
-    "EasyExampleApp/Logic/Analysis.py",
-    "EasyExampleApp/Logic/Calculators.py",
-    "EasyExampleApp/Logic/Connections.py",
-    "EasyExampleApp/Logic/Data.py",
-    "EasyExampleApp/Logic/Experiment.py",
-    "EasyExampleApp/Logic/Fittables.py",
-    "EasyExampleApp/Logic/Fitting.py",
-    "EasyExampleApp/Logic/Helpers.py",
-    "EasyExampleApp/Logic/Model.py",
-    "EasyExampleApp/Logic/Plotting.py",
-    "EasyExampleApp/Logic/Project.py",
-    "EasyExampleApp/Logic/PyProxy.py",
-    "EasyExampleApp/Logic/Status.py",
-    "EasyExampleApp/Logic/Summary.py",
-    "EasyExampleApp/Logic/Tables.py",
+    "easyDiffractionApp/Logic/Analysis.py",
+    "easyDiffractionApp/Logic/Calculators.py",
+    "easyDiffractionApp/Logic/Connections.py",
+    "easyDiffractionApp/Logic/Data.py",
+    "easyDiffractionApp/Logic/Experiment.py",
+    "easyDiffractionApp/Logic/Fittables.py",
+    "easyDiffractionApp/Logic/Fitting.py",
+    "easyDiffractionApp/Logic/Helpers.py",
+    "easyDiffractionApp/Logic/Model.py",
+    "easyDiffractionApp/Logic/Plotting.py",
+    "easyDiffractionApp/Logic/Project.py",
+    "easyDiffractionApp/Logic/PyProxy.py",
+    "easyDiffractionApp/Logic/Status.py",
+    "easyDiffractionApp/Logic/Summary.py",
+    "easyDiffractionApp/Logic/Tables.py",
 
-    "EasyExampleApp/Gui/main.qml",
+    "easyDiffractionApp/Gui/main.qml",
 
-    "EasyExampleApp/resources.qrc",
-
-    "EasyApp/Logic/Logging.py"
+    "easyDiffractionApp/resources.qrc"
     ]
 }

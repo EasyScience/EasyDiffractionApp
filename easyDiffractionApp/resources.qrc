@@ -65,6 +65,7 @@
         <file>Gui/Components/ApplicationWindow.qml</file>
         <file>Gui/Components/GuiTestsController.qml</file>
         <file>Gui/Components/qmldir</file>
+        <file>Gui/Components/CloseDialog.qml</file>
         <file>Gui/Components/SplashScreen.qml</file>
         <file>Gui/Components/StatusBar.qml</file>
         <file>Gui/Components/UserTutorialsController.qml</file>

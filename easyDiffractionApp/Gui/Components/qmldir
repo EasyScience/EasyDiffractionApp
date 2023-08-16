@@ -1,6 +1,7 @@
 module Components
 
 ApplicationWindow ApplicationWindow.qml
-StatusBar StatusBar.qml
+CloseDialog CloseDialog.qml
 GuiTestsController GuiTestsController.qml
+StatusBar StatusBar.qml
 UserTutorialsController UserTutorialsController.qml

@@ -23,7 +23,18 @@ EaComponents.ApplicationWindow {
     //opacity: Globals.Vars.splashScreenAnimoFinished ? 1 : 0
     //Behavior on opacity { EaAnimations.ThemeChange {} }
 
-    onClosing: Qt.quit()
+    onClosing: (close) => {
+        if (Globals.Vars.isTestMode) {
+            Qt.quit()
+        } else {
+            closeDialog.visible = Globals.Proxies.main.project.created && Globals.Proxies.main.project.needSave
+            close.accepted = !(Globals.Proxies.main.project.created && Globals.Proxies.main.project.needSave)
+            if (close.accepted) {
+                close.accepted = false
+                applicationWindow.quit()
+            }
+        }
+    }
 
     Component.onCompleted: {
         console.debug(`Application window loaded: ${this}`)
@@ -197,6 +208,14 @@ EaComponents.ApplicationWindow {
     /////////////
 
     statusBar: Components.StatusBar {}
+
+    ///////////////////
+    // CLOSE APP DIALOG
+    ///////////////////
+
+    Components.CloseDialog {
+        id: closeDialog
+    }
 
     ////////////
     // GUI TESTS
